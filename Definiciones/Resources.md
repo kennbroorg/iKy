@@ -61,3 +61,8 @@
 
 [Speedtest-cli, mide el ancho de banda de tu conexión desde la terminal](https://ubunlog.com/speedtest-cli-ancho-banda-terminal/)
     Tal vez sirva para estimar los tiempos de respuesta
+
+#Breaches
+- https://www.reddit.com/r/pwned/comments/7hhqfo/combination_of_many_breaches/
+- https://gist.github.com/nlitsme/6f138e72b328c28520d64d7e03f2d5f9
+- Hacete una busqueda de 7ffbcd8cee06aba2ce6561688cf68ce2addca0a3 y fijate

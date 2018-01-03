@@ -16,3 +16,9 @@
 ## Back End
 - Python
 - API Rest
+
+## Ejemplos
+https://github.com/hrharish111/wordcountpython
+
+## Documentacion
+- https://docusaurus.io
