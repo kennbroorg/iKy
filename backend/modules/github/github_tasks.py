@@ -1,14 +1,19 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
+
 import sys
 import json
 import requests
+
+from celery_config import app
 
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
-def main(username):
+@app.task
+def t_github(username):
     req = requests.get("https://api.github.com/users/%s" % username)
     # TODO : Many things 
     # Use other API URLs
@@ -22,7 +27,7 @@ def output(data):
 if __name__ == "__main__":
     try:
         username = sys.argv[1]
-        result = main(username)
+        result = t_github(username)
         output(result)
     except Exception as e:
         print e
