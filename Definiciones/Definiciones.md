@@ -16,6 +16,16 @@
 ## Back End
 - Python
 - API Rest
+- Celery
+    - http://agiliq.com/blog/2015/07/getting-started-with-celery-and-redis/
+    - http://docs.celeryproject.org/en/latest/index.html
+- Redis
+    - https://redis.io/topics/quickstart
+- Flask
+
+### Logica
+- Hay que validar y revalidar la info obtenida mediante puntajes(?)
+- Una vez obtenido el nombre completo buscar combinaciones del mismo en las redes sociales. Por ejemplo en keybase habria que entrar a varios perfiles y confirmar con el nombre completo informado o a traves de las claves publicas.
 
 ## Ejemplos
 https://github.com/hrharish111/wordcountpython
