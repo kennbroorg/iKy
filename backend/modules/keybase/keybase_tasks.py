@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
 
@@ -9,9 +10,16 @@ import json
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+try:
+    from celery_config import app
+except ImportError:
+    # This is to test the module individually
+    sys.path.append('../../')
+    from celery_config import app
 
-def main(username):
-    # Use the username variable to do some stuff and return the data
+ 
+@app.task
+def t_keybase(username):
     url = "https://keybase.io/_/api/1.0/user/lookup.json?usernames=%s" %username
     req = requests.get(url)
     data = json.loads(req.text) 
@@ -28,7 +36,11 @@ def output(data):
 
 
 if __name__ == "__main__":
-    username = sys.argv[1]
-    result = main(username)
-    output(result)
+    try:
+        username = sys.argv[1]
+        result = t_keybase(username)
+        output(result)
+    except Exception as e:
+        print e
+        print "Please provide a username as argument"
 

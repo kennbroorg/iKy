@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
 
@@ -10,8 +11,16 @@ from bs4 import BeautifulSoup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-def main(username):
-    # Use the username variable to do some stuff and return the data
+try:
+    from celery_config import app
+except ImportError:
+    # This is to test the module individually
+    sys.path.append('../../')
+    from celery_config import app
+
+
+@app.task
+def t_gitlab(username):
     gitlabdetails = []
     url = "https://gitlab.com/" + username
     if (requests.head(url, verify=False).status_code == 200):
@@ -42,7 +51,7 @@ def output(data):
 if __name__ == "__main__":
     try:
         username = sys.argv[1]
-        result = main(username)
+        result = t_gitlab(username)
         output(result)
     except Exception as e:
         print e
