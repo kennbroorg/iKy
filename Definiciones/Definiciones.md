@@ -19,8 +19,11 @@
 - Celery
     - http://agiliq.com/blog/2015/07/getting-started-with-celery-and-redis/
     - http://docs.celeryproject.org/en/latest/index.html
+    - https://www.fullstackpython.com/celery.html
 - Redis
     - https://redis.io/topics/quickstart
+    - [Redis JSON](https://redislabs.com/blog/redis-as-a-json-store/)
+        Para manejar la estructura JSON dentro de Redis para la construccion de la estructura que albergaria los datos a consumir desde el FrontEnd. (Por ahora no, en un futuro)
 - Flask
 
 ### Logica
