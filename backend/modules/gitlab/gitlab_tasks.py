@@ -11,6 +11,10 @@ from bs4 import BeautifulSoup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+## Delete Please KKK
+import time
+time.sleep(5)
+
 try:
     from celery_config import app
 except ImportError:
