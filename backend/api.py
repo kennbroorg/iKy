@@ -4,6 +4,7 @@
 from __future__ import absolute_import
 
 import sys
+import time
 
 from flask import Flask
 from flask import jsonify
@@ -15,32 +16,41 @@ from modules.gitlab.gitlab_tasks import t_gitlab
 from modules.username.username_tasks import t_username
 from modules.keybase.keybase_tasks import t_keybase
 
-import time # KKK
 
 f_app = Flask(__name__)
 
 
+# KKK : I think the api should handle the task times until obtain the result
+
 @f_app.route('/github', methods=["POST"])
 def github():
-    if request.method == "POST":
+    try:
         username = request.form['username']
-        print "Username detectado : ", username
-        r = t_github.delay(username)
-        print "Tarea lanzada a celery"
-        print "Tarea : ", r
-        while (r.state != 'SUCCESS'):
-            print "Estado : ", r.state
-            time.sleep(2)
+        print "Detected Username : ", username
+        task_r = t_github.delay(username)
+        print "Task : ", task_r.id
+        while (task_r.state != 'SUCCESS'):
+            print "State : ", task_r.state
+            time.sleep(1)
+        print "Data : ", task_r.result
+    except:
+        return "{'state' : 'FAILURE'}"
 
-        print "Resultado : ", r.result
-
-#        r_github = r
-    else:
-        r_github = "MAL"
-
-    # print r
-    return jsonify(r.result)
+    return jsonify(task_r.result)
 		
+
+@f_app.route('/github-redis', methods=["POST"])
+def github_redis():
+    try:
+        username = request.form['username']
+        print "Detected Username : ", username
+        task_r = t_github.delay(username)
+        print "Task : ", r.id
+    except:
+       return "{'state' : 'FAILURE'}"
+
+    return jsonify(task_r.result)
+
 
 if __name__ == '__main__':
     f_app.run(debug=True)
