@@ -6,7 +6,7 @@ from __future__ import absolute_import
 import sys
 
 from flask import Flask
-from flask import json
+from flask import jsonify
 from flask import request
 
 # Import our modules
@@ -34,12 +34,12 @@ def github():
 
         print "Resultado : ", r.result
 
-        r_github = 'BIEN'
+#        r_github = r
     else:
         r_github = "MAL"
 
-    print r_github
-    return r_github
+    # print r
+    return jsonify(r.result)
 		
 
 if __name__ == '__main__':
