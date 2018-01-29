@@ -22,6 +22,14 @@
 [duckduckgo]
 
 
+# Identificacion de nombres
+[Parseador de nombres](https://github.com/derek73/python-nameparser)
+
+
+# Telefonos (Parseador)
+[Parseador de numeros telefonicos](https://github.com/daviddrysdale/python-phonenumbers)
+
+
 #Geolocalizacion
 [Geocreepy](http://www.geocreepy.com/)
 
@@ -49,6 +57,8 @@
 
 
 #Miscelaneas
+[Lista bastante completa de APIs](https://github.com/TonnyL/Awesome_APIs)
+[Varias cosas, pero esta bueno lo del lenguaje natural](https://github.com/lorien/awesome-web-scraping/blob/master/python.md)
 [Herramienta OSINT de reconocimiento y búsqueda que permite rastrear personas](https://github.com/boxug/trape)
 
 [Cli.Fyi, información rápida sobre direcciones IP, correos electrónicos y más](https://ubunlog.com/cli-fyi-informacion-terminal/)
