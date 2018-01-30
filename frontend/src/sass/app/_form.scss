@@ -1,0 +1,646 @@
+.label {
+  border-radius: 0;
+}
+
+.label-primary {
+  background: $primary;
+}
+
+.label-info {
+  background: $primary-light;
+}
+
+.label-success {
+  background: $success;
+}
+
+.label-warning {
+  background: $warning;
+}
+
+.label-danger {
+  background: $danger;
+}
+
+.form-horizontal {
+  label {
+    line-height: 34px;
+    margin-bottom: 0;
+    padding-top: 0 !important;
+  }
+}
+
+.form-group {
+  label {
+    margin-bottom: 5px;
+    color: $default-text;
+    font-weight: $font-normal;
+    font-size: 13px;
+  }
+}
+
+.form-control {
+  color: $default-text;
+  @include placeholderStyle($default-text, 0.7);
+  border: 1px solid $input-border;
+  border-radius: 5px;
+  background-color: $input-background;
+  box-shadow: none;
+  &:focus {
+    box-shadow: none;
+    border-color: $primary-bg;
+    background: $input-background;
+  }
+}
+
+select.form-control {
+  padding-left: 8px;
+}
+
+textarea.form-control {
+  height: 96px;
+}
+
+.form-inline {
+  .form-group {
+    input {
+      width: 100%;
+    }
+    label {
+      margin-right: 12px;
+    }
+  }
+
+  button[type="submit"] {
+    margin-left: 12px;
+  }
+
+  label.custom-checkbox > span {
+    display: block;
+    margin-top: -13px;
+    margin-right: 10px;
+  }
+}
+
+@mixin setSwitchBorder($color) {
+  .bootstrap-switch.bootstrap-switch-on {
+    border-color: $color;
+  }
+}
+
+@mixin setSwitcherColor($color) {
+  border: solid 1px $color;
+  .handle.handle-on {
+    background-color: $color;
+  }
+}
+
+.switcher-container {
+  margin-right: 10px;
+  font-weight: normal;
+  input {
+    display: none;
+  }
+  .switcher {
+    &.primary {
+      @include setSwitcherColor($primary);
+    }
+    &.success {
+      @include setSwitcherColor($success);
+    }
+    &.warning {
+      @include setSwitcherColor($warning);
+    }
+    &.danger {
+      @include setSwitcherColor($danger);
+    }
+    &.info {
+      @include setSwitcherColor($primary-light);
+    }
+    position: relative;
+    display: inline-block;
+    width: 84px;
+    overflow: hidden;
+    border-radius: 6px;
+    box-sizing: border-box;
+
+    /* this fixes the overflow:hidden in Chrome */
+    -webkit-transform: translateZ(0);
+    /* Hide default HTML checkbox */
+    input {
+      display: none;
+    }
+    .handle-container {
+      position: relative;
+      width: 126px;
+      cursor: pointer;
+      transform: translate3d(-42px, 0, 0);
+      transition: transform .2s linear;
+      .handle {
+        width: 42px;
+        float: left;
+        line-height: 28px;
+        height: 28px;
+        font-size: 12px;
+        text-align: center;
+        color: white;
+        &.handle-off {
+          background: $border;
+          color: black;
+        }
+      }
+    }
+  }
+  input:checked + .switcher {
+    border: solid 1px $border;
+    .handle-container {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+}
+
+
+.switch-container {
+  display: inline-block;
+  &.primary {
+    @include setSwitchBorder($primary);
+  }
+  &.success {
+    @include setSwitchBorder($success);
+  }
+  &.warning {
+    @include setSwitchBorder($warning);
+  }
+  &.danger {
+    @include setSwitchBorder($danger);
+  }
+  &.info {
+    @include setSwitchBorder($primary-light);
+  }
+}
+
+.bootstrap-switch {
+  border-radius: 5px;
+  border: 1px solid $default;
+  transition: border-color ease-in-out .7s, box-shadow ease-in-out .7s;
+  &:focus {
+    outline: none;
+  }
+  &.bootstrap-switch-off {
+    border-color: $border;
+  }
+  &.bootstrap-switch-focused {
+    box-shadow: none;
+    &.bootstrap-switch-off {
+      border-color: $border;
+    }
+  }
+  .bootstrap-switch-container {
+    border-radius: 0;
+    &:focus {
+      outline: none;
+    }
+  }
+  .bootstrap-switch-handle-on {
+    border-radius: 0;
+    &.bootstrap-switch-default {
+      background: $default;
+    }
+    &.bootstrap-switch-success {
+      background: $success;
+    }
+    &.bootstrap-switch-primary {
+      background: $primary;
+    }
+    &.bootstrap-switch-warning {
+      background: $warning;
+    }
+    &.bootstrap-switch-danger {
+      background: $danger;
+    }
+    &.bootstrap-switch-info {
+      background: $primary-light;
+    }
+  }
+  .bootstrap-switch-handle-off {
+    border-radius: 0;
+  }
+
+  .bootstrap-switch-label {
+    background: transparent;
+  }
+
+  &.bootstrap-switch-animate .bootstrap-switch-container {
+    transition: margin-left .2s;
+  }
+}
+
+.switches {
+  margin-left: -12px;
+  margin-bottom: -12px;
+  .switch-container {
+    float: left;
+    margin-left: 12px;
+    margin-bottom: 12px;
+  }
+}
+
+.input-group {
+  width: 100%;
+  margin-bottom: 15px;
+  & > span {
+    border-radius: 0;
+  }
+}
+
+label.custom-checkbox {
+  padding-right: 0;
+  padding-left: 0;
+  margin-bottom: 0;
+  & > input {
+    height: 0;
+    z-index: -100 !important;
+    opacity: 0;
+    position: absolute;
+    &:checked {
+      & + span {
+        &:before {
+          content: "\f00c";
+          font-weight: $font-light;
+        }
+      }
+    }
+    &:disabled {
+      & + span {
+        color: $disabled;
+        cursor: not-allowed;
+        &:before {
+          border-color: $disabled !important;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+  & > span {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    line-height: 16px;
+    font-weight: $font-light;
+    cursor: pointer;
+    padding-left: 22px;
+    width: 100%;
+    &:before {
+      cursor: pointer;
+      font-family: fontAwesome;
+      font-weight: $font-light;
+      font-size: 12px;
+      color: $default-text;
+      content: "\a0";
+      background-color: transparent;
+      border: 1px solid $border;
+      border-radius: 0;
+      display: inline-block;
+      text-align: center;
+      height: 16px;
+      line-height: 14px;
+      min-width: 16px;
+      margin-right: 6px;
+      position: relative;
+      top: 0;
+      margin-left: -22px;
+      float: left;
+    }
+    &:hover {
+      &:before {
+        border-color: $primary-bg;
+      }
+    }
+  }
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.cut-with-dots {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+label.custom-radio {
+  @extend .custom-checkbox;
+  & > input {
+    &:checked {
+      & + span {
+        &:before {
+          content: "\f111";
+        }
+      }
+    }
+  }
+  & > span {
+    &:before {
+      border-radius: 16px;
+      font-size: 9px;
+    }
+  }
+}
+
+@mixin customInput($color) {
+  & > span {
+    &:before {
+      color: $color;
+    }
+    &:hover {
+      &:before {
+        border-color: $color;
+      }
+    }
+  }
+}
+
+label.custom-input-primary {
+  @include customInput($primary);
+}
+
+label.custom-input-success {
+  @include customInput($success);
+}
+
+label.custom-input-warning {
+  @include customInput($warning)
+}
+
+label.custom-input-danger {
+  @include customInput($danger)
+}
+
+.form-horizontal {
+  .radio, .checkbox, .radio-inline, .checkbox-inline {
+    padding-top: 0px;
+  }
+}
+
+.input-demo {
+  line-height: 25px;
+}
+
+@mixin validationState($color, $focusColor) {
+  .control-label {
+    color: $default-text;
+  }
+  .form-control {
+    border: 1px solid $color;
+    &:focus {
+      box-shadow: none;
+      border-color: $focusColor;
+    }
+  }
+
+  label.custom-checkbox {
+    color: $color;
+    & > span {
+      &:before {
+        color: $color;
+      }
+      &:hover {
+        &:before {
+          border-color: $color;
+        }
+      }
+    }
+  }
+  .form-control-feedback {
+    color: $color;
+  }
+  .input-group-addon {
+    background-color: $color;
+    color: $label-text;
+  }
+}
+
+.has-success {
+  @include validationState($success-bg, $success);
+}
+
+.has-warning {
+  @include validationState($warning-bg, $warning);
+}
+
+.has-error {
+  @include validationState($danger-bg, $danger);
+}
+
+.has-feedback label ~ .form-control-feedback {
+  top: 21px;
+  font-size: 18px;
+}
+
+.bootstrap-select {
+  .btn-default {
+    &:focus {
+      color: $default-text;
+    }
+  }
+  > .dropdown-toggle {
+    &.btn-primary, &.btn-warning, &.btn-danger, &.btn-success, &.btn-inverse, &.btn-info {
+      color: #fff;
+      &:hover, &:focus {
+        color: #fff;
+      }
+    }
+  }
+}
+
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+  background-color: $input-background;
+  color: $disabled;
+  border-color: $disabled-bg;
+  @include placeholderStyle($default-text, 0.5);
+}
+
+.form-control-rounded {
+  border-radius: 16px;
+}
+
+.help-block {
+  color: $help-text;
+}
+
+.help-block.error-block {
+  display: none;
+  .has-error &.basic-block {
+    display: block;
+  }
+}
+
+@mixin groupAddon($color) {
+  background: $color;
+  color: $label-text;
+  border-color: $color;
+}
+
+.input-group-addon-danger {
+  @include groupAddon($danger);
+}
+
+.input-group-addon-warning {
+  @include groupAddon($warning);
+}
+
+.input-group-addon-success {
+  @include groupAddon($success);
+}
+
+.input-group-addon-primary {
+  @include groupAddon($primary);
+}
+
+.checkbox-demo-row {
+  margin-bottom: 12px;
+}
+
+.dropdown-menu {
+  border-radius: 5px;
+}
+
+.bootstrap-select.btn-group {
+  button.btn.btn-default {
+    background: transparent;
+    color: $default-text;
+    &:hover {
+      background: $default;
+      box-shadow: none;
+      outline: 0 !important;
+    }
+    &:active {
+      background: $default;
+      box-shadow: none;
+    }
+  }
+  &.open {
+    > .btn.btn-default.dropdown-toggle {
+      background: $default;
+      box-shadow: none;
+      border-color: $border;
+    }
+    > .btn {
+      border-radius: 5px 5px 0 0;
+    }
+    .dropdown-menu.open {
+      border: 1px solid $border-light;
+      border-top: none;
+      border-radius: 0 0 5px 5px;
+    }
+  }
+  &.with-search.open .btn-default + .dropdown-menu {
+    .bs-searchbox .form-control {
+      background-color: $default;
+      border: 1px solid $input-border;
+    }
+    .no-results {
+      color: $dropdown-text;
+    }
+  }
+  .notify {
+    color: $dropdown-text;
+  }
+}
+
+.bootstrap-tagsinput {
+  color: $default-text;
+  background-color: $input-background;
+  border: 1px solid $input-border;
+  border-radius: 5px;
+  box-shadow: none;
+  max-width: 100%;
+  font-size: 14px;
+  line-height: 26px;
+  width: 100%;
+  &.form-control {
+    display: block;
+    width: 100%;
+  }
+  .tag {
+    border-radius: 3px;
+    font-weight: $font-normal;
+    font-size: 11px;
+    padding: 4px 8px;
+    & [data-role="remove"]:hover {
+      box-shadow: none;
+    }
+  }
+  input {
+    background-color: $input-background;
+    border: 1px solid $input-border;
+    border-radius: 5px;
+    @include placeholderStyle($default-text, 0.8);
+    line-height: 22px;
+    font-size: 11px;
+    min-width: 53px;
+  }
+}
+
+.ui-select-multiple.ui-select-bootstrap {
+
+  min-height: 34px;
+  padding: 4px 3px 0 12px;
+}
+
+.progress {
+  background: $progress-background;
+}
+
+.progress-bar-primary {
+  background-color: $primary;
+}
+
+.progress-bar-success {
+  background-color: $success-light;
+}
+
+.progress-bar-warning {
+  background-color: $warning;
+}
+
+.progress-bar-danger {
+  background-color: $danger;
+}
+
+.has-success .input-group-addon {
+  border: none;
+}
+
+.input-group > span.addon-left {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.input-group > span.addon-right {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.with-primary-addon:focus {
+  border-color: $primary;
+}
+
+.with-warning-addon:focus {
+  border-color: $warning;
+}
+
+.with-success-addon:focus {
+  border-color: $success;
+}
+
+.with-danger-addon:focus {
+  border-color: $danger;
+}
+
+.sub-little-text {
+  font-size: 12px;
+}
+

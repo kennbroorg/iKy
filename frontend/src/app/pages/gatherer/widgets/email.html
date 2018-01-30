@@ -1,0 +1,9 @@
+<form>
+  <div class="form-group">
+    <label for="inputEmailAddress">Email address</label>
+    <input type="email" class="form-control" id="inputEmailAddress" placeholder="Email" ng-model="$parent.emailAddress"> 
+  </div>
+
+  <button type="submit" class="btn btn-primary btn-with-icon" ng-click="showInfo($parent.emailAddress)" ><i class="ion-ios-eye"></i>Gather info</button>
+
+</form>

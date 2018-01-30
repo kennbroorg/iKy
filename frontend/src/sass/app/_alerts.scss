@@ -1,0 +1,67 @@
+.alert{
+  color: $label-text;
+  font-size: 13px;
+  font-weight: $font-light;
+  strong{
+    font-weight: $font-normal;
+  }
+  .close{
+    margin-top: -3px;
+  }
+  .alert-link{
+    font-weight: $font-normal;
+  }
+  .control-alert{
+    padding-top:10px ;
+    button{
+      margin-right: 10px;
+    }
+  }
+}
+
+.closeable{
+  button{
+    color: $input-border;
+  }
+}
+
+.bg-success {
+  background-color: rgba($success,0.85);
+  color: $label-text;
+  a{
+    color: $danger-dark;
+    &:hover{
+      color: $danger;
+    }
+  }
+}
+.bg-info {
+  background-color: rgba($info,0.85);
+  color: $label-text;
+  a{
+    color: $warning-light;
+    &:hover{
+      color: $warning;
+    }
+  }
+}
+.bg-warning {
+  background-color: rgba($warning,0.85);
+  color: $label-text;
+  a{
+    color: $danger-dark;
+    &:hover{
+      color: $danger;
+    }
+  }
+}
+.bg-danger {
+  background-color: rgba($danger,0.85);
+  color: $label-text;
+  a{
+    color: $warning-light;
+    &:hover{
+      color: $warning;
+    }
+  }
+}

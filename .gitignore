@@ -32,7 +32,7 @@
 ## Plugin-specific files:
 
 # IntelliJ
-/out/
+out/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -50,9 +50,9 @@ gulp.1
 build
 .tmp
 
-/src/release
-/release
-/bower_components
+frontend/src/release
+frontend/release
+frontend/bower_components
 
 # Compiled source #
 ###################
