@@ -49,6 +49,11 @@ t_keybase.delay('kennbro') # there is no user
 t_username.delay('kennbro')
 ```
 
+Finally, again, in another terminal turn on API from directory **backend** 
+```shell
+python api.py
+```
+
 ## INSTALL FRONTEND
 
 ### Dependencies
@@ -57,8 +62,9 @@ First of all, install **[nodejs]**(https://nodejs.org/en/)
 And then you must install **gulp** and the dependencies from the directory **frontend**
 ```shell
 cd frontend
-npm install --save gulp-install
-npm install
+sudo npm install -g bower
+sudo npm install --save gulp-install
+sudo npm install
 ```
 
 Finally, to run frontend server, execute:

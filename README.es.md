@@ -53,6 +53,11 @@ El primer conjunto sin celery, cada uno espera al otro para ir ejecutandose y la
 El segundo grupo se arroja a celery, todos juntos y éste en conjunto con redis manejan la salida, por lo que la misma se mostrará en la consola que corre celery
 
 
+Finalmente, otra vez, en otra terminal enciender la API desde el directorio **backend** 
+```shell
+python api.py
+```
+
 ## INSTALAR FRONTEND
 
 ### Dependencias
