@@ -15,6 +15,8 @@
         // The $scope is driving me crazy
         // Verify Adress
         $scope.emailAddress = address;
+        $scope.username = $scope.emailAddress.split("@")[0];
+        console.log($scope.username);
 
         // Example : Data changes
         $http.get('http://echo.jsontest.com/key/value/one/two').then(function(response) {
@@ -47,8 +49,7 @@
             method: 'POST',
             url: 'http://127.0.0.1:5000/github',
             data: $.param({
-                //username: $scope.emailAddress,
-                username: 'kennbro',
+                username: $scope.username,
             }),
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function (data, status, headers, config) {
@@ -69,8 +70,7 @@
             method: 'POST',
             url: 'http://127.0.0.1:5000/gitlab',
             data: $.param({
-                //username: $scope.emailAddress,
-                username: 'kennbro',
+                username: $scope.username,
             }),
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function (data, status, headers, config) {
@@ -91,8 +91,7 @@
             method: 'POST',
             url: 'http://127.0.0.1:5000/keybase',
             data: $.param({
-                //username: $scope.emailAddress,
-                username: 'kennbro',
+                username: $scope.username,
             }),
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function (data, status, headers, config) {
@@ -113,8 +112,7 @@
             method: 'POST',
             url: 'http://127.0.0.1:5000/username',
             data: $.param({
-                //username: $scope.emailAddress,
-                username: 'kennbro',
+                username: $scope.username,
             }),
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function (data, status, headers, config) {
