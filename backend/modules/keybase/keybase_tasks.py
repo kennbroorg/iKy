@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
+from factories._celery import create_celery
+from factories.application import create_application
+celery = create_celery(create_application())
+import time
 
 import sys
 import requests
@@ -10,16 +12,10 @@ import json
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-try:
-    from celery_config import app
-except ImportError:
-    # This is to test the module individually
-    sys.path.append('../../')
-    from celery_config import app
-
  
-@app.task
+@celery.task
 def t_keybase(username):
+    # time.sleep(50)
     url = "https://keybase.io/_/api/1.0/user/lookup.json?usernames=%s" %username
     req = requests.get(url)
     data = json.loads(req.text) 

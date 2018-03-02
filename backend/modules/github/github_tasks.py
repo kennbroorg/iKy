@@ -1,7 +1,17 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# -*- encoding: utf-8 -*-
+from factories._celery import create_celery
+from factories.application import create_application
+celery = create_celery(create_application())
+import time
 
-from __future__ import absolute_import
+# @celery.task(name="tasks.simple_task")
+# def simple_task(argument):
+#     this = 0
+#     for i in range(0,1000000):
+#         this = i * i * i * i * i * i
+#     print(argument)
+# # -*- coding: utf-8 -*-
 
 import sys
 import json
@@ -10,15 +20,14 @@ import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-try:
-    from celery_config import app
-except ImportError:
-    # This is to test the module individually
-    sys.path.append('../../')
-    from celery_config import app
+# try:
+#     from celery_config import app
+# except ImportError:
+#     # This is to test the module individually
+#     sys.path.append('../../')
+#     from celery_config import app
 
-
-@app.task
+@celery.task
 def t_github(username):
     req = requests.get("https://api.github.com/users/%s" % username)
     # TODO : Many things 

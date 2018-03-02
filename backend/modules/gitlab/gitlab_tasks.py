@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
+from factories._celery import create_celery
+from factories.application import create_application
+celery = create_celery(create_application())
+import time
 
 import sys
 import requests
@@ -11,19 +13,8 @@ from bs4 import BeautifulSoup
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-## Delete Please KKK
-import time
-time.sleep(5)
 
-try:
-    from celery_config import app
-except ImportError:
-    # This is to test the module individually
-    sys.path.append('../../')
-    from celery_config import app
-
-
-@app.task
+@celery.task
 def t_gitlab(username):
     gitlabdetails = []
     url = "https://gitlab.com/" + username

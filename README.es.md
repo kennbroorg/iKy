@@ -24,38 +24,12 @@ pip install -r requirements.txt
 
 Y encender Celery en otra terminal aparte y parado en el directorio **backend**
 ```shell
-celery worker -A celery_config -l info -c 5
+./celery.sh
 ```
 
-### Corrida de prueba
-Utilizar, por ahora, la terminal de python (o ipython) y desde el directorio **backend**, ejecutando lo siguiente
-
-```python
-from modules.github.github_tasks import t_github
-from modules.gitlab.gitlab_tasks import t_gitlab
-from modules.keybase.keybase_tasks import t_keybase
-from modules.username.username_tasks import t_username
-
-# Sin celery, uno atras del otro
-t_github('kennbro')
-t_gitlab('kennbro')
-t_keybase('kennbro') # No devuelve nada por que no hay usuario
-t_username('kennbro')
-
-# Con celery
-t_github.delay('kennbro')
-t_gitlab.delay('kennbro')
-t_keybase.delay('kennbro') # No devuelve nada por que no hay usuario
-t_username.delay('kennbro')
-```
-
-El primer conjunto sin celery, cada uno espera al otro para ir ejecutandose y la salida se muestra por consola
-El segundo grupo se arroja a celery, todos juntos y éste en conjunto con redis manejan la salida, por lo que la misma se mostrará en la consola que corre celery
-
-
-Finalmente, otra vez, en otra terminal enciender la API desde el directorio **backend** 
+Finalmente, otra vez, en otra terminal encender la app de backend desde el directorio **backend** 
 ```shell
-python api.py
+python app.py
 ```
 
 ## INSTALAR FRONTEND

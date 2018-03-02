@@ -24,34 +24,12 @@ pip install -r requirements.txt
 
 And turn on Celery in another terminal, within the directory **backend**
 ```shell
-celery worker -A celery_config -l info -c 5
+./celery.sh
 ```
 
-### Test run
-Use the python terminal (or ipython) and from the directory **backend**, running the following
-
-```python
-from modules.github.github_tasks import t_github
-from modules.gitlab.gitlab_tasks import t_gitlab
-from modules.keybase.keybase_tasks import t_keybase
-from modules.username.username_tasks import t_username
-
-# Without Celery, the processes run in sequence
-t_github('kennbro')
-t_gitlab('kennbro')
-t_keybase('kennbro') # there is no user
-t_username('kennbro')
-
-# With Celery, the processes are all executed together
-t_github.delay('kennbro')
-t_gitlab.delay('kennbro')
-t_keybase.delay('kennbro') # there is no user
-t_username.delay('kennbro')
-```
-
-Finally, again, in another terminal turn on API from directory **backend** 
+Finally, again, in another terminal turn on backend app from directory **backend** 
 ```shell
-python api.py
+python app.py
 ```
 
 ## INSTALL FRONTEND
