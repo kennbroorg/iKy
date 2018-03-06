@@ -2,6 +2,7 @@
 # -*- encoding: utf-8 -*-
 from factories._celery import create_celery
 from factories.application import create_application
+from celery.utils.log import get_task_logger
 celery = create_celery(create_application())
 import time
 
@@ -27,8 +28,11 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 #     sys.path.append('../../')
 #     from celery_config import app
 
+logger = get_task_logger(__name__)
+
 @celery.task
 def t_github(username):
+    logger.info('User detected: ' + username) # This message appears in Celery console
     req = requests.get("https://api.github.com/users/%s" % username)
     # TODO : Many things 
     # Use other API URLs

@@ -40,7 +40,7 @@ def r_github(username=None):
     celery = create_celery(current_app)
     username = request.args.get("username", username)
     print "Github - Detected Username : ", username
-    res = celery.send_task('github_tasks.t_github', args=(username, )) # ESTA ES LA PAPA, tiene que ser una TUPLA
+    res = celery.send_task('modules.github.github_tasks.t_github', args=(username, )) # ESTA ES LA PAPA, tiene que ser una TUPLA
     context = {"id": res.task_id, "param" : username}
     print "Task : ", res.task_id
     result = "github({})".format(context['param'])
