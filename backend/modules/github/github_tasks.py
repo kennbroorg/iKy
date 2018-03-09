@@ -36,6 +36,7 @@ def t_github(username):
     req = requests.get("https://api.github.com/users/%s" % username)
     # TODO : Many things 
     # Use other API URLs
+    time.sleep(20);
     return json.loads(req.content)
 
 

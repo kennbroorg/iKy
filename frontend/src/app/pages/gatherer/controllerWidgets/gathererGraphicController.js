@@ -2,10 +2,10 @@
   'use strict';
 
   angular.module('BlurAdmin.pages.gatherer')
-    .controller('gathererGithubController', gathererGithubController);
+    .controller('gathererGraphicController', gathererGraphicController);
 
-  function gathererGithubController($scope, $rootScope, $http) {
-    console.log('Initialize Github Controller');
+  function gathererGraphicController($scope, $rootScope, $http) {
+    console.log('Initialize Graphic Controller');
 
     //$scope.$watch("$scope.emailAddress", function(){
     //    $scope.emailAddress = 'dario@gmail.com';
