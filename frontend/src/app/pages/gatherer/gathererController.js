@@ -6,17 +6,24 @@
 
   /** @ngInject */
   function gathererController($scope, $rootScope, $http, $timeout, $polling, $q) {
-    $scope.emailAddress = '';
+    // $scope.emailAddress = '';
     $scope.tasks = new Array();
     console.log('Initialize Controller');
     console.log($scope);
+    console.log($rootScope);
      
+    console.log('scope.emailAddress ', $scope.emailAddress);
+    console.log('scope.username ', $scope.username);
+    console.log('rootScope.emailAddress ', $rootScope.emailAddress);
+    console.log('rootScope.username ', $rootScope.username);
+
     $scope.showInfo = function (address) {
 
-        // The $scope is driving me crazy
         // Verify Adress
         $scope.emailAddress = address;
         $scope.username = $scope.emailAddress.split("@")[0];
+        $rootScope.emailAddress = address;
+        $rootScope.username = $scope.emailAddress.split("@")[0];
 
 
         //////////////////////////////////////////////////

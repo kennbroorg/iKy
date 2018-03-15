@@ -4,13 +4,23 @@
   angular.module('BlurAdmin.pages.gatherer')
     .controller('gathererGraphicController', gathererGraphicController);
 
-  function gathererGraphicController($scope, $rootScope, $http) {
+  function gathererGraphicController($scope, $rootScope) {
     console.log('Initialize Graphic Controller');
 
-    //$scope.$watch("$scope.emailAddress", function(){
-    //    $scope.emailAddress = 'dario@gmail.com';
-    //    console.log("Cambie la variable");
-    //});
+    $scope.allCohortsNorm = [
+        {
+            "cohortName": "Boston Public Schools",
+            "value": 0.3337727272727273
+        },
+        {
+            "cohortName": "Stanley Middle School",
+            "value": 0.2844818181818182
+        },
+        {
+            "cohortName": "My Students",
+            "value": 0.1590909090909091
+        }
+    ]
 
   }
 
