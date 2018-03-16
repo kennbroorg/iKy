@@ -12,6 +12,7 @@
             "name-node": "Github",
             "title": "Github",
             "subtitle": "",
+            // "icon": "\uf113",
             "icon": "\uf09b",
             "link": "Github"
         },

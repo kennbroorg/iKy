@@ -165,10 +165,12 @@
                       if (icon) {
                         d3.select(this).append("text")
                           .attr("style","font-family:FontAwesome;")
+                          .attr('text-anchor', 'middle')
+                          .attr('alignment-baseline', 'central')
                           .attr('font-size', "30px" )
-                          .attr('fill', "#444" )
-                          .attr("x", -13)
-                          .attr("y", 10)
+                          .attr('fill', "#111" )
+                          // .attr("x", -13)
+                          // .attr("y", 10)
                           .text(icon);
                       }
                   });

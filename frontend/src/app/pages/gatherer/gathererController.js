@@ -5,25 +5,45 @@
     .controller('gathererController', gathererController);
 
   /** @ngInject */
-  function gathererController($scope, $rootScope, $http, $timeout, $polling, $q) {
+  function gathererController($scope, $rootScope, $http, $timeout, $polling, $q, localStorageService) {
     // $scope.emailAddress = '';
     $scope.tasks = new Array();
     console.log('Initialize Controller');
-    console.log($scope);
-    console.log($rootScope);
      
-    console.log('scope.emailAddress ', $scope.emailAddress);
-    console.log('scope.username ', $scope.username);
-    console.log('rootScope.emailAddress ', $rootScope.emailAddress);
-    console.log('rootScope.username ', $rootScope.username);
+    // Do something if not
+    if(localStorageService.isSupported) {
+        console.log("localStorage Supported");
+    }
+
+    // Control storage
+    if (localStorageService.get('button-off')) {
+        $scope.button = localStorageService.get('button-off');
+    }
+    if (localStorageService.get('emailAddress')) {
+        $scope.emailAddress = localStorageService.get('emailAddress');
+    }
+    if (localStorageService.get('gather')) {
+        $scope.gather = localStorageService.get('gather');
+    }
+
+    $scope.clearInfo = function () {
+        // Aniquilate everything
+        localStorageService.remove('button-off');
+        localStorageService.remove('gather');
+        delete $scope.button;
+        delete $scope.gather;
+    }
 
     $scope.showInfo = function (address) {
 
         // Verify Adress
         $scope.emailAddress = address;
+        localStorageService.set('emailAddress', address);
         $scope.username = $scope.emailAddress.split("@")[0];
         $rootScope.emailAddress = address;
         $rootScope.username = $scope.emailAddress.split("@")[0];
+        $scope.button = 'OFF';
+        localStorageService.set('button-off', 'OFF');
 
 
         //////////////////////////////////////////////////
@@ -186,6 +206,11 @@
         //    // handle error things
         //});
         
+        // Progress bar
+        var progressTotal = 0
+        var progressChunk = 0
+        var progressActual = 0
+        $('#progress-gather').css('width', '0%').attr('aria-valuenow', '0');
 
         function callbackProccessData(response) {
             // console.log("Call", response);
@@ -197,7 +222,13 @@
                 $http.get('http://127.0.0.1:5000/result/' + response.data.task_id)
                 .success(function (data, status, headers, config) {
                     $scope.gather[response.data.task_app] = data;
+                    localStorageService.set('gather', $scope.gather);
+
                     console.log($scope.gather, $scope.gather.keybase);
+                    progressActual = progressActual + progressChunk;
+                    $('#progress-gather').css('width', progressActual+'%').attr('aria-valuenow', progressActual);
+                    console.log(progressTotal, progressChunk, progressActual);
+
                 }).error(function (data, status, headers, config) {
                     // handle error things
                 });
@@ -210,6 +241,13 @@
             for (task in $scope.tasks) {
                 console.log($scope.tasks[task].task_id, $scope.tasks[task].module)
                 $polling.startPolling($scope.tasks[task].module, 'http://127.0.0.1:5000/state/' + $scope.tasks[task].task_id + '/' +  $scope.tasks[task].module, 1000, callbackProccessData);
+
+            // Progress bar
+            progressTotal = $scope.tasks.length;
+            progressChunk = 100 / progressTotal;
+            console.log(progressTotal, progressChunk, progressActual);
+            // $('.progress-gather').css('width', valeur+'%').attr('aria-valuenow', valeur);
+            //
             };
         });
 
