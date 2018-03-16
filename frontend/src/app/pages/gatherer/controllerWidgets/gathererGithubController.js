@@ -11,6 +11,8 @@
     //    $scope.emailAddress = 'dario@gmail.com';
     //    console.log("Cambie la variable");
     //});
+    var githubData = $scope.gather.github.gather;
+    console.log('githubData', githubData);
 
   }
 

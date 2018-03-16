@@ -224,7 +224,7 @@
                     $scope.gather[response.data.task_app] = data;
                     localStorageService.set('gather', $scope.gather);
 
-                    console.log($scope.gather, $scope.gather.keybase);
+                    console.log('Gather', $scope.gather);
                     progressActual = progressActual + progressChunk;
                     $('#progress-gather').css('width', progressActual+'%').attr('aria-valuenow', progressActual);
                     console.log(progressTotal, progressChunk, progressActual);
