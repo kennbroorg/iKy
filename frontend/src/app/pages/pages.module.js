@@ -17,12 +17,14 @@
     'BlurAdmin.pages.maps',
     'BlurAdmin.pages.profile',
     'BlurAdmin.pages.gatherer',
+    'BlurAdmin.pages.dashiky',
+    'BlurAdmin.pages.timeline',
   ])
       .config(routeConfig);
 
   /** @ngInject */
   function routeConfig($urlRouterProvider, baSidebarServiceProvider) {
-    $urlRouterProvider.otherwise('/dashboard');
+    $urlRouterProvider.otherwise('/dashiky');
 
     baSidebarServiceProvider.addStaticItem({
       title: 'Pages',

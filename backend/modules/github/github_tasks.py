@@ -75,7 +75,7 @@ def t_github(username):
             gather.append(gather_item)
             profile_item = {'company': raw_node['company']}
             profile.append(profile_item)
-        if ('blog' in raw_node) and (raw_node['blog'] != None): 
+        if ('blog' in raw_node) and (raw_node['blog'] != None) and (raw_node['blog'] != ""): 
             gather_item = {"name-node": "GitBlog", "title": "Blog", 
                     "subtitle": raw_node['blog'], "icon": u'\uf143', 
                     "link": link}

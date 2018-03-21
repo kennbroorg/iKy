@@ -143,7 +143,7 @@
                       d3.select(this)
                           .append('clipPath')
                             .attr('id', 'circle-clip-' + d.id)
-                          .append('circle').attr('r', 20);
+                          .append('circle').attr('r', 15);
                   });
 
                   node.each(function (d) {

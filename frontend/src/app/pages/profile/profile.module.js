@@ -16,6 +16,10 @@
           title: 'Profile',
           templateUrl: 'app/pages/profile/profile.html',
           controller: 'ProfilePageCtrl',
+          sidebarMeta: {
+            icon: 'ion-person',
+            order: 3,
+          },
         });
   }
 
