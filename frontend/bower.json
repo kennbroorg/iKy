@@ -36,7 +36,7 @@
     "bootstrap-select": "~1.12.1",
     "bootstrap-switch": "~3.3.2",
     "bootstrap-tagsinput": "~0.7.1",
-    "font-awesome": "fontawesome#~4.4.0",
+    "font-awesome": "fontawesome#~5.0.8",
     "fullcalendar": "~3.0.1",
     "highlight": "~8.8.0",
     "leaflet": "~0.7.5",

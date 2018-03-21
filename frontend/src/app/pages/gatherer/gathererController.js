@@ -6,7 +6,6 @@
 
   /** @ngInject */
   function gathererController($scope, $rootScope, $http, $timeout, $polling, $q, localStorageService) {
-    // $scope.emailAddress = '';
     $scope.tasks = new Array();
     console.log('Initialize Controller');
      
@@ -30,8 +29,13 @@
         // Aniquilate everything
         localStorageService.remove('button-off');
         localStorageService.remove('gather');
+        localStorageService.remove('emailAddress');
         delete $scope.button;
         delete $scope.gather;
+        delete $scope.emailAddress;
+        delete $scope.username;
+        delete $scope.tasks;
+        $scope.tasks = new Array();
     }
 
     $scope.showInfo = function (address) {
@@ -73,7 +77,7 @@
                 data: $.param({
                     username: $scope.username,
                 }),
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
             }).success(function (data, status, headers, config) {
                 //$scope.github_info = data;
                 console.log("Receiving... Github");

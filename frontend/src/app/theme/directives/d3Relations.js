@@ -168,10 +168,13 @@
                           .attr('text-anchor', 'middle')
                           .attr('alignment-baseline', 'central')
                           .attr('font-size', "30px" )
-                          .attr('fill', "#111" )
+                          .attr('fill', "#222" )
                           // .attr("x", -13)
                           // .attr("y", 10)
-                          .text(icon);
+                          // .text(icon);
+                          .text(function(d) { 
+                              return d.icon;
+                          });
                       }
                   });
 
