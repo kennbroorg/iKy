@@ -37,7 +37,6 @@ def t_github(username):
     # Total
     total = []
     total.append({'module': 'github'})
-    total.append({'raw': raw_node})
 
     if ('message' not in raw_node) or (raw_node['message'] != 'Not Found'):
         # Gather Array
@@ -127,6 +126,9 @@ def t_github(username):
             timeline_item = {'updated_at': raw_node['updated_at']}
             timeline.append(timeline_item)
 
+        # Please, respect the order of items in the total array
+        # Because the frontend depend of that (By now)
+        total.append({'raw': raw_node})
         total.append({'github': gather})
         total.append({'profile': profile})
         total.append({'timeline': timeline})

@@ -216,8 +216,8 @@
         var progressActual = 0
         $('#progress-gather').css('width', '0%').attr('aria-valuenow', '0');
 
+        // Process data result
         function callbackProccessData(response) {
-            // console.log("Call", response);
             if (response.data.state == "SUCCESS"){
                 console.log("***************************************");
                 console.log("App : ", response.data.task_app, " SUCCESS")
@@ -225,10 +225,26 @@
 
                 $http.get('http://127.0.0.1:5000/result/' + response.data.task_id)
                 .success(function (data, status, headers, config) {
+                    for (var items in data.result) {
+                        if (data.result[items].profile != null) {
+                            if ($scope.profile == null) { $scope.profile = new Object(); }
+                            $scope.profile[response.data.task_app] = data.result[items].profile;
+                            console.log($scope.profile);
+                            localStorageService.set('profile', $scope.gather);
+                        }
+                        if (data.result[items].timeline != null) {
+                            if ($scope.timeline == null) { $scope.timeline = new Object(); }
+                            $scope.timeline[response.data.task_app] = data.result[items].timeline;
+                            console.log($scope.timeline);
+                            localStorageService.set('timeline', $scope.gather);
+                        }
+                    }
                     $scope.gather[response.data.task_app] = data;
                     localStorageService.set('gather', $scope.gather);
-
                     console.log('Gather', $scope.gather);
+                   
+
+                    // Code for progress bar
                     progressActual = progressActual + progressChunk;
                     $('#progress-gather').css('width', progressActual+'%').attr('aria-valuenow', progressActual);
                     console.log(progressTotal, progressChunk, progressActual);
@@ -239,10 +255,11 @@
             }
         };
 
+        // Wait to task begin
         $q.all([r_github, r_gitlab, r_keybase]).then(function() {
             $scope.gather = new Object();
-            var task;
-            for (task in $scope.tasks) {
+            // var task;
+            for (var task in $scope.tasks) {
                 console.log($scope.tasks[task].task_id, $scope.tasks[task].module)
                 $polling.startPolling($scope.tasks[task].module, 'http://127.0.0.1:5000/state/' + $scope.tasks[task].task_id + '/' +  $scope.tasks[task].module, 1000, callbackProccessData);
 
@@ -250,8 +267,6 @@
             progressTotal = $scope.tasks.length;
             progressChunk = 100 / progressTotal;
             console.log(progressTotal, progressChunk, progressActual);
-            // $('.progress-gather').css('width', valeur+'%').attr('aria-valuenow', valeur);
-            //
             };
         });
 

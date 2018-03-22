@@ -1,18 +1,11 @@
 <div ba-panel ba-panel-class="profile-page">
-  <div class="panel-content">
-    <div class="progress-info">Your profile is 70% Complete</div>
-    <div class="progress">
-      <div class="progress-bar progress-bar-primary progress-bar-striped active" role="progressbar"
-           aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 70%">
-      </div>
-    </div>
 
     <h3 class="with-line">General Information</h3>
 
     <div class="row">
       <div class="col-md-6">
         <div class="form-group row clearfix">
-          <label for="inputFirstName" class="col-sm-3 control-label">Picture</label>
+          <label for="inputFirstName" class="col-sm-3 control-label">Pictures</label>
 
           <div class="col-sm-9">
             <div class="userpic">
@@ -35,28 +28,23 @@
           <label for="inputFirstName" class="col-sm-3 control-label">First Name</label>
 
           <div class="col-sm-9">
-            <input type="text" class="form-control" id="inputFirstName" placeholder="" value="Anastasiya">
+            <input disabled type="text" class="form-control" id="inputFirstName" placeholder="" value="Anastasiya">
           </div>
         </div>
         <div class="form-group row clearfix">
           <label for="inputLastName" class="col-sm-3 control-label">Last Name</label>
 
           <div class="col-sm-9">
-            <input type="text" class="form-control" id="inputLastName" placeholder="" value="">
+            <input disabled type="text" class="form-control" id="inputLastName" placeholder="" value="">
           </div>
         </div>
       </div>
       <div class="col-md-6">
         <div class="form-group row clearfix">
-          <label class="col-sm-3 control-label">Department</label>
+          <label class="col-sm-3 control-label">Location</label>
 
           <div class="col-sm-9">
-            <select class="form-control" selectpicker>
-              <option>Web Development</option>
-              <option>System Development</option>
-              <option>Sales</option>
-              <option>Human Resources</option>
-            </select>
+            <input disabled type="text" class="form-control" id="inputLocation" placeholder="" value="">
           </div>
         </div>
 
@@ -64,30 +52,7 @@
           <label for="inputOccupation" class="col-sm-3 control-label">Occupation</label>
 
           <div class="col-sm-9">
-            <input type="text" class="form-control" id="inputOccupation" placeholder="" value="Front End Web Developer">
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <h3 class="with-line">Change Password</h3>
-
-    <div class="row">
-      <div class="col-md-6">
-        <div class="form-group row clearfix">
-          <label for="inputPassword" class="col-sm-3 control-label">Password</label>
-
-          <div class="col-sm-9">
-            <input type="password" class="form-control" id="inputPassword" placeholder="" value="12345678">
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="form-group row clearfix">
-          <label for="inputConfirmPassword" class="col-sm-3 control-label">Confirm Password</label>
-
-          <div class="col-sm-9">
-            <input type="password" class="form-control" id="inputConfirmPassword" placeholder="">
+            <input disabled type="text" class="form-control" id="inputOccupation" placeholder="" value="Front End Web Developer">
           </div>
         </div>
       </div>
@@ -101,35 +66,30 @@
           <label for="inputEmail3" class="col-sm-3 control-label">Email</label>
 
           <div class="col-sm-9">
-            <input type="email" class="form-control" id="inputEmail3" placeholder="" value="contact@akveo.com">
+            <input disabled type="email" class="form-control" id="inputEmail3" placeholder="" value="contact@akveo.com">
           </div>
         </div>
         <div class="form-group row clearfix">
           <label for="inputPhone" class="col-sm-3 control-label">Phone</label>
 
           <div class="col-sm-9">
-            <input type="text" class="form-control" id="inputPhone" placeholder="" value="+1 (23) 456 7890">
+            <input disabled type="text" class="form-control" id="inputPhone" placeholder="" value="+1 (23) 456 7890">
           </div>
         </div>
       </div>
       <div class="col-md-6">
         <div class="form-group row clearfix">
-          <label class="col-sm-3 control-label">Office Location</label>
+          <label class="col-sm-3 control-label">Address</label>
 
           <div class="col-sm-9">
-            <select class="form-control" title="Standard Select" selectpicker>
-              <option>San Francisco</option>
-              <option>London</option>
-              <option>Minsk</option>
-              <option>Tokio</option>
-            </select>
+            <input type="text" class="form-control" id="inputAddress" placeholder="" value="">
           </div>
         </div>
         <div class="form-group row clearfix">
           <label for="inputRoom" class="col-sm-3 control-label">Room</label>
 
           <div class="col-sm-9">
-            <input type="text" class="form-control" id="inputRoom" placeholder="" value="303">
+            <input disabled type="text" class="form-control" id="inputRoom" placeholder="" value="303">
           </div>
         </div>
       </div>
@@ -153,59 +113,5 @@
       </div>
     </div>
 
-    <h3 class="with-line">Send Email Notifications</h3>
-
-    <div class="notification row clearfix">
-      <div class="col-sm-6">
-        <div class="form-group row clearfix">
-          <label class="col-xs-8">When I receive a message</label>
-
-          <div class="col-xs-4">
-            <switch color="primary" ng-model="switches[0]"></switch>
-          </div>
-        </div>
-        <div class="form-group row clearfix">
-          <label class="col-xs-8">When Someone sends me an invitation</label>
-
-          <div class="col-xs-4">
-            <switch color="primary" ng-model="switches[1]"></switch>
-          </div>
-        </div>
-        <div class="form-group row clearfix">
-          <label class="col-xs-8">When profile information changes</label>
-
-          <div class="col-xs-4">
-            <switch color="primary" ng-model="switches[2]"></switch>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-6">
-        <div class="form-group row clearfix">
-          <label class="col-xs-8">When anyone logs into your account from a new device or browser</label>
-
-          <div class="col-xs-4">
-            <switch color="primary" ng-model="switches[3]"></switch>
-          </div>
-        </div>
-        <div class="form-group row clearfix">
-          <label class="col-xs-8">Weekly Reports</label>
-
-          <div class="col-xs-4">
-            <switch color="primary" ng-model="switches[4]"></switch>
-          </div>
-        </div>
-
-        <div class="form-group row clearfix">
-          <label class="col-xs-8">Daily Reports</label>
-
-          <div class="col-xs-4">
-            <switch color="primary" ng-model="switches[5]"></switch>
-          </div>
-        </div>
-      </div>
-    </div>
-    <button type="button" class="btn btn-primary btn-with-icon save-profile">
-      <i class="ion-android-checkmark-circle"></i>Update Profile
-    </button>
   </div>
 </div>

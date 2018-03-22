@@ -8,6 +8,11 @@
   angular.module('BlurAdmin.pages.timeline')
       .controller('TimelineCtrl', TimelineCtrl);
 
+  // Note that I would use localStorage and not thw watch variable !!!! Thinking That
+  // Podria no usar watch sino localStorage, pero no se todavia. Pensalo. Por ahora 
+  // cambia solo en la pagina de gatherer pero despues
+  // podria sufrir otros cambios
+    
   /** @ngInject */
   function TimelineCtrl() {
     var timelineBlocks = $('.cd-timeline-block'),
