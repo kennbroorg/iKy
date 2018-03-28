@@ -103,4 +103,5 @@ Thumbs.db
 ################
 *.pyc
 dump.rdb
-apikeys_default.cfg
+apikeys.cfg
+apikeys.json
