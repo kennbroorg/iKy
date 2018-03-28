@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1,
+    "name": "clearbit_apikey",
+    "key": ""
+  },
+  {
+    "id": 2,
+    "name": "emailhunter",
+    "key": ""
+  },
+  {
+    "id": 3,
+    "name": "github_access_token",
+    "key": ""
+  },
+  {
+    "id": 4,
+    "name": "facebook_access_token",
+    "key": ""
+  },
+  {
+    "id": 5,
+    "name": "flickr_api",
+    "key": ""
+  },
+  {
+    "id": 6,
+    "name": "google_api",
+    "key": ""
+  },
+  {
+    "id": 7,
+    "name": "google_cse_key",
+    "key": ""
+  },
+  {
+    "id": 8,
+    "name": "google_cse_cx",
+    "key": ""
+  },
+  {
+    "id": 9,
+    "name": "twitter_consumer_key",
+    "key": ""
+  },
+  {
+    "id": 10,
+    "name": "twitter_consumer_secret",
+    "key": ""
+  },
+  {
+    "id": 11,
+    "name": "twitter_access_token",
+    "key": ""
+  },
+  {
+    "id": 12,
+    "name": "twitter_access_token_secret",
+    "key": ""
+  },
+  {
+    "id": 13,
+    "name": "fullcontact_api",
+    "key": ""
+  },
+  {
+    "id": 14,
+    "name": "mailboxlayer_api",
+    "key": ""
+  },
+  {
+    "id": 15,
+    "name": "linkedin_api",
+    "key": ""
+  },
+  {
+    "id": 16,
+    "name": "linkedin_secret",
+    "key": ""
+  },
+  {
+    "id": 17,
+    "name": "pwnedlist_api",
+    "key": ""
+  },
+  {
+    "id": 18,
+    "name": "pwnedlist_iv",
+    "key": ""
+  },
+  {
+    "id": 19,
+    "name": "pwnedlist_secret",
+    "key": ""
+  },
+  {
+    "id": 20,
+    "name": "instagram_token",
+    "key": ""
+  },
+  {
+    "id": 20,
+    "name": "instagram_client_id",
+    "key": ""
+  },
+  {
+    "id": 20,
+    "name": "instagram_client_secret",
+    "key": ""
+  }
+]

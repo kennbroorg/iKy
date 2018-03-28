@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 from flask import Blueprint, current_app, request, jsonify
 from factories._celery import create_celery
+from factories.configuration import api_keys_read, api_keys_write
 home = Blueprint('home_views', __name__)
 
 
@@ -35,6 +36,19 @@ def r_result(task_id):
     celery = create_celery(current_app)
     res = celery.AsyncResult(task_id).get()
     return jsonify(result=res)
+
+
+################################################
+# API Keys 
+################################################
+@home.route("/apikey", methods=["POST"])
+def r_apikey():
+    if request.json:
+        api_keys = request.get_json()
+        keys = api_keys_write(api_keys)
+    else:
+        keys = api_keys_read()
+    return jsonify(keys=keys)
 
 
 ################################################

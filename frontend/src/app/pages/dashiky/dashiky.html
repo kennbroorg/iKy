@@ -1,36 +1,27 @@
-<!--
-<dashboard-pie-chart></dashboard-pie-chart>
+<div class="row">
+
+  <div class="col-md-12">
+    <div ba-panel ba-panel-class="medium-panel" id="logo">
+      <canvas id="canvas" drawdot></canvas>
+      <img style="position: absolute; top: 10px;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/280px-PNG_transparency_demonstration_1.png">
+    </div>
+  </div>
+
+</div>
+
 
 <div class="row">
   <div class="col-lg-6 col-md-12 col-sm-12"
        ba-panel
-       ba-panel-title="Acquisition Channels"
+       ba-panel-title="Modules Gather Type"
        ba-panel-class="medium-panel traffic-panel">
     <traffic-chart></traffic-chart>
   </div>
-  <div class="col-lg-6 col-md-12 col-sm-12"
+  <div class="col-xlg-3 col-lg-6 col-md-6 col-xs-12"
        ba-panel
-       ba-panel-title="Users by Country"
-       ba-panel-class="medium-panel">
-    <dashboard-map></dashboard-map>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-xlg-9 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-    <div class="row">
-      <div class="col-xlg-8 col-lg-12 col-md-12 col-sm-7 col-xs-12"
-           ba-panel
-           ba-panel-title="Revenue"
-           ba-panel-class="medium-panel">
-        <dashboard-line-chart></dashboard-line-chart>
-      </div>
-      <div class="col-xlg-4 col-lg-12 col-md-12 col-sm-5 col-xs-12"
-           ba-panel
-           ba-panel-class="popular-app medium-panel">
-        <popular-app></popular-app>
-      </div>
-    </div>
+       ba-panel-title="To Do List"
+       ba-panel-class="xmedium-panel feed-comply-panel with-scroll todo-panel">
+    <dashboard-todo></dashboard-todo>
   </div>
   <div class="col-xlg-3 col-lg-6 col-md-6 col-sm-12 col-xs-12"
        ba-panel
@@ -39,28 +30,3 @@
     <blur-feed></blur-feed>
   </div>
 </div>
-
-<div class="row shift-up">
-  <div class="col-xlg-3 col-lg-6 col-md-6 col-xs-12"
-       ba-panel
-       ba-panel-title="To Do List"
-       ba-panel-class="xmedium-panel feed-comply-panel with-scroll todo-panel">
-    <dashboard-todo></dashboard-todo>
-  </div>
-  <div class="col-xlg-6 col-lg-6 col-md-6 col-xs-12"
-       ba-panel
-       ba-panel-title="Calendar"
-       ba-panel-class="xmedium-panel feed-comply-panel with-scroll calendar-panel">
-    <dashboard-calendar></dashboard-calendar>
-  </div>
-</div>
--->
-
-
-<!--<div class="row">
-  <div class="col-lg-4 col-sm-6 col-xs-12">
-    <div ba-panel ba-panel-title="Weather" ba-panel-class="medium-panel with-scroll">
-      <blur-weather forecast="5"></blur-weather>
-    </div>
-  </div>
-</div>-->

@@ -49,8 +49,12 @@ Por último, para encender el frontend, se debe ejecutar
 gulp serve
 ```
 
-# DISFRUTA
+# DISFRUTE
 Por ahora solo funciona en Chrome (y Chromium). Abrir el navegador y [DISFRUTAR](http://127.0.0.1:3000)
+
+## CONFIGURACION DE APIKEYS
+Esto no es estrictamente necesario porque la aplicación trabaja con módulos que no requieren apikeys.
+Pero si las tiene puede cargarlas desde la opción de **API Keys** en el frontend.  
 
 # Proximamente
 Prometo meter todo junto en un script

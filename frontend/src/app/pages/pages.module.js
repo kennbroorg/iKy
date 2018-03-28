@@ -19,6 +19,7 @@
     'BlurAdmin.pages.gatherer',
     'BlurAdmin.pages.dashiky',
     'BlurAdmin.pages.timeline',
+    'BlurAdmin.pages.apikeys',
   ])
       .config(routeConfig);
 

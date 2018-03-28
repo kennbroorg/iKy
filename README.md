@@ -50,6 +50,10 @@ Finally, to run frontend server, execute:
 gulp serve
 ```
 
+## CONFIG APIKEYS
+This is not strictly necessary because the app works with modules that do not require apikeys.
+But if you have them you can load them from the **API Keys** option in the frontend.
+
 # ENJOY
 For now it works on Chrome (And Chromium). Open the browser and [ENJOY](http://127.0.0.1:3000)
 
