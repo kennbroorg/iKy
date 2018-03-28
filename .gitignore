@@ -103,5 +103,10 @@ Thumbs.db
 ################
 *.pyc
 dump.rdb
-apikeys.cfg
 apikeys.json
+
+# Delete APP temporal #
+#######################
+apikeys.cfg
+apikeys_default.cfg
+drawing.js
