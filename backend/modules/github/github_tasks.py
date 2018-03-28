@@ -120,10 +120,10 @@ def t_github(username):
             profile_item = {'location': raw_node['location']}
             profile.append(profile_item)
         if ('created_at' in raw_node) and (raw_node['created_at'] != None): 
-            timeline_item = {'created_at': raw_node['created_at']}
+            timeline_item = {'date': raw_node['created_at'], 'action' : 'Create Account',  'icon': 'fa-github' }
             timeline.append(timeline_item)
         if ('updated_at' in raw_node) and (raw_node['updated_at'] != None): 
-            timeline_item = {'updated_at': raw_node['updated_at']}
+            timeline_item = {'date': raw_node['updated_at'], 'action' : 'Update Account',  'icon': 'fa-github' }
             timeline.append(timeline_item)
 
         # Please, respect the order of items in the total array

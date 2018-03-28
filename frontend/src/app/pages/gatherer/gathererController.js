@@ -229,14 +229,17 @@
                         if (data.result[items].profile != null) {
                             if ($scope.profile == null) { $scope.profile = new Object(); }
                             $scope.profile[response.data.task_app] = data.result[items].profile;
-                            console.log($scope.profile);
-                            localStorageService.set('profile', $scope.gather);
+                            console.log("Profile ", $scope.profile);
+                            localStorageService.set('profile', $scope.profile);
                         }
                         if (data.result[items].timeline != null) {
-                            if ($scope.timeline == null) { $scope.timeline = new Object(); }
-                            $scope.timeline[response.data.task_app] = data.result[items].timeline;
-                            console.log($scope.timeline);
-                            localStorageService.set('timeline', $scope.gather);
+                            if ($scope.timeline == null) { $scope.timeline = []; }
+                                for (var i in data.result[items].timeline) {
+                                    $scope.timeline.push(data.result[items].timeline[i]);
+                                }
+                            // $scope.timeline[response.data.task_app] = data.result[items].timeline;
+                            console.log("Timeline ", $scope.timeline);
+                            localStorageService.set('timeline', $scope.timeline);
                         }
                     }
                     $scope.gather[response.data.task_app] = data;
@@ -249,8 +252,6 @@
                     $('#progress-gather').css('width', progressActual+'%').attr('aria-valuenow', progressActual);
                     console.log(progressTotal, progressChunk, progressActual);
 
-                }).error(function (data, status, headers, config) {
-                    // handle error things
                 });
             }
         };

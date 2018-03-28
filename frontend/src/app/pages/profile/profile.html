@@ -10,11 +10,8 @@
           <div class="col-sm-9">
             <div class="userpic">
               <div class="userpic-wrapper">
-                <img ng-src="{{ picture }}" ng-click="uploadPicture()">
+                <img ng-src="{{ picture }}">
               </div>
-              <i class="ion-ios-close-outline" ng-click="removePicture()" ng-if="!noPicture"></i>
-              <a href class="change-userpic" ng-click="uploadPicture()">Change Profile Picture</a>
-              <input type="file" ng-show="false" id="uploadFile" ng-file-select="onFileSelect($files)">
             </div>
           </div>
         </div>
@@ -28,14 +25,14 @@
           <label for="inputFirstName" class="col-sm-3 control-label">First Name</label>
 
           <div class="col-sm-9">
-            <input disabled type="text" class="form-control" id="inputFirstName" placeholder="" value="Anastasiya">
+              <input disabled type="text" class="form-control" id="inputFirstName" placeholder="First name" value={{name}}>
           </div>
         </div>
         <div class="form-group row clearfix">
           <label for="inputLastName" class="col-sm-3 control-label">Last Name</label>
 
           <div class="col-sm-9">
-            <input disabled type="text" class="form-control" id="inputLastName" placeholder="" value="">
+              <input disabled type="text" class="form-control" id="inputLastName" placeholder="Last name" value={{name}}>
           </div>
         </div>
       </div>
@@ -44,15 +41,15 @@
           <label class="col-sm-3 control-label">Location</label>
 
           <div class="col-sm-9">
-            <input disabled type="text" class="form-control" id="inputLocation" placeholder="" value="">
+              <input disabled type="text" class="form-control" id="inputLocation" placeholder="Location" value={{location}}>
           </div>
         </div>
 
         <div class="form-group row clearfix">
-          <label for="inputOccupation" class="col-sm-3 control-label">Occupation</label>
+          <label for="inputOrganization" class="col-sm-3 control-label">Organization</label>
 
           <div class="col-sm-9">
-            <input disabled type="text" class="form-control" id="inputOccupation" placeholder="" value="Front End Web Developer">
+              <input disabled type="text" class="form-control" id="inputOrganization" placeholder="Organization" value={{organization}}>
           </div>
         </div>
       </div>
@@ -85,13 +82,23 @@
             <input type="text" class="form-control" id="inputAddress" placeholder="" value="">
           </div>
         </div>
+
+
         <div class="form-group row clearfix">
+          <label for="inputOccupation" class="col-sm-3 control-label">Occupation</label>
+
+          <div class="col-sm-9">
+            <input disabled type="text" class="form-control" id="inputOccupation" placeholder="" value="Front End Web Developer">
+          </div>
+        </div>
+
+        <!-- <div class="form-group row clearfix">
           <label for="inputRoom" class="col-sm-3 control-label">Room</label>
 
           <div class="col-sm-9">
             <input disabled type="text" class="form-control" id="inputRoom" placeholder="" value="303">
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 

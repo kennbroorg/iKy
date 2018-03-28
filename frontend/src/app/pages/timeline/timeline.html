@@ -1,6 +1,28 @@
 <!-- todo: remove whole block -->
 <div ba-panel>
   <section id="cd-timeline" class="cd-container cssanimations" ng-controller="TimelineCtrl">
+
+
+
+    <div class="cd-timeline-block" ng-repeat="time in timeline">
+      <div class="cd-timeline-img" style="color: #209E91;">
+        <div class="principal">
+            <span class="fa-stack fa-2x" style="font-size:2.2em; color:#001111;">
+                <i class="fa fa-circle fa-stack-2x" style="color: #209E91;"></i>
+                <i class="fa {{time.icon}} fa-stack-1x"></i>
+            </span>
+        </div>
+      </div>
+
+      <div class="cd-timeline-content primary">
+        <h5>{{time.action}}</h5>
+        <span class="cd-date">{{time.date}}</span>
+      </div>
+    </div>
+
+
+
+<!--
     <div class="cd-timeline-block">
       <div class="cd-timeline-img">
         <div class="kameleon-icon with-round-bg warning"><img ng-src="{{::( 'Euro-Coin' | kameleonImg )}}"></div>
@@ -96,6 +118,6 @@
           scelerisque sed, euismod id eros.</p>
         <span class="cd-date">Feb 24</span>
       </div>
-    </div>
+    </div> -->
   </section>
 </div>

@@ -14,11 +14,12 @@
       .state('timeline', {
         url: '/timeline',
         templateUrl: 'app/pages/timeline/timeline.html',
-          title: 'Timeline',
-          sidebarMeta: {
-            icon: 'ion-ios-pulse',
-            order: 4,
-          },
+        controller: 'timelineController',
+        title: 'Timeline',
+        sidebarMeta: {
+          icon: 'ion-ios-pulse',
+          order: 4,
+        },
       });
   }
 })();

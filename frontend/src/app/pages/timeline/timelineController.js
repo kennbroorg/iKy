@@ -6,15 +6,29 @@
   'use strict';
 
   angular.module('BlurAdmin.pages.timeline')
-      .controller('TimelineCtrl', TimelineCtrl);
+      .controller('timelineController', timelineController);
 
-  // Note that I would use localStorage and not thw watch variable !!!! Thinking That
-  // Podria no usar watch sino localStorage, pero no se todavia. Pensalo. Por ahora 
-  // cambia solo en la pagina de gatherer pero despues
-  // podria sufrir otros cambios
-    
   /** @ngInject */
-  function TimelineCtrl() {
+  function timelineController(localStorageService, $scope) {
+
+    console.log('Initialize Controller Timeline');
+     
+    // Do something if not
+    if(localStorageService.isSupported) {
+        console.log("localStorage Supported");
+    }
+
+    // Control storage
+    if (localStorageService.get('timeline')) {
+        $scope.timeline = localStorageService.get('timeline');
+
+        // By now only github for profile
+        console.log("Timeline Controller ", $scope.timeline);
+        
+    } else {
+        delete $scope.timeline
+    }
+
     var timelineBlocks = $('.cd-timeline-block'),
         offset = 0.8;
 
