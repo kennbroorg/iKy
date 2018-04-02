@@ -79,8 +79,6 @@
                 }),
                 headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
             }).success(function (data, status, headers, config) {
-                //$scope.github_info = data;
-                console.log("Receiving... Github");
                 $scope.tasks.push({
                     "module" : data.module,
                     "param" : data.param,
@@ -114,7 +112,6 @@
                 }),
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             }).success(function (data, status, headers, config) {
-                console.log("Receiving... Gitlab");
                 $scope.tasks.push({
                     "module" : data.module,
                     "param" : data.param,
@@ -148,7 +145,6 @@
                 }),
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             }).success(function (data, status, headers, config) {
-                console.log("Receiving... Keybase");
                 $scope.tasks.push({
                     "module" : data.module,
                     "param" : data.param,
@@ -245,6 +241,7 @@
                     $scope.gather[response.data.task_app] = data;
                     localStorageService.set('gather', $scope.gather);
                     console.log('Gather', $scope.gather);
+                    console.log('Task', $scope.tasks);
                    
 
                     // Code for progress bar

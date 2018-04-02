@@ -15,9 +15,7 @@
 
     $http.post('http://127.0.0.1:5000/apikey')
         .success(function (data, status, headers, config) {
-            console.log("Receiving... ApiKeys");
             $scope.keys = data.keys;
-            console.log("Keys ", $scope.keys);
         })
 
     $scope.removeKey = function(index) {
@@ -34,25 +32,7 @@
     };
 
     $scope.updateKey = function() {
-      console.log("UPDATE", $scope.keys);
-
       $http.post('http://127.0.0.1:5000/apikey', $scope.keys);
-
-      // var r_keys = $http({
-      //         method: 'POST',
-      //         url: 'http://127.0.0.1:5000/apikey',
-      //         data: $.param({
-      //             apikeys: $scope.keys,
-      //         }),
-      //         headers: {'Content-Type': 'application/json'}
-      //     }).success(function (data, status, headers, config) {
-      //         console.log("Sending... ApiKeys");
-      //         $scope.keys = data.keys;
-      //         console.log("Keys ", $scope.keys);
-      //     }).error(function (data, status, headers, config) {
-      //         // handle error things
-      //     });
-
     };
 
     editableOptions.theme = 'bs3';

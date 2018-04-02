@@ -47,8 +47,6 @@
 
             scope.render = function(data) {
 
-              console.log("Datos: ",data); 
-
               if (data === undefined) {
                 return ;
               }

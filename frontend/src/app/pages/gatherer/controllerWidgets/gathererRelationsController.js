@@ -46,8 +46,6 @@
         }
     ]
 
-    console.log("RELACIONES ", $scope.relationsNode);
-
   }
 
 })();
