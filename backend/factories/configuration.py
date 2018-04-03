@@ -14,6 +14,7 @@ def get_config():
         CELERY_IMPORTS = ('modules.keybase.keybase_tasks',
                 'modules.gitlab.gitlab_tasks',
                 'modules.github.github_tasks',
+                'modules.fullcontact.fullcontact_tasks',
                 'modules.usersearch.usersearch_tasks')
     return Config
 

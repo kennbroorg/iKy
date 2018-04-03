@@ -49,6 +49,21 @@ def r_apikey():
 
 
 ################################################
+# Fullcontact
+################################################
+@home.route("/fullcontact", methods=["POST"])
+def r_fullcontact():
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username","")
+    # username = request.form.get('username')
+    print "Fullcontact - Detected Username : ", username
+    res = celery.send_task('modules.fullcontact.fullcontact_tasks.t_fullcontact', args=(username, )) 
+    print "Task : ", res.task_id
+    return jsonify(module="fullcontact", task=res.task_id, param=username)
+
+
+################################################
 # Github 
 ################################################
 @home.route("/github", methods=["POST"])

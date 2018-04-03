@@ -29,13 +29,14 @@ logger = get_task_logger(__name__)
 
 
 @celery.task
-def t_fillcontact(email):
+def t_fullcontact(email):
     key = api_keys_search('fullcontact_api')
     if key:
         req = requests.get("https://api.fullcontact.com/v2/person.json?email=%s" % email, headers={"X-FullContact-APIKey": key})
         raw_node = json.loads(req.content)
     else:
         raw_node = []
+
 
     # Icons unicode
     font_list = fontawesome_cheat()
@@ -96,6 +97,7 @@ def t_fillcontact(email):
                 profile.append(profile_item)
 
 
+            bios = []
             for social in raw_node.get("socialProfiles", ""):
                 if ((social.get("username", "") != "") and
                     (social.get("id", "") != "")):
@@ -119,7 +121,8 @@ def t_fillcontact(email):
                         "link": link_social}
                 gather.append(gather_item)
 
-            # TODO : Collect all Bios for profile
+                if (social.get("bio", "") != ""):
+                    bios.append(social.get("bio", ""))
 
             if (raw_node.get("demographics", "") != ""):
                 if (raw_node.get("demographics", "") \
@@ -155,6 +158,8 @@ def t_fillcontact(email):
         total.append({'photo': photo})
         if (webs != []):
             total.append({'webs': webs})
+        if (bios != []):
+            total.append({'bios': bios})
         total.append({'profile': profile})
 
     return total
