@@ -5,9 +5,30 @@
     .controller('gathererController', gathererController);
 
   /** @ngInject */
-  function gathererController($scope, $rootScope, $http, $timeout, $polling, $q, localStorageService) {
-    $scope.tasks = new Array();
+  function gathererController($scope, $rootScope, $http, $timeout, $polling, $q, localStorageService, toastr, toastrConfig) {
     console.log('Initialize Controller');
+
+    // Notifications
+    var defaultConfig = angular.copy(toastrConfig);
+    var openedToasts = [];
+    $scope.options = {
+      autoDismiss: false,
+      positionClass: 'toast-top-right',
+      type: 'info',
+      timeOut: '1500',
+      extendedTimeOut: '2000',
+      allowHtml: false,
+      closeButton: false,
+      tapToDismiss: true,
+      progressBar: true,
+      newestOnTop: true,
+      maxOpened: 0,
+      preventDuplicates: false,
+      preventOpenDuplicates: false
+    };
+    angular.extend(toastrConfig, $scope.options);
+
+    $scope.tasks = new Array();
      
     // Do something if not
     if(localStorageService.isSupported) {
@@ -50,53 +71,56 @@
         localStorageService.set('button-off', 'OFF');
 
 
+        // $http.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
         //////////////////////////////////////////////////
         // Testing
         //////////////////////////////////////////////////
-        $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
         console.log("Execute Testing");
-        $http({
-            method: 'POST',
-            url: 'http://127.0.0.1:5000/testing',
-            data: $.param({
-                testing: 'ok',
-                username: $scope.username,
-            }),
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        }); //TODO : Use to test backend availabillity
-
+        $http.post('http://127.0.0.1:5000/testing', {testing: "ok", username: $scope.username});
 
         //////////////////////////////////////////////////
         // GitHub data
         //////////////////////////////////////////////////
         console.log("Execute Github");
-        // $http({
-        var r_github = $http({
-                method: 'POST',
-                url: 'http://127.0.0.1:5000/github',
-                data: $.param({
-                    username: $scope.username,
-                }),
-                headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
-            }).success(function (data, status, headers, config) {
+        $http.post('http://127.0.0.1:5000/github', {username: $scope.username})
+            .success(function (data, status, headers, config) {
                 $scope.tasks.push({
                     "module" : data.module,
                     "param" : data.param,
                     "task_id" : data.task,
                     "state" : "PENDING",
                 });
+                openedToasts.push(toastr['info']("", "Github"));
+                $polling.startPolling(data.module, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
 
-                //$http.get('http://127.0.0.1:5000/result/' + data.goto)
-                //.success(function (data, status, headers, config) {
-                //    $scope.github_info = data;
-                //    console.log($scope.github_info);
-                //}).error(function (data, status, headers, config) {
-                //    // handle error things
-                //});
-
-            }).error(function (data, status, headers, config) {
-                // handle error things
             });
+
+        // var r_github = $http({
+        //         method: 'POST',
+        //         url: 'http://127.0.0.1:5000/github',
+        //         data: $.param({
+        //             username: $scope.username,
+        //         }),
+        //         headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
+        //     }).success(function (data, status, headers, config) {
+        //         $scope.tasks.push({
+        //             "module" : data.module,
+        //             "param" : data.param,
+        //             "task_id" : data.task,
+        //             "state" : "PENDING",
+        //         });
+
+        //         //$http.get('http://127.0.0.1:5000/result/' + data.goto)
+        //         //.success(function (data, status, headers, config) {
+        //         //    $scope.github_info = data;
+        //         //    console.log($scope.github_info);
+        //         //}).error(function (data, status, headers, config) {
+        //         //    // handle error things
+        //         //});
+
+        //     }).error(function (data, status, headers, config) {
+        //         // handle error things
+        //     });
         
 
         //////////////////////////////////////////////////
@@ -215,6 +239,7 @@
         // Process data result
         function callbackProccessData(response) {
             if (response.data.state == "SUCCESS"){
+                openedToasts.push(toastr['success']("", response.data.task_app));
                 console.log("***************************************");
                 console.log("App : ", response.data.task_app, " SUCCESS")
                 $polling.stopPolling(response.data.task_app);
@@ -254,11 +279,11 @@
         };
 
         // Wait to task begin
-        $q.all([r_github, r_gitlab, r_keybase]).then(function() {
+        $q.all([r_gitlab, r_keybase]).then(function() {
             $scope.gather = new Object();
             // var task;
             for (var task in $scope.tasks) {
-                console.log($scope.tasks[task].task_id, $scope.tasks[task].module)
+                console.log("Task ", $scope.tasks[task].task_id, $scope.tasks[task].module)
                 $polling.startPolling($scope.tasks[task].module, 'http://127.0.0.1:5000/state/' + $scope.tasks[task].task_id + '/' +  $scope.tasks[task].module, 1000, callbackProccessData);
 
             // Progress bar

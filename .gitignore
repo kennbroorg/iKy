@@ -103,7 +103,7 @@ Thumbs.db
 ################
 *.pyc
 dump.rdb
-apikeys.json
+*.json
 
 # Delete APP temporal #
 #######################

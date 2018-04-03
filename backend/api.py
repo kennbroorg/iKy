@@ -12,10 +12,7 @@ home = Blueprint('home_views', __name__)
 def r_testing():
     result = request.get_json()
     print "JSON : ", result
-    print "Form : ", request.form
-    print "Testing : ", request.form.get('testing')
-    print "Username : ", request.form.get('username')
-    return repr(result)
+    return jsonify(result)
 
 
 ################################################
@@ -57,7 +54,9 @@ def r_apikey():
 @home.route("/github", methods=["POST"])
 def r_github():
     celery = create_celery(current_app)
-    username = request.form.get('username')
+    json_result = request.get_json()
+    username = json_result.get("username","")
+    # username = request.form.get('username')
     print "Github - Detected Username : ", username
     res = celery.send_task('modules.github.github_tasks.t_github', args=(username, )) 
     print "Task : ", res.task_id
