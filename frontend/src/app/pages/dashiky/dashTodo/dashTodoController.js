@@ -26,7 +26,7 @@
     $scope.todoList = [
       { text: 'Convert definitions in Trello boards' },
       { text: 'Continue the modification of pool task' },
-      { text: 'Change logo by crazy graphics' },
+      { text: 'Manage multiples api keys' },
       { text: 'Initial collection that runs other collectors' },
       { text: 'Cloud 3d Tag directive for profile' },
       { text: 'Vertical Tag for bios collected' },
@@ -34,6 +34,7 @@
       { text: 'Contributors in dash, from based software and github contributions' },
       { text: 'Documentation for contributions' },
       { text: 'Normalize everything, python and angularjs' },
+      { text: 'Fix : When resize th windows the logo doenst resize' },
     ];
 
     $scope.todoList.forEach(function(item) {
