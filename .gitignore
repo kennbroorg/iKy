@@ -104,6 +104,7 @@ Thumbs.db
 *.pyc
 dump.rdb
 *.json
+*.swp
 
 # Delete APP temporal #
 #######################

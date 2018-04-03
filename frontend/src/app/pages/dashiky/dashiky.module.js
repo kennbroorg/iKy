@@ -14,9 +14,9 @@
         .state('dashiky', {
           url: '/dashiky',
           templateUrl: 'app/pages/dashiky/dashiky.html',
-          title: 'Dashiky',
+          title: 'Home',
           sidebarMeta: {
-            icon: 'ion-stats-bars',
+            icon: 'ion-android-home',
             order: 0,
           },
         });
