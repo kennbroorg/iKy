@@ -26,7 +26,6 @@ logger = get_task_logger(__name__)
 @celery.task
 def t_github(username):
     """ Task of Celery that get info from github """
-    logger.info('User detected: ' + username) # This message appears in Celery console
     req = requests.get("https://api.github.com/users/%s" % username)
     # TODO : Many things 
     # Use other API URLs
@@ -37,16 +36,20 @@ def t_github(username):
     # Total
     total = []
     total.append({'module': 'github'})
+    total.append({'param': username})
 
     if ('message' not in raw_node) or (raw_node['message'] != 'Not Found'):
-        # Gather Array
-        gather = []
+        # Graphic Array
+        graphic = []
 
         # Profile Array
         profile = []
 
         # Timeline Array
         timeline = []
+
+        # Gather Array
+        gather = []
 
         link = "Github"
         gather_item = {"name-node": "Github", "title": "Github", 
@@ -129,7 +132,8 @@ def t_github(username):
         # Please, respect the order of items in the total array
         # Because the frontend depend of that (By now)
         total.append({'raw': raw_node})
-        total.append({'github': gather})
+        graphic.append({'github': gather})
+        total.append({'graphic': graphic})
         total.append({'profile': profile})
         total.append({'timeline': timeline})
 

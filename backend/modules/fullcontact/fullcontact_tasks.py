@@ -37,17 +37,26 @@ def t_fullcontact(email):
     else:
         raw_node = []
 
-
     # Icons unicode
     font_list = fontawesome_cheat()
     # Total
     total = []
     total.append({'module': 'fullcontact'})
+    total.append({'param': email})
 
     # if (raw_node == []) or (raw_node['message'] != 'Not Found'):
     if (raw_node != []):
-        # Gather Array
-        gather = []
+        # Graphic Array
+        graphic = []
+
+        # Profile Array
+        profile = []
+
+        # Tasks Array
+        tasks = []
+
+        # Social Array
+        socialp = []
 
         # Photo Array
         photo = []
@@ -55,13 +64,10 @@ def t_fullcontact(email):
         # Web Array
         webs = []
 
-        # Profile Array
-        profile = []
-
         link_social = "Social"
-        gather_item = {"name-node": "Social", "title": "Social", 
+        social_item = {"name-node": "Social", "title": "Social", 
             "subtitle": "", "icon": u'\uf1ae', "link": link_social}
-        gather.append(gather_item)
+        socialp.append(social_item)
         link_photo = "Photos"
         photo_item = {"name-node": "Photos", "title": "Photos", 
             "subtitle": "", "icon": u'\uf083', "link": link_photo}
@@ -114,15 +120,24 @@ def t_fullcontact(email):
                 if (fa_icon == None):
                     fa_icon = search_icon("question", font_list)
 
-                gather_item = {"name-node": social.get("typeName", ""), 
+                social_item = {"name-node": social.get("typeName", ""), 
                         "title": social.get("typeName", ""), 
                         "subtitle": subtitle, 
                         "icon": fa_icon, 
                         "link": link_social}
-                gather.append(gather_item)
+                socialp.append(social_item)
 
                 if (social.get("bio", "") != ""):
                     bios.append(social.get("bio", ""))
+
+                # TODO : Send all to tasks array 
+                # Prepare other tasks 
+                if (social.get("typeId", "") == "github"):
+                    tasks.append({"module": "github", \
+                        "param": social.get("username", "")})
+                if (social.get("typeId", "") == "keybase"):
+                    tasks.append({"module": "keybase", \
+                        "param": social.get("username", "")})
 
             if (raw_node.get("demographics", "") != ""):
                 if (raw_node.get("demographics", "") \
@@ -154,13 +169,15 @@ def t_fullcontact(email):
                 profile.append(profile_item)
 
         total.append({'raw': raw_node})
-        total.append({'social': gather})
-        total.append({'photo': photo})
-        if (webs != []):
-            total.append({'webs': webs})
-        if (bios != []):
-            total.append({'bios': bios})
-        total.append({'profile': profile})
+        graphic.append({'social': socialp})
+        graphic.append({'photo': photo})
+        graphic.append({'webs': webs})
+        graphic.append({'bios': bios})
+        total.append({'graphic': graphic})
+        if (profile != []):
+            total.append({'profile': profile})
+        if (tasks != []):
+            total.append({'tasks': tasks})
 
     return total
 
@@ -171,5 +188,5 @@ def output(data):
 
 if __name__ == "__main__":
     email = sys.argv[1]
-    result = t_fillcontact(email)
+    result = t_fullcontact(email)
     output(result)

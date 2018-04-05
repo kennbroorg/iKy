@@ -82,9 +82,10 @@ def r_github():
 # Keybase
 ################################################
 @home.route("/keybase", methods=["POST"])
-def r_keybase(username=None):
+def r_keybase():
     celery = create_celery(current_app)
-    username = request.form.get('username')
+    json_result = request.get_json()
+    username = json_result.get("username","")
     print "Keybase - Detected Username : ", username
     res = celery.send_task('modules.keybase.keybase_tasks.t_keybase', args=(username, )) 
     print "Task : ", res.task_id

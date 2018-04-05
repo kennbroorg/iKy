@@ -5,20 +5,25 @@
       <div
           ba-panel
           ba-panel-title="Information Gathering"
-          ba-panel-class="with-scroll">
+          ba-panel-class="with-scroll black-panel">
         <div ng-include="'app/pages/gatherer/widgets/email.html'"></div>
       </div>
     </div>
   </div>
 
   <div class="row">
-    <div ng-include="'app/pages/gatherer/widgets/graphic.html'" ng-controller="gathererGraphicController"></div>
+    <div ng-include="'app/pages/gatherer/widgets/social.html'"></div>
+    <div ng-include="'app/pages/gatherer/widgets/bios.html'"></div>
+    <div ng-include="'app/pages/gatherer/widgets/photos.html'" ng-controller="gathererPhotosController"></div>
     <div ng-include="'app/pages/gatherer/widgets/github.html'" ng-controller="gathererGithubController"></div>
     <div ng-include="'app/pages/gatherer/widgets/gitlab.html'" ng-controller="gathererGitlabController"></div>
+    <div ng-include="'app/pages/gatherer/widgets/keybase.html'" ng-controller="gathererKeybaseController"></div>
+    <!--
+    <div ng-include="'app/pages/gatherer/widgets/graphic.html'" ng-controller="gathererGraphicController"></div>
     <div ng-include="'app/pages/gatherer/widgets/graphic2.html'" ng-controller="gathererGraphic2Controller"></div>
     <div ng-include="'app/pages/gatherer/widgets/usersearch.html'" ng-controller="gathererUsernameController"></div>
-    <div ng-include="'app/pages/gatherer/widgets/keybase.html'" ng-controller="gathererKeybaseController"></div>
     <div ng-include="'app/pages/gatherer/widgets/relations.html'" ng-controller="gathererRelationsController"></div>
+    -->
   </div>
 
 </div>

@@ -1,16 +1,31 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-from factories._celery import create_celery
-from factories.application import create_application
-celery = create_celery(create_application())
-import time
+# -*- encoding: utf-8 -*-
 
-import sys
-import requests
+import sys 
 import json
+import requests
+
+try : 
+    from factories._celery import create_celery
+    from factories.application import create_application
+    from factories.configuration import api_keys_search
+    from factories.fontcheat import fontawesome_cheat, search_icon
+    from celery.utils.log import get_task_logger
+    celery = create_celery(create_application())
+except ImportError:
+    # This is to test the module individually, and I know that is piece of shit
+    sys.path.append('../../')
+    from factories._celery import create_celery
+    from factories.application import create_application
+    from factories.configuration import api_keys_search
+    from factories.fontcheat import fontawesome_cheat, search_icon
+    from celery.utils.log import get_task_logger
+    celery = create_celery(create_application())
 
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
+logger = get_task_logger(__name__)
 
  
 @celery.task
