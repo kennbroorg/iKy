@@ -20,8 +20,8 @@
       allowHtml: false,
       closeButton: false,
       tapToDismiss: true,
-      progressBar: true,
-      newestOnTop: true,
+      progressBar: false,
+      newestOnTop: false,
       maxOpened: 0,
       preventDuplicates: false,
       preventOpenDuplicates: false
@@ -44,6 +44,8 @@
     }
     if (localStorageService.get('gather')) {
         $scope.gather = localStorageService.get('gather');
+    } else {
+        $scope.gather = new Object();
     }
 
     $scope.clearInfo = function () {
@@ -70,8 +72,6 @@
         $scope.button = 'OFF';
         localStorageService.set('button-off', 'OFF');
 
-
-        // $http.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
         //////////////////////////////////////////////////
         // Testing
         //////////////////////////////////////////////////
@@ -79,157 +79,39 @@
         $http.post('http://127.0.0.1:5000/testing', {testing: "ok", username: $scope.username});
 
         //////////////////////////////////////////////////
-        // GitHub data
+        // Fullcontact data
         //////////////////////////////////////////////////
-        console.log("Execute Github");
-        $http.post('http://127.0.0.1:5000/github', {username: $scope.username})
+        console.log("Execute Fullcontact");
+        $http.post('http://127.0.0.1:5000/fullcontact', {username: $scope.username})
             .success(function (data, status, headers, config) {
                 $scope.tasks.push({
-                    "module" : data.module,
-                    "param" : data.param,
-                    "task_id" : data.task,
-                    "state" : "PENDING",
+                    "module" : data.module, "param" : data.param,
+                    "task_id" : data.task, "state" : "PENDING",
                 });
-                openedToasts.push(toastr['info']("", "Github"));
+                openedToasts.push(toastr['info']("", "Initial Gather"));
                 $polling.startPolling(data.module, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
 
             });
 
-        // var r_github = $http({
-        //         method: 'POST',
-        //         url: 'http://127.0.0.1:5000/github',
-        //         data: $.param({
-        //             username: $scope.username,
-        //         }),
-        //         headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
-        //     }).success(function (data, status, headers, config) {
+        //////////////////////////////////////////////////
+        // GitHub data
+        //////////////////////////////////////////////////
+        // console.log("Execute Github");
+        // $http.post('http://127.0.0.1:5000/github', {username: $scope.username})
+        //     .success(function (data, status, headers, config) {
         //         $scope.tasks.push({
-        //             "module" : data.module,
-        //             "param" : data.param,
-        //             "task_id" : data.task,
-        //             "state" : "PENDING",
+        //             "module" : data.module, "param" : data.param,
+        //             "task_id" : data.task, "state" : "PENDING",
         //         });
+        //         openedToasts.push(toastr['info']("", "Github"));
+        //         $polling.startPolling(data.module, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
 
-        //         //$http.get('http://127.0.0.1:5000/result/' + data.goto)
-        //         //.success(function (data, status, headers, config) {
-        //         //    $scope.github_info = data;
-        //         //    console.log($scope.github_info);
-        //         //}).error(function (data, status, headers, config) {
-        //         //    // handle error things
-        //         //});
-
-        //     }).error(function (data, status, headers, config) {
-        //         // handle error things
         //     });
+
         
-
         //////////////////////////////////////////////////
-        // Gitlab data
+        // Callback 
         //////////////////////////////////////////////////
-        console.log("Execute Gitlab");
-        //$http({
-        var r_gitlab = $http({
-                method: 'POST',
-                url: 'http://127.0.0.1:5000/gitlab',
-                data: $.param({
-                    username: $scope.username,
-                }),
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-            }).success(function (data, status, headers, config) {
-                $scope.tasks.push({
-                    "module" : data.module,
-                    "param" : data.param,
-                    "task_id" : data.task,
-                    "state" : "PENDING",
-                });
-
-                //$http.get('http://127.0.0.1:5000/result/' + data.goto)
-                //.success(function (data, status, headers, config) {
-                //    $scope.gitlab_info = data;
-                //    console.log($scope.gitlab_info);
-                //}).error(function (data, status, headers, config) {
-                //    // handle error things
-                //});
-
-            }).error(function (data, status, headers, config) {
-                // handle error things
-            });
-        
-
-        //////////////////////////////////////////////////
-        // Keybase data
-        //////////////////////////////////////////////////
-        console.log("Execute Keybase");
-        //$http({
-        var r_keybase = $http({
-                method: 'POST',
-                url: 'http://127.0.0.1:5000/keybase',
-                data: $.param({
-                    username: $scope.username,
-                }),
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-            }).success(function (data, status, headers, config) {
-                $scope.tasks.push({
-                    "module" : data.module,
-                    "param" : data.param,
-                    "task_id" : data.task,
-                    "state" : "PENDING",
-                });
-
-                //$http.get('http://127.0.0.1:5000/result/' + data.goto)
-                //.success(function (data, status, headers, config) {
-                //    $scope.keybase_info = data;
-                //    console.log($scope.keybase_info);
-                //}).error(function (data, status, headers, config) {
-                //    // handle error things
-                //});
-
-            }).error(function (data, status, headers, config) {
-                // handle error things
-            });
-        
-
-        //////////////////////////////////////////////////
-        // Usersearch data
-        //////////////////////////////////////////////////
-        //console.log("Execute Usersearch");
-        //$http({
-        //    method: 'POST',
-        //    url: 'http://127.0.0.1:5000/usersearch',
-        //    data: $.param({
-        //        username: $scope.username,
-        //    }),
-        //    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        //}).success(function (data, status, headers, config) {
-        //    console.log("Receiving... Usersearch");
-        //    $scope.tasks.push({
-        //        "module" : data.module,
-        //        "param" : data.param,
-        //        "task_id" : data.task,
-        //        "state" : "PENDING",
-        //    });
-        //    
-
-        //    $http.get('http://127.0.0.1:5000/result/' + data.goto)
-        //    .success(function (data, status, headers, config) {
-        //        $scope.usersearch_info = data;
-        //        console.log($scope.usersearch_info);
-        //    }).error(function (data, status, headers, config) {
-        //        console.log(data);
-        //        console.log(status);
-        //        console.log(headers);
-        //        console.log(config);
-        //        // handle error things
-        //    });
-
-        //}).error(function (data, status, headers, config) {
-        //    console.log(data);
-        //    console.log(status);
-        //    console.log(headers);
-        //    console.log(config);
-        //    // handle error things
-        //});
-        
         // Progress bar
         var progressTotal = 0
         var progressChunk = 0
@@ -240,29 +122,46 @@
         function callbackProccessData(response) {
             if (response.data.state == "SUCCESS"){
                 openedToasts.push(toastr['success']("", response.data.task_app));
-                console.log("***************************************");
-                console.log("App : ", response.data.task_app, " SUCCESS")
                 $polling.stopPolling(response.data.task_app);
 
                 $http.get('http://127.0.0.1:5000/result/' + response.data.task_id)
                 .success(function (data, status, headers, config) {
                     for (var items in data.result) {
+
                         if (data.result[items].profile != null) {
                             if ($scope.profile == null) { $scope.profile = new Object(); }
                             $scope.profile[response.data.task_app] = data.result[items].profile;
                             console.log("Profile ", $scope.profile);
                             localStorageService.set('profile', $scope.profile);
                         }
+
                         if (data.result[items].timeline != null) {
                             if ($scope.timeline == null) { $scope.timeline = []; }
                                 for (var i in data.result[items].timeline) {
                                     $scope.timeline.push(data.result[items].timeline[i]);
                                 }
-                            // $scope.timeline[response.data.task_app] = data.result[items].timeline;
                             console.log("Timeline ", $scope.timeline);
                             localStorageService.set('timeline', $scope.timeline);
                         }
+
+                        if (data.result[items].tasks != null) {
+                            for (var run in data.result[items].tasks) {
+                                console.log("Execute ", data.result[items].tasks[run].module);
+                                $http.post('http://127.0.0.1:5000/' + data.result[items].tasks[run].module, {username: data.result[items].tasks[run].param})
+                                    .success(function (data, status, headers, config) {
+                                        $scope.tasks.push({
+                                            "module" : data.module, "param" : data.param,
+                                            "task_id" : data.task, "state" : "PENDING",
+                                        });
+                                        openedToasts.push(toastr['info']("", data.module));
+                                        $polling.startPolling(data.module, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
+                                    });
+                            }
+                        }
+
                     }
+
+                    if ($scope.gather == null) { $scope.gather = new Object(); }
                     $scope.gather[response.data.task_app] = data;
                     localStorageService.set('gather', $scope.gather);
                     console.log('Gather', $scope.gather);
@@ -279,19 +178,19 @@
         };
 
         // Wait to task begin
-        $q.all([r_gitlab, r_keybase]).then(function() {
-            $scope.gather = new Object();
-            // var task;
-            for (var task in $scope.tasks) {
-                console.log("Task ", $scope.tasks[task].task_id, $scope.tasks[task].module)
-                $polling.startPolling($scope.tasks[task].module, 'http://127.0.0.1:5000/state/' + $scope.tasks[task].task_id + '/' +  $scope.tasks[task].module, 1000, callbackProccessData);
+        // $q.all([r_gitlab, r_keybase]).then(function() {
+        //     $scope.gather = new Object();
+        //     // var task;
+        //     for (var task in $scope.tasks) {
+        //         console.log("Task ", $scope.tasks[task].task_id, $scope.tasks[task].module)
+        //         $polling.startPolling($scope.tasks[task].module, 'http://127.0.0.1:5000/state/' + $scope.tasks[task].task_id + '/' +  $scope.tasks[task].module, 1000, callbackProccessData);
 
-            // Progress bar
-            progressTotal = $scope.tasks.length;
-            progressChunk = 100 / progressTotal;
-            console.log(progressTotal, progressChunk, progressActual);
-            };
-        });
+        //     // Progress bar
+        //     progressTotal = $scope.tasks.length;
+        //     progressChunk = 100 / progressTotal;
+        //     console.log(progressTotal, progressChunk, progressActual);
+        //     };
+        // });
 
 
 

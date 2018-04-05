@@ -5,10 +5,10 @@
       .directive('dashLogo', dashLogo);
 
   /** @ngInject */
-  function dashLogo() {
+  function dashLogo($window) {
     return {
       restrict: 'A',
-      link: function (scope, element, $window) {
+      link: function (scope, element) {
         var logo = document.getElementById('logo');
 
         console.log("WIDTH : ", logo.offsetWidth);
@@ -103,10 +103,6 @@
                 if (!mouseNear &&
                    ((!dot1.protect && !dot2.protect && xDiff < this.outerMaxLength && yDiff < this.outerMaxLength) || 
                    (xDiff < this.innerMaxLength && yDiff < this.innerMaxLength))) {
-
-                  let gradient = ctx.createLinearGradient(dot1.x, dot1.y, dot2.x, dot1.y)
-                  gradient.addColorStop(0, 'hsla(' + dot1.color + ',100%,50%,' + map((xDiff+yDiff)/.5,0,70,1,0.3) + ')')
-                  gradient.addColorStop(1, 'hsla(' + dot2.color + ',100%,50%,' + map((xDiff+yDiff)/2,0,70,1,0.1) + ')')
 
                   ctx.beginPath()
                   ctx.moveTo(dot1.x, dot1.y)
@@ -267,13 +263,8 @@
 
         let connect = new Connect
 
-        //window resize listener
-        // angular.element($window).on('resize', function() {
-        //   console.log("*****************************resized window");
-        //   connect.resize()
-        // });
-
         // window.onresize = () => connect.resize()
+        $window.addEventListener('resize', connect.resize);
 
         ;(function update() {
           requestAnimationFrame(update)

@@ -9,7 +9,9 @@
     left: 18px;
     height: 100%;
     width: 4px;
-    background: #d7e4ed;
+    /* background: #d7e4ed; */
+    /* background: red; */
+    background: #209E91;
   }
 }
 
@@ -184,7 +186,7 @@
     &::before {
       top: 24px;
       left: 100%;
-      border-color: transparent;
+      border-color: transparent;  
       border-left-color: white;
     }
 
