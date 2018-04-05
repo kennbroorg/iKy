@@ -25,16 +25,19 @@
 
     $scope.todoList = [
       { text: 'Convert definitions in Trello boards' },
-      { text: 'Continue the modification of pool task' },
       { text: 'Manage multiples api keys' },
-      { text: 'Initial collection that runs other collectors' },
+      { text: 'Create module Klout with Cloud 3d Tag' },
       { text: 'Cloud 3d Tag directive for profile' },
-      { text: 'Vertical Tag for bios collected' },
+      { text: 'Modify module Keybase' },
+      { text: 'Create module Twitter' },
+      { text: 'Try to get calendar from github' },
+      { text: 'Maps module and submodule' },
+      { text: 'Maps module running and submodule running' },
       { text: 'Smart Profile' },
       { text: 'Contributors in dash, from based software and github contributions' },
       { text: 'Documentation for contributions' },
       { text: 'Normalize everything, python and angularjs' },
-      { text: 'Fix : When resize th windows the logo doenst resize' },
+      { text: 'Fix : When resize the windows the logo doenst resize' },
     ];
 
     $scope.todoList.forEach(function(item) {
