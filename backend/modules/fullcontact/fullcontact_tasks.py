@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
-import sys 
+import sys
 import json
 import requests
 import urllib3
@@ -12,7 +12,6 @@ try :
     from factories.configuration import api_keys_search
     from factories.fontcheat import fontawesome_cheat, search_icon
     from celery.utils.log import get_task_logger
-    from celery.task.http import HttpDispatch
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
@@ -33,13 +32,8 @@ logger = get_task_logger(__name__)
 @celery.task
 def t_fullcontact(email):
     key = api_keys_search('fullcontact_api')
-    print "Key ", key
-    print "Email ", email
     if key:
-        # req = requests.get("https://api.fullcontact.com/v2/person.json?email=%s" % email, headers={"X-FullContact-APIKey": key})
-        url = "https://api.fullcontact.com/v2/person.json?email=%s&apiKey=%s" % (email, key)
-        print "URL ", url
-        req = requests.get(url)
+        req = requests.get("https://api.fullcontact.com/v2/person.json?email=%s" % email, headers={"X-FullContact-APIKey": key})
         raw_node = json.loads(req.content)
     else:
         raw_node = []
@@ -51,7 +45,6 @@ def t_fullcontact(email):
     total.append({'module': 'fullcontact'})
     total.append({'param': email})
 
-    # if (raw_node == []) or (raw_node['message'] != 'Not Found'):
     if (raw_node != []):
         # Graphic Array
         graphic = []
@@ -62,12 +55,19 @@ def t_fullcontact(email):
         # Tasks Array
         tasks = []
 
+        # Timeline Array
+        timeline = []
+
         # Social Array
         socialp = []
+        social_profile = []
 
         # Photo Array
         photo = []
         photo_profile = []
+
+        # footprint Array
+        footprint = []
 
         # Web Array
         webs = []
@@ -97,7 +97,7 @@ def t_fullcontact(email):
                 for web in raw_node.get("contactInfo", "").get("websites", ""):
                     webs.append({'url': web.get("url", "")})
 
-                # TODO : Find examples 
+                # Fullcontact : TODO : Find examples 
                 # if (raw_node.get("contactInfo", "").get('chats', '') != ""):
 
             company = []
@@ -107,10 +107,24 @@ def t_fullcontact(email):
                     'start': org.get("startDate", ""),
                     'end': org.get("endDate","")}
                 company.append(company_item)
+                if (org.get("startDate", "") != ""):
+                    timeline.append({'action': 'Start : ' + org.get("name",""), 
+                        'date': org.get("startDate", "").replace("-", "/"), 
+                        'icon': 'fa-building',  
+                        'desc': org.get("title","")}) 
+                if (org.get("endDate", "") != ""):
+                    timeline.append({'action': 'End : ' + org.get("name",""), 
+                        'date': org.get("endDate", "").replace("-", "/"), 
+                        'icon': 'fa-ban',  
+                        'desc': org.get("title","")}) 
 
             if (company != []):
-                profile_item = {'company': company}
+                profile_item = {'organization': company}
                 profile.append(profile_item)
+
+            if (raw_node.get("digitalFootprint", "") != ""):
+                for topics in  raw_node.get("digitalFootprint").get("topics", ""):
+                    footprint.append({'label': topics.get("value")})
 
 
             for social in raw_node.get("socialProfiles", ""):
@@ -135,17 +149,25 @@ def t_fullcontact(email):
                         "icon": fa_icon, 
                         "link": link_social}
                 socialp.append(social_item)
+                social_profile_item = {
+                        "name": social.get("type"), 
+                        "username": social.get("username"),
+                        "url": social.get("url")}
+                social_profile.append(social_profile_item)
 
                 if (social.get("bio", "") != ""):
                     bios.append(social.get("bio", ""))
 
-                # TODO : Send all to tasks array 
+                # Fullcontact : TODO : Send all to tasks array with email as param
                 # Prepare other tasks 
                 if (social.get("typeId", "") == "github"):
                     tasks.append({"module": "github", \
                         "param": social.get("username", "")})
                 if (social.get("typeId", "") == "keybase"):
                     tasks.append({"module": "keybase", \
+                        "param": social.get("username", "")})
+                if (social.get("typeId", "") == "twitter"):
+                    tasks.append({"module": "twitter", \
                         "param": social.get("username", "")})
 
             if (raw_node.get("demographics", "") != ""):
@@ -181,9 +203,13 @@ def t_fullcontact(email):
         graphic.append({'photo': photo})
         graphic.append({'webs': webs})
         graphic.append({'bios': bios})
+        graphic.append({'footprint': footprint})
+        profile.append({'social': social_profile})
         total.append({'graphic': graphic})
         if (profile != []):
             total.append({'profile': profile})
+        if (timeline != []):
+            total.append({'timeline': timeline})
         if (tasks != []):
             total.append({'tasks': tasks})
 

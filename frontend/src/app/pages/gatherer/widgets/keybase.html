@@ -1,5 +1,5 @@
-  <div class="col-md-4 col-lg-4" ng-show="$parent.gather.keybase" >
-    <div ba-panel ba-panel-title="Keybase" ba-panel-class="medium-panel black-panel with-scroll light-text">
-        <p>{{gather.keybase}}</p>
+  <div class="col-md-4 col-lg-4" ng-show="$parent.gather.keybase.result[3].graphic[0].keysocial" >
+    <div ba-panel ba-panel-title="Keybase social" ba-panel-class="medium-panel black-panel with-scroll light-text">
+        <d3-relations data="$parent.gather.keybase.result[3].graphic[0].keysocial"></d3-relations>
     </div>
   </div>

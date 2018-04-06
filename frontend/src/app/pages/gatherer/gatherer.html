@@ -14,11 +14,20 @@
   <div class="row">
     <div ng-include="'app/pages/gatherer/widgets/social.html'"></div>
     <div ng-include="'app/pages/gatherer/widgets/bios.html'"></div>
-    <div ng-include="'app/pages/gatherer/widgets/photos.html'" ng-controller="gathererPhotosController"></div>
-    <div ng-include="'app/pages/gatherer/widgets/github.html'" ng-controller="gathererGithubController"></div>
-    <div ng-include="'app/pages/gatherer/widgets/gitlab.html'" ng-controller="gathererGitlabController"></div>
-    <div ng-include="'app/pages/gatherer/widgets/keybase.html'" ng-controller="gathererKeybaseController"></div>
     <!--
+    <div ng-include="'app/pages/gatherer/widgets/photos.html'" ng-controller="gathererPhotosController"></div>
+    -->
+    <div ng-include="'app/pages/gatherer/widgets/klout.html'"></div>
+    <div ng-include="'app/pages/gatherer/widgets/twitter-popularity.html'"></div>
+    <div ng-include="'app/pages/gatherer/widgets/twitter-approval.html'"></div>
+    <div ng-include="'app/pages/gatherer/widgets/twitter-resume.html'"></div>
+    <div ng-include="'app/pages/gatherer/widgets/github.html'" ng-controller="gathererGithubController"></div>
+    <div ng-include="'app/pages/gatherer/widgets/github-calendar.html'"></div>
+    <div ng-include="'app/pages/gatherer/widgets/keybase.html'" ng-controller="gathererKeybaseController"></div>
+    <div ng-include="'app/pages/gatherer/widgets/keybase-device.html'" ng-controller="gathererKeybaseController"></div>
+    <!--
+    <div ng-include="'app/pages/gatherer/widgets/gitlab.html'" ng-controller="gathererGitlabController"></div>
+    <div ng-include="'app/pages/gatherer/widgets/bios2.html'"></div>
     <div ng-include="'app/pages/gatherer/widgets/graphic.html'" ng-controller="gathererGraphicController"></div>
     <div ng-include="'app/pages/gatherer/widgets/graphic2.html'" ng-controller="gathererGraphic2Controller"></div>
     <div ng-include="'app/pages/gatherer/widgets/usersearch.html'" ng-controller="gathererUsernameController"></div>

@@ -4,6 +4,7 @@
 import sys
 import json
 import requests
+from datetime import date, datetime
 
 try : 
     from factories._celery import create_celery
@@ -27,6 +28,15 @@ logger = get_task_logger(__name__)
 def t_github(username):
     """ Task of Celery that get info from github """
     req = requests.get("https://api.github.com/users/%s" % username)
+
+    today = date.today()
+    actual_year_from = date(today.year, today.month, 1)
+    actual_year_to = date(today.year, today.month, today.day)
+    previous_year_from = date(today.year - 1, today.month, 1)
+    previous_year_to = date(today.year - 1, today.month, today.day)
+
+    svg_actual = requests.get("https://github.com/users/%s/contributions?from=%s&to=%s" % (username, actual_year_from, actual_year_to))
+    svg_previous = requests.get("https://github.com/users/%s/contributions?from=%s&to=%s" % (username, previous_year_from, previous_year_to))
     # TODO : Many things 
     # Use other API URLs
 
@@ -75,7 +85,7 @@ def t_github(username):
                     "subtitle": raw_node['company'], "icon": u'\uf1ad', 
                     "link": link}
             gather.append(gather_item)
-            profile_item = {'company': raw_node['company']}
+            profile_item = {'organization': raw_node['company']}
             profile.append(profile_item)
         if ('blog' in raw_node) and (raw_node['blog'] != None) and (raw_node['blog'] != ""): 
             gather_item = {"name-node": "GitBlog", "title": "Blog", 
@@ -117,22 +127,29 @@ def t_github(username):
                     "picture": raw_node['avatar_url'], "subtitle": "", 
                     "link": link}
             gather.append(gather_item)
-            profile_item = {'avatar': raw_node['avatar_url']}
+            profile_item = {'photos': [{ \
+                "picture" : raw_node['avatar_url'],
+                "title" : "github"}
+                ]}
             profile.append(profile_item)
         if ('location' in raw_node) and (raw_node['location'] != None): 
             profile_item = {'location': raw_node['location']}
             profile.append(profile_item)
         if ('created_at' in raw_node) and (raw_node['created_at'] != None): 
-            timeline_item = {'date': raw_node['created_at'], 'action' : 'Github : Create Account',  'icon': 'fa-github' }
+            ctime = datetime.strptime(raw_node['created_at'], "%Y-%m-%dT%H:%M:%SZ")
+            timeline_item = {'date': ctime.strftime("%Y/%m/%d %H:%M:%S"), 'action' : 'Github : Create Account',  'icon': 'fa-github' }
             timeline.append(timeline_item)
         if ('updated_at' in raw_node) and (raw_node['updated_at'] != None): 
-            timeline_item = {'date': raw_node['updated_at'], 'action' : 'Github : Update Account',  'icon': 'fa-github' }
+            mtime = datetime.strptime(raw_node['updated_at'], "%Y-%m-%dT%H:%M:%SZ")
+            timeline_item = {'date': mtime.strftime("%Y/%m/%d %H:%M:%S"), 'action' : 'Github : Update Account',  'icon': 'fa-github' }
             timeline.append(timeline_item)
 
         # Please, respect the order of items in the total array
         # Because the frontend depend of that (By now)
         total.append({'raw': raw_node})
         graphic.append({'github': gather})
+        graphic.append({'cal_actual': svg_actual.content})
+        graphic.append({'cal_previous': svg_previous.content})
         total.append({'graphic': graphic})
         total.append({'profile': profile})
         total.append({'timeline': timeline})

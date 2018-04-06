@@ -44,6 +44,7 @@
     }
     if (localStorageService.get('gather')) {
         $scope.gather = localStorageService.get('gather');
+        console.log("Gather !!!", $scope.gather);
     } else {
         $scope.gather = new Object();
     }
@@ -53,11 +54,17 @@
         localStorageService.remove('button-off');
         localStorageService.remove('gather');
         localStorageService.remove('emailAddress');
+        localStorageService.remove('timeline');
+        localStorageService.remove('profile');
         delete $scope.button;
         delete $scope.gather;
         delete $scope.emailAddress;
         delete $scope.username;
         delete $scope.tasks;
+        delete $scope.tasklist;
+        delete $scope.timeline;
+        delete $scope.profile;
+        delete $scope.data;
         $scope.tasks = new Array();
     }
 
@@ -79,6 +86,16 @@
         $http.post('http://127.0.0.1:5000/testing', {testing: "ok", username: $scope.username});
 
         //////////////////////////////////////////////////
+        // TaskList
+        //////////////////////////////////////////////////
+        console.log("Execute TaskList");
+        $http.get('http://127.0.0.1:5000/tasklist')
+            .success(function (data, status, headers, config) {
+                $scope.tasklist = data.modules;
+                console.log("Task List : ", $scope.tasklist);
+            });
+
+        //////////////////////////////////////////////////
         // Fullcontact data
         //////////////////////////////////////////////////
         console.log("Execute Fullcontact");
@@ -86,27 +103,41 @@
             .success(function (data, status, headers, config) {
                 $scope.tasks.push({
                     "module" : data.module, "param" : data.param,
-                    "task_id" : data.task, "state" : "PENDING",
+                    "task_id" : data.task, "state" : "PENDING", "from" : "Initial", 
                 });
                 openedToasts.push(toastr['info']("", "Initial Gather"));
-                $polling.startPolling(data.module, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
+                $polling.startPolling(data.module + data.task, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
 
             });
 
         //////////////////////////////////////////////////
         // GitHub data
         //////////////////////////////////////////////////
-        // console.log("Execute Github");
-        // $http.post('http://127.0.0.1:5000/github', {username: $scope.username})
-        //     .success(function (data, status, headers, config) {
-        //         $scope.tasks.push({
-        //             "module" : data.module, "param" : data.param,
-        //             "task_id" : data.task, "state" : "PENDING",
-        //         });
-        //         openedToasts.push(toastr['info']("", "Github"));
-        //         $polling.startPolling(data.module, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
+        console.log("Execute Github");
+        $http.post('http://127.0.0.1:5000/github', {username: $scope.username})
+            .success(function (data, status, headers, config) {
+                $scope.tasks.push({
+                    "module" : data.module, "param" : data.param,
+                    "task_id" : data.task, "state" : "PENDING", "from" : "Initial", 
+                });
+                openedToasts.push(toastr['info']("", "Github"));
+                $polling.startPolling(data.module + data.task, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
+            });
 
-        //     });
+        
+        //////////////////////////////////////////////////
+        // Keybase data
+        //////////////////////////////////////////////////
+        console.log("Execute Keybase");
+        $http.post('http://127.0.0.1:5000/keybase', {username: $scope.username})
+            .success(function (data, status, headers, config) {
+                $scope.tasks.push({
+                    "module" : data.module, "param" : data.param,
+                    "task_id" : data.task, "state" : "PENDING", "from" : "Initial", 
+                });
+                openedToasts.push(toastr['info']("", "Keybase"));
+                $polling.startPolling(data.module + data.task, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
+            });
 
         
         //////////////////////////////////////////////////
@@ -118,11 +149,36 @@
         var progressActual = 0
         $('#progress-gather').css('width', '0%').attr('aria-valuenow', '0');
 
+        function isTaskImplemented(module) {
+            for(var i=0; i<$scope.tasklist.length; i++) {
+                if ($scope.tasklist[i] == module) return true;
+            }
+        }
+
+        function isTaskRun(taskId) {
+            for(var i=0; i<$scope.tasks.length; i++) {
+                if ($scope.tasks[i].task_id == taskId) return i;
+            }
+            return -1;
+        }
+
+        function isModuleParamRun(module, param) {
+            for(var i=0; i<$scope.tasks.length; i++) {
+                if ($scope.tasks[i].module == module && $scope.tasks[i].param == param) return i;
+            }
+            return -1;
+        }
+
         // Process data result
         function callbackProccessData(response) {
             if (response.data.state == "SUCCESS"){
+                console.log("TERMINO !!", response.data.task_app, response.data.task_id, response.data.state);
                 openedToasts.push(toastr['success']("", response.data.task_app));
-                $polling.stopPolling(response.data.task_app);
+                $polling.stopPolling(response.data.task_app + response.data.task_id);
+                if (isTaskRun(response.data.task_id) != -1) {
+                    $scope.tasks[isTaskRun(response.data.task_id)].state = response.data.state;
+                }
+
 
                 $http.get('http://127.0.0.1:5000/result/' + response.data.task_id)
                 .success(function (data, status, headers, config) {
@@ -146,16 +202,20 @@
 
                         if (data.result[items].tasks != null) {
                             for (var run in data.result[items].tasks) {
-                                console.log("Execute ", data.result[items].tasks[run].module);
-                                $http.post('http://127.0.0.1:5000/' + data.result[items].tasks[run].module, {username: data.result[items].tasks[run].param})
-                                    .success(function (data, status, headers, config) {
-                                        $scope.tasks.push({
-                                            "module" : data.module, "param" : data.param,
-                                            "task_id" : data.task, "state" : "PENDING",
+                                if (isTaskImplemented(data.result[items].tasks[run].module) == true && 
+                                    isModuleParamRun(data.result[items].tasks[run].module, data.result[items].tasks[run].param) == -1) {
+                                    $http.post('http://127.0.0.1:5000/' + data.result[items].tasks[run].module, {username: data.result[items].tasks[run].param})
+                                        .success(function (data, status, headers, config) {
+                                            $scope.tasks.push({
+                                                "module" : data.module, "param" : data.param,
+                                                "task_id" : data.task, "state" : "PENDING", "from" : response.data.task_app,
+                                            });
+                                            openedToasts.push(toastr['info']("", data.module));
+                                            $polling.startPolling(data.module + data.task, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
                                         });
-                                        openedToasts.push(toastr['info']("", data.module));
-                                        $polling.startPolling(data.module, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
-                                    });
+                                } else {
+                                    console.log("You must implement : ", data.result[items].tasks[run].module);
+                                }
                             }
                         }
 
@@ -167,15 +227,24 @@
                     console.log('Gather', $scope.gather);
                     console.log('Task', $scope.tasks);
                    
-
-                    // Code for progress bar
-                    progressActual = progressActual + progressChunk;
-                    $('#progress-gather').css('width', progressActual+'%').attr('aria-valuenow', progressActual);
-                    console.log(progressTotal, progressChunk, progressActual);
-
                 });
             }
         };
+
+
+        // Progress Bar
+        $scope.$watch('tasks', function() {
+            progressTotal = $scope.tasks.length;
+            progressChunk = 100 / progressTotal;
+            progressActual = 0;
+            for (var task in $scope.tasks) {
+                if ($scope.tasks[task].state == 'SUCCESS') {
+                    progressActual = progressActual + progressChunk;
+                }
+            }
+            $('#progress-gather').css('width', progressActual+'%').attr('aria-valuenow', progressActual);
+            console.log(progressTotal, progressChunk, progressActual);
+        }, true);
 
         // Wait to task begin
         // $q.all([r_gitlab, r_keybase]).then(function() {

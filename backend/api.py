@@ -16,6 +16,19 @@ def r_testing():
 
 
 ################################################
+# Task List
+################################################
+# @home.route("/tasklist", methods=["POST"])
+@home.route('/tasklist', methods = ['GET'])
+def r_tasklist():
+    module_list = []
+    for rule in current_app.url_map.iter_rules():
+        if rule.endpoint != 'static':
+            module_list.append(rule.rule[1:])
+    return jsonify(modules=module_list)
+
+
+################################################
 # State
 ################################################
 @home.route("/state/<task_id>/<task_app>")
@@ -90,6 +103,20 @@ def r_keybase():
     res = celery.send_task('modules.keybase.keybase_tasks.t_keybase', args=(username, )) 
     print "Task : ", res.task_id
     return jsonify(module="keybase", task=res.task_id, param=username)
+
+
+################################################
+# Twitter
+################################################
+@home.route("/twitter", methods=["POST"])
+def r_twitter():
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username","")
+    print "Twitter - Detected Username : ", username
+    res = celery.send_task('modules.twitter.twitter_tasks.t_twitter', args=(username, )) 
+    print "Task : ", res.task_id
+    return jsonify(module="twitter", task=res.task_id, param=username)
 
 
 ################################################

@@ -29,6 +29,16 @@
         delete $scope.timeline
     }
 
+    // Sort timeline array by date
+    $scope.timeline.sort(function(a, b){
+        var dateA=a.date.toLowerCase(), dateB=b.date.toLowerCase()
+        if (dateA > dateB) //sort string ascending
+            return -1 
+        if (dateA < dateB)
+            return 1
+        return 0 //default return value (no sorting)
+    })
+
     var timelineBlocks = $('.cd-timeline-block'),
         offset = 0.8;
 
