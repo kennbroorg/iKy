@@ -33,13 +33,11 @@ logger = get_task_logger(__name__)
 @celery.task
 def t_fullcontact(email):
     key = api_keys_search('fullcontact_api')
-    print "Key ", key
-    print "Email ", email
     if key:
-        # req = requests.get("https://api.fullcontact.com/v2/person.json?email=%s" % email, headers={"X-FullContact-APIKey": key})
-        url = "https://api.fullcontact.com/v2/person.json?email=%s&apiKey=%s" % (email, key)
-        print "URL ", url
-        req = requests.get(url)
+        req = requests.get("https://api.fullcontact.com/v2/person.json?email=%s" % email, headers={"X-FullContact-APIKey": key})
+        # url = "https://api.fullcontact.com/v2/person.json?email=%s&apiKey=%s" % (email, key)
+        # print "URL ", url
+        # req = requests.get(url)
         raw_node = json.loads(req.content)
     else:
         raw_node = []
