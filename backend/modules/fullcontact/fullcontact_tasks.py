@@ -4,6 +4,7 @@
 import sys 
 import json
 import requests
+import urllib3
 
 try : 
     from factories._celery import create_celery
@@ -11,6 +12,7 @@ try :
     from factories.configuration import api_keys_search
     from factories.fontcheat import fontawesome_cheat, search_icon
     from celery.utils.log import get_task_logger
+    from celery.task.http import HttpDispatch
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
@@ -31,8 +33,13 @@ logger = get_task_logger(__name__)
 @celery.task
 def t_fullcontact(email):
     key = api_keys_search('fullcontact_api')
+    print "Key ", key
+    print "Email ", email
     if key:
-        req = requests.get("https://api.fullcontact.com/v2/person.json?email=%s" % email, headers={"X-FullContact-APIKey": key})
+        # req = requests.get("https://api.fullcontact.com/v2/person.json?email=%s" % email, headers={"X-FullContact-APIKey": key})
+        url = "https://api.fullcontact.com/v2/person.json?email=%s&apiKey=%s" % (email, key)
+        print "URL ", url
+        req = requests.get(url)
         raw_node = json.loads(req.content)
     else:
         raw_node = []
@@ -60,9 +67,13 @@ def t_fullcontact(email):
 
         # Photo Array
         photo = []
+        photo_profile = []
 
         # Web Array
         webs = []
+
+        # Bios Array
+        bios = []
 
         link_social = "Social"
         social_item = {"name-node": "Social", "title": "Social", 
@@ -83,7 +94,6 @@ def t_fullcontact(email):
                 profile_item = {'lastName': raw_node.get("contactInfo", "").get('familyName', '')}
                 profile.append(profile_item)
 
-                webs = []
                 for web in raw_node.get("contactInfo", "").get("websites", ""):
                     webs.append({'url': web.get("url", "")})
 
@@ -103,7 +113,6 @@ def t_fullcontact(email):
                 profile.append(profile_item)
 
 
-            bios = []
             for social in raw_node.get("socialProfiles", ""):
                 if ((social.get("username", "") != "") and
                     (social.get("id", "") != "")):
@@ -155,7 +164,6 @@ def t_fullcontact(email):
                     profile_item = {'gender': raw_node.get("demographics", "").get("gender", "")}
                     profile.append(profile_item)
 
-            photo_profile = []
             for photos in raw_node.get("photos", ""):
                 photo_item = {"name-node": photos.get("typeName", ""), 
                         "title": photos.get("typeName", ""), 

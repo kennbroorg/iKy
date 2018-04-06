@@ -36,10 +36,9 @@ def api_keys_write(api_keys):
 
 def api_keys_search(api_name):
     cur_dir = os.getcwd()
-    api_keys_file = cur_dir + '/../../factories/apikeys.json'
+    api_keys_file = cur_dir + '/factories/apikeys.json'
     with open(api_keys_file, 'r') as f:
         items = json.load(f)
-    # items = api_keys_read()
     key = False
     for item in items:
         if (item['name'] == api_name):

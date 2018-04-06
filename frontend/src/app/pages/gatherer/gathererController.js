@@ -82,7 +82,7 @@
         // Fullcontact data
         //////////////////////////////////////////////////
         console.log("Execute Fullcontact");
-        $http.post('http://127.0.0.1:5000/fullcontact', {username: $scope.username})
+        $http.post('http://127.0.0.1:5000/fullcontact', {username: $scope.emailAddress})
             .success(function (data, status, headers, config) {
                 $scope.tasks.push({
                     "module" : data.module, "param" : data.param,
