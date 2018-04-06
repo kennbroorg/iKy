@@ -4,6 +4,7 @@
 import sys
 import json
 import requests
+from datetime import date
 
 try : 
     from factories._celery import create_celery
@@ -27,6 +28,15 @@ logger = get_task_logger(__name__)
 def t_github(username):
     """ Task of Celery that get info from github """
     req = requests.get("https://api.github.com/users/%s" % username)
+
+    today = date.today()
+    actual_year_from = date(today.year, today.month, 1)
+    actual_year_to = date(today.year, today.month, today.day)
+    previous_year_from = date(today.year - 1, today.month, 1)
+    previous_year_to = date(today.year - 1, today.month, today.day)
+
+    svg_actual = requests.get("https://github.com/users/%s/contributions?from=%s&to=%s" % (username, actual_year_from, actual_year_to))
+    svg_previous = requests.get("https://github.com/users/%s/contributions?from=%s&to=%s" % (username, previous_year_from, previous_year_to))
     # TODO : Many things 
     # Use other API URLs
 
@@ -133,6 +143,8 @@ def t_github(username):
         # Because the frontend depend of that (By now)
         total.append({'raw': raw_node})
         graphic.append({'github': gather})
+        graphic.append({'cal_actual': svg_actual.content})
+        graphic.append({'cal_previous': svg_previous.content})
         total.append({'graphic': graphic})
         total.append({'profile': profile})
         total.append({'timeline': timeline})
