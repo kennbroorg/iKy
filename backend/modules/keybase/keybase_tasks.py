@@ -4,6 +4,7 @@
 import sys 
 import json
 import requests
+import time
 
 try : 
     from factories._celery import create_celery
@@ -30,9 +31,12 @@ logger = get_task_logger(__name__)
  
 @celery.task
 def t_keybase(username):
-    url = "https://keybase.io/_/api/1.0/user/lookup.json?usernames=%s" %username
-    req = requests.get(url)
-    raw_node = json.loads(req.text) 
+    # url = "https://keybase.io/_/api/1.0/user/lookup.json?usernames=%s" %username
+    # req = requests.get(url)
+    # raw_node = json.loads(req.text) 
+
+    with open("/media/akennedy/Krypky/PIFA/Repositorio/iKy/backend/modules/keybase/aortega.json", 'r') as f:
+        raw_node = json.load(f)
 
     # Keybase : TODO : Get Followers and Following throw crawling
 
@@ -70,8 +74,8 @@ def t_keybase(username):
             "subtitle": "", "icon": u'\uf10c', "link": link_device}
         devices.append(device_item)
 
-        link_social = "Social"
-        social_item = {"name-node": "Social", "title": "Social", 
+        link_social = "KeybaseSocial"
+        social_item = {"name-node": "KeybaseSocial", "title": "KeybaseSocial", 
             "subtitle": "", "icon": u'\uf1ae', "link": link_social}
         social.append(social_item)
 
@@ -88,13 +92,15 @@ def t_keybase(username):
 
         if (raw.get("basics", "") != ""):
             if (raw.get("basics", "").get("ctime", "") != ""):
+                ctime = time.strftime('%Y/%m/%d %H:%M:%S',  time.gmtime(raw.get("basics", "").get("ctime")))
                 timeline_item = {'action': "Keybase : Create Account", 
-                        'date': raw.get("basics", "").get("ctime", ""), 
+                        'date': ctime,
                         'icon': "fa-key"} 
                 timeline.append(timeline_item)
             if (raw.get("basics", "").get("mtime", "") != ""):
+                mtime = time.strftime('%Y/%m/%d %H:%M:%S',  time.gmtime(raw.get("basics", "").get("mtime")))
                 timeline_item = {'action': "Keybase : Update Account", 
-                        'date': raw.get("basics", "").get("mtime", ""), 
+                        'date': mtime,
                         'icon': "fa-key"} 
                 timeline.append(timeline_item)
 
@@ -102,31 +108,36 @@ def t_keybase(username):
 
         for dev in raw.get("devices", ""):
 
+            print dev
+            print " Type ", raw.get("devices").get(dev).get("type", "")
             fa_icon = search_icon(raw.get("devices").get(dev).get("type", ""), font_list)
             if (fa_icon == None):
                 fa_icon = search_icon("question", font_list)
 
-            dev_item = {"name-node": raw.get("devices").get(dev).get("type", ""), 
+            device_item = {"name-node": raw.get("devices").get(dev).get("type", ""), 
                     "title": raw.get("devices").get(dev).get("type", ""),
                     "subtitle": "Name : " + raw.get("devices").get(dev).get("name", ""),
+                    "icon": fa_icon, 
                     "link": link_device}
             devices.append(device_item)
 
-        for proof in raw.get("proofs_summary", ""):
-            for soc in proof.get("all"):
+        if (raw.get("proofs_summary", "") != ""):
+            for soc in raw.get("proofs_summary", "").get("all"):
                 fa_icon = search_icon(soc.get("proof_type"), font_list)
                 if (fa_icon == None):
                     fa_icon = search_icon("question", font_list)
 
-                social_item = {"name-node": soc.get("proof_type", ""), 
+                social_item = {"name-node": "keybase" + soc.get("proof_type", ""), 
                         "title": soc.get("proof_type", ""), 
                         "subtitle": soc.get("nametag", ""), 
                         "icon": fa_icon, 
                         "link": link_social}
                 social.append(social_item)
 
-                social_profile_item = {"name": soc.get("proof_type"), 
-                        "username": soc.get("nametag")}
+                social_profile_item = {
+                        "name": soc.get("proof_type"), 
+                        "username": soc.get("nametag"),
+                        "url": soc.get("service_url")}
                 social_profile.append(social_profile_item)
 
 
@@ -136,7 +147,7 @@ def t_keybase(username):
 
         total.append({'raw': raw_node})
         if ( len(social) > 1 ):
-            graphic.append({'social': social})
+            graphic.append({'keysocial': social})
         if ( len(devices) > 1 ):
             graphic.append({'devices': devices})
         total.append({'graphic': graphic})
