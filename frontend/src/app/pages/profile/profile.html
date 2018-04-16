@@ -6,55 +6,75 @@
       <div class="col-md-6">
         <div class="form-group row clearfix">
           <label for="inputFirstName" class="col-sm-3 control-label">Pictures</label>
-
-          <div class="col-sm-9">
-            <div class="userpic">
-              <div class="userpic-wrapper">
-                <img ng-src="{{ picture }}">
-              </div>
-            </div>
-          </div>
         </div>
       </div>
-      <div class="col-md-6"></div>
     </div>
+
+    <div class="row clearfix">
+      <div ng-repeat="item in smartProfile.photos">
+          <div class="col-md-3 col-lg-3 centered userpic">
+            <div class="userpic-wrapper">
+              <img ng-src="{{ item.picture }}">
+            </div>
+            <a href class="change-userpic" >{{item.title}}</a>
+          </div>
+      </div>
+    </div>
+
+
+    <!--
+    <div class="userpic row clearfix">
+      <div class="col-md-3 col-sm-4" ng-repeat="item in smartProfile.photos">
+          <div class="userpic-wrapper">
+            <img ng-src="{{ item.picture }}">
+          </div>
+      </div>
+    </div>
+    -->
+
+
+
+
+
+    <h3 class="with-line"></h3>
 
     <div class="row">
       <div class="col-md-6">
-        <div class="form-group row clearfix">
-          <label for="inputFirstName" class="col-sm-3 control-label">First Name</label>
+        <div ng-show="smartProfile.name" class="form-group row clearfix">
+          <label for="inputFirstName" class="col-sm-3 control-label">Name</label>
 
           <div class="col-sm-9">
-              <input disabled type="text" class="form-control" id="inputFirstName" placeholder="First name" value={{name}}>
+              <input disabled type="text" class="form-control" id="inputFirstName" placeholder="First name" value={{smartProfile.name}}>
           </div>
         </div>
-        <div class="form-group row clearfix">
-          <label for="inputLastName" class="col-sm-3 control-label">Last Name</label>
+        <div ng-show="smartProfile.gender" class="form-group row clearfix">
+          <label for="inputLastName" class="col-sm-3 control-label">Gender</label>
 
           <div class="col-sm-9">
-              <input disabled type="text" class="form-control" id="inputLastName" placeholder="Last name" value={{name}}>
+              <input disabled type="text" class="form-control" id="inputLastName" placeholder="Gender" value={{smartProfile.gender}}>
           </div>
         </div>
       </div>
       <div class="col-md-6">
-        <div class="form-group row clearfix">
+        <div ng-show="smartProfile.location" class="form-group row clearfix">
           <label class="col-sm-3 control-label">Location</label>
 
           <div class="col-sm-9">
-              <input disabled type="text" class="form-control" id="inputLocation" placeholder="Location" value={{location}}>
+              <input disabled type="text" class="form-control" id="inputLocation" placeholder="Location" value={{smartProfile.location}}>
           </div>
         </div>
 
-        <div class="form-group row clearfix">
+        <div ng-show="profile.organization" class="form-group row clearfix">
           <label for="inputOrganization" class="col-sm-3 control-label">Organization</label>
 
           <div class="col-sm-9">
-              <input disabled type="text" class="form-control" id="inputOrganization" placeholder="Organization" value={{organization}}>
+              <input disabled type="text" class="form-control" id="inputOrganization" placeholder="Organization" value={{profile.organization}}>
           </div>
         </div>
       </div>
     </div>
 
+    <!--
     <h3 class="with-line">Contact Information</h3>
 
     <div class="row">
@@ -92,30 +112,18 @@
           </div>
         </div>
 
-        <!-- <div class="form-group row clearfix">
-          <label for="inputRoom" class="col-sm-3 control-label">Room</label>
-
-          <div class="col-sm-9">
-            <input disabled type="text" class="form-control" id="inputRoom" placeholder="" value="303">
-          </div>
-        </div> -->
       </div>
     </div>
+    -->
 
     <h3 class="with-line">Social Profiles</h3>
 
     <div class="social-profiles row clearfix">
-      <div class="col-md-3 col-sm-4" ng-repeat="item in socialProfiles">
-
-        <a class="sn-link" href ng-click="showModal(item)" ng-if="!item.href">
+        <!-- <div class="col-md-3 col-sm-4" ng-repeat="item in socialProfiles"> -->
+      <div class="col-md-3 col-sm-4" ng-repeat="item in smartProfile.social">
+        <a class="sn-link connected" href="{{ item.url }}" target="_blank" >
           <i class="socicon {{ item.icon }}"></i>
           <span>{{ item.name }}</span>
-        </a>
-
-        <a class="sn-link connected" href="{{ item.href }}" target="_blank" ng-if="item.href">
-          <i class="socicon {{ item.icon }}"></i>
-          <span>{{ item.name }}</span>
-          <em class="ion-ios-close-empty sn-link-close" ng-mousedown="unconnect(item)"></em>
         </a>
       </div>
     </div>

@@ -12,7 +12,6 @@ try :
     from factories.configuration import api_keys_search
     from factories.fontcheat import fontawesome_cheat, search_icon
     from celery.utils.log import get_task_logger
-    from celery.task.http import HttpDispatch
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
@@ -32,15 +31,15 @@ logger = get_task_logger(__name__)
 
 @celery.task
 def t_fullcontact(email):
-    key = api_keys_search('fullcontact_api')
-    if key:
-        req = requests.get("https://api.fullcontact.com/v2/person.json?email=%s" % email, headers={"X-FullContact-APIKey": key})
-        # url = "https://api.fullcontact.com/v2/person.json?email=%s&apiKey=%s" % (email, key)
-        # print "URL ", url
-        # req = requests.get(url)
-        raw_node = json.loads(req.content)
-    else:
-        raw_node = []
+    # key = api_keys_search('fullcontact_api')
+    # if key:
+    #     req = requests.get("https://api.fullcontact.com/v2/person.json?email=%s" % email, headers={"X-FullContact-APIKey": key})
+    #     raw_node = json.loads(req.content)
+    # else:
+    #     raw_node = []
+
+    with open("/media/akennedy/Krypky/PIFA/Repositorio/iKy/backend/modules/fullcontact/ortegaalfredo.json", 'r') as f:
+        raw_node = json.load(f)
 
     # Icons unicode
     font_list = fontawesome_cheat()
@@ -49,7 +48,6 @@ def t_fullcontact(email):
     total.append({'module': 'fullcontact'})
     total.append({'param': email})
 
-    # if (raw_node == []) or (raw_node['message'] != 'Not Found'):
     if (raw_node != []):
         # Graphic Array
         graphic = []
@@ -62,6 +60,7 @@ def t_fullcontact(email):
 
         # Social Array
         socialp = []
+        social_profile = []
 
         # Photo Array
         photo = []
@@ -95,7 +94,7 @@ def t_fullcontact(email):
                 for web in raw_node.get("contactInfo", "").get("websites", ""):
                     webs.append({'url': web.get("url", "")})
 
-                # TODO : Find examples 
+                # Fullcontact : TODO : Find examples 
                 # if (raw_node.get("contactInfo", "").get('chats', '') != ""):
 
             company = []
@@ -107,7 +106,7 @@ def t_fullcontact(email):
                 company.append(company_item)
 
             if (company != []):
-                profile_item = {'company': company}
+                profile_item = {'organization': company}
                 profile.append(profile_item)
 
 
@@ -133,11 +132,16 @@ def t_fullcontact(email):
                         "icon": fa_icon, 
                         "link": link_social}
                 socialp.append(social_item)
+                social_profile_item = {
+                        "name": social.get("type"), 
+                        "username": social.get("username"),
+                        "url": social.get("url")}
+                social_profile.append(social_profile_item)
 
                 if (social.get("bio", "") != ""):
                     bios.append(social.get("bio", ""))
 
-                # TODO : Send all to tasks array 
+                # Fullcontact : TODO : Send all to tasks array 
                 # Prepare other tasks 
                 if (social.get("typeId", "") == "github"):
                     tasks.append({"module": "github", \
@@ -179,6 +183,7 @@ def t_fullcontact(email):
         graphic.append({'photo': photo})
         graphic.append({'webs': webs})
         graphic.append({'bios': bios})
+        profile.append({'social': social_profile})
         total.append({'graphic': graphic})
         if (profile != []):
             total.append({'profile': profile})
