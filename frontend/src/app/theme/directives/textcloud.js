@@ -18,18 +18,16 @@
 
           link: function (scope, element) {
 
-
-
-
-
-
+                var w = element.parent()[0].offsetWidth;
+                var h = element.parent()[0].offsetHeight;
 
                 function SVG3DTagCloud( element, params ) {
+                    console.log("PARENT F ", element);
 
                     var settings = {
                         entries: [],
-                        width: 480,
-                        height: 480,
+                        width: '100%',
+                        height: '100%',
                         radius: '70%',
                         radiusMin: 75,
                         bgDraw: true,
@@ -39,7 +37,7 @@
                         opacityOut: 0.05,
                         opacitySpeed: 6,
                         fov: 800,
-                        speed: 2,
+                        speed: 3,
                         fontFamily: 'Arial, sans-serif',
                         fontSize: '15',
                         fontColor: '#fff',
@@ -109,7 +107,7 @@
                         var svgHeight = windowHeight;
 
                         if ( settings.width.toString().indexOf( '%' ) > 0 || settings.height.toString().indexOf( '%' ) > 0 ) {
-                            svgWidth = Math.round( element.offsetWidth / 100 * parseInt( settings.width ) );
+                            svgWidth = Math.round( w / 100 * parseInt( settings.width ) );
                             svgHeight = Math.round( svgWidth / 100 * parseInt( settings.height ) );
                         } else {
                             svgWidth = parseInt( settings.width );
@@ -573,8 +571,6 @@
               scope.$watch('data', function(){
                 // scope.render(scope.data);
 
-                console.log("TextCloud!!!!!!");
-
                 var entries = [ 
                     { label: 'Back to top', url: 'https://www.jqueryscript.net/tags.php?/Back%20to%20top/', target: '_top' },
                     { label: 'Bootstrap', url: 'https://www.jqueryscript.net/tags.php?/Bootstrap/', target: '_top' },
@@ -586,8 +582,8 @@
                 var settings = {
                     entries: entries,
                     width: '90%',
-                    height: '80%',
-                    radius: '65%',
+                    height: '70%',
+                    radius: '75%',
                     radiusMin: 75,
                     bgDraw: true,
                     bgColor: '#111',
@@ -604,9 +600,9 @@
                     fontStretch: 'normal',//wider, narrower, ultra-condensed, extra-condensed, condensed, semi-condensed, semi-expanded, expanded, extra-expanded, ultra-expanded
                     fontToUpperCase: true
                 };
-                //var svg3DTagCloud = new SVG3DTagCloud( document.getElementById( 'holder'  ), settings );
-                $( '#tag-cloud1' ).svg3DTagCloud( settings );
 
+                var el = element[0];
+                var svg3DTagCloud = new SVG3DTagCloud( el, settings );
 
               });
 
