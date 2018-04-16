@@ -16,6 +16,19 @@ def r_testing():
 
 
 ################################################
+# Task List
+################################################
+# @home.route("/tasklist", methods=["POST"])
+@home.route('/tasklist', methods = ['GET'])
+def r_tasklist():
+    module_list = []
+    for rule in current_app.url_map.iter_rules():
+        if rule.endpoint != 'static':
+            module_list.append(rule.rule[1:])
+    return jsonify(modules=module_list)
+
+
+################################################
 # State
 ################################################
 @home.route("/state/<task_id>/<task_app>")

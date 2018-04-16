@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
-import sys 
+import sys
 import json
 import requests
 import urllib3
@@ -58,6 +58,9 @@ def t_fullcontact(email):
         # Tasks Array
         tasks = []
 
+        # Timeline Array
+        timeline = []
+
         # Social Array
         socialp = []
         social_profile = []
@@ -65,6 +68,9 @@ def t_fullcontact(email):
         # Photo Array
         photo = []
         photo_profile = []
+
+        # footprint Array
+        footprint = []
 
         # Web Array
         webs = []
@@ -104,10 +110,24 @@ def t_fullcontact(email):
                     'start': org.get("startDate", ""),
                     'end': org.get("endDate","")}
                 company.append(company_item)
+                if (org.get("startDate", "") != ""):
+                    timeline.append({'action': 'Start : ' + org.get("name",""), 
+                        'date': org.get("startDate", "").replace("-", "/"), 
+                        'icon': 'fa-building',  
+                        'desc': org.get("title","")}) 
+                if (org.get("endDate", "") != ""):
+                    timeline.append({'action': 'End : ' + org.get("name",""), 
+                        'date': org.get("endDate", "").replace("-", "/"), 
+                        'icon': 'fa-ban',  
+                        'desc': org.get("title","")}) 
 
             if (company != []):
                 profile_item = {'organization': company}
                 profile.append(profile_item)
+
+            if (raw_node.get("digitalFootprint", "") != ""):
+                for topics in  raw_node.get("digitalFootprint").get("topics", ""):
+                    footprint.append({'label': topics.get("value")})
 
 
             for social in raw_node.get("socialProfiles", ""):
@@ -183,10 +203,13 @@ def t_fullcontact(email):
         graphic.append({'photo': photo})
         graphic.append({'webs': webs})
         graphic.append({'bios': bios})
+        graphic.append({'footprint': footprint})
         profile.append({'social': social_profile})
         total.append({'graphic': graphic})
         if (profile != []):
             total.append({'profile': profile})
+        if (timeline != []):
+            total.append({'timeline': timeline})
         if (tasks != []):
             total.append({'tasks': tasks})
 

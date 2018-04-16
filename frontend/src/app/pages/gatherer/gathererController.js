@@ -202,15 +202,24 @@
                     console.log('Gather', $scope.gather);
                     console.log('Task', $scope.tasks);
                    
-
-                    // Code for progress bar
-                    progressActual = progressActual + progressChunk;
-                    $('#progress-gather').css('width', progressActual+'%').attr('aria-valuenow', progressActual);
-                    console.log(progressTotal, progressChunk, progressActual);
-
                 });
             }
         };
+
+
+        // Progress Bar
+        $scope.$watch('tasks', function() {
+            progressTotal = $scope.tasks.length;
+            progressChunk = 100 / progressTotal;
+            progressActual = 0;
+            for (var task in $scope.tasks) {
+                if ($scope.tasks[task].state == 'SUCCESS') {
+                    progressActual = progressActual + progressChunk;
+                }
+            }
+            $('#progress-gather').css('width', progressActual+'%').attr('aria-valuenow', progressActual);
+            console.log(progressTotal, progressChunk, progressActual);
+        }, true);
 
         // Wait to task begin
         // $q.all([r_gitlab, r_keybase]).then(function() {
