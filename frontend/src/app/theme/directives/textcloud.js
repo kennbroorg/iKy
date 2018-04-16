@@ -22,7 +22,6 @@
                 var h = element.parent()[0].offsetHeight;
 
                 function SVG3DTagCloud( element, params ) {
-                    console.log("PARENT F ", element);
 
                     var settings = {
                         entries: [],
@@ -569,18 +568,8 @@
 
 
               scope.$watch('data', function(){
-                // scope.render(scope.data);
-
-                var entries = [ 
-                    { label: 'Back to top', url: 'https://www.jqueryscript.net/tags.php?/Back%20to%20top/', target: '_top' },
-                    { label: 'Bootstrap', url: 'https://www.jqueryscript.net/tags.php?/Bootstrap/', target: '_top' },
-                    { label: 'Carousel', url: 'https://www.jqueryscript.net/tags.php?/carousel/', target: '_top' },
-                    { label: 'Countdown', url: 'https://www.jqueryscript.net/tags.php?/countdown/', target: '_top' },
-                    { label: 'Dropdown Menu', url: 'https://www.jqueryscript.net/tags.php?/Drop%20Down%20Menu/', target: '_top' },
-                    { label: 'CodePen', url: 'https://codepen.io/', target: '_top' },
-                ];
                 var settings = {
-                    entries: entries,
+                    entries: scope.data,
                     width: '90%',
                     height: '70%',
                     radius: '75%',

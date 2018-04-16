@@ -38,6 +38,7 @@ def t_keybase(username):
     with open("/media/akennedy/Krypky/PIFA/Repositorio/iKy/backend/modules/keybase/aortega.json", 'r') as f:
         raw_node = json.load(f)
 
+    # Keybase : TODO : Validation via some info
     # Keybase : TODO : Get Followers and Following throw crawling
 
     # Icons unicode
