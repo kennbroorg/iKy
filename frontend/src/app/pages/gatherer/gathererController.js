@@ -44,6 +44,7 @@
     }
     if (localStorageService.get('gather')) {
         $scope.gather = localStorageService.get('gather');
+        console.log("Gather !!!", $scope.gather);
     } else {
         $scope.gather = new Object();
     }
@@ -63,6 +64,7 @@
         delete $scope.tasklist;
         delete $scope.timeline;
         delete $scope.profile;
+        delete $scope.data;
         $scope.tasks = new Array();
     }
 

@@ -31,15 +31,15 @@ logger = get_task_logger(__name__)
 
 @celery.task
 def t_fullcontact(email):
-    # key = api_keys_search('fullcontact_api')
-    # if key:
-    #     req = requests.get("https://api.fullcontact.com/v2/person.json?email=%s" % email, headers={"X-FullContact-APIKey": key})
-    #     raw_node = json.loads(req.content)
-    # else:
-    #     raw_node = []
+    key = api_keys_search('fullcontact_api')
+    if key:
+        req = requests.get("https://api.fullcontact.com/v2/person.json?email=%s" % email, headers={"X-FullContact-APIKey": key})
+        raw_node = json.loads(req.content)
+    else:
+        raw_node = []
 
-    with open("/media/akennedy/Krypky/PIFA/Repositorio/iKy/backend/modules/fullcontact/ortegaalfredo.json", 'r') as f:
-        raw_node = json.load(f)
+    # with open("/media/akennedy/Krypky/PIFA/Repositorio/iKy/backend/modules/fullcontact/ortegaalfredo.json", 'r') as f:
+    #     raw_node = json.load(f)
 
     # Icons unicode
     font_list = fontawesome_cheat()

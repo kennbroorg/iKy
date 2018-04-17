@@ -9,16 +9,21 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 def fontawesome_cheat():
     """ Get unicode for fontawesome """
-    req = requests.get("https://fontawesome.com/v4.7.0/cheatsheet/")
+    # Problem page
+    length = 0
+    while (length < 22000):
+        req = requests.get("https://fontawesome.com/v4.7.0/cheatsheet/")
+        length = len(req.content)
     soup = BeautifulSoup(req.content, 'lxml')
     
     fonta = {}
     for icons in soup.findAll("div", {"class": "col-print-4"}):
         icon = icons.text.split('\n')
+        print icon
         if (len(icon) == 7):
             fonta[icon[3].strip()] = [icon[2].strip(), icon[5].strip(), 
                 icon[1].strip(), icon[4].strip()]
-        else:
+        elif (len(icon) == 6):
             fonta[icon[2].strip()] = [icon[1].strip(), icon[4].strip(), 
                 icon[0].strip(), icon[3].strip()]
     return fonta
@@ -32,5 +37,5 @@ def search_icon(name, font_list):
     return uni_icon
 
 # font_list =  fontawesome_cheat()
-# icon = search_icon('github', font_list)
+# icon = search_icon('angellist', font_list)
 # print "Icon ", icon

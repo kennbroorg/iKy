@@ -13,7 +13,7 @@
         return {
           restrict: 'E',
           scope: {
-            data: '='
+            words: '=words'
           },
 
           link: function (scope, element) {
@@ -556,20 +556,10 @@
              
                 };
 
-
-
-
-
-
-
-
-
-
-
-
-              scope.$watch('data', function(){
+              scope.$watch('words', function(){
+                console.log("DATA DEL CLOUD", scope.words);
                 var settings = {
-                    entries: scope.data,
+                    entries: scope.words,
                     width: '90%',
                     height: '70%',
                     radius: '75%',
@@ -591,6 +581,9 @@
                 };
 
                 var el = element[0];
+                while (el.firstChild) {
+                    el.removeChild(el.firstChild);
+                }
                 var svg3DTagCloud = new SVG3DTagCloud( el, settings );
 
               });

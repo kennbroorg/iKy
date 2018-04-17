@@ -31,12 +31,12 @@ logger = get_task_logger(__name__)
  
 @celery.task
 def t_keybase(username):
-    # url = "https://keybase.io/_/api/1.0/user/lookup.json?usernames=%s" %username
-    # req = requests.get(url)
-    # raw_node = json.loads(req.text) 
+    url = "https://keybase.io/_/api/1.0/user/lookup.json?usernames=%s" %username
+    req = requests.get(url)
+    raw_node = json.loads(req.text) 
 
-    with open("/media/akennedy/Krypky/PIFA/Repositorio/iKy/backend/modules/keybase/aortega.json", 'r') as f:
-        raw_node = json.load(f)
+    # with open("/media/akennedy/Krypky/PIFA/Repositorio/iKy/backend/modules/keybase/aortega.json", 'r') as f:
+    #     raw_node = json.load(f)
 
     # Keybase : TODO : Validation via some info
     # Keybase : TODO : Get Followers and Following throw crawling
