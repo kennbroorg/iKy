@@ -162,6 +162,13 @@
             return -1;
         }
 
+        function isModuleParamRun(module, param) {
+            for(var i=0; i<$scope.tasks.length; i++) {
+                if ($scope.tasks[i].module == module && $scope.tasks[i].param == param) return i;
+            }
+            return -1;
+        }
+
         // Process data result
         function callbackProccessData(response) {
             if (response.data.state == "SUCCESS"){
@@ -175,6 +182,7 @@
 
                 $http.get('http://127.0.0.1:5000/result/' + response.data.task_id)
                 .success(function (data, status, headers, config) {
+                    console.log("VALOR DEVUELTO!!!!!", data);
                     for (var items in data.result) {
 
                         if (data.result[items].profile != null) {
@@ -195,8 +203,8 @@
 
                         if (data.result[items].tasks != null) {
                             for (var run in data.result[items].tasks) {
-                                console.log("Execute ", data.result[items].tasks[run].module);
-                                if (isTaskImplemented(data.result[items].tasks[run].module) == true) {
+                                if (isTaskImplemented(data.result[items].tasks[run].module) == true && 
+                                    isModuleParamRun(data.result[items].tasks[run].module, data.result[items].tasks[run].param) == -1) {
                                     $http.post('http://127.0.0.1:5000/' + data.result[items].tasks[run].module, {username: data.result[items].tasks[run].param})
                                         .success(function (data, status, headers, config) {
                                             $scope.tasks.push({
