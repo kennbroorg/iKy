@@ -48,7 +48,7 @@ def t_keybase(username):
     total.append({'module': 'keybase'})
     total.append({'param': username})
     
-    if raw_node['them'][0] is not None:
+    if (raw_node['status']['code'] == 0) and (raw_node['them'][0] is not None):
         raw = raw_node['them'][0]
 
         # Graphic Array
@@ -159,9 +159,9 @@ def t_keybase(username):
         if (timeline != []):
             total.append({'timeline': timeline})
 
-        # Keybase : TODO : Before send task, code the validation for duplicate proccess
-        # if (tasks != []):
-        #     total.append({'tasks': tasks})
+    # Keybase : TODO : Before send task, code the validation for duplicate proccess
+    # if (tasks != []):
+    #     total.append({'tasks': tasks})
 
     return total
 
