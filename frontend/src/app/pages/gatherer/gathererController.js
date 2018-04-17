@@ -106,23 +106,38 @@
                     "task_id" : data.task, "state" : "PENDING", "from" : "Initial", 
                 });
                 openedToasts.push(toastr['info']("", "Initial Gather"));
-                $polling.startPolling(data.module, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
+                $polling.startPolling(data.module + data.task, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
 
             });
 
         //////////////////////////////////////////////////
         // GitHub data
         //////////////////////////////////////////////////
-        // console.log("Execute Github");
-        // $http.post('http://127.0.0.1:5000/github', {username: $scope.username})
-        //     .success(function (data, status, headers, config) {
-        //         $scope.tasks.push({
-        //             "module" : data.module, "param" : data.param,
-        //             "task_id" : data.task, "state" : "PENDING",
-        //         });
-        //         openedToasts.push(toastr['info']("", "Github"));
-        //         $polling.startPolling(data.module, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
-        //     });
+        console.log("Execute Github");
+        $http.post('http://127.0.0.1:5000/github', {username: $scope.username})
+            .success(function (data, status, headers, config) {
+                $scope.tasks.push({
+                    "module" : data.module, "param" : data.param,
+                    "task_id" : data.task, "state" : "PENDING", "from" : "Initial", 
+                });
+                openedToasts.push(toastr['info']("", "Github"));
+                $polling.startPolling(data.module + data.task, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
+            });
+
+        
+        //////////////////////////////////////////////////
+        // Keybase data
+        //////////////////////////////////////////////////
+        console.log("Execute Keybase");
+        $http.post('http://127.0.0.1:5000/keybase', {username: $scope.username})
+            .success(function (data, status, headers, config) {
+                $scope.tasks.push({
+                    "module" : data.module, "param" : data.param,
+                    "task_id" : data.task, "state" : "PENDING", "from" : "Initial", 
+                });
+                openedToasts.push(toastr['info']("", "Keybase"));
+                $polling.startPolling(data.module + data.task, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
+            });
 
         
         //////////////////////////////////////////////////
@@ -150,8 +165,9 @@
         // Process data result
         function callbackProccessData(response) {
             if (response.data.state == "SUCCESS"){
+                console.log("TERMINO !!", response.data.task_app, response.data.task_id, response.data.state);
                 openedToasts.push(toastr['success']("", response.data.task_app));
-                $polling.stopPolling(response.data.task_app);
+                $polling.stopPolling(response.data.task_app + response.data.task_id);
                 if (isTaskRun(response.data.task_id) != -1) {
                     $scope.tasks[isTaskRun(response.data.task_id)].state = response.data.state;
                 }
@@ -188,7 +204,7 @@
                                                 "task_id" : data.task, "state" : "PENDING", "from" : response.data.task_app,
                                             });
                                             openedToasts.push(toastr['info']("", data.module));
-                                            $polling.startPolling(data.module, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
+                                            $polling.startPolling(data.module + data.task, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
                                         });
                                 } else {
                                     console.log("You must implement : ", data.result[items].tasks[run].module);
