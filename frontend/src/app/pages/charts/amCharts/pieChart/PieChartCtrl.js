@@ -52,40 +52,40 @@
       },
       dataProvider: [
         {
-          country: 'Lithuania',
+          chota: 'Lithuania',
           litres: 501.9
         },
         {
-          country: 'Czech Republic',
+          chota: 'Czech Republic',
           litres: 301.9
         },
         {
-          country: 'Ireland',
+          chota: 'Ireland',
           litres: 201.1
         },
         {
-          country: 'Germany',
+          chota: 'Germany',
           litres: 165.8
         },
         {
-          country: 'Australia',
+          chota: 'Australia',
           litres: 139.9
         },
         {
-          country: 'Austria',
+          chota: 'Austria',
           litres: 128.3
         },
         {
-          country: 'UK',
+          chota: 'UK',
           litres: 99
         },
         {
-          country: 'Belgium',
+          chota: 'Belgium',
           litres: 60
         }
       ],
       valueField: 'litres',
-      titleField: 'country',
+      titleField: 'chota',
       export: {
         enabled: true
       },

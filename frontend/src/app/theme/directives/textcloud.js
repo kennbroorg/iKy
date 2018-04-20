@@ -557,7 +557,6 @@
                 };
 
               scope.$watch('words', function(){
-                console.log("DATA DEL CLOUD", scope.words);
                 var settings = {
                     entries: scope.words,
                     width: '90%',
