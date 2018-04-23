@@ -182,7 +182,6 @@
 
                 $http.get('http://127.0.0.1:5000/result/' + response.data.task_id)
                 .success(function (data, status, headers, config) {
-                    console.log("VALOR DEVUELTO!!!!!", data);
                     for (var items in data.result) {
 
                         if (data.result[items].profile != null) {

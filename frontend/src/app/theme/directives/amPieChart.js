@@ -72,20 +72,21 @@
                           }
                         ]
                       },
-                      dataProvider: [
-                        {
-                          title: 'Followers',
-                          value: 501.9
-                        },
-                        {
-                          title: 'Following',
-                          value: 301.9
-                        },
-                        {
-                          title: 'Listed',
-                          value: 201.1
-                        }
-                      ],
+                      dataProvider: scope.values,
+                      // dataProvider: [
+                      //   {
+                      //     title: 'Followers',
+                      //     value: 501.9
+                      //   },
+                      //   {
+                      //     title: 'Following',
+                      //     value: 301.9
+                      //   },
+                      //   {
+                      //     title: 'Listed',
+                      //     value: 201.1
+                      //   }
+                      // ],
                       valueField: 'value',
                       titleField: 'title',
                       export: {
@@ -152,12 +153,12 @@
                   wedge.parentNode.appendChild(wedge);
                 }
             };
-            initChart();
 
 
             scope.$watch('values', function(){
               console.log("VALUESSSSSSSSS", scope.values);
               // scope.render(scope.values);
+              initChart();
             });
 
           }

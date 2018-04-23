@@ -106,6 +106,20 @@ def r_keybase():
 
 
 ################################################
+# Twitter
+################################################
+@home.route("/twitter", methods=["POST"])
+def r_twitter():
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username","")
+    print "Twitter - Detected Username : ", username
+    res = celery.send_task('modules.twitter.twitter_tasks.t_twitter', args=(username, )) 
+    print "Task : ", res.task_id
+    return jsonify(module="twitter", task=res.task_id, param=username)
+
+
+################################################
 # Gitlab
 ################################################
 @home.route("/gitlab", methods=["POST"])

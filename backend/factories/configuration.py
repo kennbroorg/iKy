@@ -13,6 +13,7 @@ def get_config():
         CELERY_RESULT_SERIALIZER = 'json'
         CELERY_IMPORTS = ('modules.keybase.keybase_tasks',
                 'modules.gitlab.gitlab_tasks',
+                'modules.twitter.twitter_tasks',
                 'modules.github.github_tasks',
                 'modules.fullcontact.fullcontact_tasks',
                 'modules.usersearch.usersearch_tasks')

@@ -38,9 +38,6 @@ def t_fullcontact(email):
     else:
         raw_node = []
 
-    # with open("/media/akennedy/Krypky/PIFA/Repositorio/iKy/backend/modules/fullcontact/ortegaalfredo.json", 'r') as f:
-    #     raw_node = json.load(f)
-
     # Icons unicode
     font_list = fontawesome_cheat()
     # Total
@@ -161,13 +158,16 @@ def t_fullcontact(email):
                 if (social.get("bio", "") != ""):
                     bios.append(social.get("bio", ""))
 
-                # Fullcontact : TODO : Send all to tasks array 
+                # Fullcontact : TODO : Send all to tasks array with email as param
                 # Prepare other tasks 
                 if (social.get("typeId", "") == "github"):
                     tasks.append({"module": "github", \
                         "param": social.get("username", "")})
                 if (social.get("typeId", "") == "keybase"):
                     tasks.append({"module": "keybase", \
+                        "param": social.get("username", "")})
+                if (social.get("typeId", "") == "twitter"):
+                    tasks.append({"module": "twitter", \
                         "param": social.get("username", "")})
 
             if (raw_node.get("demographics", "") != ""):
