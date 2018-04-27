@@ -50,11 +50,10 @@ gulp serve
 ```
 
 # DISFRUTE
-Por ahora solo funciona en Chrome (y Chromium). Abrir el navegador y [DISFRUTAR](http://127.0.0.1:3000)
+Abrir el navegador y [DISFRUTAR](http://127.0.0.1:3000)
 
 ## CONFIGURACION DE APIKEYS
-Esto no es estrictamente necesario porque la aplicación trabaja con módulos que no requieren apikeys.
-Pero si las tiene puede cargarlas desde la opción de **API Keys** en el frontend.  
+Por ahora lo ideal es cargar las apiKeys de fullcontact y twitter a través del frontend desde la opción de **API Keys**. Es intuitivo.  
 
 # Proximamente
 Prometo meter todo junto en un script
