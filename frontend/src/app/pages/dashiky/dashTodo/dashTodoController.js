@@ -28,7 +28,6 @@
       { text: 'Minor changes pending: grep -r -i TODO in the backend' },
       { text: 'Use tag input to select the modules to will run' },
       { text: 'Validation of username and email modules' },
-      { text: 'Create module Twitter' },
       { text: 'Create module Klout with crawling' },
       { text: 'Manage multiples api keys' },
       { text: 'List module and submodule' },
