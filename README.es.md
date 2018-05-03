@@ -35,7 +35,7 @@ python app.py
 ## INSTALAR FRONTEND
 
 ### Dependencias
-Primero que nada, instalar **[nodejs]**(https://nodejs.org/es/)
+Primero que nada, instalar [nodejs](https://nodejs.org/es/)
 
 Y luego se debe instalar **gulp** y las dependencias desde el directorio **frontend**
 ```shell
