@@ -1,7 +1,3 @@
-/**
- * @author a.demeshko
- * created on 1/12/16
- */
 (function () {
   'use strict';
 
