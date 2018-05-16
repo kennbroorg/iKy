@@ -7,12 +7,14 @@ The idea is that the main branch is master. There will be a new branch called "r
 - *BUG/bugname*       - For Bug 
 - *JUNK/junkname*     - For experimental actions
 - *ISSUE/issuenumber* - Obvious
+- *REF/refname*       - For violent refactoring
 - *MISC/miscname*     - For anything else (don't abuse)
 
 ##Commits names
 - *[ADD] message* - For add 
 - *[MOD] message* - For modify
 - *[REM] message* - For remove 
+- *[REF] message* - For moderate refactoring 
 - *[HOT] message* - For hot fix in master 
 - *[FIX] message* - For fix, but it is not HOT and it's throught another branch, not master
 - *[MRG] message* - For Merge
