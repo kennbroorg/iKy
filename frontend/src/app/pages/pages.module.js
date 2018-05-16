@@ -10,7 +10,7 @@
 
     // 'BlurAdmin.pages.dashboard',
     // 'BlurAdmin.pages.ui',
-    'BlurAdmin.pages.components',
+    // 'BlurAdmin.pages.components',
     // 'BlurAdmin.pages.form',
     // 'BlurAdmin.pages.tables',
     // 'BlurAdmin.pages.charts',

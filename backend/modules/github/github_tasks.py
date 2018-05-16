@@ -37,8 +37,9 @@ def t_github(username):
 
     svg_actual = requests.get("https://github.com/users/%s/contributions?from=%s&to=%s" % (username, actual_year_from, actual_year_to))
     svg_previous = requests.get("https://github.com/users/%s/contributions?from=%s&to=%s" % (username, previous_year_from, previous_year_to))
-    # TODO : Many things 
-    # Use other API URLs
+
+    # Github : TODO : Many things. Use other API URLs 
+    # Github : TODO : Validation of email with patch commit hack
 
     # Raw Array
     raw_node = json.loads(req.content)
