@@ -11,7 +11,7 @@ home = Blueprint('home_views', __name__)
 @home.route("/testing", methods=["POST"])
 def r_testing():
     result = request.get_json()
-    print "JSON : ", result
+    print("JSON : ", result)
     return jsonify(result)
 
 
@@ -19,7 +19,7 @@ def r_testing():
 # Task List
 ################################################
 # @home.route("/tasklist", methods=["POST"])
-@home.route('/tasklist', methods = ['GET'])
+@home.route('/tasklist', methods=['GET'])
 def r_tasklist():
     module_list = []
     for rule in current_app.url_map.iter_rules():
@@ -39,7 +39,7 @@ def r_state(task_id, task_app):
 
 
 ################################################
-# Result 
+# Result
 ################################################
 @home.route("/result/<task_id>")
 def r_result(task_id):
@@ -49,7 +49,7 @@ def r_result(task_id):
 
 
 ################################################
-# API Keys 
+# API Keys
 ################################################
 @home.route("/apikey", methods=["POST"])
 def r_apikey():
@@ -68,26 +68,28 @@ def r_apikey():
 def r_fullcontact():
     celery = create_celery(current_app)
     json_result = request.get_json()
-    username = json_result.get("username","")
+    username = json_result.get("username", "")
     # username = request.form.get('username')
-    print "Fullcontact - Detected Username : ", username
-    res = celery.send_task('modules.fullcontact.fullcontact_tasks.t_fullcontact', args=(username, )) 
-    print "Task : ", res.task_id
+    print("Fullcontact - Detected Username : ", username)
+    res = celery.send_task('modules.fullcontact.fullcontact_tasks.' +
+                           't_fullcontact', args=(username, ))
+    print("Task : ", res.task_id)
     return jsonify(module="fullcontact", task=res.task_id, param=username)
 
 
 ################################################
-# Github 
+# Github
 ################################################
 @home.route("/github", methods=["POST"])
 def r_github():
     celery = create_celery(current_app)
     json_result = request.get_json()
-    username = json_result.get("username","")
+    username = json_result.get("username", "")
     # username = request.form.get('username')
-    print "Github - Detected Username : ", username
-    res = celery.send_task('modules.github.github_tasks.t_github', args=(username, )) 
-    print "Task : ", res.task_id
+    print("Github - Detected Username : ", username)
+    res = celery.send_task('modules.github.github_tasks.t_github',
+                           args=(username, ))
+    print("Task : ", res.task_id)
     return jsonify(module="github", task=res.task_id, param=username)
 
 
@@ -98,10 +100,11 @@ def r_github():
 def r_keybase():
     celery = create_celery(current_app)
     json_result = request.get_json()
-    username = json_result.get("username","")
-    print "Keybase - Detected Username : ", username
-    res = celery.send_task('modules.keybase.keybase_tasks.t_keybase', args=(username, )) 
-    print "Task : ", res.task_id
+    username = json_result.get("username", "")
+    print("Keybase - Detected Username : ", username)
+    res = celery.send_task('modules.keybase.keybase_tasks.t_keybase',
+                           args=(username, ))
+    print("Task : ", res.task_id)
     return jsonify(module="keybase", task=res.task_id, param=username)
 
 
@@ -112,10 +115,11 @@ def r_keybase():
 def r_twitter():
     celery = create_celery(current_app)
     json_result = request.get_json()
-    username = json_result.get("username","")
-    print "Twitter - Detected Username : ", username
-    res = celery.send_task('modules.twitter.twitter_tasks.t_twitter', args=(username, )) 
-    print "Task : ", res.task_id
+    username = json_result.get("username", "")
+    print("Twitter - Detected Username : ", username)
+    res = celery.send_task('modules.twitter.twitter_tasks.t_twitter',
+                           args=(username, ))
+    print("Task : ", res.task_id)
     return jsonify(module="twitter", task=res.task_id, param=username)
 
 
@@ -126,21 +130,22 @@ def r_twitter():
 def r_gitlab(username=None):
     celery = create_celery(current_app)
     username = request.form.get("username")
-    print "Gitlab - Detected Username : ", username
-    res = celery.send_task('modules.gitlab.gitlab_tasks.t_gitlab', args=(username, )) 
-    print "Task : ", res.task_id
+    print("Gitlab - Detected Username : ", username)
+    res = celery.send_task('modules.gitlab.gitlab_tasks.t_gitlab',
+                           args=(username, ))
+    print("Task : ", res.task_id)
     return jsonify(module="gitlab", task=res.task_id, param=username)
 
 
 ################################################
-# Usersearch 
+# Usersearch
 ################################################
 @home.route("/usersearch", methods=["POST"])
 def r_usersearch(username=None):
     celery = create_celery(current_app)
     username = request.form.get("username")
-    print "Usersearch - Detected Username : ", username
-    res = celery.send_task('modules.usersearch.usersearch_tasks.t_usersearch', args=(username, )) 
-    print "Task : ", res.task_id
+    print("Usersearch - Detected Username : ", username)
+    res = celery.send_task('modules.usersearch.usersearch_tasks.t_usersearch',
+                           args=(username, ))
+    print("Task : ", res.task_id)
     return jsonify(module="usersearch", task=res.task_id, param=username)
-

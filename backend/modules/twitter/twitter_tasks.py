@@ -4,16 +4,15 @@
 import sys
 import json
 import requests
-import urllib3
+# import urllib3
 
 import tweepy
-import oauth2
+# import oauth2
 
-try : 
+try:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    from factories.fontcheat import fontawesome_cheat, search_icon
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 except ImportError:
@@ -22,7 +21,6 @@ except ImportError:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    from factories.fontcheat import fontawesome_cheat, search_icon
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
@@ -37,15 +35,18 @@ def t_twitter(username):
 
     twitter_consumer_key = api_keys_search('twitter_consumer_key')
     twitter_consumer_secret = api_keys_search('twitter_consumer_secret')
-    twitter_access_token = api_keys_search('twitter_access_token')
-    twitter_access_token_secret = api_keys_search('twitter_access_token_secret')
+    # twitter_access_token = api_keys_search('twitter_access_token')
+    # twitter_access_token_secret = api_keys_search(
+    #     'twitter_access_token_secret')
 
     auth = tweepy.OAuthHandler(twitter_consumer_key, twitter_consumer_secret)
     # auth.set_access_token(twitter_access_token, twitter_access_token_secret)
 
     api = tweepy.API(auth)
-    # consumer = oauth2.Consumer(key=twitter_consumer_key, secret=twitter_consumer_secret)
-    # access_token = oauth2.Token(key=twitter_access_token, secret=twitter_access_token_secret)
+    # consumer = oauth2.Consumer(key=twitter_consumer_key,
+    #                            secret=twitter_consumer_secret)
+    # access_token = oauth2.Token(key=twitter_access_token,
+    #                             secret=twitter_access_token_secret)
     # client = oauth2.Client(consumer, access_token)
 
     # Total
@@ -74,12 +75,12 @@ def t_twitter(username):
     timeline = []
 
     # Twitter : TODO : Get hashtags as footprinting
-    # Twitter : TODO : Validations 
+    # Twitter : TODO : Validations
     # footprint Array
     # footprint = []
 
     # Bios Array
-    bios = []
+    # bios = []
 
     children = []
     children.append({"name": "Likes", "total": result_api.favourites_count})
@@ -89,14 +90,19 @@ def t_twitter(username):
     # children.append({"name": "Listed", "total": result_api.listed_count})
     resume = {"name": "twitter", "children": children}
 
-    popularity.append({"title": "Followers", "value": result_api.followers_count})
+    popularity.append({"title": "Followers",
+                       "value": result_api.followers_count})
     popularity.append({"title": "Listed", "value": result_api.listed_count})
-    popularity.append({"title": "Following", "value": result_api.friends_count})
+    popularity.append({"title": "Following",
+                       "value": result_api.friends_count})
 
     approval.append({"title": "Tweets", "value": result_api.statuses_count})
     approval.append({"title": "Likes", "value": result_api.favourites_count})
 
-    timeline_item = {'date': result_api.created_at.strftime("%Y/%m/%d %H:%M:%S"), 'action' : 'Twitter : Create Account',  'icon': 'fa-twitter' }
+    timeline_item = {'date': result_api.created_at.strftime(
+        "%Y/%m/%d %H:%M:%S"),
+        "action": "Twitter : Create Account",
+        "icon": "fa-twitter"}
     timeline.append(timeline_item)
 
     total.append({'raw': raw_node})
@@ -113,7 +119,7 @@ def t_twitter(username):
 
 
 def output(data):
-    print json.dumps(data, ensure_ascii=False, indent=2)
+    print(json.dumps(data, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
