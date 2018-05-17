@@ -5,9 +5,28 @@
       .controller('apikeyController', apikeyController);
 
   /** @ngInject */
-  function apikeyController($scope, $http, editableOptions, editableThemes) {
-
+  function apikeyController($scope, $http, editableOptions, editableThemes, toastr, toastrConfig) {
     console.log('Initialize Controller API Key');
+
+    // Notifications
+    var defaultConfig = angular.copy(toastrConfig);
+    var openedToasts = [];
+    $scope.options = {
+      autoDismiss: false,
+      positionClass: 'toast-top-right',
+      type: 'info',
+      timeOut: '1500',
+      extendedTimeOut: '2000',
+      allowHtml: false,
+      closeButton: false,
+      tapToDismiss: true,
+      progressBar: false,
+      newestOnTop: false,
+      maxOpened: 0,
+      preventDuplicates: false,
+      preventOpenDuplicates: false
+    };
+    angular.extend(toastrConfig, $scope.options);
 
     $http.post('http://127.0.0.1:5000/apikey')
         .success(function (data, status, headers, config) {
@@ -28,7 +47,8 @@
     };
 
     $scope.updateKey = function() {
-      $http.post('http://127.0.0.1:5000/apikey', $scope.keys);
+        openedToasts.push(toastr['success']("The keys have been stored", "Save Keys"));
+        $http.post('http://127.0.0.1:5000/apikey', $scope.keys);
     };
 
     editableOptions.theme = 'bs3';
