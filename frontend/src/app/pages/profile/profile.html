@@ -1,4 +1,11 @@
-<div ba-panel ba-panel-class="profile-page black-panel">
+<div class="container">
+    <div class="col-md-6 col-centered" ba-panel ba-panel-class="black-panel" ng-hide="profile">
+        <h2 style="text-align: center;">No profile</h2>
+        <img class="svg-no-info" height="400" style="display:block; margin:auto;" src="assets/img/app/no-profile.svg">
+    </div>
+</div>
+
+<div ba-panel ba-panel-class="profile-page black-panel" ng-show="profile">
 
     <h3 class="with-line">General Information</h3>
 
