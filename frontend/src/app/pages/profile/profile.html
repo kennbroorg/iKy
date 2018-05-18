@@ -1,9 +1,22 @@
-<div class="container">
-    <div class="col-md-6 col-centered" ba-panel ba-panel-class="black-panel" ng-hide="profile">
-        <h2 style="text-align: center;">No profile</h2>
-        <img class="svg-no-info" height="400" style="display:block; margin:auto;" src="assets/img/app/no-profile.svg">
+<div class="row-fluid" ng-hide="profile"> 
+  <div class="col-lg-12 col-sm-12 col-xs-12">
+    <div ba-panel ba-panel-tittle="No profile" ba-panel-class="black-panel"> 
+      <div class="banner">
+        <div class="large-banner-wrapper" style="padding-top:20px;">
+          <img ng-src="assets/img/app/no-info.png" alt=""/>
+        </div>
+        <div class="banner-text-wrapper">
+          <div class="banner-text">
+            <h1>No profile</h1>
+
+            <p>There is no profile to show</p>
+
+          </div>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
+</div> 
 
 <div ba-panel ba-panel-class="profile-page black-panel" ng-show="profile">
 
