@@ -40,7 +40,6 @@ Primero que nada, instalar [nodejs](https://nodejs.org/es/)
 Y luego se debe instalar **gulp** y las dependencias desde el directorio **frontend**
 ```shell
 cd frontend
-npm install --save gulp-install
 npm install
 ```
 

@@ -40,9 +40,7 @@ First of all, install [nodejs](https://nodejs.org/en/)
 And then you must install **gulp** and the dependencies from the directory **frontend**
 ```shell
 cd frontend
-sudo npm install -g bower
-sudo npm install --save gulp-install
-sudo npm install
+npm install
 ```
 
 Finally, to run frontend server, execute:
