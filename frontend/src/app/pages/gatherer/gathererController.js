@@ -172,7 +172,7 @@
         // Process data result
         function callbackProccessData(response) {
             if (response.data.state == "SUCCESS"){
-                console.log("TERMINO !!", response.data.task_app, response.data.task_id, response.data.state);
+                console.log("FINISH !!", response.data.task_app, response.data.task_id, response.data.state);
                 openedToasts.push(toastr['success']("", response.data.task_app));
                 $polling.stopPolling(response.data.task_app + response.data.task_id);
                 if (isTaskRun(response.data.task_id) != -1) {
