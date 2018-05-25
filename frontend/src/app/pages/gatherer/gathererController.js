@@ -141,6 +141,21 @@
 
         
         //////////////////////////////////////////////////
+        // Leaks data
+        //////////////////////////////////////////////////
+        console.log("Execute Leaks");
+        $http.post('http://127.0.0.1:5000/leaks', {username: $scope.emailAddress})
+            .success(function (data, status, headers, config) {
+                $scope.tasks.push({
+                    "module" : data.module, "param" : data.param,
+                    "task_id" : data.task, "state" : "PENDING", "from" : "Initial", 
+                });
+                openedToasts.push(toastr['info']("", "Leaks"));
+                $polling.startPolling(data.module + data.task, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
+            });
+
+
+        //////////////////////////////////////////////////
         // Callback 
         //////////////////////////////////////////////////
         // Progress bar
