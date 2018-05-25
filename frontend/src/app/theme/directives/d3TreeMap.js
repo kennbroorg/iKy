@@ -1,7 +1,3 @@
-/**
- * Created by kennbro on 13/03/18.
- */
-
 (function () {
     'use strict';
 
@@ -55,29 +51,10 @@
                     .size([width, height])
                     .sticky(true)
                     .value(function(d) { 
-                        console.log("Valores", d.total);
                         return d.total; });
 
-
-
-                // var data2 = {
-                //   "name": "twitter",
-                //   "children": [
-                //        {"name": "Followers", "total": 3938},
-                //        {"name": "Following", "total": 3812},
-                //        {"name": "Listed", "total": 6714},
-                //        {"name": "Tweets", "total": 73},
-                //        {"name": "Likes", "total": 74}
-                //       ]
-                //      };
-            
-                // var data = scope.treedata;
-
-                  console.log("DATA", data);
-                  // console.log("DATA2", data2);
                   var nodes = treemap.nodes(root)
                       .filter(function(d) {return !d.children; });
-                  console.log("NODES", nodes);
                   var cell = svg.selectAll("g")
                       .data(nodes)
                     .enter().append("svg:g")
@@ -95,48 +72,12 @@
                       .attr("y", function(d) { return d.dy / 2; })
                       .attr("dy", ".35em")
                       .attr("text-anchor", "middle")
-                      .text(function(d) { console.log("text", d.name + ": " + d.total); return d.name + ": " + d.total; })
+                      .text(function(d) { return d.name + ": " + d.total; })
                       .style("fill", "#B3FEFF")
                       .style("opacity", 1);
-                  console.log("CELL", cell);
-                   // d3.select(window).on("click", function() { zoom(root); });
-                   // d3.select("select").on("change", function() {
-                    //treemap.value(this.value == "size" ? size : count).nodes(root);
-                    // treemap.value((this.value == "total") ? total : (this.value == "building") ? building : (this.value == "ground") ? ground : cash).nodes(root);
-                  //  zoom(node);
-                  // });
-                // function total(d) {
-                //   return d.total;
-                // }
-                // function zoom(d) {
-                //   var kx = width / d.dx, ky = height / d.dy;
-                //   x.domain([d.x, d.x + d.dx]);
-                //   y.domain([d.y, d.y + d.dy]);
-                //   var t = svg.selectAll("g.cell").transition()
-                //       .duration(d3.event.altKey ? 7500 : 750)
-                //       .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
-                //   t.select("rect")
-                //       .attr("width", function(d) { return kx * d.dx - 1; })
-                //       .attr("height", function(d) { return ky * d.dy - 1; })
-                //   t.select("text")
-                //       .attr("x", function(d) { return kx * d.dx / 2; })
-                //       .attr("y", function(d) { return ky * d.dy / 2; })
-                //       .style("opacity", function(d) { return kx * d.dx > d.w ? 1 : 0; });
-                //   node = d;
-                //   d3.event.stopPropagation();
-                // }
             }
 
-
-
-
-
-
-
-
-
           scope.$watch('treedata', function(){
-              console.log("TREEDATA ", scope.treedata);
               scope.renderTreemap(scope.treedata);
           });
 

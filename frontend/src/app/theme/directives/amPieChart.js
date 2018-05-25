@@ -156,7 +156,6 @@
 
 
             scope.$watch('values', function(){
-              console.log("VALUESSSSSSSSS", scope.values);
               // scope.render(scope.values);
               initChart();
             });

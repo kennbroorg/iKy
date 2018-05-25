@@ -51,6 +51,9 @@
 
     $scope.clearInfo = function () {
         // Aniquilate everything
+        for(var i=0; i<$scope.tasks.length; i++) {
+            $polling.stopPolling($scope.tasks[i].module + $scope.tasks[i].task_id);
+        }
         localStorageService.remove('button-off');
         localStorageService.remove('gather');
         localStorageService.remove('emailAddress');
@@ -106,6 +109,8 @@
                     "task_id" : data.task, "state" : "PENDING", "from" : "Initial", 
                 });
                 openedToasts.push(toastr['info']("", "Initial Gather"));
+                // KKK : Borrar
+                console.log("Enciendo : ", data.module + data.task);
                 $polling.startPolling(data.module + data.task, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
 
             });

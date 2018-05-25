@@ -11,9 +11,6 @@
       link: function (scope, element) {
         var logo = document.getElementById('logo');
 
-        console.log("WIDTH : ", logo.offsetWidth);
-        console.log("HEIGHT : ", logo.offsetHeight);
-
         let map = (val, a1, a2, b1, b2) => b1 + (val - a1) * (b2 - b1) / (a2 - a1)
 
         class Connect {
@@ -71,9 +68,6 @@
           resize() {
             this.width = canvas.width = logo.offsetWidth  - 40
             this.height = canvas.height = logo.offsetHeight - 40
-            // this.width = canvas.width = window.innerWidth
-            // this.height = canvas.height = window.innerHeight
-
             this.bounds.right = this.width - 1
             this.bounds.bottom = this.height - 1
           }

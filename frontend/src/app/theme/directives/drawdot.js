@@ -6,7 +6,6 @@
     
     /** @ngInject */
     function drawdot() {
-      console.log(" Utilizando la directiva dots!!!!");
         return {
           restrict: 'A',
           link: function (scope, element) {
@@ -21,9 +20,6 @@
               var color = '#a9efe7';
               // var colorDot = '#000000';
               // var color = '#000000';
-
-              console.log("WIDTH : ", logo.offsetWidth);
-              console.log("HEIGHT : ", logo.offsetHeight);
 
               canvas.width = logo.offsetWidth - 40;
               canvas.height = logo.offsetHeight - 40;
@@ -114,21 +110,10 @@
                 dot.animate();
               }
 
-              //window.onmousemove = function(parameter) {
-              //  mousePosition.x = parameter.pageX;
-              //  mousePosition.y = parameter.pageY;
-              //}
-
-              // mousePosition.x = window.innerWidth / 2;
-              // mousePosition.y = window.innerHeight / 2;
               mousePosition.x = canvas.width / 2;
               mousePosition.y = canvas.height / 2;
 
               setInterval(createDots, 1000/30);
-
-
-
-
 
           }
         };
