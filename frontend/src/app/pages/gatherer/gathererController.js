@@ -51,6 +51,9 @@
 
     $scope.clearInfo = function () {
         // Aniquilate everything
+        for(var i=0; i<$scope.tasks.length; i++) {
+            $polling.stopPolling($scope.tasks[i].module + $scope.tasks[i].task_id);
+        }
         localStorageService.remove('button-off');
         localStorageService.remove('gather');
         localStorageService.remove('emailAddress');
