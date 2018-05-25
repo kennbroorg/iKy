@@ -109,6 +109,8 @@
                     "task_id" : data.task, "state" : "PENDING", "from" : "Initial", 
                 });
                 openedToasts.push(toastr['info']("", "Initial Gather"));
+                // KKK : Borrar
+                console.log("Enciendo : ", data.module + data.task);
                 $polling.startPolling(data.module + data.task, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
 
             });
