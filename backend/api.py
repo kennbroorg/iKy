@@ -124,6 +124,21 @@ def r_twitter():
 
 
 ################################################
+# Leaks
+################################################
+@home.route("/leaks", methods=["POST"])
+def r_leaks():
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    print("Leaks - Detected Username : ", username)
+    res = celery.send_task('modules.leaks.leaks_tasks.t_leaks',
+                           args=(username, ))
+    print("Task : ", res.task_id)
+    return jsonify(module="leaks", task=res.task_id, param=username)
+
+
+################################################
 # Gitlab
 ################################################
 @home.route("/gitlab", methods=["POST"])
