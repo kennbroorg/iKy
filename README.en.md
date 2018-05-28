@@ -1,5 +1,8 @@
 # iKy
 
+## PROJECT
+Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
+
 ## INSTALL BACKEND
 
 ### Redis
