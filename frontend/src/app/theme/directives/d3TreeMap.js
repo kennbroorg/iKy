@@ -72,9 +72,21 @@
                       .attr("y", function(d) { return d.dy / 2; })
                       .attr("dy", ".35em")
                       .attr("text-anchor", "middle")
-                      .text(function(d) { return d.name + ": " + d.total; })
+                      // .text(function(d) { return d.name + ": " + d.total; })
+                      .text(function(d) { return d.name; })
                       .style("fill", "#B3FEFF")
-                      .style("opacity", 1);
+                      .style("opacity", 1)
+                      .style("overflow", "visible");
+                  cell.append("svg:text")
+                      .attr("x", function(d) { return d.dx / 2; })
+                      .attr("y", function(d) { return d.dy / 2; })
+                      .attr("dy", "18px")
+                      .attr("text-anchor", "middle")
+                      // .text(function(d) { return d.name + ": " + d.total; })
+                      .text(function(d) { return d.total; })
+                      .style("fill", "#B3FEFF")
+                      .style("opacity", 1)
+                      .style("overflow", "visible");
             }
 
           scope.$watch('treedata', function(){
