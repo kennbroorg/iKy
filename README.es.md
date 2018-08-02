@@ -12,6 +12,7 @@ wget http://download.redis.io/redis-stable.tar.gz
 tar xvzf redis-stable.tar.gz
 cd redis-stable
 make
+sudo make install
 ```
 
 Y encender el server en una terminal aparte
@@ -38,10 +39,22 @@ python app.py
 ## INSTALAR FRONTEND
 
 ### Dependencias
-Primero que nada, instalar [nodejs](https://nodejs.org/es/)
+Primero que nada, instalar [nodejs](https://nodejs.org/es/) 8.
 
-Y luego se debe instalar **gulp** y las dependencias desde el directorio **frontend**
+Ejemplo en Ubuntu 16.04
 ```shell
+sudo apt-get update
+sudo apt-get install -y curl python-software-properties
+sudo curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+node -v
+npm -v 
+```
+
+Y luego se debe instalar **bower**, **gulp** y las dependencias desde el directorio **frontend**
+```shell
+sudo npm install -g bower
+sudo npm install -g gulp
 cd frontend
 npm install
 ```
@@ -55,7 +68,7 @@ gulp serve
 Abrir el navegador y [DISFRUTAR](http://127.0.0.1:3000)
 
 ## CONFIGURACION DE APIKEYS
-Por ahora lo ideal es cargar las apiKeys de fullcontact y twitter a través del frontend desde la opción de **API Keys**. Es intuitivo.  
+Por ahora lo ideal es cargar las apiKeys de [fullcontact](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs) y [twitter](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html) a través del frontend desde la opción de **API Keys**. Es intuitivo.  
 
 # Proximamente
 Prometo meter todo junto en un script
