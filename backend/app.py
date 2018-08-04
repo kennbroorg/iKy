@@ -2,9 +2,10 @@
 from factories.application import create_application
 import os
 import shutil
+import argparse
 
 
-def run():
+def run(ip='127.0.0.1'):
 
     # For apiKey initialization
     cur_dir = os.getcwd()
@@ -17,8 +18,14 @@ def run():
 
     app = create_application()
     # port = int(environ.get("PORT", 5000))
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    app.run(host=ip, port=5000, debug=True)
 
 
 if __name__ == '__main__':
-    run()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--ip', action='store', default='127.0.0.1',
+                        help='IP address, just for vagrant')
+
+    args = parser.parse_args()
+    ip = str(args.ip)
+    run(ip)
