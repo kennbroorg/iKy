@@ -1,0 +1,20 @@
+<div class="col-md-4 col-lg-4" ng-if="$parent.gather.ghostproject.result[2].leaks.length">
+    <div ba-panel ba-panel-title="GhostProject (Leaked Credentials)" ba-panel-class="medium-panel black-panel with-scroll light-text">
+        <div class="horizontal-scroll">
+            <table class="table table-striped" st-table="$parent.gather.ghostproject.result[2].leaks">
+                <thead>
+                    <tr class="sortable">
+                        <th st-sort="email" st-sort-default="true">E-mail</th>
+                        <th st-sort="password">Password</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in $parent.gather.ghostproject.result[2].leaks">
+                        <td>{{item.email}}</td>
+                        <td>{{item.password}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

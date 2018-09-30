@@ -129,7 +129,20 @@
                 $polling.startPolling(data.module + data.task, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
             });
 
-        
+        //////////////////////////////////////////////////
+        // GitHub data
+        //////////////////////////////////////////////////
+        console.log("Execute GhostProject");
+        $http.post('http://127.0.0.1:5000/ghostproject', {username: $scope.username})
+            .success(function (data, status, headers, config) {
+                $scope.tasks.push({
+                    "module" : data.module, "param" : data.param,
+                    "task_id" : data.task, "state" : "PENDING", "from" : "Initial", 
+                });
+                openedToasts.push(toastr['info']("", "GhostProject"));
+                $polling.startPolling(data.module + data.task, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
+            });
+
         //////////////////////////////////////////////////
         // Keybase data
         //////////////////////////////////////////////////
