@@ -94,6 +94,21 @@ def r_github():
 
 
 ################################################
+# GhostProject
+################################################
+@home.route("/ghostproject", methods=["POST"])
+def r_ghostproject():
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    print("GhostProject - Detected Username : ", username)
+    res = celery.send_task('modules.ghostproject.ghostproject_tasks.t_ghostproject',
+                           args=(username, ))
+    print("Task : ", res.task_id)
+    return jsonify(module="ghostproject", task=res.task_id, param=username)
+
+
+################################################
 # Keybase
 ################################################
 @home.route("/keybase", methods=["POST"])
