@@ -130,7 +130,7 @@
             });
 
         //////////////////////////////////////////////////
-        // GitHub data
+        // GhostProject data
         //////////////////////////////////////////////////
         console.log("Execute GhostProject");
         $http.post('http://127.0.0.1:5000/ghostproject', {username: $scope.username})
