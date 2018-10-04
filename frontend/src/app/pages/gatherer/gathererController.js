@@ -133,7 +133,7 @@
         // GhostProject data
         //////////////////////////////////////////////////
         console.log("Execute GhostProject");
-        $http.post('http://127.0.0.1:5000/ghostproject', {username: $scope.username})
+        $http.post('http://127.0.0.1:5000/ghostproject', {username: $scope.emailAddress})
             .success(function (data, status, headers, config) {
                 $scope.tasks.push({
                     "module" : data.module, "param" : data.param,
