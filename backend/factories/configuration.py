@@ -16,6 +16,7 @@ def get_config():
                           'modules.gitlab.gitlab_tasks',
                           'modules.leaks.leaks_tasks',
                           'modules.twitter.twitter_tasks',
+                          'modules.ghostproject.ghostproject_tasks',
                           'modules.github.github_tasks',
                           'modules.fullcontact.fullcontact_tasks',
                           'modules.usersearch.usersearch_tasks')
