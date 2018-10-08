@@ -19,3 +19,5 @@ The idea is that the main branch is master. There will be a new branch called "r
 - *[FIX] message* - For fix, but it is not HOT and it's throught another branch, not master
 - *[MRG] message* - For Merge
 - *[DOC] message* - For documentation
+
+Contributions of any kind are welcome!
