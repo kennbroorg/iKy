@@ -10,9 +10,6 @@
   fill:#e6e6e6;
 }
 
-
-
-
 .soup-title {
   font-size: 40px;
 }
@@ -84,4 +81,78 @@
 .letter {
   /*display: inline-block;*/
   color: red;
+}
+
+.tag {
+  text-transform: lowercase;
+  font-size: 11px;
+  font-weight: $font-light;
+  width: 80px;
+  /* cursor: pointer; */
+  display: inline-block;
+  &.label {
+    /* padding-bottom: 100px;
+    margin-bottom: 10px; */
+    border-radius: 2px;
+    line-height: 1.1;
+  }
+  &.work {
+    background-color: $primary;
+  }
+
+  &.soft {
+    background-color: $warning;
+  }
+
+  &.hard {
+    background-color: $success;
+  }
+
+  &.no {
+    background-color: $danger;
+  }
+}
+
+/* GitHub Calendar */
+.contrib-legend {
+    float: right;
+}
+
+.contrib-legend .legend {
+    /* align-items: center;
+    position: relative; */
+    bottom: -1px;
+    display: inline-block;
+    list-style: none;
+    list-style-type: none;
+    list-style-position: initial;
+    list-style-image: initial;
+    /* margin: 0 5px; */
+    margin: 0px;
+    padding: 5px;
+    position: relative;
+}
+
+.contrib-legend .legend li {
+    display: inline-block;
+    height: 10px;
+    width: 10px;
+}
+
+h2.f4 {
+    font-size: 12px;
+}
+
+#git-cal-1 {
+    margin: 0px;
+    padding: 0px;
+}
+
+#git-cal-2 {
+    margin: 0px;
+    padding: 0px;
+}
+
+.float-left {
+    visibility: hidden;
 }
