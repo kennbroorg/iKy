@@ -98,18 +98,22 @@
   }
   &.work {
     background-color: $primary;
+    color: black;
   }
 
   &.soft {
     background-color: $warning;
+    color: black;
   }
 
   &.hard {
     background-color: $success;
+    color: black;
   }
 
   &.no {
     background-color: $danger;
+    color: black;
   }
 }
 
@@ -156,3 +160,9 @@ h2.f4 {
 .float-left {
     visibility: hidden;
 }
+
+/*
+.day {
+    fill: blue !important;
+}
+*/
