@@ -102,7 +102,7 @@
         // Fullcontact data
         //////////////////////////////////////////////////
         console.log("Execute Fullcontact");
-        $http.post('http://127.0.0.1:5000/fullcontact', {username: $scope.emailAddress})
+        $http.post('http://127.0.0.1:5000/fullcontact', {username: $scope.emailAddress, from: 'Initial'})
             .success(function (data, status, headers, config) {
                 $scope.tasks.push({
                     "module" : data.module, "param" : data.param,
@@ -119,7 +119,7 @@
         // GitHub data
         //////////////////////////////////////////////////
         console.log("Execute Github");
-        $http.post('http://127.0.0.1:5000/github', {username: $scope.username})
+        $http.post('http://127.0.0.1:5000/github', {username: $scope.username, from: 'Initial'})
             .success(function (data, status, headers, config) {
                 $scope.tasks.push({
                     "module" : data.module, "param" : data.param,
@@ -133,7 +133,7 @@
         // GhostProject data
         //////////////////////////////////////////////////
         console.log("Execute GhostProject");
-        $http.post('http://127.0.0.1:5000/ghostproject', {username: $scope.emailAddress})
+        $http.post('http://127.0.0.1:5000/ghostproject', {username: $scope.emailAddress, from: 'Initial'})
             .success(function (data, status, headers, config) {
                 $scope.tasks.push({
                     "module" : data.module, "param" : data.param,
@@ -147,7 +147,7 @@
         // Keybase data
         //////////////////////////////////////////////////
         console.log("Execute Keybase");
-        $http.post('http://127.0.0.1:5000/keybase', {username: $scope.username})
+        $http.post('http://127.0.0.1:5000/keybase', {username: $scope.username, from: 'Initial'})
             .success(function (data, status, headers, config) {
                 $scope.tasks.push({
                     "module" : data.module, "param" : data.param,
@@ -162,7 +162,7 @@
         // Leaks data
         //////////////////////////////////////////////////
         console.log("Execute Leaks");
-        $http.post('http://127.0.0.1:5000/leaks', {username: $scope.emailAddress})
+        $http.post('http://127.0.0.1:5000/leaks', {username: $scope.emailAddress, from: 'Initial'})
             .success(function (data, status, headers, config) {
                 $scope.tasks.push({
                     "module" : data.module, "param" : data.param,
@@ -195,9 +195,9 @@
             return -1;
         }
 
-        function isModuleParamRun(module, param) {
+        function isModuleParamRun(module, param, from) {
             for(var i=0; i<$scope.tasks.length; i++) {
-                if ($scope.tasks[i].module == module && $scope.tasks[i].param == param) return i;
+                if ($scope.tasks[i].module == module && $scope.tasks[i].param == param && $scope.tasks[i].from == from) return i;
             }
             return -1;
         }
@@ -236,8 +236,10 @@
                         if (data.result[items].tasks != null) {
                             for (var run in data.result[items].tasks) {
                                 if (isTaskImplemented(data.result[items].tasks[run].module) == true && 
-                                    isModuleParamRun(data.result[items].tasks[run].module, data.result[items].tasks[run].param) == -1) {
-                                    $http.post('http://127.0.0.1:5000/' + data.result[items].tasks[run].module, {username: data.result[items].tasks[run].param})
+                                    isModuleParamRun(data.result[items].tasks[run].module, data.result[items].tasks[run].param, 
+                                            data.result[items].tasks[run].from) == -1) {
+                                    $http.post('http://127.0.0.1:5000/' + data.result[items].tasks[run].module, {username: data.result[items].tasks[run].param, 
+                                            from: response.data.task_app})
                                         .success(function (data, status, headers, config) {
                                             $scope.tasks.push({
                                                 "module" : data.module, "param" : data.param,
