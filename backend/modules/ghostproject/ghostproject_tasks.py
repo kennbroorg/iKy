@@ -38,6 +38,7 @@ def t_ghostproject(username):
     total = []
     total.append({'module': 'ghostproject'})
     total.append({'param': username})
+    total.append({'validation': 'hard'})
     total.append({'leaks': parse_response(req)})
 
     return total

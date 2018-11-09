@@ -19,7 +19,7 @@
 
             var margin = {top: 20, right: 20, bottom: 20, left: 20},
                width = widthParent - margin.left - margin.right,
-               height = heightParent - margin.top - margin.bottom;
+               height = heightParent - margin.top - margin.bottom - margin.top - margin.bottom;
 
             scope.renderTreemap = function(data) {
 

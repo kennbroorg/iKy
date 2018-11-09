@@ -1,6 +1,7 @@
-  <div class="col-md-8 col-lg-8" ng-show="$parent.gather.github.result[3].graphic[1].cal_actual" ng-controller="githubCalendar">
-    <div ba-panel ba-panel-title="GitHub contributions (two last years)" ba-panel-class="medium-panel black-panel with-scroll light-text">
-      <div id="git-cal-1" align="center" style="padding:20px;" ng-bind-html="$parent.gather.github.result[3].graphic[1].cal_actual"></div>
-      <div id="git-cal-2" align="center" style="padding:20px;" ng-bind-html="$parent.gather.github.result[3].graphic[2].cal_previous"></div>
+  <div class="col-md-8 col-lg-8" ng-show="$parent.gather.github.result[4].graphic[1].cal_actual" ng-controller="githubCalendar">
+    <div ba-panel ba-panel-title="GitHub contributions (two last years)<div style='text-align: right;'><span class='tag label {{gather.github.result[2].validation}}'>validation</span></div>" ba-panel-class="medium-panel black-panel wit.-scroll light-text">
+    <!-- <div ba-panel ba-panel-title="GitHub contributions (two last years)" ba-panel-class="medium-panel black-panel light-text"> -->
+      <div id="git-cal-1" align="center" style="padding:0px;" ng-bind-html="$parent.gather.github.result[4].graphic[1].cal_actual"></div>
+      <div id="git-cal-2" align="center" style="padding:0px;" ng-bind-html="$parent.gather.github.result[4].graphic[2].cal_previous"></div>
     </div>
   </div>
