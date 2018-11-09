@@ -9,8 +9,59 @@
 
 </div>
 
-
 <div class="row">
+  <div class="col-xlg-6 col-lg-6 col-md-6 col-sm-12 col-xs-12"
+       ba-panel
+       ba-panel-title="Validation Information"
+       ba-panel-class="medium-panel black-panel feed-panel">
+    <div class="feed-messages-container" track-width="smallContainerWidth" min-width="360">
+
+      <div class="feed-message">
+        <div class="message-icon">
+          <span class='tag label hard'>validation</span>
+        </div>
+        <div class="text-block text-message"> 
+          <div class="message-header">
+            <span class="author">Hard Validation</span>
+          </div>
+          <div class="message-content">
+              This label indicates that the information collected is strongly validated. That is, it was obtained directly with the e-mail or was validated by some code algorithm.
+          </div>
+        </div>
+      </div>
+
+      <div class="feed-message">
+        <div class="message-icon">
+          <span class='tag label soft'>validation</span>
+        </div>
+        <div class="text-block text-message"> 
+          <div class="message-header">
+            <span class="author">Soft Validation</span>
+          </div>
+          <div class="message-content">
+            This label indicates that the information collected is softly validated. That is, it was obtained from some page crawling or API not directly related. But it's still very good information.
+          </div>
+        </div>
+      </div>
+
+      <div class="feed-message">
+        <div class="message-icon">
+          <span class='tag label no'>validation</span>
+        </div>
+        <div class="text-block text-message"> 
+          <div class="message-header">
+            <span class="author">No Validation</span>
+          </div>
+          <div class="message-content">
+            This label indicates that the information collected is not validated. That is, it was obtained by taking the username from the e-mail or through search engines. We recommend that the information be validated visually or by other mechanisms.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+<!-- </div> -->
+
   <div class="col-lg-6 col-md-12 col-sm-12"
        ba-panel
        ba-panel-title="Modules Gather Type"
