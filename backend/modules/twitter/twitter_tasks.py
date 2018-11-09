@@ -31,7 +31,7 @@ logger = get_task_logger(__name__)
 
 
 @celery.task
-def t_twitter(username):
+def t_twitter(username, from_m):
 
     twitter_consumer_key = api_keys_search('twitter_consumer_key')
     twitter_consumer_secret = api_keys_search('twitter_consumer_secret')
@@ -53,6 +53,11 @@ def t_twitter(username):
     total = []
     total.append({'module': 'twitter'})
     total.append({'param': username})
+    # Evaluates the module that executed the task and set validation
+    if (from_m == 'Initial'):
+        total.append({'validation': 'no'})
+    else:
+        total.append({'validation': 'soft'})
 
     try:
         result_api = api.get_user(username)

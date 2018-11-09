@@ -46,6 +46,7 @@ def t_leaks(username):
     total = []
     total.append({'module': 'leaks'})
     total.append({'param': username})
+    total.append({'validation': 'hard'})
 
     # Graphic Array
     graphic = []

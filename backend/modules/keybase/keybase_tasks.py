@@ -28,7 +28,7 @@ logger = get_task_logger(__name__)
 
 
 @celery.task
-def t_keybase(username):
+def t_keybase(username, from_m):
     url = "https://keybase.io/_/api/1.0/user/lookup.json?" + \
           "usernames=%s" % username
     req = requests.get(url)
@@ -43,6 +43,11 @@ def t_keybase(username):
     total = []
     total.append({'module': 'keybase'})
     total.append({'param': username})
+    # Evaluates the module that executed the task
+    if (from_m == 'Initial'):
+        total.append({'validation': 'no'})
+    else:
+        total.append({'validation': 'soft'})
 
     if (raw_node['status']['code'] == 0) and (raw_node['them'][0] is not None):
         raw = raw_node['them'][0]

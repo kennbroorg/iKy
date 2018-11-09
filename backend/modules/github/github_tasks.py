@@ -26,7 +26,7 @@ logger = get_task_logger(__name__)
 
 
 @celery.task
-def t_github(username):
+def t_github(username, from_m):
     """ Task of Celery that get info from github """
     req = requests.get("https://api.github.com/users/%s" % username)
 
@@ -37,10 +37,13 @@ def t_github(username):
     previous_year_to = date(today.year - 1, today.month, today.day)
 
     svg_req = "https://github.com/users/%s/contributions?from=%s&to=%s"
-    svg_actual = requests.get(svg_req % (username, str(actual_year_from),
-                                         str(actual_year_to)))
-    svg_previous = requests.get(svg_req % (username, str(previous_year_from),
-                                           str(previous_year_to)))
+    svg_actual_r = requests.get(svg_req % (username, str(actual_year_from),
+                                           str(actual_year_to)))
+    svg_previous_r = requests.get(svg_req % (username, str(previous_year_from),
+                                             str(previous_year_to)))
+    # Change color of calendar
+    svg_actual = svg_actual_r.content.replace('ebedf0', '4d4d4d')
+    svg_previous = svg_previous_r.content.replace('ebedf0', '4d4d4d')
 
     # TODO : Many things
     # Use other API URLs
@@ -52,6 +55,11 @@ def t_github(username):
     total = []
     total.append({'module': 'github'})
     total.append({'param': username})
+    # Evaluates the module that executed the task and set validation
+    if (from_m == 'Initial'):
+        total.append({'validation': 'no'})
+    else:
+        total.append({'validation': 'soft'})
 
     if ('message' not in raw_node) or (raw_node['message'] != 'Not Found'):
         # Graphic Array
@@ -158,8 +166,8 @@ def t_github(username):
         # Because the frontend depend of that (By now)
         total.append({'raw': raw_node})
         graphic.append({'github': gather})
-        graphic.append({'cal_actual': svg_actual.content})
-        graphic.append({'cal_previous': svg_previous.content})
+        graphic.append({'cal_actual': svg_actual})
+        graphic.append({'cal_previous': svg_previous})
         total.append({'graphic': graphic})
         total.append({'profile': profile})
         total.append({'timeline': timeline})

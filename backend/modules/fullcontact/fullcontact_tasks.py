@@ -46,6 +46,7 @@ def t_fullcontact(email):
     total = []
     total.append({'module': 'fullcontact'})
     total.append({'param': email})
+    total.append({'validation': 'soft'})
 
     if (raw_node != []):
         # Graphic Array
