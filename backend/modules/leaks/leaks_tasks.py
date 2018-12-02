@@ -71,9 +71,10 @@ def t_leaks(username):
                        "title": leak.get("Title", ""),
                        "subtitle": "Breach Date: " + leak.get(
                            "BreachDate", ""),
-                       "picture": "https://haveibeenpwned.com/Content/" +
-                       "Images/PwnedLogos/" + leak.get("Name", "") + "." +
-                       leak.get("LogoType", ""),
+                       "picture": leak.get("LogoPath", ""),
+                       # "picture": "https://haveibeenpwned.com/Content/" +
+                       # "Images/PwnedLogos/" + leak.get("Name", "") + "." +
+                       # leak.get("LogoType", ""),
                        "link": link}
         gather.append(gather_item)
         timeline.append({"action": "Leak : " + leak.get("Title", ""),
