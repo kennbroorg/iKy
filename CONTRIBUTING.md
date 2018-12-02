@@ -8,6 +8,7 @@ The idea is that the main branch is master. There will be a new branch called "r
 - *JUNK/junkname*     - For experimental actions
 - *ISSUE/issuenumber* - Obvious
 - *REF/refname*       - For violent refactoring
+- *IMP/improvename*   - For improvements
 - *MISC/miscname*     - For anything else (don't abuse)
 
 ##Commits names
