@@ -43,11 +43,21 @@
         $scope.emailAddress = localStorageService.get('emailAddress');
     }
     if (localStorageService.get('gather')) {
-        $scope.gather = localStorageService.get('gather');
-        console.log("Gather !!!", $scope.gather);
+        // $scope.gather = JSON.parse(localStorageService.get('gather'));
+        // $rootScope.gather = localStorageService.get('gather');
+        // $scope.gather = localStorageService.get('gather');
+        console.log("Gather !!! localStorage", localStorageService.get('gather'));
+        console.log("Gather !!! scope", $scope.gather);
+        console.log("Gather !!! root", $rootScope.gather);
     } else {
+        // $rootScope.gather = new Object();
         $scope.gather = new Object();
     }
+    if ($rootScope.gather) {
+        $scope.gather = $rootScope.gather;
+    }
+    console.log("Gather !!! root", $rootScope.gather);
+    console.log("Gather !!! ", $scope.gather);
 
     $scope.clearInfo = function () {
         // Aniquilate everything
@@ -59,8 +69,12 @@
         localStorageService.remove('emailAddress');
         localStorageService.remove('timeline');
         localStorageService.remove('profile');
+        localStorageService.clearAll();
         delete $scope.button;
         delete $scope.gather;
+        delete $rootScope.gather;
+        delete $rootScope.username;
+        delete $rootScope.emailAddress;
         delete $scope.emailAddress;
         delete $scope.username;
         delete $scope.tasks;
@@ -140,6 +154,20 @@
                     "task_id" : data.task, "state" : "PENDING", "from" : "Initial", 
                 });
                 openedToasts.push(toastr['info']("", "GhostProject"));
+                $polling.startPolling(data.module + data.task, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
+            });
+
+        //////////////////////////////////////////////////
+        // Linkedin data
+        //////////////////////////////////////////////////
+        console.log("Execute Linkedin");
+        $http.post('http://127.0.0.1:5000/linkedin', {username: $scope.emailAddress, from: 'Initial'})
+            .success(function (data, status, headers, config) {
+                $scope.tasks.push({
+                    "module" : data.module, "param" : data.param,
+                    "task_id" : data.task, "state" : "PENDING", "from" : "Initial", 
+                });
+                openedToasts.push(toastr['info']("", "Linkedin"));
                 $polling.startPolling(data.module + data.task, 'http://127.0.0.1:5000/state/' + data.task + '/' +  data.module, 1000, callbackProccessData);
             });
 
@@ -257,9 +285,13 @@
                     }
 
                     if ($scope.gather == null) { $scope.gather = new Object(); }
+                    if ($rootScope.gather == null) { $rootScope.gather = new Object(); }
                     $scope.gather[response.data.task_app] = data;
-                    localStorageService.set('gather', $scope.gather);
+                    $rootScope.gather[response.data.task_app] = data;
+                    // localStorageService.set('gather', JSON.stringify($scope.gather));
+                    // localStorageService.set('gather', $scope.gather);
                     console.log('Gather', $scope.gather);
+                    console.log('Gather ROOT', $rootScope.gather);
                     console.log('Task', $scope.tasks);
                    
                 });
