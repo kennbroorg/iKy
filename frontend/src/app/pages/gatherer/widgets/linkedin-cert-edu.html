@@ -1,0 +1,26 @@
+  <div class="col-md-4 col-lg-4" ng-show="$parent.gather.linkedin.result[4].graphic[2].certificationView" >
+      <div ba-panel ba-panel-title="Certification and Education<div style='text-align: right;'><span class='tag label {{gather.linkedin.result[2].validation}}'>validation</span></div>" ba-panel-class="medium-panel black-panel with-scroll light-text">
+
+        <div class="feed-messages-container" track-width="smallContainerWidth" min-width="360">
+          <div class="feed-message" ng-repeat="message in gather.linkedin.result[4].graphic[2].certificationView">
+
+            <div class="message-icon" ng-if="message.picture != ''">
+              <img class="photo-icon" src="{{message.picture}}" style="width: 60px; height: 60px; color: #209E91; stroke: #209E91; fill: #209E91;">
+            </div>
+            <div class="message-icon" ng-if="message.picture == ''">
+              <img class="photo-icon" ng-src="{{::( profilePicture )}}">
+            </div>
+
+            <div class="text-block text-message">
+              <div class="message-header">
+                <span class="author">{{ ::message.name }}</span>
+              </div>
+              <div class="message-content line-clamp">
+                {{::message.desc}}
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </div>
+  </div>
