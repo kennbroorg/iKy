@@ -143,6 +143,22 @@ def r_twitter():
 
 
 ################################################
+# Linkedin
+################################################
+@home.route("/linkedin", methods=["POST"])
+def r_linkedin():
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("Linkedin - Detected Username : ", username, from_m)
+    res = celery.send_task('modules.linkedin.linkedin_tasks.t_linkedin',
+                           args=(username, from_m))
+    print("Task : ", res.task_id)
+    return jsonify(module="linkedin", task=res.task_id, param=username)
+
+
+################################################
 # Leaks
 ################################################
 @home.route("/leaks", methods=["POST"])

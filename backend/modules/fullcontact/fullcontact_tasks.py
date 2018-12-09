@@ -179,6 +179,9 @@ def t_fullcontact(email):
                 if (social.get("typeId", "") == "twitter"):
                     tasks.append({"module": "twitter",
                                  "param": social.get("username", "")})
+                if (social.get("typeId", "") == "linkedin"):
+                    tasks.append({"module": "linkedin",
+                                 "param": social.get("username", "")})
 
             if (raw_node.get("demographics", "") != ""):
                 if (raw_node.get("demographics", "").get(
