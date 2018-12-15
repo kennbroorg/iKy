@@ -3,6 +3,20 @@
 ## PROYECTO
 Visitar el Gitlab Page del [Proyecto](https://kennbroorg.gitlab.io/ikyweb/)
 
+```shell
+git clone https://gitlab.com/kennbroorg/iKy.git
+```
+
+[![Video Demo](https://kennbroorg.gitlab.io/ikyweb/assets/img/i-1.png)](https://vimeo.com/272495754 "Video Demo - Click para ver!")
+
+[Video Demo](https://vimeo.com/272495754 "Video Demo - Click para ver!")
+
+También tenemos una máquina vagrant para simplificar la instalación
+
+```shell
+git clone https://gitlab.com/kennbroorg/iKy-vagrant.git
+```
+
 ## INSTALAR BACKEND
 
 ### Redis
