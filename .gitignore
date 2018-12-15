@@ -53,6 +53,12 @@ build
 frontend/src/release
 frontend/release
 frontend/bower_components
+frontend/package-lock.json
+frontend/src/assets/fonts/Socicon.eot
+frontend/src/assets/fonts/Socicon.svg
+frontend/src/assets/fonts/Socicon.ttf
+frontend/src/assets/fonts/Socicon.woff
+frontend/src/assets/fonts/Socicon.woff2
 
 # Compiled source #
 ###################
