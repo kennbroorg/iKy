@@ -40,6 +40,7 @@ python app.py
 
 ### Dependencies
 First of all, install [nodejs](https://nodejs.org/en/) 8.
+**Be sure to install version 8 LTS. The 10 LTS version was recently launched and we must adapt the project**
 
 Ubuntu 16.04 example
 ```shell
@@ -69,6 +70,4 @@ Open the browser and [ENJOY](http://127.0.0.1:3000)
 
 ## CONFIG APIKEYS
 For now please load the apiKeys of [fullcontact](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs) and [twitter](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html) through the **API Keys** option in the frontend.
-
-# Coming soon
-I promise to put everything together in a script.
+Recently we have merged the linkedin branch. You must put the user and password of linkedin to obtain data from the module.
