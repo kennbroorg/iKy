@@ -40,6 +40,7 @@ python app.py
 
 ### Dependencias
 Primero que nada, instalar [nodejs](https://nodejs.org/es/) 8.
+**Asegurarse de instalar la version 8 LTS. Recientemente lanzaron �la version 10 LTS y debemos adaptar el proyecto**
 
 Ejemplo en Ubuntu 16.04
 ```shell
@@ -53,8 +54,8 @@ npm -v
 
 Y luego se debe instalar **bower**, **gulp** y las dependencias desde el directorio **frontend**
 ```shell
-sudo npm install -g bower
-sudo npm install -g gulp
+npm install bower
+npm install gulp
 cd frontend
 npm install
 ```
@@ -68,7 +69,6 @@ gulp serve
 Abrir el navegador y [DISFRUTAR](http://127.0.0.1:3000)
 
 ## CONFIGURACION DE APIKEYS
-Por ahora lo ideal es cargar las apiKeys de [fullcontact](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs) y [twitter](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html) a través del frontend desde la opción de **API Keys**. Es intuitivo.  
-
-# Proximamente
-Prometo meter todo junto en un script
+Por ahora lo ideal es cargar las apiKeys de [fullcontact](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs) y [twitter](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html) a través del frontend desde la opción de **API Keys**
+Recientemente hemos fusionado la rama de linkedin. Se debe cargar usuario y password de linkedin para obtener datos.
+Es intuitivo.  
