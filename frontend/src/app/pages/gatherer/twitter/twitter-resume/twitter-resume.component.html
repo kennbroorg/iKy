@@ -1,0 +1,17 @@
+  <nb-card size="small" class="border-default">
+    <nb-card-header>
+      TWITTER Resume
+    </nb-card-header>
+    <nb-card-body style="text-align: center; overflow: hidden;">
+        <nb-badge text="Validation" status="{{validation}}" position="top right"></nb-badge>
+
+        <div #nbCardTwitterResume>
+            <ngx-charts-tree-map
+              [view]="[width, height]"
+              scheme="aqua"
+              [results]="twitterResume">
+            </ngx-charts-tree-map>
+        </div>
+
+    </nb-card-body>
+  </nb-card>

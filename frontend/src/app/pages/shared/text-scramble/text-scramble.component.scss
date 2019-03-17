@@ -1,0 +1,24 @@
+@import '../../../@theme/styles/themes';
+@import '~bootstrap/scss/mixins/breakpoints';
+@import '~@nebular/theme/styles/global/breakpoints';
+
+@include nb-install-component() {
+
+  /* borders  */ 
+
+  .border-default {
+    border: 2px solid transparent;
+    border-image: url("assets/images/border-default.svg") ;
+    border-image-slice: 20;
+    border-image-repeat: stretch;
+    border-image-outset: 1;
+    border-image-width: 5;
+  }
+
+  @include media-breakpoint-down(md) {
+  }
+  @include media-breakpoint-down(sm) {
+  }
+  @include media-breakpoint-down(is) {
+  }
+}

@@ -1,0 +1,9 @@
+  <nb-card size="small" class="border-default">
+    <nb-card-header>
+      FULLCONTACT Footprint
+    </nb-card-header>
+    <nb-card-body id="nbCardFullcontactCloud" #nbCardGraphs style="text-align: center; overflow: hidden;">
+        <nb-badge text="Validation" status="{{validation}}" position="top right"></nb-badge>
+        <ngx-text-cloud [data]="fullcontactCloud"></ngx-text-cloud>
+    </nb-card-body>
+  </nb-card>
