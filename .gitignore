@@ -94,12 +94,8 @@ Thumbs.db
 ###########
 *.pyc
 dump.rdb
-*.json
 *.swp
 
 # Delete APP temporal #
 #######################
-apikeys.cfg
-apikeys_default.cfg
-drawing.js
-sandbox
+apikeys.json

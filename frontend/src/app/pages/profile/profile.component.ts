@@ -62,7 +62,9 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
                         case 'name':
                         case 'firstName':
                         case 'lastName':
-                          this.name.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
+                          if (this.gathered[i][j][k][l][p][q] != null) {
+                              this.name.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
+                          };
                           break;
                         case 'photos':
                           for (let iphoto in this.gathered[i][j][k][l][p][q]) {
@@ -78,7 +80,14 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
                           this.location.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
                           break;
                         case 'organization':
-                          this.organization.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
+                          if (Array.isArray(this.gathered[i][j][k][l][p][q])) {
+                              for (let r in this.gathered[i][j][k][l][p][q]) {
+                                  this.organization.push({"label" : this.gathered[i][j][k][l][p][q][r]['name'], "source" : i});
+                              }
+
+                          } else {
+                              this.organization.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
+                          }    
                           break;
                         case 'gender':
                           this.gender.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
@@ -94,6 +103,12 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
           }
         }     
         // TODO : Analize profile information
+        console.log("name", this.name);
+        console.log("location", this.location);
+        console.log("gender", this.gender);
+        console.log("social", this.social);
+        console.log("photo", this.photo);
+        console.log("orgnization", this.organization);
     }
 
     ngOnDestroy () {
