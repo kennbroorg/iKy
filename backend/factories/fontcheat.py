@@ -2,6 +2,8 @@
 # -*- encoding: utf-8 -*-
 
 import requests
+import re
+import json
 from bs4 import BeautifulSoup
 
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
@@ -20,13 +22,32 @@ def fontawesome_cheat():
     fonta = {}
     for icons in soup.findAll("div", {"class": "col-print-4"}):
         icon = icons.text.split('\n')
-        # print(icon)
         if (len(icon) == 7):
             fonta[icon[3].strip()] = [icon[2].strip(), icon[5].strip(),
                                       icon[1].strip(), icon[4].strip()]
         elif (len(icon) == 6):
             fonta[icon[2].strip()] = [icon[1].strip(), icon[4].strip(),
                                       icon[0].strip(), icon[3].strip()]
+    return fonta
+
+
+def fontawesome_cheat_5():
+    """ Get icon name for fontawesome 5 """
+    # import pdb; pdb.set_trace()
+
+    fonta = {}
+    req = requests.get("https://origin.fontawesome.com/cheatsheet")
+
+    m = re.findall('window.__inline_data__ = (.*)', req.text)
+    json_m = json.loads(m[0])
+    json_data = json_m[2]['data']
+
+    for icons in json_data:
+        free = icons['attributes']['membership']['free']
+        if (len(free)):
+            letter_free = free[0][0]
+            fonta[icons['id']] = "fa" + letter_free + " fa-" + icons['id']
+
     return fonta
 
 
@@ -38,6 +59,15 @@ def search_icon(name, font_list):
                 uni_icon = font_list[key][0]
     return uni_icon
 
-# font_list =  fontawesome_cheat()
-# icon = search_icon('angellist', font_list)
-# print "Icon ", icon
+
+def search_icon_5(name, font_list):
+    if (name in font_list):
+        return font_list[name]
+    else:
+        return None
+
+
+if __name__ == "__main__":
+    font_list = fontawesome_cheat_5()
+    print(font_list)
+    print(search_icon_5("facebook", font_list))

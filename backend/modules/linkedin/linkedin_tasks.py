@@ -12,7 +12,6 @@ try:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    # from factories.fontcheat import fontawesome_cheat, search_icon
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 except ImportError:
@@ -21,7 +20,6 @@ except ImportError:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    # from factories.fontcheat import fontawesome_cheat, search_icon
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
@@ -223,7 +221,8 @@ def t_linkedin(email, from_m):
         socialp = []
         link_social = "Linkedin"
         social_item = {"name-node": "Linkedin", "title": "Linkedin",
-                       "subtitle": "", "icon": u'\uf0e1', "link": link_social}
+                       "subtitle": "", "icon": "fab fa-linkedin-in",
+                       "link": link_social}
         socialp.append(social_item)
 
         # ProfileView
@@ -255,7 +254,7 @@ def t_linkedin(email, from_m):
                                          certificate.get("name", ""),
                                         'desc': certificate.get(
                                             "authority", ""),
-                                         'icon': 'fa-certificate',
+                                         'icon': 'fas fa-certificate',
                                          'date': date_convert(certificate.get(
                                             "timePeriod", "").get(
                                                 "startDate", ""))})
@@ -265,7 +264,7 @@ def t_linkedin(email, from_m):
                                          certificate.get("name", ""),
                                          'desc': certificate.get(
                                              "authority", ""),
-                                         'icon': 'fa-certificate',
+                                         'icon': 'fas fa-certificate',
                                          'date': date_convert(certificate.get(
                                              "timePeriod", "").get(
                                                 "endDate", ""))})
@@ -303,7 +302,7 @@ def t_linkedin(email, from_m):
                             'desc': education.get("schoolName") + ' - ' +
                             education.get("fieldOfStudy", "") + ' - ' +
                             education.get("description", ""),
-                            'icon': 'fa-university',
+                            'icon': 'fas fa-university',
                             'date': date_convert(education.get(
                                 "timePeriod", "").get(
                                     "startDate", ""))})
@@ -317,7 +316,7 @@ def t_linkedin(email, from_m):
                                          education.get("fieldOfStudy", "") +
                                          ' ' +
                                          education.get("description", ""),
-                                         'icon': 'fa-university',
+                                         'icon': 'fas fa-university',
                                          'date': date_convert(
                                              education.get(
                                                  "timePeriod", "").get(
@@ -342,7 +341,7 @@ def t_linkedin(email, from_m):
                                          positionGroup.get("name", ""),
                                          'desc': positionGroup.get(
                                              "positions")[0].get("title", ""),
-                                         'icon': 'fa-briefcase',
+                                         'icon': 'fas fa-briefcase',
                                          'date': date_convert(
                                              positionGroup.get(
                                                  "timePeriod", "").get(
@@ -354,7 +353,7 @@ def t_linkedin(email, from_m):
                                          positionGroup.get("name", ""),
                                          'desc': positionGroup.get(
                                              "positions")[0].get("title", ""),
-                                         'icon': 'fa-briefcase',
+                                         'icon': 'fas fa-briefcase',
                                          'date': date_convert(
                                              positionGroup.get(
                                                  "timePeriod", "").get(
@@ -395,21 +394,21 @@ def t_linkedin(email, from_m):
                                "subtitle": profile_view.get(key).get(
                                    "firstName", "") + " " +
                                profile_view.get(key).get("lastName", ""),
-                               "icon": u'\uf2bd',
+                               "icon": "fas fa-user-circle",
                                "link": link_social}
                 socialp.append(social_item)
                 social_item = {"name-node": "Headline",
                                "title": "Headline",
                                "subtitle": profile_view.get(key).get(
                                    "headline", ""),
-                               "icon": u'\uf1ad',
+                               "icon": "fas fa-building",
                                "link": link_social}
                 socialp.append(social_item)
                 social_item = {"name-node": "Location",
                                "title": "Location",
                                "subtitle": profile_view.get(key).get(
                                    "locationName", ""),
-                               "icon": u'\uf041',
+                               "icon": "fas fa-map-marker-alt",
                                "link": link_social}
                 socialp.append(social_item)
                 # NetworkInfo - Followers
@@ -417,7 +416,7 @@ def t_linkedin(email, from_m):
                                "title": "Followers",
                                "subtitle": network_info.get("followersCount",
                                                             ""),
-                               "icon": u'\uf0c0',
+                               "icon": "fas fa-users",
                                "link": link_social}
                 socialp.append(social_item)
                 # FollowingView - Following
@@ -426,7 +425,7 @@ def t_linkedin(email, from_m):
                                "subtitle": following_view.get("paging",
                                                               "").get(
                                                                   "total", ""),
-                               "icon": u'\uf0c0',
+                               "icon": "fas fa-users",
                                "link": link_social}
                 socialp.append(social_item)
                 # RecommendReceived
@@ -435,7 +434,7 @@ def t_linkedin(email, from_m):
                                "subtitle": recommend_received.get("paging",
                                                                   "").get(
                                                                   "total", ""),
-                               "icon": u'\uf164',
+                               "icon": "fas fa-thumbs-up",
                                "link": link_social}
                 socialp.append(social_item)
                 # RecommendGiven
@@ -444,7 +443,7 @@ def t_linkedin(email, from_m):
                                "subtitle": recommend_given.get("paging",
                                                                "").get(
                                                                "total", ""),
-                               "icon": u'\uf164',
+                               "icon": "fas fa-thumbs-up",
                                "link": link_social}
                 socialp.append(social_item)
 
@@ -473,7 +472,7 @@ def t_linkedin(email, from_m):
 
 
 def output(data):
-    print(json.dumps(data, ensure_ascii=False, indent=2))
+    print(json.dumps(data, ensure_ascii=True, indent=2))
 
 
 if __name__ == "__main__":

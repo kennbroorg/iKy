@@ -9,7 +9,8 @@ import time
 try:
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.fontcheat import fontawesome_cheat, search_icon
+    # from factories.fontcheat import fontawesome_cheat, search_icon
+    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 except ImportError:
@@ -17,7 +18,8 @@ except ImportError:
     sys.path.append('../../')
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.fontcheat import fontawesome_cheat, search_icon
+    # from factories.fontcheat import fontawesome_cheat, search_icon
+    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
@@ -37,8 +39,8 @@ def t_keybase(username, from_m):
     # Keybase : TODO : Validation via some info
     # Keybase : TODO : Get Followers and Following throw crawling
 
-    # Icons unicode
-    font_list = fontawesome_cheat()
+    # Icons
+    font_list = fontawesome_cheat_5()
     # Total
     total = []
     total.append({'module': 'keybase'})
@@ -73,12 +75,12 @@ def t_keybase(username, from_m):
 
         link_device = "Devices"
         device_item = {"name-node": "Devices", "title": "Devices",
-                       "subtitle": "", "icon": u'\uf10c', "link": link_device}
+                       "subtitle": "", "icon": "fas fa-laptop", "link": link_device}
         devices.append(device_item)
 
         link_social = "KeybaseSocial"
         social_item = {"name-node": "KeybaseSocial", "title": "KeybaseSocial",
-                       "subtitle": "", "icon": u'\uf1ae', "link": link_social}
+                       "subtitle": "", "icon": "fas fa-child", "link": link_social}
         social.append(social_item)
 
         if (raw.get("profile", "") != ""):
@@ -100,14 +102,14 @@ def t_keybase(username, from_m):
                                       time.gmtime(raw.get("basics", "")
                                                   .get("ctime")))
                 timeline_item = {"action": "Keybase: Create Account",
-                                 "date": ctime, "icon": "fa-key"}
+                                 "date": ctime, "icon": "fas fa-key"}
                 timeline.append(timeline_item)
             if (raw.get("basics", "").get("mtime", "") != ""):
                 mtime = time.strftime('%Y/%m/%d %H:%M:%S',
                                       time.gmtime(raw.get("basics", "")
                                                   .get("mtime")))
                 timeline_item = {"action": "Keybase : Update Account",
-                                 "date": mtime, "icon": "fa-key"}
+                                 "date": mtime, "icon": "fas fa-key"}
                 timeline.append(timeline_item)
 
         # Keybase : TODO : picture in profile
@@ -116,10 +118,10 @@ def t_keybase(username, from_m):
 
             print(dev)
             print(" Type ", raw.get("devices").get(dev).get("type", ""))
-            fa_icon = search_icon(raw.get("devices").get(dev).get("type", ""),
+            fa_icon = search_icon_5(raw.get("devices").get(dev).get("type", ""),
                                   font_list)
             if (fa_icon is None):
-                fa_icon = search_icon("question", font_list)
+                fa_icon = search_icon_5("question", font_list)
 
             device_item = {"name-node": raw.get("devices").get(dev)
                            .get("type", ""),
@@ -133,9 +135,9 @@ def t_keybase(username, from_m):
 
         if (raw.get("proofs_summary", "") != ""):
             for soc in raw.get("proofs_summary", "").get("all"):
-                fa_icon = search_icon(soc.get("proof_type"), font_list)
+                fa_icon = search_icon_5(soc.get("proof_type"), font_list)
                 if (fa_icon is None):
-                    fa_icon = search_icon("question", font_list)
+                    fa_icon = search_icon_5("question", font_list)
 
                 social_item = {"name-node": "keybase" +
                                soc.get("proof_type", ""),
@@ -180,5 +182,5 @@ def output(data):
 
 if __name__ == "__main__":
     username = sys.argv[1]
-    result = t_keybase(username)
+    result = t_keybase(username, "initial")
     output(result)
