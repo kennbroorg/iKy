@@ -4,6 +4,7 @@
 import sys
 import json
 import requests
+import cfscrape
 
 try:
     from factories._celery import create_celery
@@ -26,15 +27,22 @@ logger = get_task_logger(__name__)
 
 @celery.task
 def t_ghostproject(username):
+    import pdb; pdb.set_trace()
     """ Task of Celery that gets info from GhostProject """
 
     GHOSTPROJECT_URL = "https://ghostproject.fr"
 
     cookies = dict(requests.get(GHOSTPROJECT_URL).cookies)
-    req = requests.post(GHOSTPROJECT_URL + "/search.php",
+    # req = requests.post(GHOSTPROJECT_URL + "/search.php",
+    #                     data={'param': username},
+    #                     cookies=cookies)
+
+    scraper = cfscrape.create_scraper()
+    req = scraper.post(GHOSTPROJECT_URL + "/x000x1337.php",
                         data={'param': username},
                         cookies=cookies)
 
+    print(req.content)
     total = []
     total.append({'module': 'ghostproject'})
     total.append({'param': username})

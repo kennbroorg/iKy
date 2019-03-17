@@ -76,26 +76,28 @@ def t_github(username, from_m):
 
         link = "Github"
         gather_item = {"name-node": "Github", "title": "Github",
-                       "subtitle": "", "icon": u'\uf09b', "link": link}
+                       "subtitle": "", "icon": "fab fa-github", "link": link}
         gather.append(gather_item)
 
         if ('name' in raw_node):
             gather_item = {"name-node": "Gitname", "title": "Git Name",
-                           "subtitle": raw_node['name'], "icon": u'\uf007',
+                           "subtitle": raw_node['name'], "icon": "fas fa-user",
                            "link": link}
             profile_item = {'name': raw_node['name']}
             profile.append(profile_item)
             gather.append(gather_item)
         if ('email' in raw_node) and (raw_node['email'] is not None):
             gather_item = {"name-node": "GitEmail", "title": "Email",
-                           "subtitle": raw_node['email'], "icon": u'\uf0e0',
+                           "subtitle": raw_node['email'],
+                           "icon": "fas fa-envelope",
                            "link": link}
             gather.append(gather_item)
             profile_item = {'email': raw_node['email']}
             profile.append(profile_item)
         if ('company' in raw_node) and (raw_node['company'] is not None):
             gather_item = {"name-node": "GitCompany", "title": "Company",
-                           "subtitle": raw_node['company'], "icon": u'\uf1ad',
+                           "subtitle": raw_node['company'],
+                           "icon": "fas fa-building",
                            "link": link}
             gather.append(gather_item)
             profile_item = {'organization': raw_node['company']}
@@ -103,37 +105,39 @@ def t_github(username, from_m):
         if (('blog' in raw_node) and (raw_node['blog'] is not None) and
            (raw_node['blog'] != "")):
             gather_item = {"name-node": "GitBlog", "title": "Blog",
-                           "subtitle": raw_node['blog'], "icon": u'\uf143',
+                           "subtitle": raw_node['blog'],
+                           "icon": "fas fa-rss-square",
                            "link": link}
             gather.append(gather_item)
         if ('bio' in raw_node) and (raw_node['bio'] is not None):
             gather_item = {"name-node": "GitBio", "title": "Bio",
-                           "subtitle": raw_node['bio'], "icon": u'\uf004',
+                           "subtitle": raw_node['bio'],
+                           "icon": "fas fa-heart",
                            "link": link}
             gather.append(gather_item)
         if ('public_repos' in raw_node):
             gather_item = {"name-node": "GitRepos", "title": "Repos",
                            "subtitle": raw_node['public_repos'],
-                           "icon": u'\uf07c', "link": link}
+                           "icon": "fas fa-folder-open", "link": link}
             gather.append(gather_item)
         if ('public_gists' in raw_node):
             gather_item = {"name-node": "GitGists", "title": "Gists",
                            "subtitle": raw_node['public_gists'],
-                           "icon": u'\uf121', "link": link}
+                           "icon": "fas fa-code", "link": link}
             gather.append(gather_item)
         if ('followers' in raw_node):
             gather_item = {"name-node": "GitFollowers", "title": "Followers",
                            "subtitle": raw_node['followers'],
-                           "icon": u'\uf0c0', "link": link}
+                           "icon": "fas fa-users", "link": link}
             gather.append(gather_item)
         if ('following' in raw_node):
             gather_item = {"name-node": "GitFollowing", "title": "Following",
                            "subtitle": raw_node['following'],
-                           "icon": u'\uf0c0', "link": link}
+                           "icon": "fas fa-users", "link": link}
             gather.append(gather_item)
         if ('id' in raw_node):
             gather_item = {"name-node": "GitId", "title": "Id",
-                           "subtitle": raw_node['id'], "icon": u'\uf129',
+                           "subtitle": raw_node['id'], "icon": "fas fa-info",
                            "link": link}
             gather.append(gather_item)
         if ('avatar_url' in raw_node):
@@ -142,7 +146,7 @@ def t_github(username, from_m):
                            "link": link}
             gather.append(gather_item)
             profile_item = {'photos': [{"picture": raw_node['avatar_url'],
-                                        "title": "github"}]}
+                                        "title": "Github"}]}
             profile.append(profile_item)
         if ('location' in raw_node) and (raw_node['location'] is not None):
             profile_item = {'location': raw_node['location']}
@@ -152,14 +156,14 @@ def t_github(username, from_m):
                                       "%Y-%m-%dT%H:%M:%SZ")
             timeline_item = {'date': ctime.strftime("%Y/%m/%d %H:%M:%S"),
                              'action': 'Github : Create Account',
-                             'icon': 'fa-github'}
+                             'icon': 'fab fa-github'}
             timeline.append(timeline_item)
         if ('updated_at' in raw_node) and (raw_node['updated_at'] is not None):
             mtime = datetime.strptime(raw_node['updated_at'],
                                       "%Y-%m-%dT%H:%M:%SZ")
             timeline_item = {'date': mtime.strftime("%Y/%m/%d %H:%M:%S"),
                              'action': 'Github : Update Account',
-                             'icon': 'fa-github'}
+                             'icon': 'fab fa-github'}
             timeline.append(timeline_item)
 
         # Please, respect the order of items in the total array
@@ -181,5 +185,6 @@ def output(data):
 
 if __name__ == "__main__":
     username = sys.argv[1]
-    result = t_github(username)
+    from_m = sys.argv[2]
+    result = t_github(username, from_m)
     output(result)

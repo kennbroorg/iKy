@@ -124,10 +124,10 @@ def t_twitter(username, from_m):
 
 
 def output(data):
-    print(json.dumps(data, ensure_ascii=False, indent=2))
+    print(json.dumps(data, ensure_ascii=True, indent=2))
 
 
 if __name__ == "__main__":
     username = sys.argv[1]
-    result = t_twitter(username)
+    result = t_twitter(username, "initial")
     output(result)

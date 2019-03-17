@@ -10,7 +10,8 @@ try:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    from factories.fontcheat import fontawesome_cheat, search_icon
+    # from factories.fontcheat import fontawesome_cheat, search_icon
+    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 except ImportError:
@@ -19,7 +20,8 @@ except ImportError:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    from factories.fontcheat import fontawesome_cheat, search_icon
+    # from factories.fontcheat import fontawesome_cheat, search_icon
+    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
@@ -41,7 +43,7 @@ def t_fullcontact(email):
         raw_node = []
 
     # Icons unicode
-    font_list = fontawesome_cheat()
+    font_list = fontawesome_cheat_5()
     # Total
     total = []
     total.append({'module': 'fullcontact'})
@@ -80,11 +82,15 @@ def t_fullcontact(email):
 
         link_social = "Social"
         social_item = {"name-node": "Social", "title": "Social",
-                       "subtitle": "", "icon": u'\uf1ae', "link": link_social}
+                       "subtitle": "", "icon": search_icon_5(
+                           "child", font_list),
+                       "link": link_social}
         socialp.append(social_item)
         link_photo = "Photos"
         photo_item = {"name-node": "Photos", "title": "Photos",
-                      "subtitle": "", "icon": u'\uf083', "link": link_photo}
+                       "subtitle": "", "icon": search_icon_5(
+                           "camera-retro", font_list),
+                      "link": link_photo}
         photo.append(photo_item)
 
         if raw_node.get("status", "") == 200:
@@ -118,13 +124,13 @@ def t_fullcontact(email):
                                      .get("name", ""),
                                      'date': org.get("startDate", "")
                                      .replace("-", "/"),
-                                     'icon': 'fa-building',
+                                     # 'icon': 'fa-building',
                                      'desc': org.get("title", "")})
                 if (org.get("endDate", "") != ""):
                     timeline.append({'action': 'End : ' + org.get("name", ""),
                                      'date': org.get("endDate", "")
                                      .replace("-", "/"),
-                                     'icon': 'fa-ban',
+                                     # 'icon': 'fa-ban',
                                      'desc': org.get("title", "")})
 
             if (company != []):
@@ -148,9 +154,9 @@ def t_fullcontact(email):
                 else:
                     subtitle = "Not identified"
 
-                fa_icon = search_icon(social.get("typeId", ""), font_list)
+                fa_icon = search_icon_5(social.get("typeId", ""), font_list)
                 if (fa_icon is None):
-                    fa_icon = search_icon("question", font_list)
+                    fa_icon = search_icon_5("question", font_list)
 
                 social_item = {"name-node": social.get("typeName", ""),
                                "title": social.get("typeName", ""),
@@ -236,7 +242,7 @@ def t_fullcontact(email):
 
 
 def output(data):
-    print(json.dumps(data, ensure_ascii=False, indent=2))
+    print(json.dumps(data, ensure_ascii=True, indent=2))
 
 
 if __name__ == "__main__":
