@@ -1,25 +1,32 @@
 # iKy
 
-## PROYECTO
-Visitar el Gitlab Page del [Proyecto](https://kennbroorg.gitlab.io/ikyweb/)
+## Descripción
+
+El proyecto iKy es una herramienta que colecta información a partir de una dirección de e-mail y muestra los resultados en una interface visual.
+
+Visite el Gitlab Page del [Projecto](https://kennbroorg.gitlab.io/ikyweb/)
+
+[![Video Demo](https://kennbroorg.gitlab.io/ikyweb/assets/img/iKy-01.png)](https://vimeo.com/ 272495754 "Video Demo - Click to Watch!") 
+
+[Video Demo](https://vimeo.com/326114716 "Video Demo - Click to Watch!")
+
+## Proyecto
+
+Primero que nada queremos aclarar que hemos cambiado el Frontend de AngularJS a Angular 7. Por esta razón hemos dejado al proyecto con AngularJS como Frontend en la rama iKy-v1 y la documentación para su instalación [aquí][readmev1es].
+
+El motivo del cambio de Frontend fue actualizar la tecnología y obtener una forma más fácil de instalación.
+
+## Instalación
+
+### Clonar el repositorio
 
 ```shell
 git clone https://gitlab.com/kennbroorg/iKy.git
 ```
 
-[![Video Demo](https://kennbroorg.gitlab.io/ikyweb/assets/img/i-1.png)](https://vimeo.com/272495754 "Video Demo - Click para ver!")
+### Instalar Backend
 
-[Video Demo](https://vimeo.com/272495754 "Video Demo - Click para ver!")
-
-También tenemos una máquina vagrant para simplificar la instalación
-
-```shell
-git clone https://gitlab.com/kennbroorg/iKy-vagrant.git
-```
-
-## INSTALAR BACKEND
-
-### Redis
+#### Redis
 Se debe instalar Redis
 ```shell
 wget http://download.redis.io/redis-stable.tar.gz
@@ -29,60 +36,62 @@ make
 sudo make install
 ```
 
-Y encender el server en una terminal aparte
+Y ejecutar el server en una terminal
 ```shell
 redis-server
 ```
 
-### Librerias de python y Celery
-Se debe instalar las librerias de requirements.txt
+#### Python y Celery
+Se debe instalar las librerías en requirements.txt
+
 ```shell
 pip install -r requirements.txt
 ```
 
-Y encender Celery en otra terminal aparte y parado en el directorio **backend**
+Y ejecutar celery en otra terminal, dentro del directorio **backend**
+
 ```shell
 ./celery.sh
 ```
 
-Finalmente, otra vez, en otra terminal encender la app de backend desde el directorio **backend** 
+Por último, otra vez, en otra terminal ejecutar app.py dentro del directorio **backend** 
+
 ```shell
 python app.py
 ```
 
-## INSTALAR FRONTEND
+### Instalar Frontend
 
-### Dependencias
-Primero que nada, instalar [nodejs](https://nodejs.org/es/) 8.
-**Asegurarse de instalar la version 8 LTS. Recientemente lanzaron �la version 10 LTS y debemos adaptar el proyecto**
+#### Node
+Primero que nada, instalar [nodejs](https://nodejs.org/es/).
 
-Ejemplo en Ubuntu 16.04
+#### Dependencias
+
+Dentro del directorio **frontend** instalar las dependencias
+
 ```shell
-sudo apt-get update
-sudo apt-get install -y curl python-software-properties
-sudo curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-sudo apt-get install -y nodejs
-node -v
-npm -v 
-```
-
-Y luego se debe instalar **bower**, **gulp** y las dependencias desde el directorio **frontend**
-```shell
-npm install bower
-npm install gulp
-cd frontend
 npm install
 ```
+#### Encender servidor
 
-Por último, para encender el frontend, se debe ejecutar 
+Finalmente, ejecutar dentro del directorio **frontend** el siguiente comando :
+
 ```shell
-gulp serve
+npm start
 ```
 
-# DISFRUTE
-Abrir el navegador y [DISFRUTAR](http://127.0.0.1:3000)
+### Browser
+Abrir el browser en esta [url](http://127.0.0.1:4200)
 
-## CONFIGURACION DE APIKEYS
-Por ahora lo ideal es cargar las apiKeys de [fullcontact](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs) y [twitter](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html) a través del frontend desde la opción de **API Keys**
-Recientemente hemos fusionado la rama de linkedin. Se debe cargar usuario y password de linkedin para obtener datos.
-Es intuitivo.  
+### Config API Keys
+Una vez que la aplicación esté cargada en el browser, deberá ir a la opción Api Keys y llenar los valores de las APIs que se necesitan.
+
+- Fullcontact : Generar las APIs desde [aquí](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs)
+- Twitter : Generar las APIs desde [aquí](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
+- Linkedin : Solo se debe cargar el usuario y contraseña de su cuenta 
+
+[readmev1en]: README-v1.en.md
+[readmev1es]: README-v1.es.md
+[readmees]: README.es.md
+[readmeen]: README.md
+

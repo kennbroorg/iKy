@@ -1,0 +1,111 @@
+<div class="row">
+
+  <div class="col-md-12" *ngIf="!email && !gathered['tasklist']">
+    <nb-card>
+      <nb-card-body>
+        <button nbButton outline status="info" (click)="searchService.activateSearch()">
+            <i style="font-size: 25px;" class="nb-search"></i>
+        </button>
+      </nb-card-body>
+    </nb-card>
+  </div>
+
+  <div class="col-md-12"  *ngIf="!email && !gathered['tasklist']">
+    <nb-card size="medium" class="border-default">
+      <nb-card-body>
+        <div class="picture"></div>
+
+        <div class="details">
+          <div class="title">
+            Gathering information
+          </div>
+          <div class="description">
+              To collect information it is necessary to enter an e-mail address in the search window that can be activated from the magnifying glass present in the button above or from the magnifying glass located in the upper right corner.
+          </div>
+        </div>
+      </nb-card-body>
+      <nb-card-footer>
+      </nb-card-footer>
+    </nb-card>
+  </div>
+
+  <!-- Fullcontact Graphs -->
+  <div id="divFullcontactGraphs" class="col-md-4" *ngIf="gathered['fullcontact'] && 
+                               gathered['fullcontact'].result[4]">
+    <ngx-fullcontact-graphs [data]="gathered['fullcontact']"></ngx-fullcontact-graphs>
+  </div>
+
+  <!-- Fullcontact Cloud 
+  <div class="col-md-4" *ngIf="gathered['fullcontact'] && 
+                               gathered['fullcontact'].result[4]">
+    <ngx-fullcontact-cloud [data]="gathered['fullcontact']"></ngx-fullcontact-cloud>
+  </div>
+  -->
+
+  <!-- Fullcontact Scramble -->
+  <div class="col-md-4" *ngIf="gathered['fullcontact'] && 
+                               gathered['fullcontact'].result[4]">
+    <ngx-fullcontact-scramble [data]="gathered['fullcontact']"></ngx-fullcontact-scramble>
+  </div>
+
+  <!-- Twitter Popularity -->
+  <div class="col-md-4" id="divTwitterPopularity" *ngIf="gathered['twitter'] && 
+                               gathered['twitter'].result[4]">
+    <ngx-twitter-popularity [data]="gathered['twitter']"></ngx-twitter-popularity>
+  </div>
+
+  <!-- Twitter Resume -->
+  <div class="col-md-4" *ngIf="gathered['twitter'] && 
+                               gathered['twitter'].result[4]">
+    <ngx-twitter-resume [data]="gathered['twitter']"></ngx-twitter-resume>
+  </div>
+
+  <!-- Twitter Approval -->
+  <div class="col-md-4" *ngIf="gathered['twitter'] && 
+                               gathered['twitter'].result[4]">
+    <ngx-twitter-approval [data]="gathered['twitter']"></ngx-twitter-approval>
+  </div>
+
+  <!-- Github Graphs -->
+  <div id="divGithubGraphs" class="col-md-4" *ngIf="gathered['github'] && 
+                               gathered['github'].result[4]">
+    <ngx-github-graphs [data]="gathered['github']"></ngx-github-graphs>
+  </div>
+
+  <!-- Github Calendar -->
+  <div class="col-md-8" *ngIf="gathered['github'] && 
+                               gathered['github'].result[4]">
+    <ngx-github-calendar [data]="gathered['github']"></ngx-github-calendar>
+  </div>
+
+  <!-- Linkedin Graphs -->
+  <div id="divLinkedinGraphs" class="col-md-4" *ngIf="gathered['linkedin'] && 
+                               gathered['linkedin'].result[4]">
+    <ngx-linkedin-graphs [data]="gathered['linkedin']"></ngx-linkedin-graphs>
+  </div>
+
+  <!-- Linkedin Bubble -->
+  <div id="divLinkedinBubble" class="col-md-4" *ngIf="gathered['linkedin'] && 
+                               gathered['linkedin'].result[4]">
+    <ngx-linkedin-bubble [data]="gathered['linkedin']"></ngx-linkedin-bubble>
+  </div>
+
+  <!-- Linkedin Certs -->
+  <div id="divLinkedinCerts" class="col-md-4" *ngIf="gathered['linkedin'] && 
+                               gathered['linkedin'].result[4]">
+    <ngx-linkedin-certs [data]="gathered['linkedin']"></ngx-linkedin-certs>
+  </div>
+
+  <!-- Keybase Devices -->
+  <div id="divKeybaseDevices" class="col-md-4" *ngIf="gathered['keybase'] && 
+                               gathered['keybase'].result[4]">
+    <ngx-keybase-devices [data]="gathered['keybase']"></ngx-keybase-devices>
+  </div>
+
+  <!-- Keybase Social -->
+  <div id="divKeybaseSocial" class="col-md-4" *ngIf="gathered['keybase'] && 
+                               gathered['keybase'].result[4]">
+    <ngx-keybase-social [data]="gathered['keybase']"></ngx-keybase-social>
+  </div>
+
+</div>

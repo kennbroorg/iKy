@@ -1,0 +1,28 @@
+<nb-card>
+  <nb-card-header>
+    API KEYS
+  </nb-card-header>
+
+  <nb-card-body>
+    <ng2-smart-table [settings]="settings" [source]="source" (deleteConfirm)="onDeleteConfirm($event)"></ng2-smart-table>
+
+<div class="row">
+    <div class="col-md-4 offset-md-4 container-btn">
+      <button class="btn btn-danger btn-block" (click)="openDialog(dialog)">UPDATE KEYS</button>
+    </div>
+</div>
+
+  </nb-card-body>
+
+</nb-card>
+
+<ng-template #dialog let-data let-ref="dialogRef">
+  <nb-card>
+    <nb-card-header>Update Keys</nb-card-header>
+    <nb-card-body>Are you sure?</nb-card-body>
+    <nb-card-footer>
+      <button nbButton status="info" (click)="ref.close()">Cancel</button>
+      <button nbButton status="danger" (click)="updateConfirm(); ref.close()">Update</button>
+    </nb-card-footer>
+  </nb-card>
+</ng-template>

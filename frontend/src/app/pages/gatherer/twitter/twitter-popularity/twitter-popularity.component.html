@@ -1,0 +1,20 @@
+  <nb-card size="small" class="border-default">
+    <nb-card-header>
+      TWITTER Popularity
+    </nb-card-header>
+    <nb-card-body>
+        <nb-badge text="Validation" status="{{validation}}" position="top right"></nb-badge>
+
+        <div #nbCardTwitterPopularity id="nbCardTwitterPopularity">
+            <ngx-charts-pie-chart
+              [view]="[width, height]"
+              [doughnut]="true"
+              [arcWidth]="0.5"
+              scheme="aqua"
+              [results]="twitterPopularity"
+              [labels]="showLabels">
+            </ngx-charts-pie-chart>
+         </div>
+
+    </nb-card-body>
+  </nb-card>

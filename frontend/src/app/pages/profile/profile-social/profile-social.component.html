@@ -1,0 +1,28 @@
+<nb-card class="border-default">
+  <nb-card-header>
+      Profile Social
+  </nb-card-header>
+  <nb-card-body>
+
+    <div class="row">
+      <div class="col-xxxl-3 col-md-6 social-items" *ngFor="let item of social">
+
+        <nb-card>
+          <a [attr.href]="item.url" target="_blank">
+            <div class="icon-container">
+              <div class="icon default">
+                    <i class="fab fa-{{ item.name }}"></i>
+              </div>
+            </div>
+          </a>
+            
+            <div class="details">
+              <div class="title">{{ item.name }}</div>
+            </div>
+        </nb-card>
+
+      </div>
+    </div>
+
+  </nb-card-body>
+</nb-card>

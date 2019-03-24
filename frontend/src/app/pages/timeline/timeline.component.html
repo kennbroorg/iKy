@@ -1,0 +1,64 @@
+<div class="row">
+  
+  <div class="col-md-12" *ngIf="!email && !gathered['tasklist']">
+    <nb-card>
+      <nb-card-body>
+        <button nbButton outline status="info" (click)="searchService.activateSearch()">
+            <i style="font-size: 25px;" class="nb-search"></i>
+        </button>
+      </nb-card-body>
+    </nb-card>
+  </div>
+
+  <div class="col-md-12"  *ngIf="!email && !gathered['tasklist']">
+    <nb-card size="medium" class="border-default">
+      <nb-card-body>
+        <div class="picture"></div>
+
+        <div class="details">
+          <div class="title">
+            Gathering information
+          </div>
+          <div class="description">
+              To collect information it is necessary to enter an e-mail address in the search window that can be activated from the magnifying glass present in the button above or from the magnifying glass located in the upper right corner.
+          </div>
+        </div>
+      </nb-card-body>
+      <nb-card-footer>
+      </nb-card-footer>
+    </nb-card>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12" *ngIf="timeline && gathered['email']">
+      <nb-card size="large" class="border-default">
+        <nb-card-header>
+          TIMELINE
+        </nb-card-header>
+        <nb-card-body>
+
+          <div class="col-md-12">
+            <div class="row example-centered">
+                <div class="col-md-12">
+                    <ul class="timeline timeline-centered">
+                        <li class="timeline-item" *ngFor="let time of timeline">
+                            <div class="timeline-info">
+                                <span>{{time.date}}</span>
+                            </div>
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h3 class="timeline-title">{{time.action}}</h3>
+                                <p *ngIf="time.desc && time.desc != ''">{{time.desc}}</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+          </div>
+
+        </nb-card-body>
+      </nb-card>
+  </div>
+
+</div>

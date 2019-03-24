@@ -1,0 +1,45 @@
+<nb-card size="medium" class="border-default">
+  <nb-card-header>
+      Profile Data
+  </nb-card-header>
+  <nb-card-body>
+
+  <div class="row">
+
+    <div class="col-md-4" *ngIf="name?.length > 0">
+      <nb-card size="small" class="border-default">
+        <nb-card-header>
+          Posible Name
+        </nb-card-header>
+        <nb-card-body id="nbCardProfileName" #nbCardProfileName style="text-align: center; overflow: hidden;">
+            <ngx-text-cloud [data]="name"></ngx-text-cloud>
+        </nb-card-body>
+      </nb-card>
+    </div>
+
+    <div class="col-md-4" *ngIf="location?.length > 0">
+      <nb-card size="small" class="border-default">
+        <nb-card-header>
+          Posible Location
+        </nb-card-header>
+        <nb-card-body id="nbCardProfileLocation" #nbCardProfileLocation style="text-align: center; overflow: hidden;">
+            <ngx-text-cloud [data]="location"></ngx-text-cloud>
+        </nb-card-body>
+      </nb-card>
+    </div>
+
+    <div class="col-md-4" *ngIf="organization?.length > 0">
+      <nb-card size="small" class="border-default">
+        <nb-card-header>
+          Posible Organization
+        </nb-card-header>
+        <nb-card-body id="nbCardProfileOrganization" #nbCardProfileOrganization style="text-align: center; overflow: hidden;">
+            <ngx-text-cloud [data]="organization"></ngx-text-cloud>
+        </nb-card-body>
+      </nb-card>
+    </div>
+
+  </div>
+
+  </nb-card-body>
+</nb-card>
