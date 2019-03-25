@@ -1,5 +1,6 @@
 ##Main Branch
-The idea is that the main branch is master. There will be a new branch called "release" soon. But all branches converge in master branch.
+The idea is that the main branch is iKy. All branches converge in iKy branch.
+The previous version (Frontend in AngularJS) is in iKy-v1 branch and we left master branch there too. 
 
 ##Branch names
 - *WIP/featurename*   - For Work In Progress, stuff that will not end soon 
