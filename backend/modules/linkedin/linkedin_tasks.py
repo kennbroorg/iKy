@@ -460,8 +460,14 @@ def t_linkedin(email, from_m):
         graphic.append({'social': socialp})
         # graphic.append({'skills': skills})
         graphic.append({'skills': skill_tmp})
-        graphic.append({'certificationView': certificationView})
-        graphic.append({'positionGroupView': positionGroupView})
+        try:
+            graphic.append({'certificationView': certificationView})
+        except NameError:
+            graphic.append({'certificationView': []})
+        try:
+            graphic.append({'positionGroupView': positionGroupView})
+        except NameError:
+            graphic.append({'positionGroupView': []})
         # graphic.append({'educationView': educationView})
         total.append({'graphic': graphic})
 
