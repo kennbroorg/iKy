@@ -4,6 +4,10 @@
 
 @include nb-install-component() {
 
+  nb-card-body {
+    padding: 0;
+  }
+
   /* borders  */ 
 
   .border-default {

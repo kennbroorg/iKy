@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, ViewChild, ElementRef, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnChanges, ViewChild, ElementRef, Input, AfterViewInit,ViewEncapsulation } from '@angular/core';
 import * as $ from 'jquery';
 import * as d3 from 'd3';
 import {event as d3Event} from 'd3-selection';
@@ -11,7 +11,7 @@ import {select as d3Select} from 'd3-selection';
     templateUrl: './graphs.component.html',
     styleUrls: ['./graphs.component.scss']
 })
-export class GraphsComponent implements OnInit {
+export class GraphsComponent implements OnInit, AfterViewInit {
   @ViewChild('cardGraphs') private cardContainer: ElementRef;
   @Input() private data: Array<any>;
 
@@ -23,9 +23,15 @@ export class GraphsComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
+  }
+
+  ngAfterViewInit() {
       this.card = this.cardContainer.nativeElement;
-      this.width = this.card.clientWidth;
-      this.height = this.width * 0.68;
+      this.width = this.cardContainer.nativeElement.parentNode.parentNode.clientWidth;
+      this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight;
+      console.log("CARD-------------------------------", this.card);
+      console.log("WIDTH-------------------------------", this.width);
+      console.log("HEIGHT-------------------------------", this.height);
       this.drawChart(this.card, this.data, this.height, this.width);
   }
 
