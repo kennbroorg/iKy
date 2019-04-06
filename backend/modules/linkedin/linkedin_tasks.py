@@ -89,6 +89,7 @@ def t_linkedin(email, from_m):
         id = re.findall(
             '\/voyager\/api\/identity\/profiles\/([a-z]*)\/profileView',
             req.text)
+        print id
 
         # url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
         #     id[0] + "/recentActivities"
@@ -248,7 +249,8 @@ def t_linkedin(email, from_m):
                                               'desc': certificate.get(
                                                   "authority", ""),
                                               'picture': picture})
-                    if (certificate.get("timePeriod", "").get(
+                    if (certificate.get("timePeriod", "") != "" and
+                        certificate.get("timePeriod", "").get(
                             "endDate", "") != ""):
                         timeline.append({'action': 'Start : ' +
                                          certificate.get("name", ""),
@@ -258,7 +260,8 @@ def t_linkedin(email, from_m):
                                          'date': date_convert(certificate.get(
                                             "timePeriod", "").get(
                                                 "startDate", ""))})
-                    if (certificate.get("timePeriod", "").get(
+                    if (certificate.get("timePeriod", "") != "" and
+                        certificate.get("timePeriod", "").get(
                             "endDate", "") != ""):
                         timeline.append({'action': 'End : ' +
                                          certificate.get("name", ""),
