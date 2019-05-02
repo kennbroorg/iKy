@@ -16,6 +16,30 @@
     padding: 0;
   }
 
+  nb-card #actions {
+      height: 101px;
+  }
+  nb-actions > nb-action {
+    padding: 0 0.75rem;
+  }
+
+  nb-action {
+    cursor: pointer;
+    i {
+      color: nb-theme(color-fg);
+      font-size: 2.5rem;
+      @include nb-ltr(margin-right, 1rem);
+      @include nb-rtl(margin-left, 1rem);
+    }
+
+    span {
+      font-family: nb-theme(font-secondary);
+      font-weight: nb-theme(font-weight-bold);
+      color: nb-theme(color-fg-heading);
+      text-transform: uppercase;
+    }
+  }
+
   .picture {
     background-image: url("assets/images/gather.jpg");
     background-position: center;
@@ -125,9 +149,11 @@
       .contrib-footer {
           display: none;
       }
+      /*
       .day {
           fill: #999 !important;
       }
+      */
       .wday {
         // fill: nb-theme(color-fg-heading);
         fill: black !important;
