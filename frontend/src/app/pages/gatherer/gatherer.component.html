@@ -1,4 +1,27 @@
-<div class="row">
+<div class="row" id="pageGather" #pageGather >
+<!-- <div class="row" id="pageGather" #pageGather [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge"> -->
+
+  <div class="col-md-12" *ngIf="gathered['email']">
+    <div class="row">
+      <div class="col-md-12">
+        <nb-card id="actions" class="border-default">
+          <nb-card-body>
+            <nb-actions size="large" fullWidth>
+              <nb-action (click)="searchService.activateSearch()" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxsmall" nbSpinnerMessage="">
+                <i class="nb-search"></i><span>Search</span>
+              </nb-action>
+              <nb-action (click)="generateAllPdf()" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxsmall" nbSpinnerMessage="">
+                <i class="nb-compose"></i><span>Report</span>
+              </nb-action>
+              <nb-action (click)="generateDownloadJsonUri()" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxsmall" nbSpinnerMessage="">
+                  <i class="nb-arrow-thin-down"></i><span>Json</span>
+              </nb-action>
+            </nb-actions>
+          </nb-card-body>
+        </nb-card>
+      </div>
+    </div>
+  </div>
 
   <div class="col-md-12" *ngIf="!email && !gathered['tasklist']">
     <nb-card>
@@ -30,8 +53,7 @@
   </div>
 
   <!-- Fullcontact Graphs -->
-  <div id="divFullcontactGraphs" class="col-md-4" *ngIf="gathered['fullcontact'] && 
-                               gathered['fullcontact'].result[4]">
+  <div id="divFullcontactGraphs" #divFullcontactGraphs class="col-md-4" *ngIf="gathered['fullcontact'] && gathered['fullcontact'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-fullcontact-graphs [data]="gathered['fullcontact']"></ngx-fullcontact-graphs>
   </div>
 
@@ -43,69 +65,90 @@
   -->
 
   <!-- Fullcontact Scramble -->
-  <div class="col-md-4" *ngIf="gathered['fullcontact'] && 
-                               gathered['fullcontact'].result[4]">
+  <div class="col-md-4" *ngIf="gathered['fullcontact'] && gathered['fullcontact'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-fullcontact-scramble [data]="gathered['fullcontact']"></ngx-fullcontact-scramble>
   </div>
 
   <!-- Twitter Popularity -->
-  <div class="col-md-4" id="divTwitterPopularity" *ngIf="gathered['twitter'] && 
-                               gathered['twitter'].result[4]">
+  <div class="col-md-4" id="divTwitterPopularity" #divTwitterPopularity *ngIf="gathered['twitter'] &&
+                               gathered['twitter'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-twitter-popularity [data]="gathered['twitter']"></ngx-twitter-popularity>
   </div>
 
   <!-- Twitter Resume -->
-  <div class="col-md-4" *ngIf="gathered['twitter'] && 
-                               gathered['twitter'].result[4]">
+  <div class="col-md-4" id="divTwitterResume" #divTwitterResume *ngIf="gathered['twitter'] && 
+                               gathered['twitter'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-twitter-resume [data]="gathered['twitter']"></ngx-twitter-resume>
   </div>
 
   <!-- Twitter Approval -->
-  <div class="col-md-4" *ngIf="gathered['twitter'] && 
-                               gathered['twitter'].result[4]">
+  <div class="col-md-4" id="divTwitterApproval" #divTwitterApproval *ngIf="gathered['twitter'] && 
+                               gathered['twitter'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-twitter-approval [data]="gathered['twitter']"></ngx-twitter-approval>
   </div>
 
   <!-- Github Graphs -->
-  <div id="divGithubGraphs" class="col-md-4" *ngIf="gathered['github'] && 
-                               gathered['github'].result[4]">
+  <div id="divGithubGraphs" id="divGithubGraphs" #divGithubGraphs class="col-md-4" *ngIf="gathered['github'] && 
+                               gathered['github'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-github-graphs [data]="gathered['github']"></ngx-github-graphs>
   </div>
 
   <!-- Github Calendar -->
-  <div class="col-md-8" *ngIf="gathered['github'] && 
-                               gathered['github'].result[4]">
+  <div class="col-md-8" id="divGithubCalendar" #divGithubCalendar *ngIf="gathered['github'] && 
+                               gathered['github'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-github-calendar [data]="gathered['github']"></ngx-github-calendar>
   </div>
 
   <!-- Linkedin Graphs -->
-  <div id="divLinkedinGraphs" class="col-md-4" *ngIf="gathered['linkedin'] && 
-                               gathered['linkedin'].result[4]">
+  <div class="col-md-4" id="divLinkedinGraphs" #divLinkedinGraphs *ngIf="gathered['linkedin'] && 
+                               gathered['linkedin'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-linkedin-graphs [data]="gathered['linkedin']"></ngx-linkedin-graphs>
   </div>
 
   <!-- Linkedin Bubble -->
-  <div id="divLinkedinBubble" class="col-md-4" *ngIf="gathered['linkedin'] && 
-                               gathered['linkedin'].result[4]">
+  <div class="col-md-4" id="divLinkedinBubble" #divLinkedinBubble *ngIf="gathered['linkedin'] && 
+                               gathered['linkedin'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-linkedin-bubble [data]="gathered['linkedin']"></ngx-linkedin-bubble>
   </div>
 
   <!-- Linkedin Certs -->
-  <div id="divLinkedinCerts" class="col-md-4" *ngIf="gathered['linkedin'] && 
-                               gathered['linkedin'].result[4]">
+  <div class="col-md-4" id="divLinkedinCerts" #divLinkedinCerts *ngIf="gathered['linkedin'] && 
+                               gathered['linkedin'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-linkedin-certs [data]="gathered['linkedin']"></ngx-linkedin-certs>
   </div>
 
   <!-- Keybase Devices -->
-  <div id="divKeybaseDevices" class="col-md-4" *ngIf="gathered['keybase'] && 
-                               gathered['keybase'].result[4]">
+  <div class="col-md-4" id="divKeybaseDevices" #divKeybaseDevices *ngIf="gathered['keybase'] && 
+                               gathered['keybase'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-keybase-devices [data]="gathered['keybase']"></ngx-keybase-devices>
   </div>
 
   <!-- Keybase Social -->
-  <div id="divKeybaseSocial" class="col-md-4" *ngIf="gathered['keybase'] && 
-                               gathered['keybase'].result[4]">
+  <div class="col-md-4" id="divKeybaseSocial" #divKeybaseSocial *ngIf="gathered['keybase'] && 
+                               gathered['keybase'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-keybase-social [data]="gathered['keybase']"></ngx-keybase-social>
+  </div>
+
+  <div class="col-md-12" *ngIf="gathered['email']">
+    <div class="row">
+      <div class="col-md-12">
+        <nb-card id="actions" class="border-default">
+          <nb-card-body>
+            <nb-actions size="large" fullWidth>
+              <nb-action (click)="searchService.activateSearch()" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxsmall" nbSpinnerMessage="">
+                <i class="nb-search"></i><span>Search</span>
+              </nb-action>
+              <nb-action (click)="generateAllPdf()" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxsmall" nbSpinnerMessage="">
+                <i class="nb-compose"></i><span>Report</span>
+              </nb-action>
+              <nb-action (click)="generateDownloadJsonUri()" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxsmall" nbSpinnerMessage="">
+                  <i class="nb-arrow-thin-down"></i><span>Json</span>
+              </nb-action>
+            </nb-actions>
+          </nb-card-body>
+        </nb-card>
+      </div>
+    </div>
   </div>
 
 </div>

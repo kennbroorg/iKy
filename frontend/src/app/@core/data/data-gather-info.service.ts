@@ -29,6 +29,7 @@ export class DataGatherInfoService {
     private email: string;
     private username: string;
     public  response: any;
+    private visualTasks: any;
     
     constructor(private http: HttpClient,
                 private dialogService: NbDialogService,
@@ -217,8 +218,10 @@ export class DataGatherInfoService {
         let taskexec = this.globalGather['taskexec'];
         let mustRun = true;
         for (let indexTaskexec in taskexec) {
-            if (module == 'linkedin' ||
-                taskexec[indexTaskexec].module == module && 
+            // if (module == 'linkedin' ||
+            //     taskexec[indexTaskexec].module == module && 
+            //     taskexec[indexTaskexec].param == param) {
+            if (taskexec[indexTaskexec].module == module && 
                 taskexec[indexTaskexec].param == param) {
                 mustRun = false;
             } 
@@ -282,4 +285,8 @@ export class DataGatherInfoService {
             title,
             config);
     }
+
 }  
+
+
+

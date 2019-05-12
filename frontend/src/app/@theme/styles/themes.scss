@@ -92,7 +92,12 @@ $nb-themes: nb-register-theme((
 
   //Badge
   badge-fg-text: #000000,
-  badge-danger-bg-color: #ff6666,
+  badge-danger-bg-color: #f68081,
+  badge-warning-bg-color: #f9e968,
+  badge-success-bg-color: #b5db5b,
+
+  //spinner
+  spinner-bg: rgba(0, 0, 0, 0.5),
 
   // app wise variables for each theme
   sidebar-header-gap: 2rem,
