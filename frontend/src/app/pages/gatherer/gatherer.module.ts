@@ -10,6 +10,8 @@ import { TreeModule } from 'angular-tree-component';
 import { ThemeModule } from '../../@theme/theme.module';
 import { GathererComponent } from './gatherer.component';
 
+import { ValidationFilterComponent } from './validation/validation-filter.component';
+
 import { GithubGraphsComponent } from './github/github-graphs/github-graphs.component';
 import { GithubCalendarComponent } from './github/github-calendar/github-calendar.component';
 
@@ -43,6 +45,7 @@ import { SharedModule } from '../shared/shared.module';
   ],
   declarations: [
     GathererComponent,
+    ValidationFilterComponent,
     GithubGraphsComponent,
     GithubCalendarComponent,
     FullcontactGraphsComponent,
