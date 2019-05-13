@@ -54,11 +54,11 @@ export class GathererComponent implements OnInit {
     public  photo: any = [];
     public  organization: any = [];
 
-    public  base64Image: any;
-
-    public  imageToShow: any;
-    public  isImageLoading: boolean;
-    public  imgUrl: string = 'https://picsum.photos/200/300/?random';
+    public  validationShow = {
+        hard: true,
+        soft: true,
+        no: true,
+    };
 
 
     constructor(private searchService: NbSearchService, 
@@ -106,6 +106,15 @@ export class GathererComponent implements OnInit {
         catch(e) {
           return 0;
         }
+    }
+
+    setValidation(val: any) {
+        this.validationShow[val] = !this.validationShow[val];
+        console.log(this.validationShow);
+    }
+
+    checkValidation(val: any) {
+        return this.validationShow[val]
     }
 
     // As All Functions in js are asynchronus, to use await i am using async here
