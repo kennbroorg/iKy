@@ -1,7 +1,8 @@
 <div class="row" id="pageGather" #pageGather >
 <!-- <div class="row" id="pageGather" #pageGather [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge"> -->
 
-  <div class="col-md-12" *ngIf="gathered['email']">
+  <div class="col-md-12" *ngIf="gathered && gathered['email'] && jsonLength(gathered) > 3">
+      <!-- <div class="col-md-12" *ngIf="gathered['email']"> -->
     <div class="row">
       <div class="col-md-12">
         <nb-card id="actions" class="border-default">
@@ -129,7 +130,8 @@
     <ngx-keybase-social [data]="gathered['keybase']"></ngx-keybase-social>
   </div>
 
-  <div class="col-md-12" *ngIf="gathered['email']">
+  <div class="col-md-12" *ngIf="gathered && gathered['email'] && jsonLength(gathered) > 3">
+      <!-- <div class="col-md-12" *ngIf="gathered['email']"> -->
     <div class="row">
       <div class="col-md-12">
         <nb-card id="actions" class="border-default">

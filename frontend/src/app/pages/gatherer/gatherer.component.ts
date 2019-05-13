@@ -81,6 +81,7 @@ export class GathererComponent implements OnInit {
         // Check global data
         this.gathered = this.dataGatherService.pullGather();
         console.log("GathererComponent ngOnInit", this.gathered)
+        console.log("GathererComponent ngOnInit length", this.jsonLength(this.gathered))
     }
 
     ngOnDestroy () {
@@ -96,6 +97,15 @@ export class GathererComponent implements OnInit {
         document.body.appendChild(element);
         element.click(); // simulate click
         document.body.removeChild(element);
+    }
+
+    jsonLength(obj: any) {
+        try {
+          return Object.keys(obj).length;
+        }
+        catch(e) {
+          return 0;
+        }
     }
 
     // As All Functions in js are asynchronus, to use await i am using async here
