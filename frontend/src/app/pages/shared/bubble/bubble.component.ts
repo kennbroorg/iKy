@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, ViewChild, ElementRef, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnChanges, ViewChild, ElementRef, Input, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import * as $ from 'jquery';
 import * as d3 from 'd3';
 import {event as d3Event} from 'd3-selection';
@@ -11,7 +11,7 @@ import {select as d3Select} from 'd3-selection';
     templateUrl: './bubble.component.html',
     styleUrls: ['./bubble.component.scss']
 })
-export class BubbleComponent implements OnInit {
+export class BubbleComponent implements OnInit, AfterViewInit {
     @ViewChild('cardBubble') private cardContainer: ElementRef;
     @Input() private data: Array<any>;
 
@@ -24,14 +24,25 @@ export class BubbleComponent implements OnInit {
     constructor() {}
 
     ngOnInit() {
-        this.card = this.cardContainer.nativeElement;
-        this.width = this.card.clientWidth;
-        this.height = this.width * 0.68;
+        // this.card = this.cardContainer.nativeElement;
+        // this.width = this.card.clientWidth;
+        // this.height = this.width * 0.68;
 
-        this.diameter = this.height;
+        // this.diameter = this.height;
 
-        this.drawChart(this.card, this.data, this.height, this.width, this.diameter);
+        // this.drawChart(this.card, this.data, this.height, this.width, this.diameter);
     }
+
+  ngAfterViewInit() {
+      this.card = this.cardContainer.nativeElement;
+      this.width = this.cardContainer.nativeElement.parentNode.parentNode.clientWidth;
+      this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight;
+      this.diameter = this.height;
+      console.log("CARD-------------------------------", this.card);
+      console.log("WIDTH-------------------------------", this.width);
+      console.log("HEIGHT-------------------------------", this.height);
+      this.drawChart(this.card, this.data, this.height, this.width, this.diameter);
+  }
 
     drawChart(element, data, height, width, diameter) {
 
