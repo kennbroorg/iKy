@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 
 @Component({
@@ -6,7 +6,7 @@ import { NbThemeService } from '@nebular/theme';
     templateUrl: './twitter-resume.component.html',
     styleUrls: ['./twitter-resume.component.scss']
 })
-export class TwitterResumeComponent implements OnInit {
+export class TwitterResumeComponent implements OnInit, AfterViewInit {
     colorScheme: any;
     themeSubscription: any;
 
@@ -30,10 +30,39 @@ export class TwitterResumeComponent implements OnInit {
 
     ngOnInit() {
 
-        this.card = this.cardContainer.nativeElement;
-        this.width = this.card.clientWidth;
-        this.height = this.width * 0.68;
+        //this.card = this.cardContainer.nativeElement;
+        //this.width = this.card.clientWidth;
+        //this.height = this.width * 0.68;
 
+        //console.log("Twitter Resume Component");
+
+        //this.twitterResume = this.data.result[4].graphic[0].resume.children.map(this.arrayAdecuate);
+        //console.log("Twitter Resume data", this.twitterResume);
+        //this.validation = this.data.result[2].validation;
+
+        ///* Validation */
+        //switch(this.data.result[2].validation) {
+        //    case 'hard':
+        //        this.validation = 'success';
+        //        break;
+        //    case 'soft':
+        //        this.validation = 'warning';
+        //        break;
+        //    case 'no':
+        //        this.validation = 'danger';
+        //        break;
+        //    default:
+        //        this.validation = 'danger';
+        //}
+    }
+
+    ngAfterViewInit() {
+        this.card = this.cardContainer.nativeElement;
+        this.width = this.cardContainer.nativeElement.parentNode.parentNode.clientWidth;
+        this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight - 55;
+        console.log("CARD-------------------------------", this.card);
+        console.log("WIDTH-------------------------------", this.width);
+        console.log("HEIGHT-------------------------------", this.height);
         console.log("Twitter Resume Component");
 
         this.twitterResume = this.data.result[4].graphic[0].resume.children.map(this.arrayAdecuate);

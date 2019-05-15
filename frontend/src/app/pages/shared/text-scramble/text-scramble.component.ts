@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, ViewChild, ElementRef, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnChanges, ViewChild, ElementRef, Input, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import * as $ from 'jquery';
 import * as d3 from 'd3';
 import {event as d3Event} from 'd3-selection';
@@ -11,7 +11,7 @@ import {select as d3Select} from 'd3-selection';
     templateUrl: './text-scramble.component.html',
     styleUrls: ['./text-scramble.component.scss']
 })
-export class TextScrambleComponent implements OnInit {
+export class TextScrambleComponent implements OnInit, AfterViewInit {
     @ViewChild('cardScramble') private cardContainer: ElementRef;
     @Input() private data: Array<any>;
   
@@ -30,14 +30,25 @@ export class TextScrambleComponent implements OnInit {
     constructor() { }
   
     ngOnInit() {
-        this.card = this.cardContainer.nativeElement;
-        this.width = this.card.clientWidth;
-        this.height = this.card.clientWidth * 0.68; //Tired, I found this relation
-        this.queue = []
-        
-        this.drawChart(this.card, this.data, this.height, this.width);
+        // this.card = this.cardContainer.nativeElement;
+        // this.width = this.card.clientWidth;
+        // this.height = this.card.clientWidth * 0.68; //Tired, I found this relation
+        // this.queue = []
+        // 
+        // this.drawChart(this.card, this.data, this.height, this.width);
     }
   
+    ngAfterViewInit() {
+        this.card = this.cardContainer.nativeElement;
+        this.width = this.cardContainer.nativeElement.parentNode.parentNode.clientWidth;
+        this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight;
+        console.log("CARD-------------------------------", this.card);
+        console.log("WIDTH-------------------------------", this.width);
+        console.log("HEIGHT-------------------------------", this.height);
+        this.queue = []
+        this.drawChart(this.card, this.data, this.height, this.width);
+    }
+
     drawChart(element, data, height, width) {
         const phrases = data;
         this.TextScramble(element);
