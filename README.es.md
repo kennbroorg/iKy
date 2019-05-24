@@ -10,9 +10,9 @@ Visite el Gitlab Page del [Projecto](https://kennbroorg.gitlab.io/ikyweb/)
 
 [Video Demo](https://vimeo.com/326114716 "Video Demo - Click to Watch!")
 
-## Proyecto
+## Proyecto - Versión anterior
 
-Primero que nada queremos aclarar que hemos cambiado el Frontend de AngularJS a Angular 7. Por esta razón hemos dejado al proyecto con AngularJS como Frontend en la rama iKy-v1 y la documentación para su instalación [aquí][readmev1es].
+Primero que nada queremos aclarar que hemos cambiado el Frontend de AngularJS a Angular 7. Por esta razón hemos dejado al proyecto con AngularJS como Frontend en la rama iKy-v1.
 
 El motivo del cambio de Frontend fue actualizar la tecnología y obtener una forma más fácil de instalación.
 
@@ -90,8 +90,6 @@ Una vez que la aplicación esté cargada en el browser, deberá ir a la opción 
 - Twitter : Generar las APIs desde [aquí](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
 - Linkedin : Solo se debe cargar el usuario y contraseña de su cuenta 
 
-[readmev1en]: README-v1.en.md
-[readmev1es]: README-v1.es.md
 [readmees]: README.es.md
 [readmeen]: README.md
 
