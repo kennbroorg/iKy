@@ -1,3 +1,21 @@
+<p align="center">
+	<a href="https://twitter.com/intent/follow?screen_name=kennbroorg">
+		<img alt="follow on Twitter" src="https://img.shields.io/twitter/follow/kennbroorg.svg?label=follow%20%40kennbroorg&style=social">
+	</a>
+</p>
+<p align="center">
+	<img alt="Redis" src="https://img.shields.io/badge/storage-redis-red.svg">
+	<img alt="Python" src="https://img.shields.io/badge/python-2.7-informational.svg">
+	<img alt="Celery" src="https://img.shields.io/badge/multiprocessing-celery-green.svg">
+	<img alt="Flask" src="https://img.shields.io/badge/interface-flask-yellowgreen.svg">
+</p>
+<p align="center">
+	<img alt="Node" src="https://img.shields.io/badge/node-%3E%208.x-brightgreen.svg">
+	<img alt="Angular" src="https://img.shields.io/badge/web%20framwork-angular%207-red.svg">
+	<img alt="Boostrap" src="https://img.shields.io/badge/toolkit-boostrap-blueviolet.svg">
+	<img alt="UI Kit" src="https://img.shields.io/badge/UI%20Kit-Nebular-9cf.svg">
+</p>
+
 # iKy
 
 ## Description
