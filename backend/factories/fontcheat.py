@@ -38,7 +38,6 @@ def fontawesome_cheat_5():
 
     cur_dir = os.getcwd()
     fonta_file = cur_dir + '/fonta.json'
-    print(fonta_file)
     fonta = {}
 
     if (not os.path.exists(fonta_file) and not
@@ -49,7 +48,6 @@ def fontawesome_cheat_5():
         m = re.findall('window.__inline_data__ = (.*)', req.text)
         json_m = json.loads(m[0])
         json_data = json_m[2]['data']
-        print(json_data)
 
         with open(fonta_file, 'w') as f:
             # json_data = json.load(f)
