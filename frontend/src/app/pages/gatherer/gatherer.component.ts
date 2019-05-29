@@ -909,6 +909,91 @@ export class GathererComponent implements OnInit {
 
         hl = hl + 10; // Space between modules
 
+        // Leaks module report
+        if (this.gathered['leaks'] && this.gathered['leaks']['result'] &&
+               this.gathered['leaks']['result'].length > 3) {
+            moduleHeight = 80;
+
+            // Validate pageHeight
+            if ( hl + moduleHeight > pageHeight) {
+                doc.addPage();
+                hl = 20;
+            }
+
+            // Leaks
+            doc.setFontSize(11);
+            doc.setDrawColor(44, 93, 126);
+            doc.setFillColor(44, 93, 126);
+            doc.rect(10, hl, 190, 7, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.text('Module leaks', 105, hl + 5, null, null, 'center');
+            hl = hl + 10;
+
+            var svg = this.nbCardContainer.nativeElement.querySelector("#divLeakSocial");
+            await html2canvas(svg.children[0], { 
+                scale: 1,
+                useCORS: true, 
+                // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
+                async: true,
+                logging: true,
+                backgroundColor: "#51A5D7",
+                allowTaint: true,
+                removeContainer: true
+                })
+                .then(function (canvas) { 
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                });
+
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(79, 79, 79);
+            infoText = 'The information of the chart is shown in the following table.';
+            var splitText = doc.splitTextToSize(infoText, 110);
+            var y = 6;
+            for (var i=0; i<splitText.length; i++){
+                doc.text(90, hl + y, splitText[i]);
+                y = y + 4;
+            }
+
+            // Information table
+            if (this.gathered['leaks']['result'][4]['graphic'][0]['leaks']) {
+                let headTable = [];
+                let bodyTable = [];
+                let elem = [];
+                let i: any;
+                let list = this.gathered['leaks']['result'][4]['graphic'][0]['leaks'];
+                
+                for (let i in list) {
+                    if (list[i]['title'] != 'Leaks' && list[i]['subtitle']) {
+                        if (Number(i) < 8) {
+                            elem = [list[i]['title'], list[i]['subtitle']];
+                            bodyTable.push(elem);
+                        }
+                    }
+                }
+
+                doc.autoTable({
+                    startY: hl + 11,
+                    margin: {left: 90},
+                    showHead: false,
+                    styles: { overflow: 'hidden' },
+                    bodyStyles: {
+                        fillColor: [52, 73, 94],
+                        textColor: 240
+                    },
+                    alternateRowStyles: {
+                        fillColor: [74, 96, 117]
+                    },
+                    head: [
+                        ['Leak', 'Breach Date'],
+                    ],
+                    body: bodyTable,
+                });
+            }
+
+            hl = hl + 70;
+        }
+
         doc.addPage();
         hl = 20;
         // Profile
