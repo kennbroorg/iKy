@@ -15,6 +15,17 @@
     <img alt="Boostrap" src="https://img.shields.io/badge/toolkit-boostrap-blueviolet.svg">
     <img alt="UI Kit" src="https://img.shields.io/badge/UI%20Kit-Nebular-9cf.svg">
 </div>
+<div align="center">
+    <img alt="fullcontact" src="https://img.shields.io/badge/module-fullcontact-blue.svg">
+    <img alt="twitter" src="https://img.shields.io/badge/module-twitter-blue.svg">
+    <img alt="linkedin" src="https://img.shields.io/badge/module-linkedin-blue.svg">
+    <img alt="github" src="https://img.shields.io/badge/module-github-blue.svg">
+    <img alt="keybase" src="https://img.shields.io/badge/module-keybase-blue.svg">
+    <img alt="ghostproject" src="https://img.shields.io/badge/module-ghostproject-red.svg">
+    <img alt="haveibeenpwned" src="https://img.shields.io/badge/module-haveibeenpwned-blue.svg">
+</div>
+
+---
 
 # iKy
 
