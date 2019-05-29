@@ -156,6 +156,12 @@
     <ngx-keybase-social [data]="gathered['keybase']"></ngx-keybase-social>
   </div>
 
+  <!-- Leaks -->
+  <div class="col-md-4" id="divLeakSocial" #divLeakSocial *ngIf="gathered['leaks'] && 
+                               gathered['leaks'].result[4] && validationShow[gathered['leaks'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+    <ngx-leak-graphs [data]="gathered['leaks']"></ngx-leak-graphs>
+  </div>
+
   <div class="col-md-12" *ngIf="gathered && gathered['email'] && jsonLength(gathered) > 3">
       <!-- <div class="col-md-12" *ngIf="gathered['email']"> -->
     <div class="row">
