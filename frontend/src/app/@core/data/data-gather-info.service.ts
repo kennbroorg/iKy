@@ -189,13 +189,13 @@ export class DataGatherInfoService {
             );
         };
     
-        // // Leaks     XXX : Repair
-        // this.showToast(NbToastStatus.INFO, 'Leaks (HIBP)', 'Send information gathering');
-        // this.executeRequest$('leaks', {username: this.username, from: 'Initial'})
-        //         .subscribe(this.processResponse,
-        //                    err => console.error('Ops: ', err.message),
-        //                    () => console.log('Completed leaks')
-        // );
+        // Leaks
+        this.showToast(NbToastStatus.INFO, 'Leaks (HIBP)', 'Send information gathering');
+        this.executeRequest$('leaks', {username: this.email, from: 'Initial'})
+                .subscribe(this.processResponse,
+                           err => console.error('Ops: ', err.message),
+                           () => console.log('Completed leaks')
+        );
     }
     
     // Tasklist Callback

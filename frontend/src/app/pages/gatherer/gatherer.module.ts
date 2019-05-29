@@ -30,6 +30,8 @@ import { LinkedinCertsComponent } from './linkedin/linkedin-certs/linkedin-certs
 import { KeybaseSocialComponent } from './keybase/keybase-social/keybase-social.component';
 import { KeybaseDevicesComponent } from './keybase/keybase-devices/keybase-devices.component';
 
+import { LeakGraphsComponent } from './leak/leak-graphs/leak-graphs.component';
+
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
@@ -59,6 +61,7 @@ import { SharedModule } from '../shared/shared.module';
     LinkedinCertsComponent,
     KeybaseSocialComponent,
     KeybaseDevicesComponent,
+    LeakGraphsComponent,
   ],
 })
 export class GathererModule { }
