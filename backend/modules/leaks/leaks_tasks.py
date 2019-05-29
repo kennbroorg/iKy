@@ -63,7 +63,8 @@ def t_leaks(username):
 
     link = "Leaks"
     gather_item = {"name-node": "Leaks", "title": "Leaks",
-                   "subtitle": "", "icon": u'\uf06a', "link": link}
+                   "subtitle": "", "icon": "fas fa-unlock-alt",
+                   "link": link}
     gather.append(gather_item)
 
     for leak in raw_node:
