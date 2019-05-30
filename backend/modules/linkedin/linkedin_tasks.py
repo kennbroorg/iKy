@@ -6,7 +6,9 @@ import json
 import requests
 
 import re
-from lxml import etree
+from bs4 import BeautifulSoup
+import os.path
+from datetime import datetime, timedelta
 
 try:
     from factories._celery import create_celery
@@ -23,8 +25,6 @@ except ImportError:
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
-from pprint import pprint
-
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -40,24 +40,45 @@ def date_convert(date):
 
 @celery.task
 def t_linkedin(email, from_m):
-    # Get user and pass
-    linkedin_user = api_keys_search('linkedin_user')
-    linkedin_pass = api_keys_search('linkedin_pass')
 
-    # Login process
+    cookie_file = "cookie-linkedin.json"
+    expiration_date = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
+
     s = requests.Session()
-    r = s.get('https://www.linkedin.com/')
-    tree = etree.HTML(r.content)
-    loginCsrfParam = ''.join(tree.xpath(
-        '//input[@id="loginCsrfParam-login"]/@value'))
+    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.75.14 (KHTML, like Gecko) Version/7.0.3 Safari/7046A194A'}
 
-    payload = {
-        'session_key': linkedin_user,
-        'loginCsrfParam': loginCsrfParam,
-        'session_password': linkedin_pass,
-    }
-    req = s.post("https://www.linkedin.com/uas/login-submit?" +
-                 "loginSubmitSource=GUEST_HOME", data=payload)
+    if (os.path.isfile(cookie_file)
+        and (expiration_date < datetime.fromtimestamp(
+            os.path.getmtime(cookie_file)).strftime('%Y-%m-%d'))):
+
+        with open('cookie-linkedin.json', 'r') as f:
+            s.cookies = requests.utils.cookiejar_from_dict(json.load(f))
+
+    else:
+        # Get user and pass
+        linkedin_user = api_keys_search('linkedin_user')
+        linkedin_pass = api_keys_search('linkedin_pass')
+
+        # import pdb; pdb.set_trace()
+        # Login process
+        r = s.get('https://www.linkedin.com/login?trk=guest_homepage-basic_nav-header-signin', headers=headers)
+        cookies = dict(r.cookies)
+
+        soup = BeautifulSoup(r.content, "lxml")
+        hidden_tags = soup.find_all("input", type="hidden")
+        payload = {}
+        for input_hidden in hidden_tags:
+            payload[input_hidden['name']] = input_hidden['value']
+        payload['session_key'] = linkedin_user
+        payload['session_password'] = linkedin_pass
+
+        req = s.post("https://www.linkedin.com/checkpoint/lg/login-submit",
+                     data=payload,
+                     headers=headers)
+
+        with open('cookie-linkedin.json', 'w') as f:
+            json.dump(requests.utils.dict_from_cookiejar(s.cookies), f)
+
     for cookie in s.cookies:
         if "JSESSIONID" in str(cookie):
             csrfToken = re.findall('JSESSIONID=([^ ]*)', str(cookie))
@@ -78,18 +99,20 @@ def t_linkedin(email, from_m):
         total.append({'validation': 'hard'})
         url = "https://www.linkedin.com/sales/gmail/profile/" + \
             "viewByEmail/%s" % email
-        req = s.get(url)
+        req = s.get(url, headers=headers)
         if "Sorry, we couldn't find a matching LinkedIn" not in req.content:
             url = "https://www.linkedin.com/sales/gmail/profile/proxy/%s" % \
                 (email)
             found = True
 
     if found:
-        req = s.get(url)
+        req = s.get(url, headers=headers)
+        print("REQ : ", req)
+
         id = re.findall(
             '\/voyager\/api\/identity\/profiles\/([a-z]*)\/profileView',
             req.text)
-        print id
+        print(id)
 
         # url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
         #     id[0] + "/recentActivities"
@@ -109,14 +132,14 @@ def t_linkedin(email, from_m):
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
             id[0] + "/following?q=followedEntities&count=17"
         s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
-        req = s.get(url)
+        req = s.get(url, headers=headers)
         # Following
         following_view = json.loads(req.text)
 
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
             id[0] + "/skillCategory?includeHiddenEndorsers=true"
         s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
-        req = s.get(url)
+        req = s.get(url, headers=headers)
         content = re.sub("\. ?\n", ",\n", req.content)
         content = re.sub(" = ", " : ", content)
         # Skill Category
@@ -134,7 +157,7 @@ def t_linkedin(email, from_m):
             id[0] + \
             "/recommendations?q=received&recommendationStatuses=List(VISIBLE)"
         s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
-        req = s.get(url)
+        req = s.get(url, headers=headers)
         # Recomendaciones 1
         recommend_received = json.loads(req.text)
 
@@ -142,14 +165,14 @@ def t_linkedin(email, from_m):
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
             id[0] + "/recommendations?q=given"
         s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
-        req = s.get(url)
+        req = s.get(url, headers=headers)
         # Recomendaciones 2
         recommend_given = json.loads(req.text)
 
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
             id[0] + "/profileView"
         s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
-        req = s.get(url)
+        req = s.get(url, headers=headers)
         content = re.sub("\. ?\n", ",\n", req.content)
         content = re.sub(" = ", " : ", content)
         # Profile
@@ -165,7 +188,7 @@ def t_linkedin(email, from_m):
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
             id[0] + "/networkinfo"
         s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
-        req = s.get(url)
+        req = s.get(url, headers=headers)
         content = re.sub("\. ?\n", ",\n", req.content)
         content = re.sub(" = ", " : ", content)
         # NetworkInfo
