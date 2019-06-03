@@ -3,15 +3,25 @@
 Thanks goes to these people
 
 ## Sebastián Leonardo Kennedy
-Gitlab   : @skennedy
-Twitter  : @emips_sk
+Code, review, vagrant.
+<div><img alt="Gitlab" src="https://img.shields.io/badge/Gitlab-@skennedy-red.svg?style=social&logo=gitlab"></div>
+<div><img alt="Twitter" src="https://img.shields.io/badge/Twitter-@emips_sk-red.svg?style=social&logo=twitter"></div>
 
 ## Juan Diego Ianelli
-Gitlab   : @jiannelli
+Review, translate and corrections
+<div><img alt="Gitlab" src="https://img.shields.io/badge/Gitlab-@jiannelli-red.svg?style=social&logo=gitlab"></div>
 
 ## Sebastián Ariel Bevacqua
-Gitlab   : @sebabeva
-Twitter  : @sebabeva
-Linkedin : linkedin.com/in/sebabeva
+Code (Ghostproject), upgrade dependencies
+<div><img alt="Gitlab" src="https://img.shields.io/badge/Gitlab-@sebabeva-red.svg?style=social&logo=gitlab"></div>
+<div><img alt="Twitter" src="https://img.shields.io/badge/Twitter-@sebabeva-red.svg?style=social&logo=twitter"></div>
+<div><img alt="Linkedin" src="https://img.shields.io/badge/Linkedin-@sebabeva-red.svg?style=social&logo=linkedin"></div>
+
+## Marcos Miguel García
+Docker
+<div><img alt="Gitlab" src="https://img.shields.io/badge/Gitlab-@marcositu-red.svg?style=social&logo=gitlab"></div>
+<div><img alt="Twitter" src="https://img.shields.io/badge/Twitter-@artsweb-red.svg?style=social&logo=twitter"></div>
+<div><img alt="Linkedin" src="https://img.shields.io/badge/Linkedin-@marcosmiguelgarcia-red.svg?style=social&logo=linkedin"></div>
+<div><img alt="Web" src="https://img.shields.io/badge/web-https%3A%2F%2Fwww.artssec.com-informational.svg"></div>
 
 # SOURCES AND OTHER PROJECTS
