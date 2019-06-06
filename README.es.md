@@ -3,6 +3,9 @@
 	<img alt="follow on Twitter" src="https://img.shields.io/twitter/follow/kennbroorg.svg?label=follow%20%40kennbroorg&style=social">
     </a>
 </div>
+
+---
+
 <div align="center">
     <img alt="Redis" src="https://img.shields.io/badge/storage-redis-red.svg">
     <img alt="Python" src="https://img.shields.io/badge/python-2.7-informational.svg">
@@ -23,6 +26,20 @@
     <img alt="keybase" src="https://img.shields.io/badge/module-keybase-blue.svg">
     <img alt="ghostproject" src="https://img.shields.io/badge/module-ghostproject-red.svg">
     <img alt="haveibeenpwned" src="https://img.shields.io/badge/module-haveibeenpwned-blue.svg">
+</div>
+
+---
+
+<div align="center">
+    <a href="https://gitlab.com/kennbroorg/iKy/blob/iKy/README.md">
+	<img alt="README English" src="https://img.shields.io/badge/README-English-orange.svg">
+    </a>
+</div>
+
+---
+
+<div align="center" style="background: #111">
+    <img alt="Logo" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/Logo-Circular.png">
 </div>
 
 ---
