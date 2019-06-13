@@ -24,9 +24,15 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
+# Compatibility code
+try:
+    # Python 2: "unicode" is built-in
+    unicode
+except NameError:
+    unicode = str
 
 @celery.task
-def t_github(username, from_m):
+def t_github(username, from_m="Initial"):
     """ Task of Celery that get info from github """
     req = requests.get("https://api.github.com/users/%s" % username)
 
@@ -42,14 +48,14 @@ def t_github(username, from_m):
     svg_previous_r = requests.get(svg_req % (username, str(previous_year_from),
                                              str(previous_year_to)))
     # Change color of calendar
-    svg_actual = svg_actual_r.content.replace('ebedf0', '4d4d4d')
-    svg_previous = svg_previous_r.content.replace('ebedf0', '4d4d4d')
+    svg_actual = svg_actual_r.text.replace('ebedf0', '4d4d4d')
+    svg_previous = svg_previous_r.text.replace('ebedf0', '4d4d4d')
 
     # TODO : Many things
     # Use other API URLs
 
     # Raw Array
-    raw_node = json.loads(req.content)
+    raw_node = json.loads(unicode(req.text))
 
     # Total
     total = []
@@ -185,6 +191,5 @@ def output(data):
 
 if __name__ == "__main__":
     username = sys.argv[1]
-    from_m = sys.argv[2]
-    result = t_github(username, from_m)
+    result = t_github(username)
     output(result)
