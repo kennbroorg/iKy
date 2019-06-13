@@ -30,6 +30,12 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
+# Compatibility code
+try:
+    # Python 2: "unicode" is built-in
+    unicode
+except NameError:
+    unicode = str
 
 @celery.task
 def t_fullcontact(email):
@@ -38,7 +44,7 @@ def t_fullcontact(email):
         req = requests.get(
             "https://api.fullcontact.com/v2/person.json?email=%s"
             % email, headers={"X-FullContact-APIKey": key})
-        raw_node = json.loads(req.content)
+        raw_node = json.loads(unicode(req.text))
     else:
         raw_node = []
 
