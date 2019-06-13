@@ -25,11 +25,23 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
+# Compatibility code
+try:
+    # Python 2: "unicode" is built-in
+    unicode
+except NameError:
+    unicode = str
 
 @celery.task
 def t_leaks(username):
     """ Task of Celery that get info from Have I Been Pwned """
-    email_encoded = urllib.quote_plus(username)
+
+    # Compatibility code
+    try:
+        email_encoded = urllib.quote_plus(username)
+    except AttributeError:
+        email_encoded = urllib.parse.quote_plus(username)
+
     url = "https://haveibeenpwned.com/api/v2/breachedaccount/%s" \
           % (email_encoded)
 
@@ -38,7 +50,7 @@ def t_leaks(username):
 
     # Raw Array
     if (len(req.content) != 0):
-        raw_node = json.loads(req.content)
+        raw_node = json.loads(unicode(req.text))
     else:
         raw_node = []
 
