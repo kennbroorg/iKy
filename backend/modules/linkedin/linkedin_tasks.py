@@ -30,6 +30,13 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
+# Compatibility code
+try:
+    # Python 2: "unicode" is built-in
+    unicode
+except NameError:
+    unicode = str
+
 
 def date_convert(date):
     date_conv = str(date.get("year", ""))
@@ -100,19 +107,17 @@ def t_linkedin(email, from_m):
         url = "https://www.linkedin.com/sales/gmail/profile/" + \
             "viewByEmail/%s" % email
         req = s.get(url, headers=headers)
-        if "Sorry, we couldn't find a matching LinkedIn" not in req.content:
+        if "Sorry, we couldn't find a matching LinkedIn" not in req.text:
             url = "https://www.linkedin.com/sales/gmail/profile/proxy/%s" % \
                 (email)
             found = True
 
     if found:
         req = s.get(url, headers=headers)
-        print("REQ : ", req)
 
         id = re.findall(
             '\/voyager\/api\/identity\/profiles\/([a-z]*)\/profileView',
             req.text)
-        print(id)
 
         # url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
         #     id[0] + "/recentActivities"
@@ -140,7 +145,7 @@ def t_linkedin(email, from_m):
             id[0] + "/skillCategory?includeHiddenEndorsers=true"
         s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         req = s.get(url, headers=headers)
-        content = re.sub("\. ?\n", ",\n", req.content)
+        content = re.sub("\. ?\n", ",\n", unicode(req.text))
         content = re.sub(" = ", " : ", content)
         # Skill Category
         skill_category = json.loads(content)
@@ -173,7 +178,7 @@ def t_linkedin(email, from_m):
             id[0] + "/profileView"
         s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         req = s.get(url, headers=headers)
-        content = re.sub("\. ?\n", ",\n", req.content)
+        content = re.sub("\. ?\n", ",\n", unicode(req.text))
         content = re.sub(" = ", " : ", content)
         # Profile
         profile_view = json.loads(content)
@@ -189,7 +194,7 @@ def t_linkedin(email, from_m):
             id[0] + "/networkinfo"
         s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         req = s.get(url, headers=headers)
-        content = re.sub("\. ?\n", ",\n", req.content)
+        content = re.sub("\. ?\n", ",\n", unicode(req.text))
         content = re.sub(" = ", " : ", content)
         # NetworkInfo
         network_info = json.loads(content)
