@@ -5,6 +5,7 @@ import sys
 import json
 import requests
 # import urllib3
+import re
 
 import tweepy
 # import oauth2
@@ -51,6 +52,7 @@ def t_twitter(username, from_m):
 
     # Total
     total = []
+    tweetslist = []
     total.append({'module': 'twitter'})
     total.append({'param': username})
     # Evaluates the module that executed the task and set validation
@@ -59,13 +61,50 @@ def t_twitter(username, from_m):
     else:
         total.append({'validation': 'soft'})
 
+    strings = []
+    tusers = []
     try:
         result_api = api.get_user(username)
     except tweepy.TweepError as e:
-        total.append({'raw_node': e[0]})
+        total.append({'raw_node': e.args})
         return total
 
-    raw_node = result_api._json
+    prevDate = ''
+    sumTweet = 0
+    sumReTweet = 0
+    raw_node = tweepy.Cursor(api.user_timeline, id=username).items(100)
+    raw_node_tweets = []
+    for tweet in raw_node:
+        raw_node_tweets.append(tweet._json)
+        if (prevDate != tweet.created_at.strftime("%Y-%m") and prevDate != ''):
+            Tweet_item = {"name": prevDate, "series": [
+                          {"name": "Tweet",
+                           "value": sumTweet},
+                          {"name": "ReTweet",
+                           "value": sumReTweet}]}
+            tweetslist.append(Tweet_item)
+            prevDate = tweet.created_at.strftime("%Y-%m")
+            sumTweet = 0
+            sumReTweet = 0
+        else:
+            prevDate = tweet.created_at.strftime("%Y-%m")
+            if (tweet.text.encode("utf-8")[:3] == 'RT '):
+                sumReTweet = sumReTweet + 1
+            else:
+                sumTweet = sumTweet + 1
+        strings = strings + re.findall(r'(?:\#+[\w_]+[\w\'_\-]*[\w_]+)',
+                                       str(tweet.text.encode("utf-8")))
+        tusers = tusers + re.findall(r'(?:@[\w_]+)',
+                                     str(tweet.text.encode("utf-8")))
+
+    Tweet_item = {"name": tweet.created_at.strftime("%Y-%m"), "series": [
+                 {"name": "Tweet", "value": sumTweet},
+                 {"name": "ReTweet", "value": sumReTweet}]}
+    tweetslist.append(Tweet_item)
+
+    raw_node_total = []
+    raw_node_total.append({'raw_node_info': result_api._json})
+    raw_node_total.append({'raw_node_tweets': raw_node_tweets})
 
     # Graphic Array
     graphic = []
@@ -110,10 +149,13 @@ def t_twitter(username, from_m):
         "icon": "fa-twitter"}
     timeline.append(timeline_item)
 
-    total.append({'raw': raw_node})
+    total.append({'raw': raw_node_total})
     graphic.append({'resume': resume})
     graphic.append({'popularity': popularity})
     graphic.append({'approval': approval})
+    graphic.append({'hashtag': list(dict.fromkeys(strings))})
+    graphic.append({'users': list(dict.fromkeys(tusers))})
+    graphic.append({'tweetslist': tweetslist})
     total.append({'graphic': graphic})
     if (profile != []):
         total.append({'profile': profile})
@@ -124,7 +166,7 @@ def t_twitter(username, from_m):
 
 
 def output(data):
-    print(json.dumps(data, ensure_ascii=True, indent=2))
+    print(json.dumps(data, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
