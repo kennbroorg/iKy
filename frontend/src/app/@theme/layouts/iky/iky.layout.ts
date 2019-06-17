@@ -21,18 +21,26 @@ import { StateService } from '../../../@core/data/state.service';
         <ngx-header [position]="sidebar.id === 'start' ? 'normal': 'inverse'"></ngx-header>
       </nb-layout-header>
 
+      <img style="width: 50%; position: absolute; display: block; left:0px; right: 0px; top: 10px; margin: 0 auto;" src="assets/images/iKy-Logo.png">
+
       <nb-sidebar class="menu-sidebar"
                    tag="menu-sidebar"
                    responsive
                    [end]="sidebar.id === 'end'">
-<!--
-        <nb-sidebar-header *ngIf="currentTheme !== 'corporate'">
-          <a href="#" class="btn btn-hero-success main-btn">
-            <i class="ion ion-social-github"></i> <span>S Support Us</span>
-          </a>
+
+      <!--
+      <nb-sidebar class="menu-sidebar"
+                   tag="menu-sidebar"
+                   responsive
+                   [end]="sidebar.id === 'end'">
+      -->
+
+        <nb-sidebar-header>
+            <img style="width: 50%; position: relative; margin: 0 auto;" src="assets/images/iKy-Logo.png">
         </nb-sidebar-header>
--->
+
         <ng-content select="nb-menu"></ng-content>
+
       </nb-sidebar>
 
       <nb-layout-column class="main-content">
