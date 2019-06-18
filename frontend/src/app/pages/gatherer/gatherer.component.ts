@@ -181,7 +181,6 @@ export class GathererComponent implements OnInit {
             hl = hl + 10;
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divFullcontactGraphs");
-            console.log("SVG FullcontactTTTTTTTTTTTTTTTTTTTTTTTT", svg.children[0]);
             await html2canvas(svg.children[0], { 
                 scale: 1,
                 useCORS: true, 
@@ -247,7 +246,7 @@ export class GathererComponent implements OnInit {
         if (this.gathered['twitter'] && this.gathered['twitter']['result'] &&
               this.gathered['twitter']['result'].length > 3) {
 
-            // Resume
+            // Mentions user
             moduleHeight = 80;
 
             // Validate pageHeight
@@ -263,6 +262,65 @@ export class GathererComponent implements OnInit {
             doc.setTextColor(255, 255, 255);
             doc.text('Module twitter', 105, hl + 5, null, null, 'center');
             hl = hl + 10;
+
+            var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterList");
+            await html2canvas(svg.children[0], { 
+                scale: 1,
+                useCORS: true, 
+                // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
+                async: true,
+                logging: true,
+                backgroundColor: "#51A5D7",
+                allowTaint: true,
+                removeContainer: true
+                })
+                .then(function (canvas) { 
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                });
+
+            // Information table
+            if (this.gathered['twitter']['result'][4]['graphic'][5]['tweetslist']) {
+                let headTable = [];
+                let bodyTable = [];
+                let elem = [];
+                let i: any;
+                let list = this.gathered['twitter']['result'][4]['graphic'][5]['tweetslist'];
+                
+                for (let i in list) {
+                    for (let y in  list[i]['series']) {
+                        elem = [list[i]['name'], list[i]['series'][y]['name'], list[i]['series'][y]['value']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.autoTable({
+                    startY: hl + 5,
+                    margin: {left: 90},
+                    showHead: false,
+                    bodyStyles: {
+                        fillColor: [52, 73, 94],
+                        textColor: 240
+                    },
+                    alternateRowStyles: {
+                        fillColor: [74, 96, 117]
+                    },
+                    head: [
+                        ['Period', 'Type', 'Value'],
+                    ],
+                    body: bodyTable,
+                });
+            }
+
+            hl = hl + 70;
+
+            // Resume
+            moduleHeight = 70;
+
+            // Validate pageHeight
+            if ( hl + moduleHeight > pageHeight) {
+                doc.addPage();
+                hl = 20;
+            }
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterResume");
             await html2canvas(svg.children[0], { 
@@ -425,6 +483,129 @@ export class GathererComponent implements OnInit {
             }
 
             hl = hl + 70;
+
+            // Hashtag
+            moduleHeight = 70;
+
+            // Validate pageHeight
+            if ( hl + moduleHeight > pageHeight) {
+                doc.addPage();
+                hl = 20;
+            }
+
+            var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterHashtag");
+            await html2canvas(svg.children[0], { 
+                scale: 1,
+                useCORS: true, 
+                // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
+                async: true,
+                logging: true,
+                backgroundColor: "#51A5D7",
+                allowTaint: true,
+                removeContainer: true
+                })
+                .then(function (canvas) { 
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                });
+
+            // Information table
+            if (this.gathered['twitter']['result'][4]['graphic'][3]['hashtag']) {
+                let headTable = [];
+                let bodyTable = [];
+                let elem = "";
+                let i: any;
+                let list = this.gathered['twitter']['result'][4]['graphic'][3]['hashtag'];
+                
+                for (let i in list) {
+                    elem = elem + list[i]['label'] + " ";
+                }
+                bodyTable.push([elem]);
+
+                doc.autoTable({
+                    startY: hl + 5,
+                    margin: {left: 90},
+                    showHead: true,
+                    styles: { overflow: 'linebreak', cellWidth: 'wrap', halign: 'center' },
+                    columnStyles: { 0: { cellWidth: 'auto' } },
+                    bodyStyles: {
+                        fillColor: [52, 73, 94],
+                        textColor: 240
+                    },
+                    alternateRowStyles: {
+                        fillColor: [74, 96, 117]
+                    },
+                    head: [
+                        ['Hashtags'],
+                    ],
+                    body: bodyTable,
+                });
+            }
+
+            hl = hl + 70;
+
+            // Mentions
+            moduleHeight = 70;
+
+            // Validate pageHeight
+            if ( hl + moduleHeight > pageHeight) {
+                doc.addPage();
+                hl = 20;
+            }
+
+            var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterUsers");
+            await html2canvas(svg.children[0], { 
+                scale: 1,
+                useCORS: true, 
+                // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
+                async: true,
+                logging: true,
+                backgroundColor: "#51A5D7",
+                allowTaint: true,
+                removeContainer: true
+                })
+                .then(function (canvas) { 
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                });
+
+            // Information table
+            if (this.gathered['twitter']['result'][4]['graphic'][4]['users']) {
+                let headTable = [];
+                let bodyTable = [];
+                let elem = "";
+                let i: any;
+                let list = this.gathered['twitter']['result'][4]['graphic'][4]['users'];
+                
+                for (let i in list) {
+                    elem = elem + list[i]['title'] + ' ';
+                }
+                bodyTable.push([elem]);
+
+                doc.autoTable({
+                    startY: hl,
+                    margin: {left: 90},
+                    showHead: true,
+                    styles: { overflow: 'linebreak', cellWidth: 'wrap', halign: 'center' },
+                    columnStyles: { 0: { cellWidth: 'auto' } },
+                    bodyStyles: {
+                        fillColor: [52, 73, 94],
+                        textColor: 240
+                    },
+                    alternateRowStyles: {
+                        fillColor: [74, 96, 117]
+                    },
+                    head: [
+                        ['Mentions to users'],
+                    ],
+                    body: bodyTable,
+                });
+            }
+
+            if (doc.previousAutoTable.finalY > hl + 70) {
+                hl = doc.previousAutoTable.finalY
+            }
+            else {
+                hl = hl + 70;
+            }
         }
 
         hl = hl + 5; // Space between modules

@@ -96,6 +96,12 @@
     <ngx-fullcontact-scramble [data]="gathered['fullcontact']"></ngx-fullcontact-scramble>
   </div>
 
+  <!-- Twitter List -->
+  <div class="col-md-4" id="divTwitterList" #divTwitterList *ngIf="gathered['twitter'] &&
+                               gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+    <ngx-twitter-list [data]="gathered['twitter']"></ngx-twitter-list>
+  </div>
+
   <!-- Twitter Popularity -->
   <div class="col-md-4" id="divTwitterPopularity" #divTwitterPopularity *ngIf="gathered['twitter'] &&
                                gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
@@ -112,6 +118,18 @@
   <div class="col-md-4" id="divTwitterApproval" #divTwitterApproval *ngIf="gathered['twitter'] && 
                                gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-twitter-approval [data]="gathered['twitter']"></ngx-twitter-approval>
+  </div>
+
+  <!-- Twitter Hashtag -->
+  <div class="col-md-4" id="divTwitterHashtag" #divTwitterHashtag *ngIf="gathered['twitter'] && 
+                               gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+    <ngx-twitter-hashtag [data]="gathered['twitter']"></ngx-twitter-hashtag>
+  </div>
+
+  <!-- Twitter Users -->
+  <div class="col-md-4" id="divTwitterUsers" #divTwitterUsers *ngIf="gathered['twitter'] && 
+                               gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+    <ngx-twitter-users [data]="gathered['twitter']"></ngx-twitter-users>
   </div>
 
   <!-- Github Graphs -->

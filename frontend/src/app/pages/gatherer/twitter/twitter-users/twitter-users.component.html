@@ -1,0 +1,9 @@
+  <nb-card size="small" class="border-default">
+    <nb-card-header>
+      TWITTER Mentions (100 last tweets)
+    </nb-card-header>
+    <nb-card-body id="nbCardTwitterUsers" #nbCardTwitterUsers style="text-align: center; overflow: hidden; margin: 0px; padding: 0px;">
+        <nb-badge text="Validation" status="{{validation}}" position="top right"></nb-badge>
+        <ngx-simple-graphs [data]="twitterUsers"></ngx-simple-graphs>
+    </nb-card-body>
+  </nb-card>

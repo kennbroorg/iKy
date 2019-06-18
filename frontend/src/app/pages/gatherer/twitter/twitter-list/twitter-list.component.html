@@ -1,0 +1,24 @@
+  <nb-card size="small" class="border-default">
+    <nb-card-header>
+      TWITTER Tweets Retweets (100 last tweets)
+    </nb-card-header>
+    <nb-card-body style="margin: 0px; padding: 0px; text-align: center; overflow: hidden;">
+        <nb-badge text="Validation" status="{{validation}}" position="top right"></nb-badge>
+
+        <div #nbCardTwitterList id="nbCardTwitterList">
+            <ngx-charts-bar-vertical-2d
+              [view]="[width, height - 50]"
+              [scheme]="colorScheme"
+              [results]="twitterList"
+              showDataLabel="true"
+              legend="true"
+              legendTitle=""
+              legendPosition="below"
+              xAxis="true"
+              yAxis="true"
+            >
+            </ngx-charts-bar-vertical-2d>
+         </div>
+
+    </nb-card-body>
+  </nb-card>
