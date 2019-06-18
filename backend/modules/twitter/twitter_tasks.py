@@ -30,6 +30,13 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
+# Compatibility code
+try:
+    # Python 2: "unicode" is built-in
+    unicode
+except NameError:
+    unicode = str
+
 
 @celery.task
 def t_twitter(username, from_m):
@@ -53,6 +60,7 @@ def t_twitter(username, from_m):
     # Total
     total = []
     tweetslist = []
+    hashtags = []
     total.append({'module': 'twitter'})
     total.append({'param': username})
     # Evaluates the module that executed the task and set validation
@@ -74,6 +82,7 @@ def t_twitter(username, from_m):
     sumReTweet = 0
     raw_node = tweepy.Cursor(api.user_timeline, id=username).items(100)
     raw_node_tweets = []
+
     for tweet in raw_node:
         raw_node_tweets.append(tweet._json)
         if (prevDate != tweet.created_at.strftime("%Y-%m") and prevDate != ''):
@@ -88,19 +97,36 @@ def t_twitter(username, from_m):
             sumReTweet = 0
         else:
             prevDate = tweet.created_at.strftime("%Y-%m")
-            if (tweet.text.encode("utf-8")[:3] == 'RT '):
+            if (unicode(tweet.text)[:3] == 'RT '):
                 sumReTweet = sumReTweet + 1
             else:
                 sumTweet = sumTweet + 1
         strings = strings + re.findall(r'(?:\#+[\w_]+[\w\'_\-]*[\w_]+)',
-                                       str(tweet.text.encode("utf-8")))
+                                       unicode(tweet.text))
         tusers = tusers + re.findall(r'(?:@[\w_]+)',
-                                     str(tweet.text.encode("utf-8")))
+                                     unicode(tweet.text))
+    for hashtag in list(dict.fromkeys(strings)):
+        hashtags.append({"label": hashtag})
 
     Tweet_item = {"name": tweet.created_at.strftime("%Y-%m"), "series": [
                  {"name": "Tweet", "value": sumTweet},
                  {"name": "ReTweet", "value": sumReTweet}]}
-    tweetslist.append(Tweet_item)
+    # tweetslist.append(Tweet_item)
+    tweetslist.insert(0, Tweet_item)
+
+
+    users = []
+    link_users = "Users"
+    user_item = {"name-node": "Users", "title": "Users",
+                 "subtitle": "",
+                 "link": link_users}
+    users.append(user_item)
+    for e_users in list(dict.fromkeys(tusers)):
+        user_item = {"name-node": e_users,
+                     "title": e_users,
+                     "subtitle": "",
+                     "link": link_users}
+        users.append(user_item)
 
     raw_node_total = []
     raw_node_total.append({'raw_node_info': result_api._json})
@@ -153,8 +179,8 @@ def t_twitter(username, from_m):
     graphic.append({'resume': resume})
     graphic.append({'popularity': popularity})
     graphic.append({'approval': approval})
-    graphic.append({'hashtag': list(dict.fromkeys(strings))})
-    graphic.append({'users': list(dict.fromkeys(tusers))})
+    graphic.append({'hashtag': hashtags})
+    graphic.append({'users': users})
     graphic.append({'tweetslist': tweetslist})
     total.append({'graphic': graphic})
     if (profile != []):
@@ -166,7 +192,7 @@ def t_twitter(username, from_m):
 
 
 def output(data):
-    print(json.dumps(data, ensure_ascii=False, indent=2))
+    print(json.dumps(data, ensure_ascii=True, indent=2))
 
 
 if __name__ == "__main__":

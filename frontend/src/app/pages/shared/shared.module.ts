@@ -4,6 +4,7 @@ import { NbCardModule } from '@nebular/theme';
 
 import { ModalDialogComponent } from './modal-dialog/modal-dialog.component';
 import { BubbleComponent } from './bubble/bubble.component';
+import { SimpleGraphsComponent } from './simple-graphs/simple-graphs.component';
 import { GraphsComponent } from './graphs/graphs.component';
 import { TextCloudComponent } from './text-cloud/text-cloud.component';
 import { TextScrambleComponent } from './text-scramble/text-scramble.component';
@@ -18,6 +19,7 @@ import { SafePipe } from './pipe/safe.pipe';
   ],
   declarations: [
     BubbleComponent,
+    SimpleGraphsComponent,
     GraphsComponent,
     TextCloudComponent,
     TextScrambleComponent,
@@ -27,6 +29,7 @@ import { SafePipe } from './pipe/safe.pipe';
   exports: [
     CommonModule,
     BubbleComponent,
+    SimpleGraphsComponent,
     GraphsComponent,
     TextCloudComponent,
     TextScrambleComponent,

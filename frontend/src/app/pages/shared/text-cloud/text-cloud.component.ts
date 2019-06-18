@@ -47,11 +47,11 @@ export class TextCloudComponent implements OnInit {
             speed: .2,
             fontFamily: 'Oswald, Arial, sans-serif',
             fontSize: '15',
-            fontColor: '#fff',
+            fontColor: '#05fcfc',
             fontWeight: 'normal', //bold
             fontStyle: 'normal', //italic 
             fontStretch: 'normal', //wider, narrower, ultra-condensed, extra-condensed, condensed, semi-condensed, semi-expanded, expanded, extra-expanded, ultra-expanded
-            fontToUpperCase: true
+            fontToUpperCase: false
         };
         
         this.SVG3DTagCloud( element, settings );

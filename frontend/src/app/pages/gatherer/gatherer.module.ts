@@ -19,9 +19,12 @@ import { FullcontactGraphsComponent } from './fullcontact/fullcontact-graphs/ful
 import { FullcontactCloudComponent } from './fullcontact/fullcontact-cloud/fullcontact-cloud.component';
 import { FullcontactScrambleComponent } from './fullcontact/fullcontact-scramble/fullcontact-scramble.component';
 
+import { TwitterListComponent } from './twitter/twitter-list/twitter-list.component';
 import { TwitterPopularityComponent } from './twitter/twitter-popularity/twitter-popularity.component';
 import { TwitterApprovalComponent } from './twitter/twitter-approval/twitter-approval.component';
 import { TwitterResumeComponent } from './twitter/twitter-resume/twitter-resume.component';
+import { TwitterHashtagComponent } from './twitter/twitter-hashtag/twitter-hashtag.component';
+import { TwitterUsersComponent } from './twitter/twitter-users/twitter-users.component';
 
 import { LinkedinGraphsComponent } from './linkedin/linkedin-graphs/linkedin-graphs.component';
 import { LinkedinBubbleComponent } from './linkedin/linkedin-bubble/linkedin-bubble.component';
@@ -53,9 +56,12 @@ import { SharedModule } from '../shared/shared.module';
     FullcontactGraphsComponent,
     FullcontactCloudComponent,
     FullcontactScrambleComponent,
+    TwitterListComponent,
     TwitterPopularityComponent,
     TwitterApprovalComponent,
     TwitterResumeComponent,
+    TwitterHashtagComponent,
+    TwitterUsersComponent,
     LinkedinGraphsComponent,
     LinkedinBubbleComponent,
     LinkedinCertsComponent,
