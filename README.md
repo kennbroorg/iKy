@@ -8,7 +8,7 @@
 
 <div align="center">
     <img alt="Redis" src="https://img.shields.io/badge/storage-redis-red.svg">
-    <img alt="Python" src="https://img.shields.io/badge/python-2.7-informational.svg">
+    <img alt="Python" src="https://img.shields.io/badge/python-2%20or%203%20(compatible)-informational.svg">
     <img alt="Celery" src="https://img.shields.io/badge/multiprocessing-celery-green.svg">
     <img alt="Flask" src="https://img.shields.io/badge/interface-flask-yellowgreen.svg">
 </div>
@@ -51,9 +51,9 @@ Project iKy is a tool that collects information from an email and shows results 
 
 Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
 
-[![Video Demo](https://kennbroorg.gitlab.io/ikyweb/assets/img/iKy-01.png)](https://vimeo.com/326114716 "Video Demo - Click to Watch!") 
+[![Video Demo](https://kennbroorg.gitlab.io/ikyweb/assets/img/Giba.gif)](https://vimeo.com/342843348 "Video Demo - Click to Watch!") 
 
-[Video Demo](https://vimeo.com/326114716 "Video Demo - Click to Watch!")
+[Video Demo](https://vimeo.com/342843348 "Video Demo - Click to Watch!")
 
 ## Project - Previous version
 We want to warn you that we have changed the Frontend from AngularJS to Angular 7. For this reason we left the project with AngularJS as Frontend in the iKy-v1 branch.

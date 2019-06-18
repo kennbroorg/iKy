@@ -8,7 +8,7 @@
 
 <div align="center">
     <img alt="Redis" src="https://img.shields.io/badge/storage-redis-red.svg">
-    <img alt="Python" src="https://img.shields.io/badge/python-2.7-informational.svg">
+    <img alt="Python" src="https://img.shields.io/badge/python-2%20o%203%20(compatible)-informational.svg">
     <img alt="Celery" src="https://img.shields.io/badge/multiprocessing-celery-green.svg">
     <img alt="Flask" src="https://img.shields.io/badge/interface-flask-yellowgreen.svg">
 </div>
@@ -52,9 +52,9 @@ El proyecto iKy es una herramienta que colecta información a partir de una dire
 
 Visite el Gitlab Page del [Projecto](https://kennbroorg.gitlab.io/ikyweb/)
 
-[![Video Demo](https://kennbroorg.gitlab.io/ikyweb/assets/img/iKy-01.png)](https://vimeo.com/326114716 "Video Demo - Click to Watch!") 
+[![Video Demo](https://kennbroorg.gitlab.io/ikyweb/assets/img/Giba.gif)](https://vimeo.com/342843348 "Video Demo - Click to Watch!") 
 
-[Video Demo](https://vimeo.com/326114716 "Video Demo - Click to Watch!")
+[Video Demo](https://vimeo.com/342843348 "Video Demo - Click to Watch!")
 
 ## Proyecto - Versión anterior
 
