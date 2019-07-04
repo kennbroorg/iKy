@@ -1,9 +1,9 @@
   <nb-card size="small" class="border-default">
     <nb-card-header>
       FULLCONTACT Bios
+      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
     </nb-card-header>
     <nb-card-body id="nbCardFullcontactScramble" #nbCardScramble style="margin: 0px; padding: 0px; text-align: center; overflow: hidden;">
-        <nb-badge text="Validation" status="{{validation}}" position="top right"></nb-badge>
         <ngx-text-scramble [data]="fullcontactScramble"></ngx-text-scramble>
     </nb-card-body>
   </nb-card>

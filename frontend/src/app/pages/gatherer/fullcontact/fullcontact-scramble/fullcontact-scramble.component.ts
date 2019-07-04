@@ -19,20 +19,5 @@ export class FullcontactScrambleComponent implements OnInit {
         this.fullcontactScramble = this.data.result[4].graphic[3].bios;
         console.log("Fullcontact data: ", this.fullcontactScramble);
   
-        /* Validation */
-        switch(this.data.result[2].validation) {
-          case 'hard':
-            this.validation = 'success';
-            break;
-          case 'soft':
-            this.validation = 'warning';
-            break;
-          case 'no':
-            this.validation = 'danger';
-            break;
-          default:
-            this.validation = 'danger';
-        }
-        console.log("Validation : ", this.validation);
     }
 }
