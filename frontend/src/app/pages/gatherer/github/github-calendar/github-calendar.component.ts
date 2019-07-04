@@ -19,20 +19,5 @@ export class GithubCalendarComponent implements OnInit {
 
         this.githubCalendar = this.data.result[4].graphic[1].cal_actual;
         this.githubCalendarPrev = this.data.result[4].graphic[2].cal_previous;
-
-        /* Validation */
-        switch(this.data.result[2].validation) {
-            case 'hard':
-                this.validation = 'success';
-                break;
-            case 'soft':
-                this.validation = 'warning';
-                break;
-            case 'no':
-                this.validation = 'danger';
-                break;
-            default:
-                this.validation = 'danger';
-        }
     }
 }
