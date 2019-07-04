@@ -1,0 +1,125 @@
+@import '../../@theme/styles/themes';
+@import '~@nebular/bootstrap/styles/hero-buttons';
+
+@include nb-install-component() {
+
+  .fa-stack { font-size: 1.5em; }
+
+  i { 
+    vertical-align: middle; 
+    margin-right: 10px; 
+  }
+       
+  .contact {
+    display: flex;
+    // align-items: center;
+    // justify-content: space-between;
+    color: nb-theme(color-fg);
+    padding: 1rem;
+
+    border-bottom: 1px solid nb-theme(separator);
+    border-top: 1px solid nb-theme(separator);
+
+    // &:not(:last-child) {
+    //   border-bottom: 1px solid nb-theme(separator);
+    // }
+  }
+
+  .i-contact {
+    font-size: 2rem;
+    cursor: pointer;
+  }
+
+  .pf-char:before{
+      font-family: Arial; /* your font family here! */
+      font-weight: bold;
+      content: attr(data-char-content);
+  }
+
+  .time {
+    font-size: 0.875rem;
+    font-weight: nb-theme(font-weight-light);
+    text-transform: uppercase;
+  }
+
+  .info-container {
+    @include nb-ltr(margin-left, 0.875rem);
+    @include nb-rtl(margin-right, 0.875rem);
+  }
+
+  .user-name {
+    font-family: nb-theme(font-primary);
+    font-weight: nb-theme(font-weight-bold);
+    color: nb-theme(color-fg-heading);
+    font-size: 1.25rem;
+
+    @include nb-for-theme(cosmic) {
+      font-weight: nb-theme(font-weight-bolder);
+    }
+  }
+
+  .user-title {
+    font-size: 0.875rem;
+    font-weight: nb-theme(font-weight-light);
+    // text-transform: uppercase;
+  }
+
+  nb-user /deep/ {
+    .info-container {
+      @include nb-ltr(margin-left, 0.875rem);
+      @include nb-rtl(margin-right, 0.875rem);
+    }
+
+    .user-name {
+      font-family: nb-theme(font-primary);
+      font-weight: nb-theme(font-weight-bold);
+      color: nb-theme(color-fg-heading);
+      font-size: 1.25rem;
+
+      @include nb-for-theme(cosmic) {
+        font-weight: nb-theme(font-weight-bolder);
+      }
+    }
+
+    .user-title {
+      font-size: 0.875rem;
+      font-weight: nb-theme(font-weight-light);
+      // text-transform: uppercase;
+    }
+  }
+  
+  ngx-charts-pie-chart {
+    display: block;
+    /* 
+    width: 100%;
+    height: nb-theme(card-height-small);
+    */
+
+    /deep/ {
+      .pie-label {
+        fill: nb-theme(color-fg-heading);
+      }
+
+      .grid-line-path {
+        stroke: nb-theme(separator);
+      }
+
+      text {
+        fill: nb-theme(color-fg-heading);
+      }
+
+      .chart-legend {
+        .legend-labels {
+          background: nb-theme(color-bg);
+        }
+        .legend-label {
+          color: nb-theme(color-fg-heading);
+          .active .legend-label-text {
+            color: nb-theme(color-fg-heading);
+          }
+        }
+      }
+    }
+  }
+
+}

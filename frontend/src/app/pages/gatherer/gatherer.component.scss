@@ -10,6 +10,69 @@
     padding: 0;
   }
 
+  /deep/ .soft {
+    position: absolute;
+    right: 30px;
+    top: 20px;
+    color: #ffcc00 !important;
+    font-size: 15px;
+
+    .icon::before {
+      display: inline-block;
+      font-style: normal;
+      font-variant: normal;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .validation::before {
+      font-family: "Font Awesome 5 Free"; font-weight: 400; content: "\f058";
+    }
+
+  }
+
+  /deep/ .hard {
+    position: absolute;
+    right: 30px;
+    top: 20px;
+    color: green !important;
+    font-size: 15px;
+
+    .icon::before {
+      display: inline-block;
+      font-style: normal;
+      font-variant: normal;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .validation::before {
+      font-family: "Font Awesome 5 Free"; font-weight: 400; content: "\f058";
+    }
+
+  }
+
+  /deep/ .no {
+    position: absolute;
+    right: 30px;
+    top: 20px;
+    color: red !important;
+    font-size: 15px;
+
+    .icon::before {
+      display: inline-block;
+      font-style: normal;
+      font-variant: normal;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .validation::before {
+      font-family: "Font Awesome 5 Free"; font-weight: 400; content: "\f058";
+    }
+
+  }
+
   nb-card-body {
     display: flex;
     flex-direction: column;
@@ -40,6 +103,12 @@
     }
   }
 
+  button.btn-success.btn-outline {
+    border: 1px solid #00f9a6;
+  //     color: #05fcfc;
+  //     background-color: transparent;
+  }
+
   .picture {
     background-image: url("assets/images/gather.jpg");
     background-position: center;
@@ -51,7 +120,9 @@
   }
 
   .details {
-    padding: 1.25rem 1.25rem 0;
+    padding: 1.25rem 1.25rem 1.25rem;
+    // border-top: 1px solid nb-theme(separator);
+    border-top: 1px solid #00f9a6;
 
     .title {
       font-family: nb-theme(font-secondary);

@@ -53,29 +53,41 @@
   <div class="col-md-12" *ngIf="!email && !gathered['tasklist']">
     <nb-card>
       <nb-card-body>
-        <button nbButton outline status="info" (click)="searchService.activateSearch()">
+        <button nbButton outline status="success" (click)="searchService.activateSearch()">
             <i style="font-size: 25px;" class="nb-search"></i>
         </button>
       </nb-card-body>
     </nb-card>
   </div>
 
-  <div class="col-md-12"  *ngIf="!email && !gathered['tasklist']">
+  <div class="col-md-4 offset-md-4"  *ngIf="!email && !gathered['tasklist']">
     <nb-card size="medium" class="border-default">
       <nb-card-body>
-        <div class="picture"></div>
+        <div>
+            <img style="position:absolute; width: 50%; top: 30px; left:0; right: 0; margin:auto;" src="assets/images/iKy-Logo.png"> 
+        </div>
 
+      </nb-card-body>
+      <nb-card-footer>
         <div class="details">
           <div class="title">
             Gathering information
           </div>
           <div class="description">
-              To collect information it is necessary to enter an e-mail address in the search window that can be activated from the magnifying glass present in the button above or from the magnifying glass located in the upper right corner.
+              To collect information it is necessary to enter an e-mail address in the search window that can be activated from the magnifying glass present in the button above, below or from the magnifying glass located in the upper right corner.
           </div>
         </div>
-      </nb-card-body>
-      <nb-card-footer>
       </nb-card-footer>
+    </nb-card>
+  </div>
+
+  <div class="col-md-12" *ngIf="!email && !gathered['tasklist']">
+    <nb-card>
+      <nb-card-body>
+        <button nbButton outline status="success" (click)="searchService.activateSearch()">
+            <i style="font-size: 25px;" class="nb-search"></i>
+        </button>
+      </nb-card-body>
     </nb-card>
   </div>
 
