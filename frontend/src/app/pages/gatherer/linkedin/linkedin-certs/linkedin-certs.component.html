@@ -1,12 +1,13 @@
 <!-- <nb-card [size]="breakpoint.width >= breakpoints.xxxl || breakpoint.width < breakpoints.md ? 'small' : 'medium'" class="border-default"> -->
 <nb-card size="small" class="border-default">
+  <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
   <nb-tabset fullWidth>
-      <nb-tab tabTitle="LINKEDIN Certs" badgeText="validation" badgePosition="bottom right" badgeStatus="{{validation}}">
+      <nb-tab tabTitle="LINKEDIN Certs">
       <div class="contact" *ngFor="let c of linkedinCerts">
         <nb-user [name]="c.desc" [title]="c.name"></nb-user>
       </div>
     </nb-tab>
-    <nb-tab tabTitle="LINKEDIN Positions" badgeText="validation" badgePosition="bottom right" badgeStatus="{{validation}}">
+    <nb-tab tabTitle="LINKEDIN Positions">
       <div class="contact" *ngFor="let c of linkedinPositions">
         <nb-user [name]="c.label"></nb-user>
       </div>
