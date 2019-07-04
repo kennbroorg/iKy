@@ -7,6 +7,24 @@
     flex: 0.15 !important;
   }
 
+  nb-layout-column.main-content {
+    padding-bottom: 100px !important;
+  }
+
+  nb-layout-footer {
+    position: absolute !important;
+    left: 0px !important;
+    bottom: 0px !important;
+    width: 100% !important;
+    display: block !important;
+    margin-top: auto !important;
+
+    nav {
+      justify-content: center;
+      display: flex;
+    }
+  }
+
   nb-sidebar.settings-sidebar {
     $sidebar-width: 7.5rem;
 
@@ -46,6 +64,7 @@
   nb-sidebar.menu-sidebar {
 
     margin-top: nb-theme(sidebar-header-gap);
+    // margin-top: 0;
 
     @include nb-for-theme(corporate) {
       margin-top: 0;
@@ -53,9 +72,14 @@
 
     /deep/ .main-container {
       height:
+        // calc(#{nb-theme(sidebar-height)} - #{nb-theme(header-height)} - #{nb-theme(footer-height)} - #{nb-theme(sidebar-header-gap)}) !important;
         calc(#{nb-theme(sidebar-height)} - #{nb-theme(header-height)} - #{nb-theme(sidebar-header-gap)}) !important;
       @include nb-ltr(border-top-right-radius, nb-theme(radius));
       @include nb-rtl(border-top-left-radius, nb-theme(radius));
+
+      -webkit-box-shadow: 0 8px 20px 0 rgba(0,0,0,0.62);
+      -moz-box-shadow: 0 8px 20px 0 rgba(0,0,0,0.62);
+      box-shadow: 0 8px 20px 0 rgba(0,0,0,0.62);
 
       @include nb-for-theme(corporate) {
         border: 1px solid nb-theme(separator);

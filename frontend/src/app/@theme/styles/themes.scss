@@ -42,7 +42,7 @@ $nb-themes: nb-register-theme((
   color-bg: rgba(0, 0, 0, 0.5),
   color-bg-active: rgba(0, 0, 0, 0.5),
   // color-bg-active : rgba(5, 252, 252, 0.2),
-  //shadow: 0px 0px 0px #05fcfc,
+  // shadow: 0px 0px 0px #05fcfc,
   // shadow: inset 0 0 5px #05fcfc,
   color-fg: #05fcfc,
   color-fg-heading: #05fcfc,
@@ -59,11 +59,13 @@ $nb-themes: nb-register-theme((
   // footer-bg: #181818,
   footer-bg: rgba(0, 0, 0, 0.5),
   footer-fg: #05fcfc,
+  footer-separator: rgba(0, 0, 0, 0.5),
   // sidebar-bg: #181818,
   sidebar-bg: rgba(0, 0, 0, 0.5),
   // sidebar-fg: red,
   // separator: #05fcfc,
   // separator: rgba(5, 252, 252, 0.5),
+  // separator: rgba(0, 249, 166, 0.5),
   separator: rgba(153, 153, 153, 0.5),
   // separator: rgba(0, 0, 0, 0.8),
   scrollbar-bg: rgba(0, 0, 0, 0.3),
@@ -82,6 +84,11 @@ $nb-themes: nb-register-theme((
   menu-submenu-active-bg: rgba(0, 0, 0, 0.3),
   menu-submenu-active-fg: error,
 
+  // Shadow
+  shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.6),
+  // sidebar-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.6),
+  sidebar-shadow: 0 0 0 0 rgba(0, 0, 0, 0.6),
+
   // Search
   search-bg: rgba(0, 0, 0, 0.1),
   search-placeholder: #017a7a,
@@ -91,15 +98,19 @@ $nb-themes: nb-register-theme((
   menu-icon-margin: 0 1rem 0 0,
 
   //Badge
-  badge-fg-text: #000000,
-  badge-danger-bg-color: #f68081,
-  badge-warning-bg-color: #f9e968,
-  badge-success-bg-color: #b5db5b,
+  badge-fg-text: #333333,
+  badge-danger-bg-color: rgba(0, 0, 0, 0),
+  badge-warning-bg-color: rgba(0, 0, 0, 0),
+  badge-success-bg-color: rgba(0, 0, 0, 0),
+  // badge-danger-bg-color: #f68081,
+  // badge-warning-bg-color: #f9e968,
+  // badge-success-bg-color: #b5db5b,
 
   //spinner
   spinner-bg: rgba(0, 0, 0, 0.5),
 
   // app wise variables for each theme
+  sidebar-height: 85vh,
   sidebar-header-gap: 2rem,
   sidebar-header-height: initial,
   layout-content-width: 1400px,
@@ -115,8 +126,8 @@ $nb-themes: nb-register-theme((
 
   slide-out-container-width: 30%,
   slide-out-background: radial-gradient(circle, #302c6e 0%, #423f8c 100%),
-  slide-out-shadow-color: 2px 0 3px rgba(19, 19, 94, 0.9),
-  slide-out-shadow-color-rtl: -2px 0 3px rgba(19, 19, 94, 0.9),
+  // slide-out-shadow-color: 2px 0 3px rgba(19, 19, 94, 0.9),
+  // slide-out-shadow-color-rtl: -2px 0 3px rgba(19, 19, 94, 0.9),
 
   chart-panel-summary-box-shadow: none,
   chart-panel-summary-background-color: rgba(0, 0, 0, 0.1),

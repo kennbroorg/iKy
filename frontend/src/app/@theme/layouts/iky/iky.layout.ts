@@ -26,6 +26,7 @@ import { StateService } from '../../../@core/data/state.service';
       <nb-sidebar class="menu-sidebar"
                    tag="menu-sidebar"
                    responsive
+                   fixed="false"
                    [end]="sidebar.id === 'end'">
 
       <!--
@@ -55,10 +56,7 @@ import { StateService } from '../../../@core/data/state.service';
         <nb-menu [items]="subMenu"></nb-menu>
       </nb-layout-column>
 
-      <nb-layout-footer fixed>
-        <ngx-footer></ngx-footer>
-      </nb-layout-footer>
-
+      <!--
       <nb-sidebar class="settings-sidebar"
                    tag="settings-sidebar"
                    state="collapsed"
@@ -66,6 +64,12 @@ import { StateService } from '../../../@core/data/state.service';
                    [end]="sidebar.id !== 'end'">
         <ngx-theme-settings></ngx-theme-settings>
       </nb-sidebar>
+      -->
+
+      <nb-layout-footer>
+        <ngx-footer></ngx-footer>
+      </nb-layout-footer>
+
     </nb-layout>
   `,
 })
