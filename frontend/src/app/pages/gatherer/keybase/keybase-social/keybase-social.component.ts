@@ -17,20 +17,5 @@ export class KeybaseSocialComponent implements OnInit {
         console.log("Keybase Social Component");
         this.keybaseSocial = this.data.result[4].graphic[0].keysocial;
         this.validation = this.data.result[2].validation;
-
-        /* Validation */
-        switch(this.data.result[2].validation) {
-            case 'hard':
-                this.validation = 'success';
-                break;
-            case 'soft':
-                this.validation = 'warning';
-                break;
-            case 'no':
-                this.validation = 'danger';
-                break;
-            default:
-                this.validation = 'danger';
-        }
     }
 }
