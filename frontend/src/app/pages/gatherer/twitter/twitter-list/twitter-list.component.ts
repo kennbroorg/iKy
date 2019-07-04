@@ -9,13 +9,13 @@ export class TwitterListComponent implements OnInit, AfterViewInit {
     @ViewChild('nbCardTwitterList') private cardContainer: ElementRef;
     @Input() private data: any;
     private twitterList : any;
-    private validation : any;
 
     private card: any;
     private width: number;
     private height: number;
     showLegend = true;
     showLabels = true;
+
     colorScheme = {
       domain: [ 
           '#80deea', 
@@ -41,21 +41,5 @@ export class TwitterListComponent implements OnInit, AfterViewInit {
         console.log("Twitter List Component");
 
         this.twitterList = this.data.result[4].graphic[5].tweetslist;
-        this.validation = this.data.result[2].validation;
-
-        /* Validation */
-        switch(this.data.result[2].validation) {
-            case 'hard':
-                this.validation = 'success';
-                break;
-            case 'soft':
-                this.validation = 'warning';
-                break;
-            case 'no':
-                this.validation = 'danger';
-                break;
-            default:
-                this.validation = 'danger';
-        }
     }
 }

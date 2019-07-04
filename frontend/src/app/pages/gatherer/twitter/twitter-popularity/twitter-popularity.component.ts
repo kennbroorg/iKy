@@ -9,7 +9,6 @@ export class TwitterPopularityComponent implements OnInit, AfterViewInit {
     @ViewChild('nbCardTwitterPopularity') private cardContainer: ElementRef;
     @Input() private data: any;
     private twitterPopularity : any;
-    private validation : any;
 
     private card: any;
     private width: number;
@@ -17,60 +16,31 @@ export class TwitterPopularityComponent implements OnInit, AfterViewInit {
     showLegend = true;
     showLabels = true;
 
+    colorScheme = {
+      domain: [ 
+          '#80deea', 
+          '#4dd0e1',
+          '#26c6da', 
+          '#00bcd4', 
+          '#00acc1', 
+          '#0097a7', 
+          '#00838f', 
+          '#006064'
+      ]
+    };
+
     constructor() {}
 
     ngOnInit() {
-
-        // console.log("Twitter Popularity Component");
-        // this.card = this.cardContainer.nativeElement;
-        // this.width = this.card.clientWidth;
-        // this.height = this.width * 0.68;
-
-        // this.twitterPopularity = this.data.result[4].graphic[1].popularity.map(this.arrayAdecuate);
-        // this.validation = this.data.result[2].validation;
-
-        // /* Validation */
-        // switch(this.data.result[2].validation) {
-        //     case 'hard':
-        //         this.validation = 'success';
-        //         break;
-        //     case 'soft':
-        //         this.validation = 'warning';
-        //         break;
-        //     case 'no':
-        //         this.validation = 'danger';
-        //         break;
-        //     default:
-        //         this.validation = 'danger';
-        // }
     }
 
     ngAfterViewInit() {
         this.card = this.cardContainer.nativeElement;
         this.width = this.cardContainer.nativeElement.parentNode.parentNode.clientWidth;
         this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight - 55;
-        console.log("CARD-------------------------------", this.card);
-        console.log("WIDTH-------------------------------", this.width);
-        console.log("HEIGHT-------------------------------", this.height);
         console.log("Twitter Popularity Component");
 
         this.twitterPopularity = this.data.result[4].graphic[1].popularity.map(this.arrayAdecuate);
-        this.validation = this.data.result[2].validation;
-
-        /* Validation */
-        switch(this.data.result[2].validation) {
-            case 'hard':
-                this.validation = 'success';
-                break;
-            case 'soft':
-                this.validation = 'warning';
-                break;
-            case 'no':
-                this.validation = 'danger';
-                break;
-            default:
-                this.validation = 'danger';
-        }
     }
 
     arrayAdecuate(item, index, array) {
