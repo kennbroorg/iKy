@@ -2,51 +2,31 @@
 <!-- <div class="row" id="pageGather" #pageGather [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge"> -->
 
   <div class="col-md-12" *ngIf="gathered && gathered['email'] && jsonLength(gathered) > 3">
-      <!-- <div class="col-md-12" *ngIf="gathered['email']"> -->
-    <div class="row">
-      <div class="col-md-12">
-        <nb-card id="actions" class="border-default">
-          <nb-card-body>
-            <nb-actions size="large" fullWidth>
-              <nb-action (click)="searchService.activateSearch()" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxsmall" nbSpinnerMessage="">
-                <i class="nb-search"></i><span>Search</span>
-              </nb-action>
-              <nb-action (click)="generateAllPdf()" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxsmall" nbSpinnerMessage="">
-                <i class="nb-compose"></i><span>Report</span>
-              </nb-action>
-              <nb-action (click)="generateDownloadJsonUri()" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxsmall" nbSpinnerMessage="">
-                  <i class="nb-arrow-thin-down"></i><span>Json</span>
-              </nb-action>
-            </nb-actions>
-          </nb-card-body>
-        </nb-card>
-      </div>
-    </div>
-  </div>
+    <nb-card>
+      <nb-card-body>
+    
+        <nb-actions size="large" fullWidth [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxsmall" nbSpinnerMessage="">
+          <nb-action (click)="searchService.activateSearch()">
+            <i class="fas fa-search" style="font-size: 14px;"></i><span>Search</span>
+          </nb-action>
+          <nb-action (click)="generateAllPdf()">
+            <i class="fas fa-file-alt" style="font-size: 14px;"></i><span>Report</span>
+          </nb-action>
+          <nb-action (click)="generateDownloadJsonUri()">
+            <i class="fas fa-download" style="font-size: 14px;"></i><span>Json</span>
+          </nb-action>
 
-  <!-- Validation selector -->
-  <!--
-  <div class="col-xxxl-4" *ngIf="gathered && gathered['email'] && jsonLength(gathered) > 3">
-    <ngx-validation-filter title="All Validation"
-                     type="info">
-      <i class="fas fa-check-double"></i>
-    </ngx-validation-filter>
-  </div>
-  -->
-  <div class="col-md-4" *ngIf="gathered && gathered['email'] && jsonLength(gathered) > 3">
-    <ngx-validation-filter title="Hard Validation" type="success" (click)="validationShow['hard'] = !validationShow['hard']">
-      <i class="fas fa-check-circle"></i>
-    </ngx-validation-filter>
-  </div>
-  <div class="col-md-4" *ngIf="gathered && gathered['email'] && jsonLength(gathered) > 3">
-    <ngx-validation-filter title="Soft Validation" type="warning" (click)="validationShow['soft'] = !validationShow['soft']">
-      <i class="far fa-check-circle"></i>
-    </ngx-validation-filter>
-  </div>
-  <div class="col-md-4" *ngIf="gathered && gathered['email'] && jsonLength(gathered) > 3">
-    <ngx-validation-filter title="No Validation" type="danger" (click)="validationShow['no'] = !validationShow['no']">
-      <i class="fas fa-ban"></i>
-    </ngx-validation-filter>
+          <nb-action>
+            <div>Validation : </div>
+            <div class="validation-menu" (click)="validationShow['hard'] = !validationShow['hard']"><span class="icon validation-hard" (click)="onH = !onH" [style.color]="!onH ? '#004d1a' : 'green'"></span></div>
+            <div class="validation-menu" (click)="validationShow['soft'] = !validationShow['soft']"><span class="icon validation-soft" (click)="onS = !onS" [style.color]="!onS ? '#4d3d00' : '#ffcc00'"></span></div>
+            <div class="validation-menu" (click)="validationShow['no'] = !validationShow['no']"><span class="icon validation-no" (click)="onN = !onN" [style.color]="!onN ? '#4d0000' : '#cc0000'"></span></div>
+          </nb-action>
+
+        </nb-actions>
+    
+      </nb-card-body>
+    </nb-card>
   </div>
 
   <!-- Principal Search -->
@@ -193,26 +173,31 @@
   </div>
 
   <div class="col-md-12" *ngIf="gathered && gathered['email'] && jsonLength(gathered) > 3">
-      <!-- <div class="col-md-12" *ngIf="gathered['email']"> -->
-    <div class="row">
-      <div class="col-md-12">
-        <nb-card id="actions" class="border-default">
-          <nb-card-body>
-            <nb-actions size="large" fullWidth>
-              <nb-action (click)="searchService.activateSearch()" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxsmall" nbSpinnerMessage="">
-                <i class="nb-search"></i><span>Search</span>
-              </nb-action>
-              <nb-action (click)="generateAllPdf()" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxsmall" nbSpinnerMessage="">
-                <i class="nb-compose"></i><span>Report</span>
-              </nb-action>
-              <nb-action (click)="generateDownloadJsonUri()" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxsmall" nbSpinnerMessage="">
-                  <i class="nb-arrow-thin-down"></i><span>Json</span>
-              </nb-action>
-            </nb-actions>
-          </nb-card-body>
-        </nb-card>
-      </div>
-    </div>
+    <nb-card>
+      <nb-card-body>
+    
+        <nb-actions size="large" fullWidth [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxsmall" nbSpinnerMessage="">
+          <nb-action (click)="searchService.activateSearch()">
+            <i class="fas fa-search" style="font-size: 14px;"></i><span>Search</span>
+          </nb-action>
+          <nb-action (click)="generateAllPdf()">
+            <i class="fas fa-file-alt" style="font-size: 14px;"></i><span>Report</span>
+          </nb-action>
+          <nb-action (click)="generateDownloadJsonUri()">
+            <i class="fas fa-download" style="font-size: 14px;"></i><span>Json</span>
+          </nb-action>
+
+          <nb-action>
+            <div>Validation : </div>
+            <div class="validation-menu" (click)="validationShow['hard'] = !validationShow['hard']"><span class="icon validation-hard" (click)="onH = !onH" [style.color]="!onH ? '#004d1a' : 'green'"></span></div>
+            <div class="validation-menu" (click)="validationShow['soft'] = !validationShow['soft']"><span class="icon validation-soft" (click)="onS = !onS" [style.color]="!onS ? '#4d3d00' : '#ffcc00'"></span></div>
+            <div class="validation-menu" (click)="validationShow['no'] = !validationShow['no']"><span class="icon validation-no" (click)="onN = !onN" [style.color]="!onN ? '#4d0000' : '#cc0000'"></span></div>
+          </nb-action>
+
+        </nb-actions>
+    
+      </nb-card-body>
+    </nb-card>
   </div>
 
 </div>
