@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 @Component({
     selector: 'ngx-twitter-approval',
@@ -45,10 +45,6 @@ export class TwitterApprovalComponent implements OnInit, AfterViewInit {
 
         this.twitterApproval = this.data.result[4].graphic[2].approval.map(this.arrayAdecuate);
 
-    }
-
-    ngOnDestroy(): void {
-        this.themeSubscription.unsubscribe();
     }
 
     arrayAdecuate(item, index, array) {
