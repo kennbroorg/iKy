@@ -50,9 +50,12 @@ def t_leaks(username):
 
     # Raw Array
     if (len(req.content) != 0):
-        raw_node = json.loads(unicode(req.text))
+        if ("You have been blocked from accessing" in req.content):
+            raw_node = [{"title": "BLOCKED"}]
+        else:
+            raw_node = json.loads(unicode(req.text))
     else:
-        raw_node = []
+        raw_node = [{"title": "NOLEAK"}]
 
     # Total
     total = []
@@ -73,41 +76,52 @@ def t_leaks(username):
     # Gather Array
     gather = []
 
-    link = "Leaks"
-    gather_item = {"name-node": "Leaks", "title": "Leaks",
-                   "subtitle": "", "icon": "fas fa-unlock-alt",
-                   "link": link}
-    gather.append(gather_item)
-
-    for leak in raw_node:
-        gather_item = {"name-node": leak.get("Title", ""),
-                       "title": leak.get("Title", ""),
-                       "subtitle": "Breach Date: " + leak.get(
-                           "BreachDate", ""),
-                       "picture": leak.get("LogoPath", ""),
-                       # "picture": "https://haveibeenpwned.com/Content/" +
-                       # "Images/PwnedLogos/" + leak.get("Name", "") + "." +
-                       # leak.get("LogoType", ""),
+    if (raw_node[0].get("title", "") == "NOLEAK"):
+        link = "Leaks"
+        gather_item = {"name-node": "Leaks", "title": "Leaks",
+                       "subtitle": "", "icon": "fas fa-unlock-alt",
                        "link": link}
         gather.append(gather_item)
-        timeline.append({"action": "Leak : " + leak.get("Title", ""),
-                         "date": leak.get("BreachDate", ""),
-                         "icon": "fa-exclamation-circle",
-                         "desc": leak.get("Description", "")})
 
-        # Leaks : TODO : Implement socialProfile disable
-        # Leaks : TODO : The problem is the icon in frontend
+    elif (raw_node[0].get("title", "") == "BLOCKED"):
+        link = "Leaks"
+        gather_item = {"name-node": "Leaks", "title": "Leaks",
+                       "subtitle": "", "icon": "fas fa-unlock-alt",
+                       "link": link}
+        gather.append(gather_item)
+
+    else:
+        link = "Leaks"
+        gather_item = {"name-node": "Leaks", "title": "Leaks",
+                       "subtitle": "", "icon": "fas fa-unlock-alt",
+                       "link": link}
+        gather.append(gather_item)
+
+        for leak in raw_node:
+            gather_item = {"name-node": leak.get("Title", ""),
+                           "title": leak.get("Title", ""),
+                           "subtitle": "Breach Date: " + leak.get(
+                               "BreachDate", ""),
+                           "picture": leak.get("LogoPath", ""),
+                           # "picture": "https://haveibeenpwned.com/Content/" +
+                          # "Images/PwnedLogos/" + leak.get("Name", "") + "." +
+                           # leak.get("LogoType", ""),
+                           "link": link}
+            gather.append(gather_item)
+            timeline.append({"action": "Leak : " + leak.get("Title", ""),
+                             "date": leak.get("BreachDate", ""),
+                             "icon": "fa-exclamation-circle",
+                             "desc": leak.get("Description", "")})
 
     # Please, respect the order of items in the total array
     # Because the frontend depend of that (By now)
     total.append({'raw': raw_node})
-    if (len(gather) != 1):
-        graphic.append({'leaks': gather})
+    # if (len(gather) != 1):
+    #     graphic.append({'leaks': gather})
+    graphic.append({'leaks': gather})
     total.append({'graphic': graphic})
     total.append({'profile': profile})
     total.append({'timeline': timeline})
-
-    print(total)
 
     return total
 

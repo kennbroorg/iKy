@@ -1,9 +1,15 @@
   <nb-card size="small" class="border-default">
     <nb-card-header>
       LEAK Graphs
+      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
     </nb-card-header>
-    <nb-card-body id="nbCardLeakGraphs" #nbCardGraphs style="text-align: center; overflow: hidden;">
-        <nb-badge text="Validation" status="{{validation}}" position="top right"></nb-badge>
+    <nb-card-body id="nbCardLeakGraphs" #nbCardLeakGraphs style="text-align: center; overflow: hidden;">
         <ngx-graphs [data]="leakGraphs"></ngx-graphs>
+        <div nbTooltip="You don't have leaks" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 100px; z-index: 2;" *ngIf="noData == 'NOLEAK'">
+            <i class="fas fa-lock" style="font-size: 100px;"></i>
+        </div>
+        <div nbTooltip="You are blocked. Try with VPN" nbTooltipIcon="alert-triangle-outline" nbTooltipStatus="danger" style="position: absolute; top: 15%; bottom: 15%; left: 0; right: 0; margin: auto; width: 50%; height: 100px; z-index: 2;" *ngIf="noData == 'BLOCKED'">
+            <i class="fas fa-ban" style="font-size: 100px;"></i>
+        </div>
     </nb-card-body>
   </nb-card>

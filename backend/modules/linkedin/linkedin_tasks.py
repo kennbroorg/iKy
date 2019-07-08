@@ -66,7 +66,6 @@ def t_linkedin(email, from_m):
         linkedin_user = api_keys_search('linkedin_user')
         linkedin_pass = api_keys_search('linkedin_pass')
 
-        # import pdb; pdb.set_trace()
         # Login process
         r = s.get('https://www.linkedin.com/login?trk=guest_homepage-basic_nav-header-signin', headers=headers)
         cookies = dict(r.cookies)
