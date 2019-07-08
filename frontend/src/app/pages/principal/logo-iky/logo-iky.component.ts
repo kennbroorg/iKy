@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, ViewChild, ElementRef, Input, ViewEncapsulation, AfterViewInit, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, OnChanges, ViewChild, ElementRef, Input, ViewEncapsulation, AfterViewInit, AfterViewChecked, OnDestroy } from '@angular/core';
 import * as $ from 'jquery';
 
 @Component({
@@ -6,16 +6,20 @@ import * as $ from 'jquery';
     templateUrl: './logo-iky.component.html',
     styleUrls: ['./logo-iky.component.scss']
 })
-export class LogoIkyComponent implements OnInit {
+export class LogoIkyComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('canvasLogo') private canvasContainer: ElementRef;
     @ViewChild('cardLogo') private cardContainer: ElementRef;
     
-    private card: any;
-    private canvas: any;
+    // private card: any;
+    // private canvas: any;
+    private connect: any;
     
     constructor() {}
 
     ngOnInit() {
+    }
+  
+    ngAfterViewInit() {
 
         class Connect {
             text: string;
@@ -67,6 +71,10 @@ export class LogoIkyComponent implements OnInit {
                   y: 0
                 }
           
+                console.log("CARD---3---------------------------", card);
+                console.log("WIDTH--3----------------------------", Twidth);
+                console.log("HEIGHT-3-----------------------------", Theight);
+
                 this.dots = []
                 this.oldKey = 0
                 this.resize()
@@ -88,8 +96,12 @@ export class LogoIkyComponent implements OnInit {
             }
 
             resize() {
-                this.width = canvas.clientWidth;
-                this.height = canvas.clientHeight;
+
+                // this.width = canvas.clientWidth;
+                // this.height = canvas.clientHeight;
+                
+                this.width = Twidth;
+                this.height = Theight;
                 
                 this.bounds.right = this.width - 1
                 this.bounds.bottom = this.height - 1
@@ -134,7 +146,7 @@ export class LogoIkyComponent implements OnInit {
                         // ctx.strokeStyle = gradient
                         // ctx.strokeStyle = '#53dfcf'
                       ctx.strokeStyle = '#05fcfc'
-                      ctx.lineWidth = dot1.radius / 2
+                      ctx.lineWidth = dot1.radius / 4
                       ctx.stroke()
                 
                     }
@@ -146,7 +158,14 @@ export class LogoIkyComponent implements OnInit {
                 // call all the dots update method
                 for (let dot of this.dots) dot.update(this.oldKey, this.bounds)
             
-                requestAnimationFrame(connect.update.bind(this));
+                // requestAnimationFrame(connect.update.bind(this));
+                // setTimeout(function() {
+                    // requestAnimationFrame(connect.update.bind(this));
+                    // requestAnimationFrame(connect.update());
+                    // requestAnimationFrame();
+                //     connect.update();
+                // }, 1000 / 15);
+
             }
 
             addText() {
@@ -156,6 +175,7 @@ export class LogoIkyComponent implements OnInit {
                 link.rel = 'stylesheet'
                 link.type = 'text/css'
                 link.href = 'https://fonts.googleapis.com/css?family=' + this.font.split(' ').join('+')
+                console.log("FONT", link.href)
                 document.getElementsByTagName('head')[0].appendChild(link)
             
                 let xhr = new XMLHttpRequest()
@@ -236,9 +256,10 @@ export class LogoIkyComponent implements OnInit {
             this.origY = y
             this.vx = (Math.random() - 0.5) * 2
             this.vy = (Math.random() - 0.5) * 2
-            this.radius = 0.5
+            this.radius = 1
               // this.radius = (Math.random() + 0.8) * 1.5
-            this.internalColor = 'hsla(' + color + ',100%,50%,' + this.radius * 0.4 + ')'
+              // this.internalColor = 'hsla(' + color + ',100%,50%,' + this.radius * 2 + ')'
+            this.internalColor = '#05fcfc'
             this.swipSwap = false
             this.inSwip = true
           }
@@ -283,14 +304,34 @@ export class LogoIkyComponent implements OnInit {
 
         } // Class : Dot 
 
-        let card = this.cardContainer.nativeElement;
+        let card = this.cardContainer.nativeElement.parentNode.parentNode.parentNode;
+        let Twidth = this.cardContainer.nativeElement.parentNode.parentNode.parentNode.clientWidth;
+        let Theight = this.cardContainer.nativeElement.parentNode.parentNode.parentNode.clientHeight;
+        console.log("CARD-------------------------------", card);
+        console.log("WIDTH-------------------------------", Twidth);
+        console.log("HEIGHT-------------------------------", Theight);
+
+
         let canvas = this.canvasContainer.nativeElement;
+        canvas.width = Twidth;
+        canvas.height = Theight;
         // let canvas = document.getElementById('connect')
         let ctx = canvas.getContext('2d')
 
-        let connect = new Connect;
+        this.connect = new Connect;
 
-        connect.update();
+        // connect.update();
+        setTimeout(function() {
+        //    requestAnimationFrame(connect.update.bind(this));
+              requestAnimationFrame(this.connect.update());
+        //    // requestAnimationFrame();
+            //       connect.update();
+        }, 1000 / 15);
+        this.connect.update();
     }
+
+    ngOnDestroy () {
+    }
+
  }
 

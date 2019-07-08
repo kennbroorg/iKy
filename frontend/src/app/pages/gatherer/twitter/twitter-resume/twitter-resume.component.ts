@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { NbThemeService } from '@nebular/theme';
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 @Component({
     selector: 'ngx-twitter-resume',
@@ -7,86 +6,41 @@ import { NbThemeService } from '@nebular/theme';
     styleUrls: ['./twitter-resume.component.scss']
 })
 export class TwitterResumeComponent implements OnInit, AfterViewInit {
-    colorScheme: any;
-    themeSubscription: any;
 
     @ViewChild('nbCardTwitterResume') private cardContainer: ElementRef;
     @Input() private data: any;
     private twitterResume : any;
-    private validation : any;
+
+    colorScheme = {
+      domain: [ 
+          '#80deea', 
+          '#4dd0e1',
+          '#26c6da', 
+          '#00bcd4', 
+          '#00acc1', 
+          '#0097a7', 
+          '#00838f', 
+          '#006064'
+      ]
+    };
 
     private card: any;
     private width: number;
     private height: number;
 
-    constructor(private theme: NbThemeService) {
-        this.themeSubscription = this.theme.getJsTheme().subscribe(config => {
-            const colors: any = config.variables;
-            this.colorScheme = {
-                domain: [colors.primaryLight, colors.infoLight, colors.successLight, colors.warningLight, colors.dangerLight],
-            };
-        });
-    }
+    constructor() {}
 
     ngOnInit() {
-
-        //this.card = this.cardContainer.nativeElement;
-        //this.width = this.card.clientWidth;
-        //this.height = this.width * 0.68;
-
-        //console.log("Twitter Resume Component");
-
-        //this.twitterResume = this.data.result[4].graphic[0].resume.children.map(this.arrayAdecuate);
-        //console.log("Twitter Resume data", this.twitterResume);
-        //this.validation = this.data.result[2].validation;
-
-        ///* Validation */
-        //switch(this.data.result[2].validation) {
-        //    case 'hard':
-        //        this.validation = 'success';
-        //        break;
-        //    case 'soft':
-        //        this.validation = 'warning';
-        //        break;
-        //    case 'no':
-        //        this.validation = 'danger';
-        //        break;
-        //    default:
-        //        this.validation = 'danger';
-        //}
     }
 
     ngAfterViewInit() {
         this.card = this.cardContainer.nativeElement;
         this.width = this.cardContainer.nativeElement.parentNode.parentNode.clientWidth;
         this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight - 55;
-        console.log("CARD-------------------------------", this.card);
-        console.log("WIDTH-------------------------------", this.width);
-        console.log("HEIGHT-------------------------------", this.height);
         console.log("Twitter Resume Component");
 
         this.twitterResume = this.data.result[4].graphic[0].resume.children.map(this.arrayAdecuate);
         console.log("Twitter Resume data", this.twitterResume);
-        this.validation = this.data.result[2].validation;
-
-        /* Validation */
-        switch(this.data.result[2].validation) {
-            case 'hard':
-                this.validation = 'success';
-                break;
-            case 'soft':
-                this.validation = 'warning';
-                break;
-            case 'no':
-                this.validation = 'danger';
-                break;
-            default:
-                this.validation = 'danger';
-        }
-    }
-
-    ngOnDestroy(): void {
-        this.themeSubscription.unsubscribe();
     }
 
     arrayAdecuate(item, index, array) {

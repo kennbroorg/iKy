@@ -1,9 +1,9 @@
   <nb-card size="small" class="border-default">
     <nb-card-header>
       TWITTER Hashtags (100 last tweets)
+      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
     </nb-card-header>
     <nb-card-body id="nbCardTwitterHashtag" #nbCardCloud style="text-align: center; overflow: hidden; margin: 0px; padding: 0px;">
-        <nb-badge text="Validation" status="{{validation}}" position="top right"></nb-badge>
         <ngx-text-cloud [data]="twitterHashtag"></ngx-text-cloud>
     </nb-card-body>
   </nb-card>

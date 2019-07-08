@@ -1,9 +1,9 @@
   <nb-card size="small" class="border-default">
     <nb-card-header>
       FULLCONTACT Graphs
+      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
     </nb-card-header>
     <nb-card-body id="nbCardFullcontactGraphs" #nbCardGraphs style="text-align: center; overflow: hidden;">
-        <nb-badge text="Validation" status="{{validation}}" position="top right"></nb-badge>
         <ngx-graphs [data]="fullcontactGraphs"></ngx-graphs>
     </nb-card-body>
   </nb-card>

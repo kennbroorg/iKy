@@ -34,21 +34,6 @@ export class LinkedinCertsComponent implements OnInit, OnDestroy {
         console.log("Linkedin Certs Component");
         this.linkedinCerts = this.data.result[4].graphic[2].certificationView;
         this.linkedinPositions = this.data.result[4].graphic[3].positionGroupView;
-
-        /* Validation */
-        switch(this.data.result[2].validation) {
-            case 'hard':
-                this.validation = 'success';
-                break;
-            case 'soft':
-                this.validation = 'warning';
-                break;
-            case 'no':
-                this.validation = 'danger';
-                break;
-            default:
-                this.validation = 'danger';
-        }
     }
 
     ngOnDestroy() {

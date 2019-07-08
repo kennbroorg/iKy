@@ -10,6 +10,69 @@
     padding: 0;
   }
 
+  /deep/ .soft {
+    position: absolute;
+    right: 30px;
+    top: 20px;
+    color: #ffcc00 !important;
+    font-size: 15px;
+
+    .icon::before {
+      display: inline-block;
+      font-style: normal;
+      font-variant: normal;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .validation::before {
+      font-family: "Font Awesome 5 Free"; font-weight: 400; content: "\f058";
+    }
+
+  }
+
+  /deep/ .hard {
+    position: absolute;
+    right: 30px;
+    top: 20px;
+    color: green !important;
+    font-size: 15px;
+
+    .icon::before {
+      display: inline-block;
+      font-style: normal;
+      font-variant: normal;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .validation::before {
+      font-family: "Font Awesome 5 Free"; font-weight: 400; content: "\f058";
+    }
+
+  }
+
+  /deep/ .no {
+    position: absolute;
+    right: 30px;
+    top: 20px;
+    color: red !important;
+    font-size: 15px;
+
+    .icon::before {
+      display: inline-block;
+      font-style: normal;
+      font-variant: normal;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .validation::before {
+      font-family: "Font Awesome 5 Free"; font-weight: 400; content: "\f058";
+    }
+
+  }
+
   nb-card-body {
     display: flex;
     flex-direction: column;
@@ -21,9 +84,11 @@
   }
   nb-actions > nb-action {
     padding: 0 0.75rem;
+    // border: 1px solid #00f9a6;
   }
 
   nb-action {
+
     cursor: pointer;
     i {
       color: nb-theme(color-fg);
@@ -34,10 +99,52 @@
 
     span {
       font-family: nb-theme(font-secondary);
-      font-weight: nb-theme(font-weight-bold);
+      // font-weight: nb-theme(font-weight-bold);
       color: nb-theme(color-fg-heading);
-      text-transform: uppercase;
+      // text-transform: uppercase;
     }
+    
+    .validation-menu {
+      font-size: 20px;
+      padding-left: 15px;
+      padding-right: 5px;
+
+      .icon::before {
+        display: inline-block;
+        font-style: normal;
+        font-variant: normal;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .validation::before {
+        font-family: "Font Awesome 5 Free"; font-weight: 400; content: "\f058";
+      }
+
+      span {
+        font-family: nb-theme(font-secondary);
+        font-weight: nb-theme(font-weight-bold);
+      }
+
+    }
+
+    .validation-hard::before {
+      font-family: "Font Awesome 5 Free"; font-weight: 400; content: "\f058";
+      // color: green;
+    }
+    .validation-soft::before {
+      font-family: "Font Awesome 5 Free"; font-weight: 400; content: "\f058";
+      // color: yellow !important;
+    }
+    .validation-no::before {
+      font-family: "Font Awesome 5 Free"; font-weight: 400; content: "\f058";
+      // color: red !important;
+    }
+
+  }
+
+  button.btn-success.btn-outline {
+    border: 1px solid #00f9a6;
   }
 
   .picture {
@@ -51,7 +158,9 @@
   }
 
   .details {
-    padding: 1.25rem 1.25rem 0;
+    padding: 1.25rem 1.25rem 1.25rem;
+    // border-top: 1px solid nb-theme(separator);
+    border-top: 1px solid #00f9a6;
 
     .title {
       font-family: nb-theme(font-secondary);
@@ -188,42 +297,6 @@
     border-image-outset: 1;
     border-image-width: 5;
   }
-
-  .border-primary {
-    border: 5px solid;
-    border-image: url("assets/images/border-primary.svg") 20 repeat;
-    border-image-outset: 0;
-    border-image-width: 5;
-  }
-
-  .border-warning {
-    border: 5px solid;
-    border-image: url("assets/images/border-warning.svg") 20 repeat;
-    border-image-outset: 0;
-    border-image-width: 5;
-  }
-
-  .border-success {
-    border: 5px solid;
-    border-image: url("assets/images/border-success.svg") 20 repeat;
-    border-image-outset: 0;
-    border-image-width: 5;
-  }
-
-  .border-info {
-    border: 5px solid;
-    border-image: url("assets/images/border-info.svg") 20 repeat;
-    border-image-outset: 0;
-    border-image-width: 5;
-  }
-
-  .border-danger {
-    border: 5px solid;
-    border-image: url("assets/images/border-danger.svg") 20 repeat;
-    border-image-outset: 0;
-    border-image-width: 5;
-  }
-
 
   /* Tree */
 

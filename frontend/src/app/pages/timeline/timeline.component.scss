@@ -16,6 +16,10 @@
     padding: 0;
   }
 
+  button.btn-success.btn-outline {
+    border: 1px solid #00f9a6;
+  }
+
   .picture {
     background-image: url("assets/images/gather.jpg");
     background-position: center;
@@ -27,7 +31,8 @@
   }
 
   .details {
-    padding: 1.25rem 1.25rem 0;
+    padding: 1.25rem 1.25rem 1.25rem;
+    border-top: 1px solid #00f9a6;
 
     .title {
       font-family: nb-theme(font-secondary);
@@ -82,42 +87,6 @@
     border-image-outset: 1;
     border-image-width: 5;
   }
-
-  .border-primary {
-    border: 5px solid;
-    border-image: url("assets/images/border-primary.svg") 20 repeat;
-    border-image-outset: 0;
-    border-image-width: 5;
-  }
-
-  .border-warning {
-    border: 5px solid;
-    border-image: url("assets/images/border-warning.svg") 20 repeat;
-    border-image-outset: 0;
-    border-image-width: 5;
-  }
-
-  .border-success {
-    border: 5px solid;
-    border-image: url("assets/images/border-success.svg") 20 repeat;
-    border-image-outset: 0;
-    border-image-width: 5;
-  }
-
-  .border-info {
-    border: 5px solid;
-    border-image: url("assets/images/border-info.svg") 20 repeat;
-    border-image-outset: 0;
-    border-image-width: 5;
-  }
-
-  .border-danger {
-    border: 5px solid;
-    border-image: url("assets/images/border-danger.svg") 20 repeat;
-    border-image-outset: 0;
-    border-image-width: 5;
-  }
-
 
   @include media-breakpoint-down(md) {
   }

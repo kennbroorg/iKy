@@ -54,6 +54,10 @@ export class GathererComponent implements OnInit {
     public  photo: any = [];
     public  organization: any = [];
 
+    public  onH: boolean = true;
+    public  onS: boolean = true;
+    public  onN: boolean = true;
+
     public  validationShow = {
         hard: true,
         soft: true,
