@@ -2,7 +2,7 @@ amqp==2.2.2
 beautifulsoup4==4.6.0
 billiard==3.5.0.3
 bs4==0.0.1
-celery==4.1.0
+celery==4.3.0
 certifi==2017.11.5
 cfscrape==1.9.5
 chardet==3.0.4
@@ -28,3 +28,4 @@ tweepy==3.6.0
 urllib3==1.22
 vine==1.1.4
 Werkzeug==0.14.1
+geopy==1.20.0
