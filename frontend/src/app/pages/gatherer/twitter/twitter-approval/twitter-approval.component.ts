@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, TemplateRef } from '@angular/core';
+import { NbDialogService } from '@nebular/theme';
 
 @Component({
     selector: 'ngx-twitter-approval',
@@ -31,7 +32,7 @@ export class TwitterApprovalComponent implements OnInit, AfterViewInit {
       ]
     };
 
-    constructor() {}
+    constructor(private dialogService: NbDialogService) {}
 
     ngOnInit() {
     }
@@ -44,7 +45,6 @@ export class TwitterApprovalComponent implements OnInit, AfterViewInit {
         console.log("Twitter Approval Component");
 
         this.twitterApproval = this.data.result[4].graphic[2].approval.map(this.arrayAdecuate);
-
     }
 
     arrayAdecuate(item, index, array) {
@@ -53,5 +53,9 @@ export class TwitterApprovalComponent implements OnInit, AfterViewInit {
             delete array[index].title;  
         }
         return item;
+    }
+
+    openDialog(dialog: TemplateRef<any>) {
+        this.dialogService.open(dialog);
     }
 }

@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, TemplateRef } from '@angular/core';
+import { NbDialogService } from '@nebular/theme';
 
 @Component({
     selector: 'ngx-twitter-list',
@@ -29,17 +30,21 @@ export class TwitterListComponent implements OnInit, AfterViewInit {
       ]
     };
 
-    constructor() {}
+    constructor(private dialogService: NbDialogService) {}
 
     ngOnInit() {
+        this.card = this.cardContainer.nativeElement;
     }
 
     ngAfterViewInit() {
-        this.card = this.cardContainer.nativeElement;
         this.width = this.cardContainer.nativeElement.parentNode.parentNode.clientWidth;
         this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight - 55;
         console.log("Twitter List Component");
 
         this.twitterList = this.data.result[4].graphic[5].tweetslist;
+    }
+
+    openDialog(dialog: TemplateRef<any>) {
+        this.dialogService.open(dialog);
     }
 }

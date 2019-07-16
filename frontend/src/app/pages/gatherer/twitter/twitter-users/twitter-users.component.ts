@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, TemplateRef } from '@angular/core';
+import { NbDialogService } from '@nebular/theme';
 
 @Component({
     selector: 'ngx-twitter-users',
@@ -14,14 +15,19 @@ export class TwitterUsersComponent implements OnInit, AfterViewInit {
     private width: number;
     private height: number;
 
-    constructor() {}
+    constructor(private dialogService: NbDialogService) {}
 
     ngOnInit() {
         this.twitterUsers = this.data.result[4].graphic[4].users;
     }
 
     ngAfterViewInit() {
+
         console.log("Twitter Users Component");
         console.log(this.twitterUsers);
+    }
+
+    openDialog(dialog: TemplateRef<any>) {
+        this.dialogService.open(dialog);
     }
 }
