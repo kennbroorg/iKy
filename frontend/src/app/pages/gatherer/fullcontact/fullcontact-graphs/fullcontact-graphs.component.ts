@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
-import { GraphsComponent } from '../../../shared/graphs/graphs.component';
+import { Component, OnInit, Input, ViewChild, ElementRef, TemplateRef } from '@angular/core';
+import { NbDialogService } from '@nebular/theme';
 
 @Component({
     selector: 'ngx-fullcontact-graphs',
@@ -13,14 +13,16 @@ export class FullcontactGraphsComponent implements OnInit {
     private validation : any;
   
     private card: any;
-    private heightH: number;
   
-    constructor() {}
+    constructor(private dialogService: NbDialogService) {}
   
     ngOnInit() {
         console.log("Fullcontact Graphs Component");
-        console.log("Fullcontact data: ", this.fullcontactGraphs);
         this.fullcontactGraphs = this.data.result[4].graphic[0].social;
-  
+        console.log("Fullcontact data: ", this.fullcontactGraphs);
+    }
+
+    openDialog(dialog: TemplateRef<any>) {
+        this.dialogService.open(dialog);
     }
 }
