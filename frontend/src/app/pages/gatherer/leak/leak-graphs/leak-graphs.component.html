@@ -1,5 +1,5 @@
   <nb-card size="small" class="border-default">
-    <nb-card-header>
+    <nb-card-header (click)="openDialog(dialogLeakGraph)">
       LEAK Graphs
       <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
     </nb-card-header>
@@ -13,3 +13,18 @@
         </div>
     </nb-card-body>
   </nb-card>
+
+  <ng-template #dialogLeakGraph let-data let-ref="dialogRef">
+      <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+        <nb-card-header>LEAK Graphs</nb-card-header>
+        <nb-card-body style="overflow: hidden; padding: 0px;">
+          <ngx-graphs [data]="leakGraphs" modal="true"></ngx-graphs>
+          <div nbTooltip="You don't have leaks" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 100px; z-index: 2;" *ngIf="noData == 'NOLEAK'">
+              <i class="fas fa-lock" style="font-size: 100px;"></i>
+          </div>
+          <div nbTooltip="You are blocked. Try with VPN" nbTooltipIcon="alert-triangle-outline" nbTooltipStatus="danger" style="position: absolute; top: 15%; bottom: 15%; left: 0; right: 0; margin: auto; width: 50%; height: 100px; z-index: 2;" *ngIf="noData == 'BLOCKED'">
+              <i class="fas fa-ban" style="font-size: 100px;"></i>
+          </div>
+          </nb-card-body>
+      </nb-card>
+  </ng-template>
