@@ -9,10 +9,12 @@
   align-items: center;
 
   .socials {
+    // align-items: flex-end;
+
     font-size: 2rem;
 
     a {
-      padding: 0.4rem;
+      padding: 0.1rem;
       color: nb-theme(color-fg);
       transition: color ease-out 0.1s;
 
