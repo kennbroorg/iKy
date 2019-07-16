@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, TemplateRef } from '@angular/core';
+import { NbDialogService } from '@nebular/theme';
 
 @Component({
     selector: 'ngx-github-graphs',
@@ -11,11 +12,15 @@ export class GithubGraphsComponent implements OnInit {
     private githubGraphs : any;
     private validation : any;
 
-    constructor() {}
-
+    constructor(private dialogService: NbDialogService) {}
+  
     ngOnInit() {
         console.log("Github Graphs Component");
         this.githubGraphs = this.data.result[4].graphic[0].github;
         this.validation = this.data.result[2].validation;
+    }
+
+    openDialog(dialog: TemplateRef<any>) {
+        this.dialogService.open(dialog);
     }
 }
