@@ -1,42 +1,38 @@
-import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
-import { NbThemeService, NbMediaBreakpoint, NbMediaBreakpointsService } from '@nebular/theme';
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { NbDialogService } from '@nebular/theme';
 
 @Component({
     selector: 'ngx-linkedin-certs',
-    styleUrls: ['./linkedin-certs.component.scss'],
     templateUrl: './linkedin-certs.component.html',
+    styleUrls: ['./linkedin-certs.component.scss'],
 })
-export class LinkedinCertsComponent implements OnInit, OnDestroy {
+export class LinkedinCertsComponent implements OnInit, AfterViewInit {
 
     contacts: any[];
     recent: any[];
-    breakpoint: NbMediaBreakpoint;
-    breakpoints: any;
-    themeSubscription: any;
 
+    @ViewChild('nbCardLinkedinCert') private cardContainer: ElementRef;
     @Input() private data: any;
     private linkedinCerts : any;
     private linkedinPositions : any;
     private validation : any;
 
-    constructor(private themeService: NbThemeService,
-                private breakpointService: NbMediaBreakpointsService) {
+    private card: any;
+    private width: number;
+    private height: number;
 
-        this.breakpoints = this.breakpointService.getBreakpointsMap();
-        this.themeSubscription = this.themeService.onMediaQueryChange()
-            .subscribe(([oldValue, newValue]) => {
-                this.breakpoint = newValue;
-            });
-    }
+    constructor(private dialogService: NbDialogService) {}
 
     ngOnInit() {
-
         console.log("Linkedin Certs Component");
         this.linkedinCerts = this.data.result[4].graphic[2].certificationView;
         this.linkedinPositions = this.data.result[4].graphic[3].positionGroupView;
     }
 
-    ngOnDestroy() {
-      this.themeSubscription.unsubscribe();
+    ngAfterViewInit() {
+    }
+
+    openDialog(dialog: TemplateRef<any>) {
+        this.dialogService.open(dialog);
     }
 }

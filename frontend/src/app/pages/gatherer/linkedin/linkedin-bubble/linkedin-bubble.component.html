@@ -1,5 +1,5 @@
   <nb-card size="small" class="border-default">
-    <nb-card-header>
+    <nb-card-header (click)="openDialog(dialogLinkedinBubble)">
       LINKEDIN Skill
       <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
     </nb-card-header>
@@ -7,3 +7,12 @@
         <ngx-bubble [data]="linkedinBubble"></ngx-bubble>
     </nb-card-body>
   </nb-card>
+
+  <ng-template #dialogLinkedinBubble let-data let-ref="dialogRef">
+      <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+        <nb-card-header>LINKEDIN Skill</nb-card-header>
+        <nb-card-body style="overflow: hidden; padding: 0px;">
+          <ngx-bubble [data]="linkedinBubble"></ngx-bubble>
+        </nb-card-body>
+      </nb-card>
+  </ng-template>
