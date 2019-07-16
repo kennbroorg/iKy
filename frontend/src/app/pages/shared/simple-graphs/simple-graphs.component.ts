@@ -14,6 +14,7 @@ import {select as d3Select} from 'd3-selection';
 export class SimpleGraphsComponent implements OnInit, AfterViewInit {
   @ViewChild('cardSimpleGraphs') private cardContainer: ElementRef;
   @Input() private data: Array<any>;
+  @Input() private modal: boolean;
 
   private width: number;
   private height: number;
@@ -57,7 +58,7 @@ export class SimpleGraphsComponent implements OnInit, AfterViewInit {
           list.push(this);
           cache[this.name] = this;
           if (adds) {
-              for (var key in adds) {
+             for (var key in adds) {
                   this[key] = adds[key];
               }
           }
@@ -90,10 +91,18 @@ export class SimpleGraphsComponent implements OnInit, AfterViewInit {
     }
 
     getForce(height, width) {
-        return d3.forceSimulation()
-          .force("charge", d3.forceManyBody().strength(-520))
-          .force("link", d3.forceLink().distance(20))
-          .force("center", d3.forceCenter(width / 2, height / 2))
+        if (this.modal) {
+          return d3.forceSimulation()
+            .force("charge", d3.forceManyBody().strength(-820))
+            .force("link", d3.forceLink().distance(40))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+        }
+        else {
+          return d3.forceSimulation()
+            .force("charge", d3.forceManyBody().strength(-520))
+            .force("link", d3.forceLink().distance(20))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+        }
     }
 
     getColor() {

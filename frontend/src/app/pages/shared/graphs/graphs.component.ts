@@ -14,6 +14,7 @@ import {select as d3Select} from 'd3-selection';
 export class GraphsComponent implements OnInit, AfterViewInit {
   @ViewChild('cardGraphs') private cardContainer: ElementRef;
   @Input() private data: Array<any>;
+  @Input() private modal: boolean;
 
   private width: number;
   private height: number;
@@ -29,9 +30,14 @@ export class GraphsComponent implements OnInit, AfterViewInit {
       this.card = this.cardContainer.nativeElement;
       this.width = this.cardContainer.nativeElement.parentNode.parentNode.clientWidth;
       this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight;
+      if (this.modal) {
+        this.width = this.cardContainer.nativeElement.parentNode.parentNode.clientWidth;
+        this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight;
+      }
       console.log("CARD-------------------------------", this.card);
       console.log("WIDTH-------------------------------", this.width);
       console.log("HEIGHT-------------------------------", this.height);
+      console.log("MODAL-------------------------------", this.modal);
       this.drawChart(this.card, this.data, this.height, this.width);
   }
 
@@ -93,10 +99,18 @@ export class GraphsComponent implements OnInit, AfterViewInit {
     }
 
     getForce(height, width) {
-        return d3.forceSimulation()
-          .force("charge", d3.forceManyBody().strength(-820))
-          .force("link", d3.forceLink().distance(60))
-          .force("center", d3.forceCenter(width / 2, height / 2))
+        if (this.modal) {
+          return d3.forceSimulation()
+            .force("charge", d3.forceManyBody().strength(-820))
+            .force("link", d3.forceLink().distance(110))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+        }
+        else {
+          return d3.forceSimulation()
+            .force("charge", d3.forceManyBody().strength(-820))
+            .force("link", d3.forceLink().distance(60))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+        }
     }
 
     getColor() {
@@ -108,16 +122,6 @@ export class GraphsComponent implements OnInit, AfterViewInit {
         force.force("link").links(data.links);
         force.restart();
   
-        var link = chart.selectAll('.link')
-            .data(data.links)
-            .enter()
-            .append('line')
-              .attr('class', 'link')
-              // .style('stroke', '#209E91')
-              .style('stroke', '#05fcfc')
-              .style('stroke-width', 0.3)
-              .style('opacity', 1);
-  
         var node = chart.selectAll('.node')
             .data(data.list)
             .enter()
@@ -127,79 +131,180 @@ export class GraphsComponent implements OnInit, AfterViewInit {
                     .on("drag", dragged)
                     .on("end", dragended));
   
-        node.append('circle')
-            .attr('r', 21)
-              .style('fill-opacity', 0.7)
-              .style('fill', function (d) {
-                  if (d.group == 0) return '#05fcfc';
-                  if (d.group == 1) return '#05fcfc';
-                  return color(d.group);
-              });
+        if (this.modal) {
+          var link = chart.selectAll('.link')
+              .data(data.links)
+              .enter()
+              .append('line')
+                .attr('class', 'link')
+                .style('stroke', '#05fcfc')
+                .style('stroke-width', 0.5)
+                .style('opacity', 1);
   
-        node.each(function (d) {
-            if (!d.picture) return;
-            d3Select(this)
-                .append('image')
-                  .attr('xlink:href', d.picture)
-                  .attr('x', -15)
-                  .attr('y', -15)
-                  .attr('width', 30)
-                  .attr('height', 30)
-                  .attr('clip-path', 'url(#circle-clip-' + d.id + ')');
-            d3Select(this)
-                .append('clipPath')
-                  .attr('id', 'circle-clip-' + d.id)
-                .append('circle').attr('r', 15);
-        });
+          node.append('circle')
+              .attr('r', 35)
+                .style('fill-opacity', 0.7)
+                .style('fill', '#05fcfc');
+
+          // For picture
+          node.each(function (d) {
+              if (!d.picture) return;
+              d3Select(this)
+                  .append('image')
+                    .attr('xlink:href', d.picture)
+                    .attr('x', -30)
+                    .attr('y', -30)
+                    .attr('width', 60)
+                    .attr('height', 60)
+                    .attr('clip-path', 'circle(50% at 50% 50%)');
+          });
+
+          node.each(function (d) {
+              var title = d.name;
+              var subtitle = d.subtitle;
+              var icon = d.icon;
+              d3Select(this).append('text')
+                .attr('text-anchor', 'middle')
+                .attr('alignment-baseline', 'middle')
+                .attr('fill', '#00FBFF')
+                .attr("y", -42)
+                .text(title);
+              d3Select(this).append('text')
+                .attr('text-anchor', 'middle')
+                .attr('alignment-baseline', 'middle')
+                .attr('fill', '#B3FEFF')
+                .attr("y", 45)
+                .text(subtitle);
+              if (icon) {
+                  d3Select(this).append('svg:foreignObject')
+                      .attr('height', '35px')
+                      .attr('width', '40px')
+                      .attr('x', '-20px')
+                      .attr('y', '-17px')
+                      .attr('fill-opacity', 0.7)
+                      .attr('opacity', 0.7)
+                      .attr('font-size', "30px" )
+                      .attr('fill', "#000" )
+                      .attr('stroke', "#000" )
+                      .attr('color', "#000" )
+                      .html('<i class="' + icon + '"></i>');
+              }
+          });
+        }
+        else {
+          var link = chart.selectAll('.link')
+              .data(data.links)
+              .enter()
+              .append('line')
+                .attr('class', 'link')
+                .style('stroke', '#05fcfc')
+                .style('stroke-width', 0.3)
+                .style('opacity', 1);
+  
+          node.append('circle')
+              .attr('r', 21)
+                .style('fill-opacity', 0.7)
+                .style('fill', '#05fcfc');
+
+          // For picture
+          node.each(function (d) {
+              if (!d.picture) return;
+              d3Select(this)
+                  .append('image')
+                    .attr('xlink:href', d.picture)
+                    .attr('x', -15)
+                    .attr('y', -15)
+                    .attr('width', 30)
+                    .attr('height', 30)
+                    .attr('clip-path', 'url(#circle-clip-' + d.id + ')');
+              d3Select(this)
+                  .append('clipPath')
+                    .attr('id', 'circle-clip-' + d.id)
+                  .append('circle').attr('r', 15);
+          });
+
+          node.each(function (d) {
+              var title = d.name;
+              var subtitle = d.subtitle;
+              var icon = d.icon;
+              d3Select(this).append('text')
+                .attr('text-anchor', 'middle')
+                .attr('alignment-baseline', 'middle')
+                .attr('fill', '#00FBFF')
+                .attr("y", -27)
+                .text(title);
+              d3Select(this).append('text')
+                .attr('text-anchor', 'middle')
+                .attr('alignment-baseline', 'middle')
+                .attr('fill', '#B3FEFF')
+                .attr("y", 30)
+                .text(subtitle);
+              if (icon) {
+                  d3Select(this).append('svg:foreignObject')
+                      .attr('height', '20px')
+                      .attr('width', '30px')
+                      .attr('x', '-15px')
+                      .attr('y', '-10px')
+                      .attr('fill-opacity', 0.7)
+                      .attr('opacity', 0.7)
+                      .attr('font-size', "20px" )
+                      .attr('fill', "#000" )
+                      .attr('stroke', "#000" )
+                      .attr('color', "#000" )
+                      .html('<i class="' + icon + '"></i>');
+              }
+          });
+
+        }
   
         // For picture
-        node.each(function (d) {
-            if (!d.picture) return;
-            d3Select(this)
-                .append('image')
-                  .attr('xlink:href', d.picture)
-                  .attr('x', -15)
-                  .attr('y', -15)
-                  .attr('width', 30)
-                  .attr('height', 30)
-                  .attr('clip-path', 'url(#circle-clip-' + d.id + ')');
-            d3Select(this)
-                .append('clipPath')
-                  .attr('id', 'circle-clip-' + d.id)
-                .append('circle').attr('r', 15);
-        });
+        // node.each(function (d) {
+        //     if (!d.picture) return;
+        //     d3Select(this)
+        //         .append('image')
+        //           .attr('xlink:href', d.picture)
+        //           .attr('x', -15)
+        //           .attr('y', -15)
+        //           .attr('width', 30)
+        //           .attr('height', 30)
+        //           .attr('clip-path', 'url(#circle-clip-' + d.id + ')');
+        //     d3Select(this)
+        //         .append('clipPath')
+        //           .attr('id', 'circle-clip-' + d.id)
+        //         .append('circle').attr('r', 15);
+        // });
   
-        node.each(function (d) {
-            var title = d.name;
-            var subtitle = d.subtitle;
-            var icon = d.icon;
-            d3Select(this).append('text')
-              .attr('text-anchor', 'middle')
-              .attr('alignment-baseline', 'middle')
-              .attr('fill', '#00FBFF')
-              .attr("y", -27)
-              .text(title);
-            d3Select(this).append('text')
-              .attr('text-anchor', 'middle')
-              .attr('alignment-baseline', 'middle')
-              .attr('fill', '#B3FEFF')
-              .attr("y", 30)
-              .text(subtitle);
-            if (icon) {
-                d3Select(this).append('svg:foreignObject')
-                    .attr('height', '20px')
-                    .attr('width', '30px')
-                    .attr('x', '-15px')
-                    .attr('y', '-10px')
-                    .attr('fill-opacity', 0.7)
-                    .attr('opacity', 0.7)
-                    .attr('font-size', "20px" )
-                    .attr('fill', "#000" )
-                    .attr('stroke', "#000" )
-                    .attr('color', "#000" )
-                    .html('<i class="' + icon + '"></i>');
-            }
-        });
+              //         node.each(function (d) {
+              //             var title = d.name;
+              //             var subtitle = d.subtitle;
+              //             var icon = d.icon;
+              //             d3Select(this).append('text')
+              //               .attr('text-anchor', 'middle')
+              //               .attr('alignment-baseline', 'middle')
+              //               .attr('fill', '#00FBFF')
+              //               .attr("y", -27)
+              //               .text(title);
+              //             d3Select(this).append('text')
+              //               .attr('text-anchor', 'middle')
+              //               .attr('alignment-baseline', 'middle')
+              //               .attr('fill', '#B3FEFF')
+              //               .attr("y", 30)
+              //               .text(subtitle);
+              //             if (icon) {
+              //                 d3Select(this).append('svg:foreignObject')
+              //                     .attr('height', '20px')
+              //                     .attr('width', '30px')
+              //                     .attr('x', '-15px')
+              //                     .attr('y', '-10px')
+              //                     .attr('fill-opacity', 0.7)
+              //                     .attr('opacity', 0.7)
+              //                     .attr('font-size', "20px" )
+              //                     .attr('fill', "#000" )
+              //                     .attr('stroke', "#000" )
+              //                     .attr('color', "#000" )
+              //                     .html('<i class="' + icon + '"></i>');
+              //             }
+              //         });
   
         force.on('tick', function () {
             link.attr('x1', function (d) {
