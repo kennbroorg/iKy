@@ -5,10 +5,10 @@
     </nb-card-header>
     <nb-card-body id="nbCardLeakGraphs" #nbCardLeakGraphs style="text-align: center; overflow: hidden;">
         <ngx-graphs [data]="leakGraphs"></ngx-graphs>
-        <div nbTooltip="You don't have leaks" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 100px; z-index: 2;" *ngIf="noData == 'NOLEAK'">
+        <div nbTooltip="You don't have leaks" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 100px; height: 100px; z-index: 2;" *ngIf="noData == 'NOLEAK'">
             <i class="fas fa-lock" style="font-size: 100px;"></i>
         </div>
-        <div nbTooltip="You are blocked. Try with VPN" nbTooltipIcon="alert-triangle-outline" nbTooltipStatus="danger" style="position: absolute; top: 15%; bottom: 15%; left: 0; right: 0; margin: auto; width: 50%; height: 100px; z-index: 2;" *ngIf="noData == 'BLOCKED'">
+        <div nbTooltip="You are blocked. Try with VPN" nbTooltipIcon="alert-triangle-outline" nbTooltipStatus="danger" style="position: absolute; top: 15%; bottom: 15%; left: 0; right: 0; margin: auto; width: 100px; height: 100px; z-index: 2;" *ngIf="noData == 'BLOCKED'">
             <i class="fas fa-ban" style="font-size: 100px;"></i>
         </div>
     </nb-card-body>
@@ -19,11 +19,11 @@
         <nb-card-header>LEAK Graphs</nb-card-header>
         <nb-card-body style="overflow: hidden; padding: 0px;">
           <ngx-graphs [data]="leakGraphs" modal="true"></ngx-graphs>
-          <div nbTooltip="You don't have leaks" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 100px; z-index: 2;" *ngIf="noData == 'NOLEAK'">
-              <i class="fas fa-lock" style="font-size: 100px;"></i>
+          <div nbTooltip="You don't have leaks" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 200px; height: 200px; z-index: 2;" *ngIf="noData == 'NOLEAK'">
+              <i class="fas fa-lock" style="font-size: 200px;"></i>
           </div>
-          <div nbTooltip="You are blocked. Try with VPN" nbTooltipIcon="alert-triangle-outline" nbTooltipStatus="danger" style="position: absolute; top: 15%; bottom: 15%; left: 0; right: 0; margin: auto; width: 50%; height: 100px; z-index: 2;" *ngIf="noData == 'BLOCKED'">
-              <i class="fas fa-ban" style="font-size: 100px;"></i>
+          <div nbTooltip="You are blocked. Try with VPN" nbTooltipIcon="alert-triangle-outline" nbTooltipStatus="danger" style="position: absolute; top: 15%; bottom: 15%; left: 0; right: 0; margin: auto; width: 200px; height: 200px; z-index: 2;" *ngIf="noData == 'BLOCKED'">
+              <i class="fas fa-ban" style="font-size: 200px;"></i>
           </div>
           </nb-card-body>
       </nb-card>
