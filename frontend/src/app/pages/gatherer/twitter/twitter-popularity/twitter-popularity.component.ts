@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, TemplateRef } from '@angular/core';
+import { NbDialogService } from '@nebular/theme';
 
 @Component({
     selector: 'ngx-twitter-popularity',
@@ -29,13 +30,13 @@ export class TwitterPopularityComponent implements OnInit, AfterViewInit {
       ]
     };
 
-    constructor() {}
+    constructor(private dialogService: NbDialogService) {}
 
     ngOnInit() {
+        this.card = this.cardContainer.nativeElement;
     }
 
     ngAfterViewInit() {
-        this.card = this.cardContainer.nativeElement;
         this.width = this.cardContainer.nativeElement.parentNode.parentNode.clientWidth;
         this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight - 55;
         console.log("Twitter Popularity Component");
@@ -51,4 +52,7 @@ export class TwitterPopularityComponent implements OnInit, AfterViewInit {
         return item;
     }
 
+    openDialog(dialog: TemplateRef<any>) {
+        this.dialogService.open(dialog);
+    }
 }

@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, TemplateRef } from '@angular/core';
+import { NbDialogService } from '@nebular/theme';
 
 @Component({
     selector: 'ngx-twitter-hashtag',
@@ -14,14 +15,18 @@ export class TwitterHashtagComponent implements OnInit, AfterViewInit {
     private width: number;
     private height: number;
 
-    constructor() {}
+    constructor(private dialogService: NbDialogService) {}
 
     ngOnInit() {
         this.twitterHashtag = this.data.result[4].graphic[3].hashtag;
+        console.log("Twitter Hashtag Component");
+        console.log(this.twitterHashtag);
     }
 
     ngAfterViewInit() {
-        console.log("Twitter Hashtag Component");
-        console.log(this.twitterHashtag);
+    }
+
+    openDialog(dialog: TemplateRef<any>) {
+        this.dialogService.open(dialog);
     }
 }

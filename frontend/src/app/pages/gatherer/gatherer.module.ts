@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ChartModule } from 'angular2-chartjs';
+import { NbDialogModule, NbWindowModule } from '@nebular/theme';
 
 import { NbBadgeModule, NbCardModule } from '@nebular/theme';
 import { TreeModule } from 'angular-tree-component';
@@ -47,6 +48,8 @@ import { SharedModule } from '../shared/shared.module';
     TreeModule,
     NbCardModule,
     SharedModule,
+    NbDialogModule.forChild(),
+    NbWindowModule.forChild(),
   ],
   declarations: [
     GathererComponent,

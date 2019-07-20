@@ -1,5 +1,5 @@
   <nb-card size="small" class="border-default">
-    <nb-card-header>
+    <nb-card-header (click)="openDialog(dialogKeybaseDGraph)">
       KEYBASE Devices
       <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
     </nb-card-header>
@@ -7,3 +7,12 @@
         <ngx-graphs [data]="keybaseDevices"></ngx-graphs>
     </nb-card-body>
   </nb-card>
+
+  <ng-template #dialogKeybaseDGraph let-data let-ref="dialogRef">
+      <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+        <nb-card-header>KEYBASE Devices</nb-card-header>
+        <nb-card-body style="overflow: hidden; padding: 0px;">
+          <ngx-graphs [data]="keybaseDevices" modal="true"></ngx-graphs>
+        </nb-card-body>
+      </nb-card>
+  </ng-template>
