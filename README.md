@@ -3,7 +3,6 @@
 	<img alt="follow on Twitter" src="https://img.shields.io/twitter/follow/kennbroorg.svg?label=follow%20%40kennbroorg&style=social">
     </a>
 </div>
-
 ---
 
 <div align="center">
@@ -27,7 +26,6 @@
     <img alt="ghostproject" src="https://img.shields.io/badge/module-ghostproject-red.svg">
     <img alt="haveibeenpwned" src="https://img.shields.io/badge/module-haveibeenpwned-blue.svg">
 </div>
-
 ---
 
 <div align="center">
@@ -35,13 +33,11 @@
 	<img alt="README Espanol" src="https://img.shields.io/badge/README-Espa%C3%B1ol-orange.svg">
     </a>
 </div>
-
 ---
 
 <div align="center">
     <img alt="Logo" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/Logo-Circular.png">
 </div>
-
 ---
 
 # iKy
@@ -54,11 +50,6 @@ Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
 [![Video Demo](https://kennbroorg.gitlab.io/ikyweb/assets/img/Giba.gif)](https://vimeo.com/342843348 "Video Demo - Click to Watch!") 
 
 [Video Demo](https://vimeo.com/342843348 "Video Demo - Click to Watch!")
-
-## Project - Previous version
-We want to warn you that we have changed the Frontend from AngularJS to Angular 7. For this reason we left the project with AngularJS as Frontend in the iKy-v1 branch.
-
-The reason of changing the Frontend was to update the technology and get an easier way of installation.
 
 ## Installation
 ### Clone repository
@@ -120,6 +111,23 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 - Fullcontact: Generate the APIs from [here](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs)
 - Twitter: Generate the APIs from [here](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
 - Linkedin: Only the user and password of your account must be loaded
+
+## Disclaimer
+
+Anyone who contributes or contributed to the project, including me, is not responsible for the use of the tool (Neither the legal use nor the illegal use, nor the "other" use).
+
+Keep in mind that this software was initially written for a joke, then for educational purposes (to educate ourselves), and now the goal is to collaborate with the community making quality free software, and while the quality is not excellent (sometimes not even good) we strive to pursue excellence.
+
+Consider that all the information collected is free and available online, the tool only tries to discover, collect and display it.
+Many times the tool cannot even achieve its goal of discovery and collection. Please load the necessary APIs before remembering my mother.
+If even with the APIs it doesn't show "nice" things that you expect to see, try other e-mails before you remember my mother.
+If you still do not see the "nice" things you expect to see, you can create an issue, contact us by e-mail or by any of the RRSS, but keep in mind that my mother is neither the creator nor Contribute to the project.
+
+We do not refund your money if you are not satisfied.
+I hope you enjoy using the tool as much as we enjoy doing it. The effort was and is enormous (Time, knowledge, coding, tests, reviews, etc.) but we would do it again.
+Do not use the tool if you cannot read the instructions and / or this disclaimer clearly.
+
+By the way, for those who insist on remembering my mother, she died many years ago but I love her as if she were right here.
 
 [readmees]: README.es.md
 [readmeen]: README.md
