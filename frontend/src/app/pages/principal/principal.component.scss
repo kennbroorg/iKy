@@ -88,6 +88,10 @@
     }
   }
   
+  #imagePrincipal {
+    height: calc(#{nb-theme(layout-min-height)} - #{nb-theme(header-height)} - #{nb-theme(footer-height)} - #{nb-theme(header-height)} - #{nb-theme(sidebar-header-gap)}) !important;  
+  }
+
   ngx-charts-pie-chart {
     display: block;
     /* 
