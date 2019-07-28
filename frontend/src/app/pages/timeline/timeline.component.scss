@@ -51,9 +51,9 @@
       color: nb-theme(color-fg-text);
       font-weight: nb-theme(font-weight-light);
 
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-height: calc(1rem * 8 * #{nb-theme(line-height)});
+      // overflow: hidden;
+      // text-overflow: ellipsis;
+      // max-height: calc(1rem * 8 * #{nb-theme(line-height)});
     }
   }
 
@@ -75,6 +75,14 @@
         font-size: 1.75rem;
       }
     }
+  }
+
+  #timelineResult {
+    height: calc(#{nb-theme(layout-min-height)} - #{nb-theme(header-height)} - #{nb-theme(footer-height)} - #{nb-theme(header-height)} - #{nb-theme(sidebar-header-gap)}) !important;  
+  }
+
+  #centralInfo {
+    height: calc(#{nb-theme(layout-min-height)} - 4 * #{nb-theme(header-height)} - 1.5 * #{nb-theme(footer-height)} }) !important;  
   }
 
   /* borders  */ 
