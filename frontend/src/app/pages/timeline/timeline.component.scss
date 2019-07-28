@@ -82,7 +82,10 @@
   }
 
   #centralInfo {
-    height: calc(#{nb-theme(layout-min-height)} - 4 * #{nb-theme(header-height)} - 1.5 * #{nb-theme(footer-height)} }) !important;  
+    // height: calc(#{nb-theme(layout-min-height)} - 4 * #{nb-theme(header-height)} - 1.5 * #{nb-theme(footer-height)} }) !important;  
+    height: calc(#{nb-theme(layout-min-height)} * 0.57) !important;  
+    height : 
+          calc(#{nb-theme(sidebar-height)} - #{nb-theme(header-height)} - #{nb-theme(footer-height)} - 7rem) !important;
   }
 
   /* borders  */ 
