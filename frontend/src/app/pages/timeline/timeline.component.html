@@ -12,10 +12,10 @@
   </div>
 
   <div class="col-md-4 offset-md-4"  *ngIf="!email && !gathered['tasklist']">
-    <nb-card size="medium" class="border-default">
+    <nb-card size="medium" class="border-default" id="centralInfo">
       <nb-card-body>
         <div>
-            <img style="position:absolute; width: 50%; top: 30px; left:0; right: 0; margin:auto;" src="assets/images/iKy-Logo.png"> 
+            <img style="position:absolute; width: 50%; top: 0; left:0; right: 0; bottom:0; margin:auto;" src="assets/images/iKy-Logo.png"> 
         </div>
 
       </nb-card-body>
@@ -41,10 +41,11 @@
       </nb-card-body>
     </nb-card>
   </div>
+</div>
 
 <div class="row">
   <div class="col-md-12" *ngIf="timeline && gathered['email']">
-      <nb-card size="large" class="border-default">
+      <nb-card size="large" class="border-default" id="timelineResult">
         <nb-card-header>
           TIMELINE
         </nb-card-header>

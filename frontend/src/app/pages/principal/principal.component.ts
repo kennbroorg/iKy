@@ -1,6 +1,8 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, TemplateRef } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { takeWhile } from 'rxjs/operators' ;
+import { NbDialogService } from '@nebular/theme';
+
 
 @Component({
     selector: 'ngx-principal',
@@ -26,7 +28,7 @@ export class PrincipalComponent implements AfterViewInit {
       ]
     };
 
-    constructor() {}
+    constructor(private dialogService: NbDialogService) {}
 
     ngAfterViewInit() {
 
@@ -59,4 +61,7 @@ export class PrincipalComponent implements AfterViewInit {
         });
     }
 
+    openDialog(dialog: TemplateRef<any>) {
+        this.dialogService.open(dialog);
+    }
 }

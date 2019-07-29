@@ -287,6 +287,11 @@
     }
   }
 
+  #centralInfo {
+    height : 
+          calc(#{nb-theme(sidebar-height)} - #{nb-theme(header-height)} - #{nb-theme(footer-height)} - 7rem) !important;
+  }
+
   /* borders  */ 
 
   .border-default {
