@@ -52,15 +52,9 @@ El proyecto iKy es una herramienta que colecta información a partir de una dire
 
 Visite el Gitlab Page del [Projecto](https://kennbroorg.gitlab.io/ikyweb/)
 
-[![Video Demo](https://kennbroorg.gitlab.io/ikyweb/assets/img/Giba.gif)](https://vimeo.com/342843348 "Video Demo - Click to Watch!") 
+[![Video Demo](https://kennbroorg.gitlab.io/ikyweb/assets/img/Giba.gif)](https://vimeo.com/347085110 "Video Demo - Click to Watch!") 
 
-[Video Demo](https://vimeo.com/342843348 "Video Demo - Click to Watch!")
-
-## Proyecto - Versión anterior
-
-Primero que nada queremos aclarar que hemos cambiado el Frontend de AngularJS a Angular 7. Por esta razón hemos dejado al proyecto con AngularJS como Frontend en la rama iKy-v1.
-
-El motivo del cambio de Frontend fue actualizar la tecnología y obtener una forma más fácil de instalación.
+[Video Demo](https://vimeo.com/347085110 "Video Demo - Click to Watch!")
 
 ## Instalación
 
