@@ -37,6 +37,7 @@ try:
 except NameError:
     unicode = str
 
+
 @celery.task
 def t_fullcontact(email):
     key = api_keys_search('fullcontact_api')
@@ -46,17 +47,18 @@ def t_fullcontact(email):
             % email, headers={"X-FullContact-APIKey": key})
         raw_node = json.loads(unicode(req.text))
     else:
-        raw_node = []
+        raw_node = {"status": 400,
+                    "message": "400: No access token"}
 
-    # Icons unicode
-    font_list = fontawesome_cheat_5()
     # Total
     total = []
     total.append({'module': 'fullcontact'})
     total.append({'param': email})
-    total.append({'validation': 'soft'})
+    total.append({'validation': 'hard'})
 
-    if (raw_node != []):
+    # Icons unicode
+    font_list = fontawesome_cheat_5()
+    if (raw_node['status'] != 400 and raw_node['status'] != 401):
         # Graphic Array
         graphic = []
 
@@ -94,7 +96,7 @@ def t_fullcontact(email):
         socialp.append(social_item)
         link_photo = "Photos"
         photo_item = {"name-node": "Photos", "title": "Photos",
-                       "subtitle": "", "icon": search_icon_5(
+                      "subtitle": "", "icon": search_icon_5(
                            "camera-retro", font_list),
                       "link": link_photo}
         photo.append(photo_item)
@@ -231,11 +233,16 @@ def t_fullcontact(email):
 
         total.append({'raw': raw_node})
         graphic.append({'social': socialp})
-        graphic.append({'photo': photo})
-        graphic.append({'webs': webs})
-        graphic.append({'bios': bios})
-        graphic.append({'footprint': footprint})
-        profile.append({'social': social_profile})
+        if (bios != []):
+            graphic.append({'bios': bios})
+        if (len(photo) > 1):
+            graphic.append({'photo': photo})
+        if (webs != []):
+            graphic.append({'webs': webs})
+        if (footprint != []):
+            graphic.append({'footprint': footprint})
+        if (social_profile != []):
+            profile.append({'social': social_profile})
         total.append({'graphic': graphic})
         if (profile != []):
             total.append({'profile': profile})
@@ -243,6 +250,18 @@ def t_fullcontact(email):
             total.append({'timeline': timeline})
         if (tasks != []):
             total.append({'tasks': tasks})
+    else:
+        total.append({'raw': raw_node})
+        link_social = "Social"
+        social_item = {"name-node": "Social", "title": "Social",
+                       "subtitle": "", "icon": search_icon_5(
+                           "child", font_list),
+                       "link": link_social}
+        socialp = []
+        graphic = []
+        socialp.append(social_item)
+        graphic.append({'social': socialp})
+        total.append({'graphic': graphic})
 
     return total
 
