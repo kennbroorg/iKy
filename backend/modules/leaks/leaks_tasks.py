@@ -50,7 +50,7 @@ def t_leaks(username):
 
     # Raw Array
     if (len(req.content) != 0):
-        if ("You have been blocked from accessing" in req.content):
+        if (unicode("You have been blocked from accessing") in unicode(req.content)):
             raw_node = [{"title": "BLOCKED"}]
         else:
             raw_node = json.loads(unicode(req.text))
