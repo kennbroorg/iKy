@@ -72,7 +72,7 @@
   </div>
 
   <!-- Fullcontact Graphs -->
-  <div id="divFullcontactGraphs" #divFullcontactGraphs class="col-md-4" *ngIf="gathered['fullcontact'] && gathered['fullcontact'].result[4] && validationShow[gathered['fullcontact'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+  <div id="divFullcontactGraphs" #divFullcontactGraphs class="col-md-4" *ngIf="gathered['fullcontact'] && gathered['fullcontact'].result && validationShow[gathered['fullcontact'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-fullcontact-graphs [data]="gathered['fullcontact']"></ngx-fullcontact-graphs>
   </div>
 
@@ -84,7 +84,7 @@
   -->
 
   <!-- Fullcontact Scramble -->
-  <div class="col-md-4" *ngIf="gathered['fullcontact'] && gathered['fullcontact'].result[4] && validationShow[gathered['fullcontact'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+  <div class="col-md-4" *ngIf="gathered['fullcontact'] && gathered['fullcontact'].result[4] && gathered['fullcontact'].result[4]['graphic'][1] && validationShow[gathered['fullcontact'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-fullcontact-scramble [data]="gathered['fullcontact']"></ngx-fullcontact-scramble>
   </div>
 

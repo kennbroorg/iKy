@@ -10,6 +10,7 @@ export class FullcontactGraphsComponent implements OnInit {
     @ViewChild('nbCardFullcontactGraphs') private nbCardContainer: ElementRef;
     @Input() private data: any;
     private fullcontactGraphs : any;
+    private statusFull : any;
     private validation : any;
   
     private card: any;
@@ -20,6 +21,8 @@ export class FullcontactGraphsComponent implements OnInit {
         console.log("Fullcontact Graphs Component");
         this.fullcontactGraphs = this.data.result[4].graphic[0].social;
         console.log("Fullcontact data: ", this.fullcontactGraphs);
+        this.statusFull = this.data.result[3].raw['status'];
+        console.log("Fullcontact status: ", this.statusFull);
     }
 
     openDialog(dialog: TemplateRef<any>) {
