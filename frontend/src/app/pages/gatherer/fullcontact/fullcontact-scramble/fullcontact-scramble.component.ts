@@ -16,7 +16,7 @@ export class FullcontactScrambleComponent implements OnInit {
   
     ngOnInit() {
         console.log("Fullcontact Scramble Component");
-        this.fullcontactScramble = this.data.result[4].graphic[3].bios;
+        this.fullcontactScramble = this.data.result[4].graphic[1].bios;
         console.log("Fullcontact data: ", this.fullcontactScramble);
   
     }
