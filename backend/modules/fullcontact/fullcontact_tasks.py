@@ -41,14 +41,33 @@ except NameError:
 @celery.task
 def t_fullcontact(email):
     key = api_keys_search('fullcontact_api')
-    if key:
+    if key and len(key) < 20:
         req = requests.get(
             "https://api.fullcontact.com/v2/person.json?email=%s"
             % email, headers={"X-FullContact-APIKey": key})
         raw_node = json.loads(unicode(req.text))
+        print(json.dumps(raw_node, ensure_ascii=True, indent=2))
+    elif key and len(key) > 20:
+        s = requests.Session()
+        headers = {'Authorization': 'Bearer ' + key}
+        data = json.dumps({
+                "email": email
+        })
+        req = s.post("https://api.fullcontact.com/v3/person.enrich",
+                     data=data,
+                     headers=headers)
+
+        raw_node = json.loads(unicode(req.text))
+        print(json.dumps(raw_node, ensure_ascii=True, indent=2))
     else:
         raw_node = {"status": 400,
                     "message": "400: No access token"}
+
+    # with open('km.json', 'r') as f:
+    #     raw_node = json.load(f)
+
+    # print(json.dumps(raw_node, ensure_ascii=True, indent=2))
+    # exit()
 
     # Total
     total = []
@@ -58,35 +77,38 @@ def t_fullcontact(email):
 
     # Icons unicode
     font_list = fontawesome_cheat_5()
-    if (raw_node['status'] != 400 and raw_node['status'] != 401):
-        # Graphic Array
-        graphic = []
 
-        # Profile Array
-        profile = []
+    # Graphic Array
+    graphic = []
 
-        # Tasks Array
-        tasks = []
+    # Profile Array
+    profile = []
 
-        # Timeline Array
-        timeline = []
+    # Tasks Array
+    tasks = []
 
-        # Social Array
-        socialp = []
-        social_profile = []
+    # Timeline Array
+    timeline = []
 
-        # Photo Array
-        photo = []
-        photo_profile = []
+    # Social Array
+    socialp = []
+    social_profile = []
 
-        # footprint Array
-        footprint = []
+    # Photo Array
+    photo = []
+    photo_profile = []
 
-        # Web Array
-        webs = []
+    # footprint Array
+    footprint = []
 
-        # Bios Array
-        bios = []
+    # Web Array
+    webs = []
+
+    # Bios Array
+    bios = []
+
+    if (raw_node.get("status", "") != "" and (
+         raw_node['status'] != 400 and raw_node['status'] != 401)):
 
         link_social = "Social"
         social_item = {"name-node": "Social", "title": "Social",
@@ -250,6 +272,123 @@ def t_fullcontact(email):
             total.append({'timeline': timeline})
         if (tasks != []):
             total.append({'tasks': tasks})
+
+    elif (raw_node.get("status", "") == ""):
+        link_social = "Social"
+        social_item = {"name-node": "Social", "title": "Social",
+                       "subtitle": "", "icon": search_icon_5(
+                           "child", font_list),
+                       "link": link_social}
+        socialp.append(social_item)
+        link_photo = "Photos"
+        photo_item = {"name-node": "Photos", "title": "Photos",
+                      "subtitle": "", "icon": search_icon_5(
+                           "camera-retro", font_list),
+                      "link": link_photo}
+        photo.append(photo_item)
+
+        if (raw_node.get("details", "") != ""):
+            if (raw_node.get("details", "").get("name", "") != ""):
+                profile_item = {'name': raw_node.get("details", "")
+                                .get("name", "").get("full", "")}
+                profile.append(profile_item)
+                profile_item = {'firstName': raw_node.get("details", "")
+                                .get("name", "").get("given", "")}
+                profile.append(profile_item)
+                profile_item = {'lastName': raw_node.get("details", "")
+                                .get("name", "").get("family", "")}
+                profile.append(profile_item)
+
+                for web in raw_node.get("details", "").get("urls", ""):
+                    webs.append({'url': web.get("value", "")})
+
+            company = []
+            for org in raw_node.get("details", "").get("employment", ""):
+                company_item = {'name': org.get("name", ""),
+                                'title': org.get("title", "")}
+                company.append(company_item)
+
+            if (company != []):
+                profile_item = {'organization': company}
+                profile.append(profile_item)
+
+            print(" ")
+            for social in raw_node.get("details", "").get("profiles", ""):
+                rrss = raw_node.get("details", "").get("profiles", "")[social]
+                username = rrss.get("url", "").split("/")[-1]
+                fa_icon = search_icon_5(rrss.get("service", ""), font_list)
+                if (fa_icon is None):
+                    fa_icon = search_icon_5("question", font_list)
+                social_item = {"name-node": rrss.get("service", ""),
+                               "title": rrss.get("service", ""),
+                               "subtitle": username,
+                               "icon": fa_icon,
+                               "link": link_social}
+                socialp.append(social_item)
+                social_profile_item = {
+                                       "name": rrss.get("service"),
+                                       "username": username,
+                                       "url": rrss.get("url")}
+                social_profile.append(social_profile_item)
+                print(username)
+
+                if (rrss.get("bio", "") != ""):
+                    bios.append(rrss.get("bio", ""))
+
+                # Prepare other tasks
+                if (rrss.get("service", "") == "twitter"):
+                    tasks.append({"module": "twitter",
+                                 "param": username})
+                # if (rrss.get("service", "") == "linkedin"):
+                #     tasks.append({"module": "linkedin",
+                #                  "param": username})
+
+            for location in raw_node.get("details", "").get("locations", ""):
+                if (location.get("city", "") != ""):
+                    profile_item = {'location': location.get("city", "")}
+                    profile.append(profile_item)
+                if (location.get("region", "") != ""):
+                    profile_item = {'location': location.get("region", "")}
+                    profile.append(profile_item)
+                if (location.get("country", "") != ""):
+                    profile_item = {'location': location.get("country", "")}
+                    profile.append(profile_item)
+                if (location.get("formatted", "") != ""):
+                    profile_item = {'location': location.get("formatted", "")}
+                    profile.append(profile_item)
+
+            for photos in raw_node.get("photos", ""):
+                photo_item = {"name-node": photos.get("label", ""),
+                              "title": photos.get("label", ""),
+                              "subtitle": "",
+                              "picture": photos.get("value", ""),
+                              "link": link_photo}
+                photo.append(photo_item)
+                photo_profile.append(photo_item)
+            if (photo_profile != []):
+                profile_item = {'photos': photo_profile}
+                profile.append(profile_item)
+
+        total.append({'raw': raw_node})
+        graphic.append({'social': socialp})
+        if (bios != []):
+            graphic.append({'bios': bios})
+        if (len(photo) > 1):
+            graphic.append({'photo': photo})
+        # if (webs != []):
+        #     graphic.append({'webs': webs})
+        if (footprint != []):
+            graphic.append({'footprint': footprint})
+        if (social_profile != []):
+            profile.append({'social': social_profile})
+        total.append({'graphic': graphic})
+        if (profile != []):
+            total.append({'profile': profile})
+        if (timeline != []):
+            total.append({'timeline': timeline})
+        if (tasks != []):
+            total.append({'tasks': tasks})
+
     else:
         total.append({'raw': raw_node})
         link_social = "Social"
