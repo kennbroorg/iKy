@@ -20,7 +20,8 @@ def get_config():
                           'modules.ghostproject.ghostproject_tasks',
                           'modules.github.github_tasks',
                           'modules.fullcontact.fullcontact_tasks',
-                          'modules.usersearch.usersearch_tasks')
+                          'modules.usersearch.usersearch_tasks',
+                          'modules.emailrep.emailrep_tasks')
     return Config
 
 
