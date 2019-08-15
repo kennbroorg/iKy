@@ -213,3 +213,20 @@ def r_usersearch(username=None):
     print("Task : ", res.task_id)
     return jsonify(module="usersearch", task=res.task_id,
                    param=username, from_m=from_m)
+
+
+################################################
+# EmailRepIO
+################################################
+@home.route("/emailrep", methods=["POST"])
+def r_emailrep(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("EmailRep - Detected Username : ", username, from_m)
+    res = celery.send_task('modules.emailrep.emailrep_tasks.t_emailrep',
+                           args=(username, ))
+    print("Task : ", res.task_id)
+    return jsonify(module="emailrep", task=res.task_id,
+                   param=username, from_m=from_m)

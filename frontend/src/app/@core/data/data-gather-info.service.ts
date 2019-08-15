@@ -141,6 +141,14 @@ export class DataGatherInfoService {
                        err => console.error('Ops: ', err.message)
         );
         
+        // EmailRepIO
+        this.showToast(NbToastStatus.INFO, 'EmailRepIO', 'Send information gathering');
+        this.executeRequest$('emailrep', {username: this.email, from: 'Initial'})
+                .subscribe(this.processResponse,
+                           err => console.error('Ops: ', err.message),
+                           () => console.log('Completed EmailRep')
+        );
+
         // Fullcontact
         if (this.isModuleParamRun('fullcontact', this.email, 'Initial')) {
             this.showToast(NbToastStatus.INFO, 'Fullcontact', 'Send information gathering');
