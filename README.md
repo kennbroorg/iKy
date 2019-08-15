@@ -8,7 +8,7 @@
 
 <div align="center">
     <img alt="Redis" src="https://img.shields.io/badge/storage-redis-red.svg">
-    <img alt="Python" src="https://img.shields.io/badge/python-2%20or%203%20(compatible)-informational.svg">
+    <img alt="Python" src="https://img.shields.io/badge/python-3.7-informational.svg">
     <img alt="Celery" src="https://img.shields.io/badge/multiprocessing-celery-green.svg">
     <img alt="Flask" src="https://img.shields.io/badge/interface-flask-yellowgreen.svg">
 </div>
@@ -26,6 +26,7 @@
     <img alt="keybase" src="https://img.shields.io/badge/module-keybase-blue.svg">
     <img alt="ghostproject" src="https://img.shields.io/badge/module-ghostproject-red.svg">
     <img alt="haveibeenpwned" src="https://img.shields.io/badge/module-haveibeenpwned-blue.svg">
+    <img alt="emailrep.io" src="https://img.shields.io/badge/module-emailrep.io-blue.svg">
 </div>
 
 ---
