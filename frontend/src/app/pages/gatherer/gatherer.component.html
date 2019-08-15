@@ -71,6 +71,16 @@
     </nb-card>
   </div>
 
+  <!-- Emailrep Info -->
+  <div class="col-md-4" *ngIf="gathered['emailrep'] && gathered['emailrep'].result[4] && gathered['emailrep'].result[4]['graphic'][0] && validationShow[gathered['emailrep'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+    <ngx-emailrep-info [data]="gathered['emailrep']"></ngx-emailrep-info>
+  </div>
+
+  <!-- Emailrep Social -->
+  <div class="col-md-4" *ngIf="gathered['emailrep'] && gathered['emailrep'].result[4] && gathered['emailrep'].result[4]['graphic'][1] && validationShow[gathered['emailrep'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+    <ngx-emailrep-social [data]="gathered['emailrep']"></ngx-emailrep-social>
+  </div>
+
   <!-- Fullcontact Graphs -->
   <div id="divFullcontactGraphs" #divFullcontactGraphs class="col-md-4" *ngIf="gathered['fullcontact'] && gathered['fullcontact'].result && validationShow[gathered['fullcontact'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
     <ngx-fullcontact-graphs [data]="gathered['fullcontact']"></ngx-fullcontact-graphs>
