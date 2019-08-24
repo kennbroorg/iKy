@@ -48,8 +48,10 @@ def t_github(username, from_m="Initial"):
     svg_previous_r = requests.get(svg_req % (username, str(previous_year_from),
                                              str(previous_year_to)))
     # Change color of calendar
-    svg_actual = svg_actual_r.text.replace('ebedf0', '4d4d4d')
-    svg_previous = svg_previous_r.text.replace('ebedf0', '4d4d4d')
+    # svg_actual = svg_actual_r.text.replace('ebedf0', '4d4d4d')
+    # svg_previous = svg_previous_r.text.replace('ebedf0', '4d4d4d')
+    svg_actual = svg_actual_r.text.replace('ebedf0', '295757')
+    svg_previous = svg_previous_r.text.replace('ebedf0', '295757')
 
     # TODO : Many things
     # Use other API URLs
