@@ -26,7 +26,8 @@ import 'jspdf-autotable';
 declare let canvg: any;
 declare let svgAsPngUri: any;
 declare let saveSvgAsPng: any;
-import * as html2canvas from "html2canvas";
+// import * as html2canvas from "html2canvas";
+import html2canvas from 'html2canvas';
 
 @Component({
     selector: 'ngx-gatherer',
@@ -189,7 +190,6 @@ export class GathererComponent implements OnInit {
                 scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                async: true,
                 logging: true,
                 backgroundColor: "#51A5D7",
                 allowTaint: true,
@@ -272,7 +272,6 @@ export class GathererComponent implements OnInit {
                 scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                async: true,
                 logging: true,
                 backgroundColor: "#51A5D7",
                 allowTaint: true,
@@ -331,7 +330,6 @@ export class GathererComponent implements OnInit {
                 scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                async: true,
                 logging: true,
                 backgroundColor: "#51A5D7",
                 allowTaint: true,
@@ -388,7 +386,6 @@ export class GathererComponent implements OnInit {
                 scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                async: true,
                 logging: true,
                 backgroundColor: "#51A5D7",
                 allowTaint: true,
@@ -445,7 +442,6 @@ export class GathererComponent implements OnInit {
                 scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                async: true,
                 logging: true,
                 backgroundColor: "#51A5D7",
                 allowTaint: true,
@@ -502,7 +498,6 @@ export class GathererComponent implements OnInit {
                 scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                async: true,
                 logging: true,
                 backgroundColor: "#51A5D7",
                 allowTaint: true,
@@ -561,7 +556,6 @@ export class GathererComponent implements OnInit {
                 scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                async: true,
                 logging: true,
                 backgroundColor: "#51A5D7",
                 allowTaint: true,
@@ -641,7 +635,6 @@ export class GathererComponent implements OnInit {
                 scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                async: true,
                 logging: true,
                 backgroundColor: "#51A5D7",
                 allowTaint: true,
@@ -711,7 +704,6 @@ export class GathererComponent implements OnInit {
                 scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                async: true,
                 logging: true,
                 backgroundColor: "#51A5D7",
                 allowTaint: true,
@@ -752,7 +744,6 @@ export class GathererComponent implements OnInit {
                 scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                async: true,
                 logging: true,
                 backgroundColor: "#51A5D7",
                 allowTaint: true,
@@ -823,7 +814,6 @@ export class GathererComponent implements OnInit {
                 scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                async: true,
                 logging: true,
                 backgroundColor: "#51A5D7",
                 allowTaint: true,
@@ -960,7 +950,6 @@ export class GathererComponent implements OnInit {
                 scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                async: true,
                 logging: true,
                 backgroundColor: "#51A5D7",
                 allowTaint: true,
@@ -1033,7 +1022,6 @@ export class GathererComponent implements OnInit {
                 scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                async: true,
                 logging: true,
                 backgroundColor: "#51A5D7",
                 allowTaint: true,
@@ -1119,7 +1107,6 @@ export class GathererComponent implements OnInit {
                 scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                async: true,
                 logging: true,
                 backgroundColor: "#51A5D7",
                 allowTaint: true,
@@ -1268,7 +1255,6 @@ export class GathererComponent implements OnInit {
         //     useCORS: true, 
         //     // allowTaint: true,
         //     // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-        //     async: true,
         //     logging: true,
         //     // backgroundColor: null,
         //     removeContainer: true
@@ -1290,7 +1276,6 @@ export class GathererComponent implements OnInit {
         //     useCORS: true, 
         //     // allowTaint: true,
         //     // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-        //     async: true,
         //     logging: true,
         //     // backgroundColor: null,
         //     removeContainer: true
