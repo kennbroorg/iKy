@@ -39,6 +39,9 @@ import { LeakGraphsComponent } from './leak/leak-graphs/leak-graphs.component';
 import { EmailrepSocialComponent } from './emailrep/emailrep-social/emailrep-social.component';
 import { EmailrepInfoComponent } from './emailrep/emailrep-info/emailrep-info.component';
 
+import { SocialscanEmailComponent } from './socialscan/socialscan-email/socialscan-email.component';
+import { SocialscanUserComponent } from './socialscan/socialscan-user/socialscan-user.component';
+
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
@@ -76,6 +79,8 @@ import { SharedModule } from '../shared/shared.module';
     LeakGraphsComponent,
     EmailrepInfoComponent,
     EmailrepSocialComponent,
+    SocialscanEmailComponent,
+    SocialscanUserComponent,
   ],
 })
 export class GathererModule { }

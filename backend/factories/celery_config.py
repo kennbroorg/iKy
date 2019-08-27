@@ -11,4 +11,5 @@ app = Celery('celery_config', broker='redis://localhost:6379/0',
                       'modules.username.username_tasks',
                       'modules.fullcontact.fullcontact_tasks',
                       'modules.emailrep.emailrep_tasks',
+                      'modules.socialscan.socialscan_tasks',
                       ])

@@ -1,0 +1,19 @@
+  <nb-card size="small" class="border-default">
+    <nb-card-header (click)="openDialog(dialogSocialscanEmail)">
+      SOCIALSCAN Email
+      <!--<div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>-->
+      <div [ngClass]="hard"><span class="icon validation"></span></div>
+    </nb-card-header>
+    <nb-card-body style="text-align: center; overflow: hidden;">
+        <ngx-graphs [data]="socialscanEmail"></ngx-graphs>
+    </nb-card-body>
+  </nb-card>
+
+  <ng-template #dialogSocialscanEmail let-data let-ref="dialogRef">
+      <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+        <nb-card-header>SOCIALSCAN Email</nb-card-header>
+        <nb-card-body style="overflow: hidden; padding: 0px;">
+          <ngx-graphs [data]="socialscanEmail" modal="true"></ngx-graphs>
+        </nb-card-body>
+      </nb-card>
+  </ng-template>

@@ -197,13 +197,22 @@ export class DataGatherInfoService {
             );
         };
     
-        // Leaks
-        this.showToast(NbToastStatus.INFO, 'Leaks (HIBP)', 'Send information gathering');
-        this.executeRequest$('leaks', {username: this.email, from: 'Initial'})
+        // Leaks (We have disccontinued this module because now asubscription must be paid)
+        // this.showToast(NbToastStatus.INFO, 'Leaks (HIBP)', 'Send information gathering');
+        // this.executeRequest$('leaks', {username: this.email, from: 'Initial'})
+        //         .subscribe(this.processResponse,
+        //                    err => console.error('Ops: ', err.message),
+        //                    () => console.log('Completed leaks')
+        // );
+
+        // SocialScan
+        this.showToast(NbToastStatus.INFO, 'SocialScan', 'Send information gathering');
+        this.executeRequest$('socialscan', {username: this.email, from: 'Initial'})
                 .subscribe(this.processResponse,
                            err => console.error('Ops: ', err.message),
-                           () => console.log('Completed leaks')
+                           () => console.log('Completed SocialScan')
         );
+
     }
     
     // Tasklist Callback
@@ -295,6 +304,3 @@ export class DataGatherInfoService {
     }
 
 }  
-
-
-
