@@ -80,15 +80,16 @@ redis-server
 #### Python stuff and Celery
 You must install the libraries inside requirements.txt
 ```shell
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 ```
 And turn on Celery in another terminal, within the directory **backend**
 ```shell
+cd backend
 ./celery.sh
 ```
 Finally, again, in another terminal turn on backend app from directory **backend** 
 ```shell
-python app.py
+python3 app.py
 ```
 
 ### Install Frontend
@@ -98,6 +99,7 @@ First of all, install [nodejs](https://nodejs.org/en/).
 #### Dependencias
 Inside the directory **frontend** install the dependencies
 ```shell
+cd frontend
 npm install
 ```
 
