@@ -33,5 +33,10 @@
     "id": 6,
     "name": "linkedin_pass",
     "key": ""
+  },
+  {
+    "id": 6,
+    "name": "haveibeenpwned_key",
+    "key": ""
   }
 ]
