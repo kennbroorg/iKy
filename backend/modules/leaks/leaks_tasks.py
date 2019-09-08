@@ -10,6 +10,7 @@ import cfscrape
 try:
     from factories._celery import create_celery
     from factories.application import create_application
+    from factories.configuration import api_keys_search
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 except ImportError:
@@ -17,6 +18,7 @@ except ImportError:
     sys.path.append('../../')
     from factories._celery import create_celery
     from factories.application import create_application
+    from factories.configuration import api_keys_search
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
@@ -33,41 +35,42 @@ except NameError:
     unicode = str
 
 @celery.task
-def t_leaks(username):
+def t_leaks(email):
     """ Task of Celery that get info from Have I Been Pwned """
 
-    # Compatibility code
-    try:
-        email_encoded = urllib.quote_plus(username)
-    except AttributeError:
-        email_encoded = urllib.parse.quote_plus(username)
+    key = ""
+    url = 'https://haveibeenpwned.com/api/v3/breachedaccount/{}'.format(email)
+    key = api_keys_search('haveibeenpwned_key')
 
-    url = "https://haveibeenpwned.com/api/v2/breachedaccount/%s" \
-          % (email_encoded)
+    # For the future
+    # scraper = cfscrape.create_scraper()
+    # req = scraper.get(url)
 
-    scraper = cfscrape.create_scraper()
-    req = scraper.get(url)
+    req = requests.get(url, headers={'User-Agent': 'iKy', 'hibp-api-key': key},
+            params={'truncateResponse': 'false'}, timeout=10)
 
     # Raw Array
-    if (len(req.content) != 0):
-        if (unicode("You have been blocked from accessing") in unicode(req.content)):
-            raw_node = [{"title": "BLOCKED"}]
-        else:
-            raw_node = json.loads(unicode(req.text))
-    else:
+    if (req.status_code == 200):
+        raw_node = json.loads(unicode(req.text))
+    elif (req.status_code == 403):
+        raw_node = [{"title": "KEY"}]
+    elif (req.status_code == 404):
         raw_node = [{"title": "NOLEAK"}]
+    elif (req.status_code == 503):
+        raw_node = [{"title": "BLOCKED"}]
+    else:
+        raw_node = [{"title": "ERROR"}]
 
     # Total
     total = []
     total.append({'module': 'leaks'})
-    total.append({'param': username})
+    total.append({'param': email})
     total.append({'validation': 'hard'})
 
     # Graphic Array
     graphic = []
 
     # Profile Array
-    # leaks : TODO : Social disable
     profile = []
 
     # Timeline Array
@@ -76,14 +79,10 @@ def t_leaks(username):
     # Gather Array
     gather = []
 
-    if (raw_node[0].get("title", "") == "NOLEAK"):
-        link = "Leaks"
-        gather_item = {"name-node": "Leaks", "title": "Leaks",
-                       "subtitle": "", "icon": "fas fa-unlock-alt",
-                       "link": link}
-        gather.append(gather_item)
-
-    elif (raw_node[0].get("title", "") == "BLOCKED"):
+    if (raw_node[0].get("title", "") == "NOLEAK") or (
+            raw_node[0].get("title", "") == "BLOCKED") or (
+            raw_node[0].get("title", "") == "KEY") or (
+            raw_node[0].get("title", "") == "ERROR"):
         link = "Leaks"
         gather_item = {"name-node": "Leaks", "title": "Leaks",
                        "subtitle": "", "icon": "fas fa-unlock-alt",
@@ -104,7 +103,7 @@ def t_leaks(username):
                                "BreachDate", ""),
                            "picture": leak.get("LogoPath", ""),
                            # "picture": "https://haveibeenpwned.com/Content/" +
-                          # "Images/PwnedLogos/" + leak.get("Name", "") + "." +
+                           #"Images/PwnedLogos/" + leak.get("Name", "") + "." +
                            # leak.get("LogoType", ""),
                            "link": link}
             gather.append(gather_item)
