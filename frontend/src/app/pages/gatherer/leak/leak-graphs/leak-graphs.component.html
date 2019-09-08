@@ -4,12 +4,18 @@
       <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
     </nb-card-header>
     <nb-card-body id="nbCardLeakGraphs" #nbCardLeakGraphs style="text-align: center; overflow: hidden;">
-        <ngx-graphs [data]="leakGraphs"></ngx-graphs>
-        <div nbTooltip="You don't have leaks" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 100px; height: 100px; z-index: 2;" *ngIf="noData == 'NOLEAK'">
-            <i class="fas fa-lock" style="font-size: 100px;"></i>
+        <ngx-graphs [data]="leakGraphs" *ngIf="leakGraphs?.length > 1"></ngx-graphs>
+        <div nbTooltip="Email not breached" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 100px; height: 100px; z-index: 2;" *ngIf="noData == 'NOLEAK'">
+            <i class="fas fa-user-lock" style="font-size: 100px;"></i>
+        </div>
+        <div nbTooltip="Missing or wrong key" nbTooltipIcon="alert-triangle-outline" nbTooltipStatus="danger" style="position: absolute; top: 15%; bottom: 15%; left: 0; right: 0; margin: auto; width: 100px; height: 100px; z-index: 2;" *ngIf="noData == 'KEY'">
+            <i class="fas fa-key" style="font-size: 100px;"></i>
         </div>
         <div nbTooltip="You are blocked. Try with VPN" nbTooltipIcon="alert-triangle-outline" nbTooltipStatus="danger" style="position: absolute; top: 15%; bottom: 15%; left: 0; right: 0; margin: auto; width: 100px; height: 100px; z-index: 2;" *ngIf="noData == 'BLOCKED'">
             <i class="fas fa-ban" style="font-size: 100px;"></i>
+        </div>
+        <div nbTooltip="Unknown error" nbTooltipIcon="alert-triangle-outline" nbTooltipStatus="danger" style="position: absolute; top: 15%; bottom: 15%; left: 0; right: 0; margin: auto; width: 100px; height: 100px; z-index: 2;" *ngIf="noData == 'ERROR'">
+            <i class="fas fa-bug" style="font-size: 100px;"></i>
         </div>
     </nb-card-body>
   </nb-card>
@@ -18,13 +24,20 @@
       <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
         <nb-card-header>LEAK Graphs</nb-card-header>
         <nb-card-body style="overflow: hidden; padding: 0px;">
-          <ngx-graphs [data]="leakGraphs" modal="true"></ngx-graphs>
-          <div nbTooltip="You don't have leaks" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 200px; height: 200px; z-index: 2;" *ngIf="noData == 'NOLEAK'">
-              <i class="fas fa-lock" style="font-size: 200px;"></i>
-          </div>
-          <div nbTooltip="You are blocked. Try with VPN" nbTooltipIcon="alert-triangle-outline" nbTooltipStatus="danger" style="position: absolute; top: 15%; bottom: 15%; left: 0; right: 0; margin: auto; width: 200px; height: 200px; z-index: 2;" *ngIf="noData == 'BLOCKED'">
-              <i class="fas fa-ban" style="font-size: 200px;"></i>
-          </div>
-          </nb-card-body>
+          <ngx-graphs [data]="leakGraphs" modal="true" *ngIf="leakGraphs?.length > 1"></ngx-graphs>
+            <div nbTooltip="Email not breached" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 100px; height: 100px; z-index: 2;" *ngIf="noData == 'NOLEAK'">
+                <i class="fas fa-user-lock" style="font-size: 200px;"></i>
+            </div>
+            <div nbTooltip="Missing or wrong key" nbTooltipIcon="alert-triangle-outline" nbTooltipStatus="danger" style="position: absolute; top: 15%; bottom: 15%; left: 0; right: 0; margin: auto; width: 100px; height: 100px; z-index: 2;" *ngIf="noData == 'KEY'">
+                <i class="fas fa-key" style="font-size: 200px;"></i>
+            </div>
+            <div nbTooltip="You are blocked. Try with VPN" nbTooltipIcon="alert-triangle-outline" nbTooltipStatus="danger" style="position: absolute; top: 15%; bottom: 15%; left: 0; right: 0; margin: auto; width: 100px; height: 100px; z-index: 2;" *ngIf="noData == 'BLOCKED'">
+                <i class="fas fa-ban" style="font-size: 200px;"></i>
+            </div>
+            <div nbTooltip="Unknown error" nbTooltipIcon="alert-triangle-outline" nbTooltipStatus="danger" style="position: absolute; top: 15%; bottom: 15%; left: 0; right: 0; margin: auto; width: 100px; height: 100px; z-index: 2;" *ngIf="noData == 'ERROR'">
+                <i class="fas fa-bug" style="font-size: 200px;"></i>
+            </div>
+
+        </nb-card-body>
       </nb-card>
   </ng-template>
