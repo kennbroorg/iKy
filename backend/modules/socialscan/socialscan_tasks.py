@@ -67,7 +67,8 @@ def t_socialscan(email, from_m="Initial"):
 
             social_item = {"name-node": "SC" + str(result.platform),
                            "title": str(result.platform),
-                           "subtitle": result.message,
+                           # "subtitle": result.message,
+                           "subtitle": "",
                            "icon": fa_icon,
                            "link": link_email}
             gather_e.append(social_item)
@@ -91,7 +92,8 @@ def t_socialscan(email, from_m="Initial"):
 
             social_item = {"name-node": "SCE" + str(result.platform),
                            "title": str(result.platform),
-                           "subtitle": result.message,
+                           # "subtitle": result.message,
+                           "subtitle": "",
                            "icon": fa_icon,
                            "link": link_email}
             gather_u.append(social_item)

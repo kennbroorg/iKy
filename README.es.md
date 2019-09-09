@@ -53,7 +53,9 @@ El proyecto iKy es una herramienta que colecta información a partir de una dire
 
 Visite el Gitlab Page del [Projecto](https://kennbroorg.gitlab.io/ikyweb/)
 
-[![Video Demo](https://kennbroorg.gitlab.io/ikyweb/assets/img/Giba.gif)](https://vimeo.com/347085110 "Video Demo - Click to Watch!") 
+<div align="center">
+    <a href="https://vimeo.com/347085110"><img src="frontend/src/assets/images/Giba.gif"></a>
+</div>
 
 [Video Demo](https://vimeo.com/347085110 "Video Demo - Click to Watch!")
 
@@ -86,19 +88,20 @@ redis-server
 Se debe instalar las librerías en requirements.txt
 
 ```shell
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 ```
 
 Y ejecutar celery en otra terminal, dentro del directorio **backend**
 
 ```shell
+cd backend
 ./celery.sh
 ```
 
 Por último, otra vez, en otra terminal ejecutar app.py dentro del directorio **backend** 
 
 ```shell
-python app.py
+python3 app.py
 ```
 
 ### Instalar Frontend
@@ -111,6 +114,7 @@ Primero que nada, instalar [nodejs](https://nodejs.org/es/).
 Dentro del directorio **frontend** instalar las dependencias
 
 ```shell
+cd frontend
 npm install
 ```
 #### Encender servidor

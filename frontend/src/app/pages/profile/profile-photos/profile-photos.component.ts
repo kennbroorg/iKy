@@ -14,7 +14,7 @@ export class ProfilePhotosComponent implements OnInit {
 
     ngOnInit() {
         console.log("Profile Photo Component");
-        this.data = this.getUnique(this.data, "title")
+        // this.data = this.getUnique(this.data, "title")
         this.selectedPhoto = this.data[0];
         this.isSingleView = false;
     }

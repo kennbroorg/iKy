@@ -4,7 +4,8 @@
       <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
     </nb-card-header>
     <nb-card-body id="nbCardLeakGraphs" #nbCardLeakGraphs style="text-align: center; overflow: hidden;">
-        <ngx-graphs [data]="leakGraphs" *ngIf="leakGraphs?.length > 1"></ngx-graphs>
+        <!-- <ngx-graphs [data]="leakGraphs" *ngIf="noData == 'OK'"></ngx-graphs> -->
+        <ngx-graphs [data]="leakGraphs"></ngx-graphs>
         <div nbTooltip="Email not breached" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 100px; height: 100px; z-index: 2;" *ngIf="noData == 'NOLEAK'">
             <i class="fas fa-user-lock" style="font-size: 100px;"></i>
         </div>
@@ -24,7 +25,8 @@
       <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
         <nb-card-header>LEAK Graphs</nb-card-header>
         <nb-card-body style="overflow: hidden; padding: 0px;">
-          <ngx-graphs [data]="leakGraphs" modal="true" *ngIf="leakGraphs?.length > 1"></ngx-graphs>
+          <ngx-graphs [data]="leakGraphs" modal="true"></ngx-graphs>
+          <!-- <ngx-graphs [data]="leakGraphs" modal="true" *ngIf="noData == 'OK'"></ngx-graphs> -->
             <div nbTooltip="Email not breached" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 100px; height: 100px; z-index: 2;" *ngIf="noData == 'NOLEAK'">
                 <i class="fas fa-user-lock" style="font-size: 200px;"></i>
             </div>
