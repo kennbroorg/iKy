@@ -96,6 +96,17 @@ def t_keybase(username, from_m):
                 profile_item = {'bio': raw.get("profile", "").get("bio", "")}
                 profile.append(profile_item)
 
+        if (raw.get("pictures", "") != ""):
+            if (raw.get("pictures", "").get("primary", "") != ""):
+                if (raw.get("pictures", "").get("primary", "").get(
+                        "url", "") != ""):
+
+                    profile_item = {'photos': [{
+                        "picture": raw.get("pictures", "").get(
+                            "primary", "").get("url", ""),
+                        "title": "Keybase"}]}
+                    profile.append(profile_item)
+
         if (raw.get("basics", "") != ""):
             if (raw.get("basics", "").get("ctime", "") != ""):
                 ctime = time.strftime('%Y/%m/%d %H:%M:%S',
