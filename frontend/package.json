@@ -50,7 +50,7 @@
     "jquery": "^3.4.1",
     "jspdf": "^1.5.3",
     "jspdf-autotable": "^3.1.0",
-    "leaflet": "1.2.0",
+    "leaflet": "^1.2.0",
     "nebular-icons": "1.1.0",
     "ng2-ckeditor": "^1.2.2",
     "ng2-completer": "2.0.8",

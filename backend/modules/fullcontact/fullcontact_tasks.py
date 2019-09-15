@@ -40,6 +40,7 @@ except NameError:
 
 @celery.task
 def t_fullcontact(email):
+    username = email.split("@")[0]
     key = api_keys_search('fullcontact_api')
     if key and len(key) < 20:
         req = requests.get(
@@ -218,6 +219,14 @@ def t_fullcontact(email):
                 if (social.get("typeId", "") == "linkedin"):
                     tasks.append({"module": "linkedin",
                                  "param": social.get("username", "")})
+                if (social.get("typeId", "") == "instagram"):
+                    inst_user = username
+                    if (social.get("username", "") != ""):
+                        inst_user = social.get("username", "")
+                    elif (social.get("url", "") != ""):
+                        inst_user = social.get("url", "").split("/")[-1]
+                    tasks.append({"module": "instagram",
+                                 "param": inst_user})
 
             if (raw_node.get("demographics", "") != ""):
                 if (raw_node.get("demographics", "").get(

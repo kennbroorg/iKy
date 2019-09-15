@@ -134,6 +134,24 @@
     <ngx-twitter-users [data]="gathered['twitter']"></ngx-twitter-users>
   </div>
 
+  <!-- Instagram graphs-->
+  <div class="col-md-4" id="divInstagramSocial" #divLeakSocial *ngIf="gathered['instagram'] && 
+                               gathered['instagram'].result[4] && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+    <ngx-instagram-graphs [data]="gathered['instagram']"></ngx-instagram-graphs>
+  </div>
+
+  <!-- Instagram Map -->
+  <div class="col-md-8" id="divInstagramMap" #divLeakSocial *ngIf="gathered['instagram'] && 
+                               gathered['instagram'].result[4] && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+    <ngx-instagram-map [data]="gathered['instagram']"></ngx-instagram-map>
+  </div>
+
+  <!-- Instagram Posts -->
+  <div class="col-md-4" id="divInstagramPosts" #divLeakSocial *ngIf="gathered['instagram'] && 
+                               gathered['instagram'].result[4] && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+    <ngx-instagram-posts [data]="gathered['instagram']"></ngx-instagram-posts>
+  </div>
+
   <!-- Github Graphs -->
   <div id="divGithubGraphs" id="divGithubGraphs" #divGithubGraphs class="col-md-4" *ngIf="gathered['github'] && 
                                gathered['github'].result[4] && validationShow[gathered['github'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
