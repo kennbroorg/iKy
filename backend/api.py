@@ -73,7 +73,7 @@ def r_fullcontact():
     print("Fullcontact - Detected Username : ", username, from_m)
     res = celery.send_task('modules.fullcontact.fullcontact_tasks.' +
                            't_fullcontact', args=(username, ))
-    print("Task : ", res.task_id)
+    print("Fullcontact - Task : ", res.task_id)
     return jsonify(module="fullcontact", task=res.task_id,
                    param=username, from_m=from_m)
 
@@ -90,7 +90,7 @@ def r_github():
     print("Github - Detected Username : ", username, from_m)
     res = celery.send_task('modules.github.github_tasks.t_github',
                            args=(username, from_m))
-    print("Task : ", res.task_id)
+    print("Github - Task : ", res.task_id)
     return jsonify(module="github", task=res.task_id,
                    param=username, from_m=from_m)
 
@@ -108,7 +108,7 @@ def r_ghostproject():
     res = celery.send_task(
         'modules.ghostproject.ghostproject_tasks.t_ghostproject',
                            args=(username, ))
-    print("Task : ", res.task_id)
+    print("Ghostproject - Task : ", res.task_id)
     return jsonify(module="ghostproject", task=res.task_id,
                    param=username, from_m=from_m)
 
@@ -125,7 +125,7 @@ def r_keybase():
     print("Keybase - Detected Username : ", username, from_m)
     res = celery.send_task('modules.keybase.keybase_tasks.t_keybase',
                            args=(username, from_m))
-    print("Task : ", res.task_id)
+    print("Keybase - Task : ", res.task_id)
     return jsonify(module="keybase", task=res.task_id,
                    param=username, from_m=from_m)
 
@@ -142,7 +142,7 @@ def r_twitter():
     print("Twitter - Detected Username : ", username, from_m)
     res = celery.send_task('modules.twitter.twitter_tasks.t_twitter',
                            args=(username, from_m))
-    print("Task : ", res.task_id)
+    print("Twitter - Task : ", res.task_id)
     return jsonify(module="twitter", task=res.task_id,
                    param=username, from_m=from_m)
 
@@ -159,7 +159,7 @@ def r_linkedin():
     print("Linkedin - Detected Username : ", username, from_m)
     res = celery.send_task('modules.linkedin.linkedin_tasks.t_linkedin',
                            args=(username, from_m))
-    print("Task : ", res.task_id)
+    print("Linkedin - Task : ", res.task_id)
     return jsonify(module="linkedin", task=res.task_id,
                    param=username, from_m=from_m)
 
@@ -176,7 +176,7 @@ def r_leaks():
     print("Leaks - Detected Username : ", username, from_m)
     res = celery.send_task('modules.leaks.leaks_tasks.t_leaks',
                            args=(username, ))
-    print("Task : ", res.task_id)
+    print("Leaks - Task : ", res.task_id)
     return jsonify(module="leaks", task=res.task_id,
                    param=username, from_m=from_m)
 
@@ -193,7 +193,7 @@ def r_gitlab(username=None):
     print("Gitlab - Detected Username : ", username, from_m)
     res = celery.send_task('modules.gitlab.gitlab_tasks.t_gitlab',
                            args=(username, ))
-    print("Task : ", res.task_id)
+    print("Gitlab - Task : ", res.task_id)
     return jsonify(module="gitlab", task=res.task_id,
                    param=username, from_m=from_m)
 
@@ -210,7 +210,7 @@ def r_usersearch(username=None):
     print("Usersearch - Detected Username : ", username, from_m)
     res = celery.send_task('modules.usersearch.usersearch_tasks.t_usersearch',
                            args=(username, ))
-    print("Task : ", res.task_id)
+    print("Usersearch - Task : ", res.task_id)
     return jsonify(module="usersearch", task=res.task_id,
                    param=username, from_m=from_m)
 
@@ -227,7 +227,7 @@ def r_emailrep(username=None):
     print("EmailRep - Detected Username : ", username, from_m)
     res = celery.send_task('modules.emailrep.emailrep_tasks.t_emailrep',
                            args=(username, ))
-    print("Task : ", res.task_id)
+    print("EmailRep - Task : ", res.task_id)
     return jsonify(module="emailrep", task=res.task_id,
                    param=username, from_m=from_m)
 
@@ -244,6 +244,23 @@ def r_socialscan(username=None):
     print("SocialScan - Detected Username : ", username, from_m)
     res = celery.send_task('modules.socialscan.socialscan_tasks.t_socialscan',
                            args=(username, ))
-    print("Task : ", res.task_id)
+    print("SocialScan - Task : ", res.task_id)
     return jsonify(module="socialscan", task=res.task_id,
+                   param=username, from_m=from_m)
+
+
+################################################
+# Instagram
+################################################
+@home.route("/instagram", methods=["POST"])
+def r_instagram(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("Instagram - Detected Username : ", username, from_m)
+    res = celery.send_task('modules.instagram.instagram_tasks.t_instagram',
+                           args=(username, ))
+    print("Instagram - Task : ", res.task_id)
+    return jsonify(module="instagram", task=res.task_id,
                    param=username, from_m=from_m)

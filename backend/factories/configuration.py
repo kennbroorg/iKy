@@ -22,6 +22,7 @@ def get_config():
                           'modules.fullcontact.fullcontact_tasks',
                           'modules.usersearch.usersearch_tasks',
                           'modules.socialscan.socialscan_tasks',
+                          'modules.instagram.instagram_tasks',
                           'modules.emailrep.emailrep_tasks')
     return Config
 
