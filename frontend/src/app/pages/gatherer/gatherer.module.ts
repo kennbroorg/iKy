@@ -11,6 +11,8 @@ import { TreeModule } from 'angular-tree-component';
 import { ThemeModule } from '../../@theme/theme.module';
 import { GathererComponent } from './gatherer.component';
 
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+
 import { ValidationFilterComponent } from './validation/validation-filter.component';
 
 import { GithubGraphsComponent } from './github/github-graphs/github-graphs.component';
@@ -42,6 +44,11 @@ import { EmailrepInfoComponent } from './emailrep/emailrep-info/emailrep-info.co
 import { SocialscanEmailComponent } from './socialscan/socialscan-email/socialscan-email.component';
 import { SocialscanUserComponent } from './socialscan/socialscan-user/socialscan-user.component';
 
+import { InstagramMapComponent } from './instagram/instagram-map/instagram-map.component';
+import { InstagramMapService } from './instagram/instagram-map/instagram-map.service';
+import { InstagramGraphsComponent } from './instagram/instagram-graphs/instagram-graphs.component';
+import { InstagramPostsComponent } from './instagram/instagram-posts/instagram-posts.component';
+
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
@@ -54,6 +61,7 @@ import { SharedModule } from '../shared/shared.module';
     TreeModule,
     NbCardModule,
     SharedModule,
+    LeafletModule,
     NbDialogModule.forChild(),
     NbWindowModule.forChild(),
   ],
@@ -81,6 +89,12 @@ import { SharedModule } from '../shared/shared.module';
     EmailrepSocialComponent,
     SocialscanEmailComponent,
     SocialscanUserComponent,
+    InstagramGraphsComponent,
+    InstagramMapComponent,
+    InstagramPostsComponent,
+  ],
+  providers: [
+    InstagramMapService,
   ],
 })
 export class GathererModule { }
