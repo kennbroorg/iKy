@@ -15,6 +15,7 @@ export class GraphsComponent implements OnInit, AfterViewInit {
   @ViewChild('cardGraphs') private cardContainer: ElementRef;
   @Input() private data: Array<any>;
   @Input() private modal: boolean;
+  @Input() private searcher: boolean;
 
   private width: number;
   private height: number;
@@ -38,6 +39,7 @@ export class GraphsComponent implements OnInit, AfterViewInit {
       console.log("WIDTH-------------------------------", this.width);
       console.log("HEIGHT-------------------------------", this.height);
       console.log("MODAL-------------------------------", this.modal);
+      console.log("SEARCHER-------------------------------", this.searcher);
       this.drawChart(this.card, this.data, this.height, this.width);
   }
 
@@ -71,22 +73,22 @@ export class GraphsComponent implements OnInit, AfterViewInit {
               }
           }
       }
-      function getInfo(name, picture, subtitle, icon) {
+      function getInfo(name, picture, subtitle, icon, help) {
           if (name in cache) return cache[name];
-          return new Node(name, { picture: picture, group: 0, subtitle: subtitle, icon: icon });
+          return new Node(name, { picture: picture, group: 0, subtitle: subtitle, icon: icon, help: help });
       }
-      function getLink(link, picture, subtitle, icon) {
+      function getLink(link, picture, subtitle, icon, help) {
           var name = link
           if (name in cache) return cache[name];
-          return new Node(name, { picture: picture, group: 1, subtitle: subtitle, icon: icon });
+          return new Node(name, { picture: picture, group: 1, subtitle: subtitle, icon: icon, help: help });
       }
       function addLinks(name, topic) {
           links.push({ source: name.id, target: topic.id });
       }
 
       data.forEach(function (entry) {
-          var linkage = getLink(entry.link, entry.picture, entry.subtitle, entry.icon);
-          var title = getInfo(entry.title, entry.picture, entry.subtitle, entry.icon);
+          var linkage = getLink(entry.link, entry.picture, entry.subtitle, entry.icon, entry.help);
+          var title = getInfo(entry.title, entry.picture, entry.subtitle, entry.icon, entry.help);
           addLinks(title, linkage);
       });
       return { list: list, links: links };
@@ -104,12 +106,24 @@ export class GraphsComponent implements OnInit, AfterViewInit {
             .force("charge", d3.forceManyBody().strength(-820))
             .force("link", d3.forceLink().distance(110))
             .force("center", d3.forceCenter(width / 2, height / 2))
-        }
-        else {
+        } else if (this.searcher) {
+          return d3.forceSimulation()
+            .force("charge", d3.forceManyBody().strength(-401))
+            .force("link", d3.forceLink().distance(60))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .velocityDecay(0.4)
+            .alphaTarget(0.1)
+            .force("x", d3.forceX())
+            .force("y", d3.forceY())
+        } else {
           return d3.forceSimulation()
             .force("charge", d3.forceManyBody().strength(-820))
             .force("link", d3.forceLink().distance(60))
             .force("center", d3.forceCenter(width / 2, height / 2))
+            .velocityDecay(0.4)
+            .alphaTarget(0.1)
+            .force("x", d3.forceX())
+            .force("y", d3.forceY())
         }
     }
 
@@ -163,6 +177,8 @@ export class GraphsComponent implements OnInit, AfterViewInit {
               var title = d.name;
               var subtitle = d.subtitle;
               var icon = d.icon;
+              var help = d.help;
+              console.log(d);
               d3Select(this).append('text')
                 .attr('text-anchor', 'middle')
                 .attr('alignment-baseline', 'middle')
@@ -175,6 +191,11 @@ export class GraphsComponent implements OnInit, AfterViewInit {
                 .attr('fill', '#B3FEFF')
                 .attr("y", 45)
                 .text(subtitle);
+              if (help) {
+                  d3Select(this).append('title')
+                  // .text(function(d: any) { return d.data.name.concat(": ", d.data.value); });
+                    .text(help);
+              }
               if (icon) {
                   d3Select(this).append('svg:foreignObject')
                       .attr('height', '35px')
@@ -227,6 +248,7 @@ export class GraphsComponent implements OnInit, AfterViewInit {
               var title = d.name;
               var subtitle = d.subtitle;
               var icon = d.icon;
+              var help = d.help;
               d3Select(this).append('text')
                 .attr('text-anchor', 'middle')
                 .attr('alignment-baseline', 'middle')
@@ -239,6 +261,11 @@ export class GraphsComponent implements OnInit, AfterViewInit {
                 .attr('fill', '#B3FEFF')
                 .attr("y", 30)
                 .text(subtitle);
+              if (help) {
+                  d3Select(this).append('title')
+                  // .text(function(d: any) { return d.data.name.concat(": ", d.data.value); });
+                    .text(help);
+              }
               if (icon) {
                   d3Select(this).append('svg:foreignObject')
                       .attr('height', '20px')

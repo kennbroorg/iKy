@@ -23,13 +23,14 @@ def get_config():
                           'modules.usersearch.usersearch_tasks',
                           'modules.socialscan.socialscan_tasks',
                           'modules.instagram.instagram_tasks',
+                          'modules.search.search_tasks',
                           'modules.emailrep.emailrep_tasks')
     return Config
 
 
 def api_keys_read():
     cur_dir = os.getcwd()
-    api_keys_file = cur_dir + '/factories/apikeys.json'
+    api_keys_file = cur_dir + '/factories/apikeys_eko.json'
     with open(api_keys_file, 'r') as f:
         items = json.load(f)
     return items
@@ -37,7 +38,7 @@ def api_keys_read():
 
 def api_keys_write(api_keys):
     cur_dir = os.getcwd()
-    api_keys_file = cur_dir + '/factories/apikeys.json'
+    api_keys_file = cur_dir + '/factories/apikeys_eko.json'
     with open(api_keys_file, 'w') as f:
         json.dump(api_keys, f)
     return api_keys

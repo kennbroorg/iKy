@@ -149,6 +149,14 @@ export class DataGatherInfoService {
                            () => console.log('Completed EmailRep')
         );
 
+        // Search
+        this.showToast(NbToastStatus.INFO, 'Searchers', 'Send information gathering');
+        this.executeRequest$('search', {username: this.username, from: 'Initial'})
+                .subscribe(this.processResponse,
+                           err => console.error('Ops: ', err.message),
+                           () => console.log('Completed Searchers')
+        );
+
         // Fullcontact
         if (this.isModuleParamRun('fullcontact', this.email, 'Initial')) {
             this.showToast(NbToastStatus.INFO, 'Fullcontact', 'Send information gathering');

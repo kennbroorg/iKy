@@ -12,5 +12,6 @@ app = Celery('celery_config', broker='redis://localhost:6379/0',
                       'modules.fullcontact.fullcontact_tasks',
                       'modules.emailrep.emailrep_tasks',
                       'modules.socialscan.socialscan_tasks',
+                      'modules.search.search_tasks',
                       'modules.instagram.instagram_tasks'
                       ])

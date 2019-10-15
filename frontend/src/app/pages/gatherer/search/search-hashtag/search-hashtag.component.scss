@@ -1,0 +1,15 @@
+@import '../../../../@theme/styles/themes';
+
+@include nb-install-component() {
+  /* borders  */ 
+
+  .border-default {
+    border: 2px solid transparent;
+    border-image: url("assets/images/border-1-default.svg") ;
+    border-image-slice: 20;
+    border-image-repeat: stretch;
+    border-image-outset: 1;
+    border-image-width: 5;
+  }
+
+}

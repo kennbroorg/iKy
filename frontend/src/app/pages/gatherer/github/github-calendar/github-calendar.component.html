@@ -3,9 +3,8 @@
       GITHUB Calendar
       <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
     </nb-card-header>
-    <nb-card-body style="text-align: center; overflow: hidden; padding: 0px;">
-        <div id="git-cal-1" align="center" style="  margin: 0; position: absolute; top: 50%; -ms-transform: translateY(-50%);
-                    transform: translateY(-50%);" [innerHTML]="githubCalendar | safe: 'html'"></div>
+    <nb-card-body style="text-align: center; overflow: visible; padding: 0px;"> 
+        <div id="git-cal-1" align="center" style="margin: 0; position: absolute; top: 50%; left: 10%; right: 10%; -ms-transform: translateY(-50%); transform: translateY(-50%);" [innerHTML]="githubCalendar | safe: 'html'"></div>
         <!-- <div id="git-cal-2" align="center" style="padding:0px;" height="500" [innerHTML]="githubCalendarPrev | safe: 'html'"></div> -->
     </nb-card-body>
   </nb-card>

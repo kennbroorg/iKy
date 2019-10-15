@@ -49,6 +49,14 @@ import { InstagramMapService } from './instagram/instagram-map/instagram-map.ser
 import { InstagramGraphsComponent } from './instagram/instagram-graphs/instagram-graphs.component';
 import { InstagramPostsComponent } from './instagram/instagram-posts/instagram-posts.component';
 
+import { SearchHashtagComponent } from './search/search-hashtag/search-hashtag.component';
+import { SearchMentionsComponent } from './search/search-mention/search-mentions.component';
+import { SearchNamesComponent } from './search/search-names/search-names.component';
+import { SearchUsernamesComponent } from './search/search-usernames/search-usernames.component';
+import { SearchSocialComponent } from './search/search-social/search-social.component';
+import { SearchSearchesComponent } from './search/search-searches/search-searches.component';
+import { SearchListComponent } from './search/search-list/search-list.component';
+
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
@@ -92,6 +100,13 @@ import { SharedModule } from '../shared/shared.module';
     InstagramGraphsComponent,
     InstagramMapComponent,
     InstagramPostsComponent,
+    SearchHashtagComponent,
+    SearchMentionsComponent,
+    SearchNamesComponent,
+    SearchUsernamesComponent,
+    SearchSocialComponent,
+    SearchSearchesComponent,
+    SearchListComponent,
   ],
   providers: [
     InstagramMapService,
