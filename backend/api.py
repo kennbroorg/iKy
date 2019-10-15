@@ -264,3 +264,20 @@ def r_instagram(username=None):
     print("Instagram - Task : ", res.task_id)
     return jsonify(module="instagram", task=res.task_id,
                    param=username, from_m=from_m)
+
+
+################################################
+# Searches
+################################################
+@home.route("/search", methods=["POST"])
+def r_search(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("Search - Detected Username : ", username, from_m)
+    res = celery.send_task('modules.search.search_tasks.t_search',
+                           args=(username, ))
+    print("Search - Task : ", res.task_id)
+    return jsonify(module="search", task=res.task_id,
+                   param=username, from_m=from_m)
