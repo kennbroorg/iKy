@@ -30,7 +30,7 @@ def get_config():
 
 def api_keys_read():
     cur_dir = os.getcwd()
-    api_keys_file = cur_dir + '/factories/apikeys_eko.json'
+    api_keys_file = cur_dir + '/factories/apikeys.json'
     with open(api_keys_file, 'r') as f:
         items = json.load(f)
     return items
@@ -38,7 +38,7 @@ def api_keys_read():
 
 def api_keys_write(api_keys):
     cur_dir = os.getcwd()
-    api_keys_file = cur_dir + '/factories/apikeys_eko.json'
+    api_keys_file = cur_dir + '/factories/apikeys.json'
     with open(api_keys_file, 'w') as f:
         json.dump(api_keys, f)
     return api_keys
