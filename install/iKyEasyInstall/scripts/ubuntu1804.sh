@@ -67,7 +67,7 @@ echo
 # cd iKy/
 # pwd
 # sudo apt-get install -y python3-pip
-sudo apt install python3-testresources
+sudo apt install -y python3-testresources
 curl -O https://bootstrap.pypa.io/get-pip.py
 sudo python3.7 get-pip.py
 ## sudo apt-get install -y python3-celery
