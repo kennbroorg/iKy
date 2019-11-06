@@ -139,9 +139,13 @@ export class GathererComponent implements OnInit {
         const doc = new jsPDF('p', 'mm', 'a4');
         var pageHeight = doc.internal.pageSize.height;
 
-        doc.setFontSize(17);
+        doc.setFontSize(25);
         doc.setFontStyle("bold");
-        doc.text('iKy Report', 105, 80, null, null, 'center');
+        var img = new Image()
+        // img.src = 'assets/images/iKy-Logo.png'
+        img.src = 'favicon-32x32.png'
+        doc.addImage(img, 'png', 65, 60, 80, 80)
+        doc.text('Report', 105, 160, null, null, 'center');
         doc.addPage();
         var hl = 20;
 
@@ -166,6 +170,170 @@ export class GathererComponent implements OnInit {
         doc.text('Information gathered', 105, hl + 5, null, null, 'center');
         hl = hl + 11;
 
+        // EmailrepIO module report
+        if (this.gathered['emailrep'] && this.gathered['emailrep']['result'] && 
+                this.gathered['linkedin']['result'].length > 3) {
+            moduleHeight = 80;
+
+            // Validate pageHeight
+            if ( hl + moduleHeight > pageHeight) {
+                doc.addPage();
+                hl = 20;
+            }
+
+            // EmailRep
+            doc.setFontSize(11);
+            doc.setDrawColor(44, 93, 126);
+            doc.setFillColor(44, 93, 126);
+            doc.rect(10, hl, 190, 7, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.text('Module emailrep', 105, hl + 5, null, null, 'center');
+            hl = hl + 10;
+
+            var svg = this.nbCardContainer.nativeElement.querySelector("#divEmailrepInfo");
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            await html2canvas(svg2, { 
+                // scale: 1,
+                useCORS: true, 
+                // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
+                // logging: false,
+                backgroundColor: "#333333",
+                allowTaint: true,
+                // removeContainer: false
+                })
+                .then(function (canvas) { 
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
+                });
+
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(79, 79, 79);
+            infoText = 'The information of the chart is shown in the following table.';
+            var splitText = doc.splitTextToSize(infoText, 110);
+            var y = 6;
+            for (var i=0; i<splitText.length; i++){
+                doc.text(90, hl + y, splitText[i]);
+                y = y + 4;
+            }
+
+            // Information table
+            if (this.gathered['emailrep']['result'][4]['graphic'][0]['details']) {
+                let headTable = [];
+                let bodyTable = [];
+                let elem = [];
+                let i: any;
+                let list = this.gathered['emailrep']['result'][4]['graphic'][0]['details'];
+                
+                for (let i in list) {
+                    if (list[i]['title'] != 'EmailRep') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.autoTable({
+                    startY: hl + 11,
+                    margin: {left: 90},
+                    showHead: false,
+                    styles: { overflow: 'hidden' },
+                    bodyStyles: {
+                        fillColor: [52, 73, 94],
+                        textColor: 240
+                    },
+                    alternateRowStyles: {
+                        fillColor: [74, 96, 117]
+                    },
+                    head: [
+                        ['Name', 'Value'],
+                    ],
+                    body: bodyTable,
+                });
+
+                let finalY = doc.previousAutoTable.finalY;
+                doc.autoTable({
+                    startY: finalY,
+                    // html: '.table',
+                    useCss: true,
+                });
+        
+                hl = finalY
+            }
+
+            hl = hl + 10;
+
+            var svg = this.nbCardContainer.nativeElement.querySelector("#divEmailrepSocial");
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            await html2canvas(svg2, { 
+                // scale: 1,
+                useCORS: true, 
+                // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
+                // logging: false,
+                backgroundColor: "#333333",
+                allowTaint: true,
+                // removeContainer: false
+                })
+                .then(function (canvas) { 
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
+                });
+
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(79, 79, 79);
+            infoText = 'The information of the chart is shown in the following table.';
+            var splitText = doc.splitTextToSize(infoText, 110);
+            var y = 6;
+            for (var i=0; i<splitText.length; i++){
+                doc.text(90, hl + y, splitText[i]);
+                y = y + 4;
+            }
+
+            // Information table
+            if (this.gathered['emailrep']['result'][4]['graphic'][1]['social']) {
+                let headTable = [];
+                let bodyTable = [];
+                let elem = [];
+                let i: any;
+                let list = this.gathered['emailrep']['result'][4]['graphic'][1]['social'];
+                
+                for (let i in list) {
+                    if (list[i]['title'] != 'EmailRep') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.autoTable({
+                    startY: hl + 11,
+                    margin: {left: 90},
+                    showHead: false,
+                    styles: { overflow: 'hidden' },
+                    bodyStyles: {
+                        fillColor: [52, 73, 94],
+                        textColor: 240
+                    },
+                    alternateRowStyles: {
+                        fillColor: [74, 96, 117]
+                    },
+                    head: [
+                        ['Name', 'Value'],
+                    ],
+                    body: bodyTable,
+                });
+
+                let finalY = doc.previousAutoTable.finalY;
+                doc.autoTable({
+                    startY: finalY,
+                    // html: '.table',
+                    useCss: true,
+                });
+        
+                hl = finalY
+            }
+
+            hl = hl + 10;
+        }
+
+
         // Fullcontact module report
         if (this.gathered['fullcontact'] && this.gathered['fullcontact']['result'] && 
               this.gathered['fullcontact']['result'].length > 3) {
@@ -181,23 +349,39 @@ export class GathererComponent implements OnInit {
             doc.setDrawColor(44, 93, 126);
             doc.setFillColor(44, 93, 126);
             doc.rect(10, hl, 190, 7, 'F');
-            doc.setTextColor(255, 255, 255);
+            doc.setTextColor(256, 255, 255);
             doc.text('Module fullcontact', 105, hl + 5, null, null, 'center');
             hl = hl + 10;
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divFullcontactGraphs");
-            await html2canvas(svg.children[0], { 
-                scale: 1,
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            // await html2canvas(svg.children[0], { 
+            await html2canvas(svg2, { 
+                // scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                logging: true,
-                backgroundColor: "#51A5D7",
+                // logging: false,
+                backgroundColor: "#333333",
                 allowTaint: true,
-                removeContainer: true
+                // removeContainer: false
                 })
                 .then(function (canvas) { 
-                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
                 });
+
+            // var svg = this.nbCardContainer.nativeElement.querySelector("#divFullcontactGraphs");
+            // await html2canvas(svg.children[0], { 
+            //     scale: 1,
+            //     useCORS: true, 
+            //     // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
+            //     logging: true,
+            //     backgroundColor: "#51A5D7",
+            //     allowTaint: true,
+            //     removeContainer: true
+            //     })
+            //     .then(function (canvas) { 
+            //         doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+            //     });
 
             doc.setFontSize(11);
             doc.setFont('helvetica', 'normal');
@@ -268,17 +452,19 @@ export class GathererComponent implements OnInit {
             hl = hl + 10;
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterList");
-            await html2canvas(svg.children[0], { 
-                scale: 1,
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            // await html2canvas(svg.children[0], { 
+            await html2canvas(svg2, { 
+                // scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                logging: true,
-                backgroundColor: "#51A5D7",
+                // logging: false,
+                backgroundColor: "#888888",
                 allowTaint: true,
-                removeContainer: true
+                // removeContainer: false
                 })
                 .then(function (canvas) { 
-                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
                 });
 
             // Information table
@@ -326,17 +512,19 @@ export class GathererComponent implements OnInit {
             }
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterResume");
-            await html2canvas(svg.children[0], { 
-                scale: 1,
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0].children[0].children[0];
+            // await html2canvas(svg.children[0], { 
+            await html2canvas(svg2, { 
+                // scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                logging: true,
-                backgroundColor: "#51A5D7",
+                // logging: false,
+                backgroundColor: "#888888",
                 allowTaint: true,
-                removeContainer: true
+                // removeContainer: false
                 })
                 .then(function (canvas) { 
-                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
                 });
 
             // Information table
@@ -382,17 +570,19 @@ export class GathererComponent implements OnInit {
             }
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterPopularity");
-            await html2canvas(svg.children[0], { 
-                scale: 1,
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0].children[0].children[0];
+            // await html2canvas(svg.children[0], { 
+            await html2canvas(svg2, { 
+                // scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                logging: true,
-                backgroundColor: "#51A5D7",
+                // logging: false,
+                backgroundColor: "#888888",
                 allowTaint: true,
-                removeContainer: true
+                // removeContainer: false
                 })
                 .then(function (canvas) { 
-                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
                 });
 
             // Information table
@@ -438,17 +628,19 @@ export class GathererComponent implements OnInit {
             }
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterApproval");
-            await html2canvas(svg.children[0], { 
-                scale: 1,
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0].children[0].children[0];
+            // await html2canvas(svg.children[0], { 
+            await html2canvas(svg2, { 
+                // scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                logging: true,
-                backgroundColor: "#51A5D7",
+                // logging: false,
+                backgroundColor: "#888888",
                 allowTaint: true,
-                removeContainer: true
+                // removeContainer: false
                 })
                 .then(function (canvas) { 
-                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
                 });
 
             // Information table
@@ -494,17 +686,19 @@ export class GathererComponent implements OnInit {
             }
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterHashtag");
-            await html2canvas(svg.children[0], { 
-                scale: 1,
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            // await html2canvas(svg.children[0], { 
+            await html2canvas(svg2, { 
+                // scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                logging: true,
-                backgroundColor: "#51A5D7",
+                // logging: false,
+                backgroundColor: "#333333",
                 allowTaint: true,
-                removeContainer: true
+                // removeContainer: false
                 })
                 .then(function (canvas) { 
-                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
                 });
 
             // Information table
@@ -552,17 +746,19 @@ export class GathererComponent implements OnInit {
             }
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterUsers");
-            await html2canvas(svg.children[0], { 
-                scale: 1,
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            // await html2canvas(svg.children[0], { 
+            await html2canvas(svg2, { 
+                // scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                logging: true,
-                backgroundColor: "#51A5D7",
+                // logging: false,
+                backgroundColor: "#333333",
                 allowTaint: true,
-                removeContainer: true
+                // removeContainer: false
                 })
                 .then(function (canvas) { 
-                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
                 });
 
             // Information table
@@ -609,6 +805,170 @@ export class GathererComponent implements OnInit {
         hl = hl + 5; // Space between modules
 
 
+        // Instagram module report
+        if (this.gathered['instagram'] && this.gathered['instagram']['result'] && 
+                this.gathered['instagram']['result'].length > 3) {
+            moduleHeight = 80;
+
+            // Validate pageHeight
+            if ( hl + moduleHeight > pageHeight) {
+                doc.addPage();
+                hl = 20;
+            }
+
+            // EmailRep
+            doc.setFontSize(11);
+            doc.setDrawColor(44, 93, 126);
+            doc.setFillColor(44, 93, 126);
+            doc.rect(10, hl, 190, 7, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.text('Module Instagram', 105, hl + 5, null, null, 'center');
+            hl = hl + 10;
+
+            var svg = this.nbCardContainer.nativeElement.querySelector("#divInstagramSocial");
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            await html2canvas(svg2, { 
+                // scale: 1,
+                useCORS: true, 
+                // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
+                // logging: false,
+                backgroundColor: "#333333",
+                allowTaint: true,
+                // removeContainer: false
+                })
+                .then(function (canvas) { 
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
+                });
+
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(79, 79, 79);
+            infoText = 'The information of the chart is shown in the following table.';
+            var splitText = doc.splitTextToSize(infoText, 110);
+            var y = 6;
+            for (var i=0; i<splitText.length; i++){
+                doc.text(90, hl + y, splitText[i]);
+                y = y + 4;
+            }
+
+            // Information table
+            if (this.gathered['instagram']['result'][4]['graphic'][0]['instagram']) {
+                let headTable = [];
+                let bodyTable = [];
+                let elem = [];
+                let i: any;
+                let list = this.gathered['instagram']['result'][4]['graphic'][0]['instagram'];
+                
+                for (let i in list) {
+                    if (list[i]['title'] != 'Instagram') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.autoTable({
+                    startY: hl + 11,
+                    margin: {left: 90},
+                    showHead: false,
+                    styles: { overflow: 'hidden' },
+                    bodyStyles: {
+                        fillColor: [52, 73, 94],
+                        textColor: 240
+                    },
+                    alternateRowStyles: {
+                        fillColor: [74, 96, 117]
+                    },
+                    head: [
+                        ['Name', 'Value'],
+                    ],
+                    body: bodyTable,
+                });
+
+                let finalY = doc.previousAutoTable.finalY;
+                doc.autoTable({
+                    startY: finalY,
+                    // html: '.table',
+                    useCss: true,
+                });
+        
+                hl = finalY
+            }
+
+            hl = hl + 10;
+
+            var svg = this.nbCardContainer.nativeElement.querySelector("#divInstagramPosts");
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            await html2canvas(svg2, { 
+                // scale: 1,
+                useCORS: true, 
+                // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
+                // logging: false,
+                backgroundColor: "#333333",
+                allowTaint: true,
+                // removeContainer: false
+                })
+                .then(function (canvas) { 
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
+                });
+
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(79, 79, 79);
+            infoText = 'The information of the chart is shown in the following table.';
+            var splitText = doc.splitTextToSize(infoText, 110);
+            var y = 6;
+            for (var i=0; i<splitText.length; i++){
+                doc.text(90, hl + y, splitText[i]);
+                y = y + 4;
+            }
+
+            // Information table
+            if (this.gathered['instagram']['result'][4]['graphic'][1]['postslist']) {
+                let headTable = [];
+                let bodyTable = [];
+                let elem = [];
+                let i: any;
+                let list = this.gathered['instagram']['result'][4]['graphic'][1]['postslist'];
+                
+                for (let i in list) {
+                    // if (list[i]['title'] != 'EmailRep') {
+                        elem = [list[i]['name'], list[i]['series'][0]['value'], list[i]['series'][1]['value']];
+                        bodyTable.push(elem);
+                    // }
+                }
+
+                doc.autoTable({
+                    startY: hl + 11,
+                    margin: {left: 90},
+                    showHead: true,
+                    styles: { overflow: 'hidden' },
+                    bodyStyles: {
+                        fillColor: [52, 73, 94],
+                        textColor: 240
+                    },
+                    alternateRowStyles: {
+                        fillColor: [74, 96, 117]
+                    },
+                    head: [
+                        ['Post', 'Comments', 'Likes'],
+                    ],
+                    body: bodyTable,
+                });
+
+                let finalY = doc.previousAutoTable.finalY;
+                doc.autoTable({
+                    startY: finalY,
+                    // html: '.table',
+                    useCss: true,
+                });
+        
+                hl = finalY
+            }
+
+            hl = hl + 10;
+        }
+
+
         // Github module report
         if (this.gathered['github'] && this.gathered['github']['result'] &&
                 this.gathered['github']['result'].length > 3) {
@@ -631,17 +991,19 @@ export class GathererComponent implements OnInit {
             hl = hl + 10;
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divGithubGraphs");
-            await html2canvas(svg.children[0], { 
-                scale: 1,
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            // await html2canvas(svg.children[0], { 
+            await html2canvas(svg2, { 
+                // scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                logging: true,
-                backgroundColor: "#51A5D7",
+                // logging: false,
+                backgroundColor: "#333333",
                 allowTaint: true,
-                removeContainer: true
+                // removeContainer: false
                 })
                 .then(function (canvas) { 
-                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
                 });
 
             doc.setFontSize(11);
@@ -700,18 +1062,34 @@ export class GathererComponent implements OnInit {
             }
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divGithubCalendar");
-            await html2canvas(svg.children[0], { 
-                scale: 1,
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            // await html2canvas(svg.children[0], { 
+            await html2canvas(svg2, { 
+                // scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                logging: true,
-                backgroundColor: "#51A5D7",
+                // logging: false,
+                backgroundColor: "#333333",
                 allowTaint: true,
-                removeContainer: true
+                // removeContainer: false
                 })
                 .then(function (canvas) { 
-                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 30, hl, 150, 65);
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 30, hl, 150, 35);
                 });
+
+            // var svg = this.nbCardContainer.nativeElement.querySelector("#divGithubCalendar");
+            // await html2canvas(svg.children[0], { 
+            //     scale: 1,
+            //     useCORS: true, 
+            //     // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
+            //     logging: true,
+            //     backgroundColor: "#51A5D7",
+            //     allowTaint: true,
+            //     removeContainer: true
+            //     })
+            //     .then(function (canvas) { 
+            //         doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 30, hl, 150, 65);
+            //     });
 
             hl = hl + 70;
 
@@ -719,7 +1097,7 @@ export class GathererComponent implements OnInit {
 
         hl = hl + 5; // Space between modules
 
-        // Linkedin module report   TODO Agregar la condicion de existencia y longitud
+        // Linkedin module report   TODO Add conditions of inexistence or empty
         if (this.gathered['linkedin'] && this.gathered['linkedin']['result'] && 
                 this.gathered['linkedin']['result'].length > 3) {
             moduleHeight = 80;
@@ -740,17 +1118,19 @@ export class GathererComponent implements OnInit {
             hl = hl + 10;
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divLinkedinGraphs");
-            await html2canvas(svg.children[0], { 
-                scale: 1,
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            // await html2canvas(svg.children[0], { 
+            await html2canvas(svg2, { 
+                // scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                logging: true,
-                backgroundColor: "#51A5D7",
+                // logging: false,
+                backgroundColor: "#333333",
                 allowTaint: true,
-                removeContainer: true
+                // removeContainer: false
                 })
                 .then(function (canvas) { 
-                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
                 });
 
             doc.setFontSize(11);
@@ -810,17 +1190,19 @@ export class GathererComponent implements OnInit {
             }
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divLinkedinBubble");
-            await html2canvas(svg.children[0], { 
-                scale: 1,
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            // await html2canvas(svg.children[0], { 
+            await html2canvas(svg2, { 
+                // scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                logging: true,
-                backgroundColor: "#51A5D7",
+                // logging: false,
+                backgroundColor: "#333333",
                 allowTaint: true,
-                removeContainer: true
+                // removeContainer: false
                 })
                 .then(function (canvas) { 
-                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
                 });
 
             doc.setFontSize(11);
@@ -946,17 +1328,19 @@ export class GathererComponent implements OnInit {
             hl = hl + 10;
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divKeybaseSocial");
-            await html2canvas(svg.children[0], { 
-                scale: 1,
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            // await html2canvas(svg.children[0], { 
+            await html2canvas(svg2, { 
+                // scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                logging: true,
-                backgroundColor: "#51A5D7",
+                // logging: false,
+                backgroundColor: "#333333",
                 allowTaint: true,
-                removeContainer: true
+                // removeContainer: false
                 })
                 .then(function (canvas) { 
-                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
                 });
 
             doc.setFontSize(11);
@@ -1018,17 +1402,19 @@ export class GathererComponent implements OnInit {
             }
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divKeybaseDevices");
-            await html2canvas(svg.children[0], { 
-                scale: 1,
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            // await html2canvas(svg.children[0], { 
+            await html2canvas(svg2, { 
+                // scale: 1,
                 useCORS: true, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                logging: true,
-                backgroundColor: "#51A5D7",
+                // logging: false,
+                backgroundColor: "#333333",
                 allowTaint: true,
-                removeContainer: true
+                // removeContainer: false
                 })
                 .then(function (canvas) { 
-                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
                 });
 
             doc.setFontSize(11);
@@ -1103,17 +1489,19 @@ export class GathererComponent implements OnInit {
             hl = hl + 10;
 
             var svg = this.nbCardContainer.nativeElement.querySelector("#divLeakSocial");
-            await html2canvas(svg.children[0], { 
-                scale: 1,
-                useCORS: true, 
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            // await html2canvas(svg.children[0], { 
+            await html2canvas(svg2, { 
+                // scale: 1,
+                useCORS: false, 
                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-                logging: true,
-                backgroundColor: "#51A5D7",
+                // logging: false,
+                backgroundColor: "#333333",
                 allowTaint: true,
-                removeContainer: true
+                // removeContainer: false
                 })
                 .then(function (canvas) { 
-                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
                 });
 
             doc.setFontSize(11);
@@ -1164,6 +1552,174 @@ export class GathererComponent implements OnInit {
             }
 
             hl = hl + 70;
+        }
+
+
+        // SocialScan module report
+        if (this.gathered['socialscan'] && this.gathered['socialscan']['result'] && 
+                this.gathered['socialscan']['result'].length > 3) {
+            moduleHeight = 80;
+
+            // Validate pageHeight
+            if ( hl + moduleHeight > pageHeight) {
+                doc.addPage();
+                hl = 20;
+            }
+
+            // EmailRep
+            doc.setFontSize(11);
+            doc.setDrawColor(44, 93, 126);
+            doc.setFillColor(44, 93, 126);
+            doc.rect(10, hl, 190, 7, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.text('Module socialscan', 105, hl + 5, null, null, 'center');
+            hl = hl + 10;
+
+            var svg = this.nbCardContainer.nativeElement.querySelector("#divSocialscanEmail");
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            await html2canvas(svg2, { 
+                // scale: 1,
+                useCORS: true, 
+                // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
+                // logging: false,
+                backgroundColor: "#333333",
+                allowTaint: true,
+                // removeContainer: false
+                })
+                .then(function (canvas) { 
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
+                });
+
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(79, 79, 79);
+            infoText = 'The information of the chart is shown in the following table.';
+            var splitText = doc.splitTextToSize(infoText, 110);
+            var y = 6;
+            for (var i=0; i<splitText.length; i++){
+                doc.text(90, hl + y, splitText[i]);
+                y = y + 4;
+            }
+
+            // Information table
+            if (this.gathered['socialscan']['result'][4]['graphic'][0]['social_email']) {
+                let headTable = [];
+                let bodyTable = [];
+                let elem = [];
+                let i: any;
+                let list = this.gathered['socialscan']['result'][4]['graphic'][0]['social_email'];
+                
+                for (let i in list) {
+                    if (list[i]['title'] != 'SocialScan') {
+                        elem = [list[i]['title']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.autoTable({
+                    startY: hl + 11,
+                    margin: {left: 90},
+                    showHead: true,
+                    styles: { overflow: 'hidden' },
+                    bodyStyles: {
+                        fillColor: [52, 73, 94],
+                        textColor: 240
+                    },
+                    alternateRowStyles: {
+                        fillColor: [74, 96, 117]
+                    },
+                    head: [
+                        ['SocialScan Email'],
+                    ],
+                    body: bodyTable,
+                });
+
+                let finalY = doc.previousAutoTable.finalY;
+                doc.autoTable({
+                    startY: finalY,
+                    // html: '.table',
+                    useCss: true,
+                });
+        
+                if (finalY >= hl + 55) {
+                    hl = finalY;
+                } else {
+                    hl = hl + 60;
+                }
+            }
+
+            hl = hl + 10;
+
+            var svg = this.nbCardContainer.nativeElement.querySelector("#divSocialscanUser");
+            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
+            await html2canvas(svg2, { 
+                // scale: 1,
+                useCORS: true, 
+                // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
+                // logging: false,
+                backgroundColor: "#333333",
+                allowTaint: true,
+                // removeContainer: false
+                })
+                .then(function (canvas) { 
+                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
+                });
+
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(79, 79, 79);
+            infoText = 'The information of the chart is shown in the following table.';
+            var splitText = doc.splitTextToSize(infoText, 110);
+            var y = 6;
+            for (var i=0; i<splitText.length; i++){
+                doc.text(90, hl + y, splitText[i]);
+                y = y + 4;
+            }
+
+            // Information table
+            if (this.gathered['socialscan']['result'][4]['graphic'][1]['social_user']) {
+                let headTable = [];
+                let bodyTable = [];
+                let elem = [];
+                let i: any;
+                let list = this.gathered['socialscan']['result'][4]['graphic'][1]['social_user'];
+                
+                for (let i in list) {
+                    if (list[i]['title'] != 'SocialScan') {
+                        elem = [list[i]['title']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.autoTable({
+                    startY: hl + 11,
+                    margin: {left: 90},
+                    showHead: true,
+                    styles: { overflow: 'hidden' },
+                    bodyStyles: {
+                        fillColor: [52, 73, 94],
+                        textColor: 240
+                    },
+                    alternateRowStyles: {
+                        fillColor: [74, 96, 117]
+                    },
+                    head: [
+                        ['SocialScan User'],
+                    ],
+                    body: bodyTable,
+                });
+
+                let finalY = doc.previousAutoTable.finalY;
+                doc.autoTable({
+                    startY: finalY,
+                    // html: '.table',
+                    useCss: true,
+                });
+        
+                hl = finalY
+            }
+
+            hl = hl + 10;
         }
 
         doc.addPage();
@@ -1241,52 +1797,6 @@ export class GathererComponent implements OnInit {
 
         hl = 35;
 
-        // Photos
-        // console.log("Convirtiendo : ", this.photo[0]['picture']);
-        // var oImg = document.createElement("img");
-        // oImg.setAttribute('src', this.photo[5]['picture']);
-        // oImg.setAttribute('alt', 'na');
-        // oImg.setAttribute('height', '250px');
-        // oImg.setAttribute('width', '250px');
-        // document.body.appendChild(oImg);
-
-        // await html2canvas(oImg, { 
-        //     scale: 1,
-        //     useCORS: true, 
-        //     // allowTaint: true,
-        //     // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-        //     logging: true,
-        //     // backgroundColor: null,
-        //     removeContainer: true
-        //     })
-        //     .then(function (canvas) { 
-        //         console.log("CANVAS DE LA IMAGE", canvas);
-        //         doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 65);
-        //     });
-
-        // var oImg = document.createElement("img");
-        // oImg.setAttribute('src', this.photo[5]['picture']);
-        // oImg.setAttribute('alt', 'na');
-        // oImg.setAttribute('height', '250px');
-        // oImg.setAttribute('width', '250px');
-        // document.body.appendChild(oImg);
-
-        // await html2canvas(oImg, { 
-        //     scale: 1,
-        //     useCORS: true, 
-        //     // allowTaint: true,
-        //     // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
-        //     logging: true,
-        //     // backgroundColor: null,
-        //     removeContainer: true
-        //     })
-        //     .then(function (canvas) { 
-        //         console.log("CANVAS DE LA IMAGE", canvas);
-        //         doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 60, hl, 75, 65);
-        //     });
-
-        // doc.addPage();
-        // hl = 20;
         // Names
         if (this.name.length > 0) {
             let headTable = [];
