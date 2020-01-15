@@ -59,6 +59,8 @@ Visite el Gitlab Page del [Projecto](https://kennbroorg.gitlab.io/ikyweb/)
 
 [Video Demo](https://vimeo.com/347085110 "Video Demo - Click to Watch!")
 
+
+
 ## Instalación
 
 ### Clonar el repositorio
@@ -70,7 +72,9 @@ git clone https://gitlab.com/kennbroorg/iKy.git
 ### Instalar Backend
 
 #### Redis
+
 Se debe instalar Redis
+
 ```shell
 wget http://download.redis.io/redis-stable.tar.gz
 tar xvzf redis-stable.tar.gz
@@ -79,34 +83,18 @@ make
 sudo make install
 ```
 
-Y ejecutar el server en una terminal
-```shell
-redis-server
-```
-
 #### Python y Celery
+
 Se debe instalar las librerías en requirements.txt
 
 ```shell
 python3 -m pip install -r requirements.txt
 ```
 
-Y ejecutar celery en otra terminal, dentro del directorio **backend**
-
-```shell
-cd backend
-./celery.sh
-```
-
-Por último, otra vez, en otra terminal ejecutar app.py dentro del directorio **backend** 
-
-```shell
-python3 app.py
-```
-
 ### Instalar Frontend
 
 #### Node
+
 Primero que nada, instalar [nodejs](https://nodejs.org/es/).
 
 #### Dependencias
@@ -117,7 +105,37 @@ Dentro del directorio **frontend** instalar las dependencias
 cd frontend
 npm install
 ```
-#### Encender servidor
+
+
+
+## Encender iKy Tool
+
+### Encender el Backend
+
+#### Redis
+
+Y ejecutar el server en una terminal
+
+```shell
+redis-server
+```
+
+#### Python y Celery
+
+Ejecutar celery en otra terminal, dentro del directorio **backend**
+
+```shell
+cd backend
+./celery.sh
+```
+
+Otra vez, en otra terminal ejecutar app.py dentro del directorio **backend** 
+
+```shell
+python3 app.py
+```
+
+### Encender el Frontend
 
 Finalmente, ejecutar dentro del directorio **frontend** el siguiente comando :
 
@@ -125,15 +143,45 @@ Finalmente, ejecutar dentro del directorio **frontend** el siguiente comando :
 npm start
 ```
 
+### Pantalla luego de encender iKy
+
+<div align="center">
+    <img src="frontend/src/assets/images/Screens1000.png">
+</div>
+
 ### Browser
+
 Abrir el browser en esta [url](http://127.0.0.1:4200)
 
 ### Config API Keys
+
 Una vez que la aplicación esté cargada en el browser, deberá ir a la opción Api Keys y llenar los valores de las APIs que se necesitan.
 
 - Fullcontact : Generar las APIs desde [aquí](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs)
 - Twitter : Generar las APIs desde [aquí](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
 - Linkedin : Solo se debe cargar el usuario y contraseña de su cuenta 
+
+- HaveIBeenPwned : Generar las APIs desde [aquí](https://haveibeenpwned.com/API/Key) (Paga)
+
+
+
+# Wiki
+
+- [iKy Wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/home)
+- [iKy Page](https://kennbroorg.gitlab.io/ikyweb/)
+- Installation
+  - [Easy Install](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/EasyInstall)
+  - [Vagrant](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Vagrant)
+  - [Manual install (Compacted)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Compacted))
+  - [Manual install (Detailed)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Detailed))
+- APIs
+  - [APIs through frontend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-through-the-browser)
+  - [APIs through backend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/APIs-through-the-backend)
+- Backend
+  - [Backend through URL](https://gitlab.com/kennbroorg/iKy/-/wikis/Backend/Backend-through-url)
+- [Disclaimer](https://gitlab.com/kennbroorg/iKy/-/wikis/Disclaimer)
+
+
 
 ## Aviso Legal
 
@@ -157,3 +205,150 @@ Por cierto, para quienes insistan en acordarse de mi madre, ella murió hace muc
 [readmees]: README.es.md
 [readmeen]: README.md
 
+
+
+
+
+
+
+
+
+## Installation
+
+### Clone repository
+
+```shell
+git clone https://gitlab.com/kennbroorg/iKy.git
+```
+
+### Install Backend
+
+#### Redis
+
+You must install Redis
+
+```shell
+wget http://download.redis.io/redis-stable.tar.gz
+tar xvzf redis-stable.tar.gz
+cd redis-stable
+make
+sudo make install
+```
+
+#### Python stuff and Celery
+
+You must install the libraries inside requirements.txt
+
+```shell
+python3 -m pip install -r requirements.txt
+```
+
+### Install Frontend
+
+#### Node
+
+First of all, install [nodejs](https://nodejs.org/en/).
+
+#### Dependencias
+
+Inside the directory **frontend** install the dependencies
+
+```shell
+cd frontend
+npm install
+```
+
+
+
+## Wake up iKy Tool
+
+### Turn on Backend
+
+#### Redis
+
+Turn on the server in a terminal
+
+```shell
+redis-server
+```
+
+#### Python stuff and Celery
+
+Turn on Celery in another terminal, within the directory **backend**
+
+```shell
+./celery.sh
+```
+
+Again, in another terminal turn on backend app from directory **backend** 
+
+```shell
+python3 app.py
+```
+
+### Turn on Frontend
+
+Finally, to run frontend server, execute the following command from directory **frontend**
+
+```shell
+npm start
+```
+
+### Screen after turn on iKy
+
+<div align="center">
+    <img src="frontend/src/assets/images/Screens1000.png">
+</div>
+
+### Browser
+
+Open the browser in this [url](http://127.0.0.1:4200) 
+
+### Config API Keys
+
+Once the application is loaded in the browser, you should go to the Api Keys option and load the values of the APIs that are needed.
+
+- Fullcontact: Generate the APIs from [here](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs)
+- Twitter: Generate the APIs from [here](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
+- Linkedin: Only the user and password of your account must be loaded
+- HaveIBeenPwned : Generate the APIs from [here](https://haveibeenpwned.com/API/Key) (Paid)
+
+
+
+# Wiki
+
+- [iKy Wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/home)
+- [iKy Page](https://kennbroorg.gitlab.io/ikyweb/)
+- Installation
+  - [Easy Install](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/EasyInstall)
+  - [Vagrant](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Vagrant)
+  - [Manual install (Compacted)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Compacted))
+  - [Manual install (Detailed)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Detailed))
+- APIs
+  - [APIs through frontend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-through-the-browser)
+  - [APIs through backend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/APIs-through-the-backend)
+- Backend
+  - [Backend through URL](https://gitlab.com/kennbroorg/iKy/-/wikis/Backend/Backend-through-url)
+- [Disclaimer](https://gitlab.com/kennbroorg/iKy/-/wikis/Disclaimer)
+
+
+
+## Disclaimer
+
+Anyone who contributes or contributed to the project, including me, is not responsible for the use of the tool (Neither the legal use nor the illegal use, nor the "other" use).
+
+Keep in mind that this software was initially written for a joke, then for educational purposes (to educate ourselves), and now the goal is to collaborate with the community making quality free software, and while the quality is not excellent (sometimes not even good) we strive to pursue excellence.
+
+Consider that all the information collected is free and available online, the tool only tries to discover, collect and display it.
+Many times the tool cannot even achieve its goal of discovery and collection. Please load the necessary APIs before remembering my mother.
+If even with the APIs it doesn't show "nice" things that you expect to see, try other e-mails before you remember my mother.
+If you still do not see the "nice" things you expect to see, you can create an issue, contact us by e-mail or by any of the RRSS, but keep in mind that my mother is neither the creator nor Contribute to the project.
+
+We do not refund your money if you are not satisfied.
+I hope you enjoy using the tool as much as we enjoy doing it. The effort was and is enormous (Time, knowledge, coding, tests, reviews, etc.) but we would do it again.
+Do not use the tool if you cannot read the instructions and / or this disclaimer clearly.
+
+By the way, for those who insist on remembering my mother, she died many years ago but I love her as if she were right here.
+
+[readmees]: README.es.md
+[readmeen]: README.md
