@@ -58,15 +58,22 @@ Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
 
 [Video Demo](https://vimeo.com/347085110 "Video Demo - Click to Watch!")
 
+
+
 ## Installation
+
 ### Clone repository
+
 ```shell
 git clone https://gitlab.com/kennbroorg/iKy.git
 ```
 
 ### Install Backend
+
 #### Redis
+
 You must install Redis
+
 ```shell
 wget http://download.redis.io/redis-stable.tar.gz
 tar xvzf redis-stable.tar.gz
@@ -74,52 +81,104 @@ cd redis-stable
 make
 sudo make install
 ```
-And turn on the server in a terminal
-```shell
-redis-server
-```
 
 #### Python stuff and Celery
+
 You must install the libraries inside requirements.txt
+
 ```shell
 python3 -m pip install -r requirements.txt
 ```
-And turn on Celery in another terminal, within the directory **backend**
-```shell
-cd backend
-./celery.sh
-```
-Finally, again, in another terminal turn on backend app from directory **backend** 
-```shell
-python3 app.py
-```
 
 ### Install Frontend
+
 #### Node
+
 First of all, install [nodejs](https://nodejs.org/en/).
 
 #### Dependencias
+
 Inside the directory **frontend** install the dependencies
+
 ```shell
 cd frontend
 npm install
 ```
 
-#### Turn on Frontend Server
-Finally, to run frontend server, execute:
+
+
+## Wake up iKy Tool
+
+### Turn on Backend
+
+#### Redis
+
+Turn on the server in a terminal
+
+```shell
+redis-server
+```
+
+#### Python stuff and Celery
+
+Turn on Celery in another terminal, within the directory **backend**
+
+```shell
+./celery.sh
+```
+
+Again, in another terminal turn on backend app from directory **backend** 
+
+```shell
+python3 app.py
+```
+
+### Turn on Frontend
+
+Finally, to run frontend server, execute the following command from directory **frontend**
+
 ```shell
 npm start
 ```
 
+### Screen after turn on iKy
+
+<div align="center">
+    <img src="frontend/src/assets/images/Screens1000.png">
+</div>
+
 ### Browser
+
 Open the browser in this [url](http://127.0.0.1:4200) 
 
 ### Config API Keys
+
 Once the application is loaded in the browser, you should go to the Api Keys option and load the values of the APIs that are needed.
 
 - Fullcontact: Generate the APIs from [here](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs)
 - Twitter: Generate the APIs from [here](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
 - Linkedin: Only the user and password of your account must be loaded
+- HaveIBeenPwned : Generate the APIs from [here](https://haveibeenpwned.com/API/Key) (Paid)
+
+
+
+# Wiki
+
+- [iKy Wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/home)
+- [iKy Page](https://kennbroorg.gitlab.io/ikyweb/)
+- Installation
+  - [Easy Install](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/EasyInstall)
+  - [Vagrant](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Vagrant)
+  - [Manual install (Compacted)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Compacted))
+  - [Manual install (Detailed)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Detailed))
+- APIs
+  - [APIs through frontend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-through-the-browser)
+  - [APIs through backend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/APIs-through-the-backend)
+- Backend
+  - [Backend through URL](https://gitlab.com/kennbroorg/iKy/-/wikis/Backend/Backend-through-url)
+- [Disclaimer](https://gitlab.com/kennbroorg/iKy/-/wikis/Disclaimer)
+
+
 
 ## Disclaimer
 
