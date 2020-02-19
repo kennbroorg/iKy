@@ -10,6 +10,7 @@ export class EmailrepInfoComponent implements OnInit {
     @ViewChild('nbCardGraphs') private nbCardContainer: ElementRef;
     @Input() private data: any;
     private emailrepInfo : any;
+    private statusFull : any;
     private validation : any;
 
     constructor(private dialogService: NbDialogService) {}
@@ -18,6 +19,8 @@ export class EmailrepInfoComponent implements OnInit {
         console.log("EmailRep Info Component");
         this.emailrepInfo = this.data.result[4].graphic[0].details;
         this.validation = this.data.result[2].validation;
+        this.statusFull = this.data.result[3].raw[0].title;
+        console.log("EmailRep status: ", this.statusFull);
     }
 
     openDialog(dialog: TemplateRef<any>) {
