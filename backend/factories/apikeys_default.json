@@ -20,23 +20,28 @@
     "key": ""
   },
   {
-    "id": 4,
+    "id": 5,
     "name": "fullcontact_api",
     "key": ""
   },
   {
-    "id": 5,
+    "id": 6,
     "name": "linkedin_user",
     "key": ""
   },
   {
-    "id": 6,
+    "id": 7,
     "name": "linkedin_pass",
     "key": ""
   },
   {
-    "id": 6,
+    "id": 8,
     "name": "haveibeenpwned_key",
+    "key": ""
+  }
+  {
+    "id": 9,
+    "name": "emailrep_key",
     "key": ""
   }
 ]
