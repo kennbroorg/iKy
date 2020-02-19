@@ -115,7 +115,7 @@ def t_linkedin(email, from_m):
         req = s.get(url, headers=headers)
 
         id = re.findall(
-            '\/voyager\/api\/identity\/profiles\/([a-z]*)\/profileView',
+            '\/voyager\/api\/identity\/profiles\/([a-z]*)\/',
             req.text)
 
         # url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
