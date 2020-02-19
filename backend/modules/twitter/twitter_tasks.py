@@ -108,12 +108,16 @@ def t_twitter(username, from_m):
     for hashtag in list(dict.fromkeys(strings)):
         hashtags.append({"label": hashtag})
 
-    Tweet_item = {"name": tweet.created_at.strftime("%Y-%m"), "series": [
-                 {"name": "Tweet", "value": sumTweet},
-                 {"name": "ReTweet", "value": sumReTweet}]}
+    try:
+        Tweet_item = {"name": tweet.created_at.strftime("%Y-%m"), "series": [
+                     {"name": "Tweet", "value": sumTweet},
+                     {"name": "ReTweet", "value": sumReTweet}]}
+    except:
+        Tweet_item = {"name": "-", "series": [
+                     {"name": "Tweet", "value": 0},
+                     {"name": "ReTweet", "value": 0}]}
     # tweetslist.append(Tweet_item)
     tweetslist.insert(0, Tweet_item)
-
 
     users = []
     link_users = "Users"
