@@ -12,7 +12,7 @@ import {select as d3Select} from 'd3-selection';
     styleUrls: ['./text-scramble.component.scss']
 })
 export class TextScrambleComponent implements OnInit, AfterViewInit {
-    @ViewChild('cardScramble') private cardContainer: ElementRef;
+    @ViewChild('cardScramble', { static: false }) private cardContainer: ElementRef;
     @Input() private data: Array<any>;
   
     public width: number;

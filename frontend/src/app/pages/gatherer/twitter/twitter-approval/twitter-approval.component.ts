@@ -11,7 +11,7 @@ export class TwitterApprovalComponent implements OnInit, AfterViewInit {
     showLabels = true;
     themeSubscription: any;
 
-    @ViewChild('nbCardTwitterApproval') private cardContainer: ElementRef;
+    @ViewChild('nbCardTwitterApproval', { static: false }) private cardContainer: ElementRef;
     @Input() private data: any;
     private twitterApproval : any;
 

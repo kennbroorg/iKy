@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./socialscan-email.component.scss']
 })
 export class SocialscanEmailComponent implements OnInit {
-    @ViewChild('nbCardSocialscanEmail') private nbCardContainer: ElementRef;
+    @ViewChild('nbCardSocialscanEmail', { static: false }) private nbCardContainer: ElementRef;
     @Input() private data: any;
     private socialscanEmail : any;
     private validation : any;

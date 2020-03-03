@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./instagram-graphs.component.scss']
 })
 export class InstagramGraphsComponent implements OnInit {
-    @ViewChild('nbCardGraphs') private nbCardContainer: ElementRef;
+    @ViewChild('nbCardGraphs', { static: false }) private nbCardContainer: ElementRef;
     @Input() private data: any;
     private instagramGraphs : any;
     private validation : any;

@@ -11,7 +11,7 @@ export class SearchListComponent implements OnInit, AfterViewInit {
     contacts: any[];
     recent: any[];
 
-    @ViewChild('nbCardSearchList') private cardContainer: ElementRef;
+    @ViewChild('nbCardSearchList', { static: false }) private cardContainer: ElementRef;
     @Input() private data: any;
     private searchList : any;
     private validation : any;

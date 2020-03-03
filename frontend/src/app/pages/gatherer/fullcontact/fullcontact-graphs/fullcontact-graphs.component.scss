@@ -8,53 +8,6 @@
     padding: 0;
   }
 
-  /* borders  */ 
-
-  .border-default {
-    border: 2px solid transparent;
-    border-image: url("assets/images/border-1-default.svg") ;
-    border-image-slice: 20;
-    border-image-repeat: stretch;
-    border-image-outset: 1;
-    border-image-width: 5;
-  }
-
-  .border-primary {
-    border: 5px solid;
-    border-image: url("assets/images/border-primary.svg") 20 repeat;
-    border-image-outset: 0;
-    border-image-width: 5;
-  }
-
-  .border-warning {
-    border: 5px solid;
-    border-image: url("assets/images/border-warning.svg") 20 repeat;
-    border-image-outset: 0;
-    border-image-width: 5;
-  }
-
-  .border-success {
-    border: 5px solid;
-    border-image: url("assets/images/border-success.svg") 20 repeat;
-    border-image-outset: 0;
-    border-image-width: 5;
-  }
-
-  .border-info {
-    border: 5px solid;
-    border-image: url("assets/images/border-info.svg") 20 repeat;
-    border-image-outset: 0;
-    border-image-width: 5;
-  }
-
-  .border-danger {
-    border: 5px solid;
-    border-image: url("assets/images/border-danger.svg") 20 repeat;
-    border-image-outset: 0;
-    border-image-width: 5;
-  }
-
-
   @include media-breakpoint-down(md) {
   }
   @include media-breakpoint-down(sm) {

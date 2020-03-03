@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./search-mentions.component.scss']
 })
 export class SearchMentionsComponent implements OnInit, AfterViewInit {
-    @ViewChild('nbCardMentionsHashtag') private cardContainer: ElementRef;
+    @ViewChild('nbCardMentionsHashtag', { static: false }) private cardContainer: ElementRef;
     @Input() private data: any;
     private searchMentions : any;
 

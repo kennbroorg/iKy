@@ -9,7 +9,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./linkedin-bubble.component.scss']
 })
 export class LinkedinBubbleComponent implements OnInit {
-    @ViewChild('nbCardLinkedinBubble') private nbCardContainer: ElementRef;
+    @ViewChild('nbCardLinkedinBubble', { static: false }) private nbCardContainer: ElementRef;
     @Input() private data: any;
     private linkedinBubble : any;
     private validation : any;

@@ -3,9 +3,20 @@ import { NgModule } from '@angular/core';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ChartModule } from 'angular2-chartjs';
-import { NbDialogModule, NbWindowModule } from '@nebular/theme';
+import { 
+    NbListModule, 
+    NbUserModule, 
+    NbActionsModule, 
+    NbButtonModule, 
+    NbCardModule, 
+    NbIconModule, 
+    NbSpinnerModule, 
+    NbTabsetModule, 
+    NbDialogModule, 
+    NbTooltipModule,
+    NbWindowModule } from '@nebular/theme';
 
-import { NbBadgeModule, NbCardModule } from '@nebular/theme';
+import { NbBadgeModule } from '@nebular/theme';
 import { TreeModule } from 'angular-tree-component';
 
 import { ThemeModule } from '../../@theme/theme.module';
@@ -65,9 +76,17 @@ import { SharedModule } from '../shared/shared.module';
     NgxEchartsModule,
     NgxChartsModule, 
     ChartModule,
+    NbTabsetModule,
+    NbSpinnerModule,
+    NbIconModule,
+    NbButtonModule,
+    NbActionsModule,  
+    NbListModule,
+    NbUserModule,
     NbBadgeModule,
     TreeModule,
     NbCardModule,
+    NbTooltipModule,
     SharedModule,
     LeafletModule,
     NbDialogModule.forChild(),

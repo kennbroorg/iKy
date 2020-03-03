@@ -2,169 +2,114 @@
 @import '~@nebular/theme/styles/theming';
 // @nebular out of the box themes
 @import '~@nebular/theme/styles/themes';
-
-// which themes you what to enable (empty to enable all)
-$nb-enabled-themes: (default, cosmic, corporate);
+// New font
+@import '../../../assets/font/fonts.scss';
 
 $nb-themes: nb-register-theme((
- // app wise variables for each theme
-  sidebar-header-gap: 2rem,
-  sidebar-header-height: initial,
-  layout-content-width: 1400px,
-
-  font-main: Roboto,
-  font-secondary: Exo,
-
-  switcher-background: #ebeff5,
-  switcher-background-percentage: 50%,
-  drops-icon-line-gadient: -webkit-linear-gradient(#01dbb5, #0bbb79),
-
-  list-item-border-width: 1px,
-
-  slide-out-container-width: 30%,
-  slide-out-background: linear-gradient(270deg, #f7fafb 0%, #ecf2f5 100%),
-  slide-out-shadow-color: 0 4px 14px 0 #a2d2c8,
-  slide-out-shadow-color-rtl: 0 4px 14px 0 #a2d2c8,
-
-  chart-panel-summary-box-shadow: none,
-  chart-panel-summary-background-color: #ecf2f5,
-  chart-panel-summary-border-color: #ebeff1,
-  chart-panel-summary-border-width: 1px,
-
-  ecommerce-card-border-width: 1px,
-
-  progress-bar-background: linear-gradient(90deg, #3edd81 0%, #3bddaf 100%),
+  layout-padding-top: 2.25rem,
 ), default, default);
 
 $nb-themes: nb-register-theme((
+  layout-padding-top: 2.25rem,
+), corporate, corporate);
 
-  // color-bg: rgba(5, 252, 252, 0.1),
-  color-bg: rgba(0, 0, 0, 0.5),
-  color-bg-active: rgba(0, 0, 0, 0.5),
-  // color-bg-active : rgba(5, 252, 252, 0.2),
-  // shadow: 0px 0px 0px #05fcfc,
-  // shadow: inset 0 0 5px #05fcfc,
-  color-fg: #05fcfc,
-  color-fg-heading: #05fcfc,
-  color-fg-text: #05fcfc,
-  color-fg-highlight: #05fcfc,
-  // layout-bg: #181818,
-  // layout-bg: url("https://mdbootstrap.com/img/Photos/Horizontal/Nature/full page/img(20).jpg"),
-  layout-bg: url("assets/images/blur-bg.jpg") no-repeat center center fixed,
-  layout-window-mode-bg: #181818,
-  // radius: 0.5rem,
-  radius: 0px,
-  // card-border-radius: 0.5rem,
-  card-border-radius: 0px,
-  // footer-bg: #181818,
-  footer-bg: rgba(0, 0, 0, 0.5),
-  footer-fg: #05fcfc,
-  footer-separator: rgba(0, 0, 0, 0.5),
-  // sidebar-bg: #181818,
-  sidebar-bg: rgba(0, 0, 0, 0.5),
-  // sidebar-fg: red,
-  // separator: #05fcfc,
-  // separator: rgba(5, 252, 252, 0.5),
-  // separator: rgba(0, 249, 166, 0.5),
-  separator: rgba(153, 153, 153, 0.5),
-  // separator: rgba(0, 0, 0, 0.8),
-  scrollbar-bg: rgba(0, 0, 0, 0.3),
-  scrollbar-fg: rgba(0, 0, 0, 0.8),
-  // scrollbar-bg: #017a7a,
-  // scrollbar-fg: #05fcfc,
-  // card-border-width: 1px,
-  // card-border-type: solid,
-  // card-border-color: #05fcfc,
-  menu-bg: error,
-  menu-fg: error,
-  menu-active-bg: rgba(0, 0, 0, 0.3),
-  menu-active-fg: error,
-  menu-submenu-bg: error,
-  menu-submenu-fg: error,
-  menu-submenu-active-bg: rgba(0, 0, 0, 0.3),
-  menu-submenu-active-fg: error,
-
-  // Shadow
-  shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.6),
-  // sidebar-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.6),
-  sidebar-shadow: 0 0 0 0 rgba(0, 0, 0, 0.6),
-
-  // Search
-  search-bg: rgba(0, 0, 0, 0.1),
-  search-placeholder: #017a7a,
-
-  // Menu
-  menu-icon-font-size: 1.5rem,
-  menu-icon-margin: 0 1rem 0 0,
-
-  //Badge
-  badge-fg-text: #333333,
-  badge-danger-bg-color: rgba(0, 0, 0, 0),
-  badge-warning-bg-color: rgba(0, 0, 0, 0),
-  badge-success-bg-color: rgba(0, 0, 0, 0),
-  // badge-danger-bg-color: #f68081,
-  // badge-warning-bg-color: #f9e968,
-  // badge-success-bg-color: #b5db5b,
-
-  //spinner
-  spinner-bg: rgba(0, 0, 0, 0.5),
-
-  // app wise variables for each theme
-  sidebar-height: 85vh,
-  sidebar-header-gap: 2rem,
-  sidebar-header-height: initial,
-  layout-content-width: 1400px,
-
-  font-main: Roboto,
-  font-secondary: Exo,
-
-  switcher-background: #4e41a5,
-  switcher-background-percentage: 14%,
-  drops-icon-line-gadient: -webkit-linear-gradient(#a258fe, #7958fa),
-
-  list-item-border-width: 1px,
-
-  slide-out-container-width: 30%,
-  slide-out-background: radial-gradient(circle, #302c6e 0%, #423f8c 100%),
-  // slide-out-shadow-color: 2px 0 3px rgba(19, 19, 94, 0.9),
-  // slide-out-shadow-color-rtl: -2px 0 3px rgba(19, 19, 94, 0.9),
-
-  chart-panel-summary-box-shadow: none,
-  chart-panel-summary-background-color: rgba(0, 0, 0, 0.1),
-  chart-panel-summary-border-color: #332e73,
-  chart-panel-summary-border-width: 1px,
-
-  ecommerce-card-border-width: 1px,
-
-  progress-bar-background: linear-gradient(90deg, #00c7c7 0%, #00d977 100%),
+$nb-themes: nb-register-theme((
+  layout-padding-top: 2.25rem,
 ), cosmic, cosmic);
 
 $nb-themes: nb-register-theme((
-  // app wise variables for each theme
-  sidebar-header-gap: 2rem,
+  layout-padding-top: 2.25rem,
+), dark, dark);
+
+$nb-themes: nb-register-theme((
+  layout-padding-top: 2.25rem,
+
+  layout-background-color: rgba(0, 0, 0, 0.5),
+  header-background-color: rgba(0, 0, 0, 0.5),
+  footer-background-color: rgba(0, 0, 0, 0.5),
+
+  card-background-color: rgba(0, 0, 0, 0.5),
+  shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.6),
+  background-basic-color-1: rgba(0, 0, 0, 0.5),
+
+  text-basic-color: #05fcfc,
+
+  sidebar-height: 85vh,
   sidebar-header-height: initial,
-  layout-content-width: 1400px,
+  sidebar-menu-item-highlight-color: #4e41a5,
+  sidebar-shadow: 0 0 0 0 rgba(0, 0, 0, 0.6),
+  
+  menu-item-icon-color: #05fcfc,
+  menu-item-hover-text-color: rgba(5, 252, 252, 0.8),
+  menu-item-hover-background-color: rgba(0, 0, 0, 0.1),
+  menu-item-icon-hover-color: rgba(5, 252, 252, 0.8),
+  menu-item-active-background-color: rgba(0, 0, 0, 0.3),
+  menu-item-icon-margin: 0 0.5rem 0 0,
+  menu-item-divider-width: 0px,
+  menu-text-font-family: Roboto,
+  menu-text-font-size: 15px,
+  menu-text-font-weight: 400,
+  menu-item-padding: 0.1rem 2rem,
+  menu-item-icon-width: 1rem,
 
-  font-main: Roboto,
-  font-secondary: Exo,
+  scrollbar-background-color: rgba(0, 0, 0, 0.5),
+  scrollbar-color: rgba(0, 0, 0, 0.8),
 
-  switcher-background: #2b2d34,
-  switcher-background-percentage: 14%,
-  drops-icon-line-gadient: -webkit-linear-gradient(#e9e8eb, #a7a2be),
+  font-family-primary: Roboto,
+  font-family-secondary: Roboto,
+  text-heading-1-font-family: Roboto,
+  text-button-font-family: Roboto,
+  text-paragraph-font-family: Roboto,
 
-  list-item-border-width: 1px,
+  color-primary-default: #00f9a6,
+  color-primary-focus: #00f9a6,
+  color-primary-hover: #00b377,
+  color-primary-active: #00f9a6,
 
-  slide-out-container-width: 30%,
-  slide-out-background: 	linear-gradient(270deg, #f7fafb 0%, #ecf2f5 100%),
-  slide-out-shadow-color: 0 4px 14px 0 #a2d2c8,
-  slide-out-shadow-color-rtl: 0 4px 14px 0 #a2d2c8,
+  search-info-text-font-weight: 300,
+  search-text-font-weight: 300,
+  search-placeholder-text-color: #00f9a6,
+  search-info-text-color: #00f9a6,
+  search-background-color: rgba(0, 0, 0, 0.5),
+  search-extra-background-color: rgba(0, 0, 0, 0.5),
+  search-divider-color: #016565,
+  layout-window-mode-background-color: #013232,
 
-  chart-panel-summary-box-shadow: none,
-  chart-panel-summary-background-color: #f7fafb,
-  chart-panel-summary-border-color: #ebeff1,
-  chart-panel-summary-border-width: 1px,
+  actions-text-font-weight: 300,
+  text-subtitle-font-weight: 300,
+  // divider-color: rgba(0, 249, 166, 0.5),
+  divider-color: rgba(5, 252, 252, 0.3),
 
-  ecommerce-card-border-width: 1px,
+  tabset-tab-text-font-weight: 300,
 
-  progress-bar-background: linear-gradient(90deg, #ff9f6f 0%, #ff8b97 100%),
-), corporate, corporate);
+  user-picture-box-background-color: rgba(0, 249, 166, 0.5),
+  user-picture-box-border-color: #00f9a6,
+  user-initials-text-color: rgba(0, 0, 0, 0.8),
+  user-title-text-font-weight: 300,
+  user-name-text-font-weight: 300,
+  text-paragraph-font-size: 1rem,
+  user-name-text-font-size: 1rem,
+
+  tooltip-primary-background-color: rgba(5, 252, 252, 0.8), 
+  tooltip-primary-border-color:  rgba(5, 252, 252, 1),
+  tooltip-primary-text-color: black,
+  tooltip-text-font-weight: 300,
+  tooltip-danger-text-color: black,
+  tooltip-success-text-color: black,
+  tooltip-warning-text-color: black,
+
+  toastr-success-background-color: rgba(0, 214, 143, 0.5),
+  toastr-success-text-color: black,
+  toastr-info-background-color: rgba(0, 149, 255, 0.5),
+  toastr-info-text-color: black,
+
+  text-paragraph-font-weight: 300,
+
+  accordion-header-border-color: rgba(5, 252, 252, 0.5), 
+  accordion-header-text-font-size: 15px,
+  accordion-header-text-font-weight: 400,
+  accordion-header-text-font-family: Roboto,
+  accordion-header-text-line-height: 1.5rem,
+
+), iKy, cosmic);
+

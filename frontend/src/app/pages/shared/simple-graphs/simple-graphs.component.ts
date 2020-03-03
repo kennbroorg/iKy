@@ -12,7 +12,7 @@ import {select as d3Select} from 'd3-selection';
     styleUrls: ['./simple-graphs.component.scss']
 })
 export class SimpleGraphsComponent implements OnInit, AfterViewInit {
-  @ViewChild('cardSimpleGraphs') private cardContainer: ElementRef;
+  @ViewChild('cardSimpleGraphs', { static: false }) private cardContainer: ElementRef;
   @Input() private data: Array<any>;
   @Input() private modal: boolean;
 

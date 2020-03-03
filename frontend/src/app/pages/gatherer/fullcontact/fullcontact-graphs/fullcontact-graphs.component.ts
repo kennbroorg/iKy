@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./fullcontact-graphs.component.scss']
 })
 export class FullcontactGraphsComponent implements OnInit {
-    @ViewChild('nbCardFullcontactGraphs') private nbCardContainer: ElementRef;
+    @ViewChild('nbCardFullcontactGraphs', { static: false }) private nbCardContainer: ElementRef;
     @Input() private data: any;
     private fullcontactGraphs : any;
     private statusFull : any;

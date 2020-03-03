@@ -5,26 +5,13 @@ import { NbSecurityModule, NbRoleProvider } from '@nebular/security';
 import { of as observableOf } from 'rxjs';
 
 import { throwIfAlreadyLoaded } from './module-import-guard';
-import { DataModule } from './data/data.module';
-import { AnalyticsService } from './utils/analytics.service';
-
-const socialLinks = [
-  {
-    url: 'https://github.com/akveo/nebular',
-    target: '_blank',
-    icon: 'socicon-github',
-  },
-  {
-    url: 'https://www.facebook.com/akveo/',
-    target: '_blank',
-    icon: 'socicon-facebook',
-  },
-  {
-    url: 'https://twitter.com/akveo_inc',
-    target: '_blank',
-    icon: 'socicon-twitter',
-  },
-];
+import {
+  AnalyticsService,
+  LayoutService,
+  PlayerService,
+  SeoService,
+  StateService,
+} from './utils';
 
 export class NbSimpleRoleProvider extends NbRoleProvider {
   getRole() {
@@ -34,7 +21,6 @@ export class NbSimpleRoleProvider extends NbRoleProvider {
 }
 
 export const NB_CORE_PROVIDERS = [
-  ...DataModule.forRoot().providers,
   ...NbAuthModule.forRoot({
 
     strategies: [
@@ -43,14 +29,6 @@ export const NB_CORE_PROVIDERS = [
         delay: 3000,
       }),
     ],
-    forms: {
-      login: {
-        socialLinks: socialLinks,
-      },
-      register: {
-        socialLinks: socialLinks,
-      },
-    },
   }).providers,
 
   NbSecurityModule.forRoot({
@@ -71,6 +49,10 @@ export const NB_CORE_PROVIDERS = [
     provide: NbRoleProvider, useClass: NbSimpleRoleProvider,
   },
   AnalyticsService,
+  LayoutService,
+  PlayerService,
+  SeoService,
+  StateService,
 ];
 
 @NgModule({

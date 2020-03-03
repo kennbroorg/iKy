@@ -12,7 +12,7 @@ import {select as d3Select} from 'd3-selection';
     styleUrls: ['./graphs.component.scss']
 })
 export class GraphsComponent implements OnInit, AfterViewInit {
-  @ViewChild('cardGraphs') private cardContainer: ElementRef;
+  @ViewChild('cardGraphs', { static: false }) private cardContainer: ElementRef;
   @Input() private data: Array<any>;
   @Input() private modal: boolean;
   @Input() private searcher: boolean;

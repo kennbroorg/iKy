@@ -1,4 +1,6 @@
 import { NgModule } from '@angular/core';
+import { NbMenuModule } from '@nebular/theme';
+import { NbIconModule } from '@nebular/theme';
 
 import { PagesComponent } from './pages.component';
 import { PrincipalModule } from './principal/principal.module';
@@ -9,19 +11,17 @@ import { ApiKeysModule } from './apikeys/apikeys.module';
 
 import { MiscellaneousModule } from './miscellaneous/miscellaneous.module';
 
-import { PagesRoutingModule } from './pages-routing.module';
 import { ThemeModule } from '../@theme/theme.module';
+import { PagesRoutingModule } from './pages-routing.module';
 
 import { SharedModule } from './shared/shared.module';
-
-const PAGES_COMPONENTS = [
-    PagesComponent,
-];
 
 @NgModule({
   imports: [
     PagesRoutingModule,
     ThemeModule,
+    NbMenuModule,
+    NbIconModule,
     PrincipalModule,
     GathererModule,
     ProfileModule,
@@ -31,8 +31,8 @@ const PAGES_COMPONENTS = [
     SharedModule,
   ],
   declarations: [
-    ...PAGES_COMPONENTS,
+    PagesComponent,
   ],
-}) 
+})
 export class PagesModule {
 }

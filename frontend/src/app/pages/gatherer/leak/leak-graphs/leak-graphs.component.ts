@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./leak-graphs.component.scss']
 })
 export class LeakGraphsComponent implements OnInit {
-    @ViewChild('nbCardLeakGraphs') private nbCardContainer: ElementRef;
+    @ViewChild('nbCardLeakGraphs', { static: true }) private nbCardContainer: ElementRef;
     @Input() private data: any;
     private leakGraphs : any;
   
@@ -28,8 +28,8 @@ export class LeakGraphsComponent implements OnInit {
 
         if (this.data.result[3].raw[0].title != null) {
             this.noData = this.data.result[3].raw[0].title;
+            console.log("Leak noData: ", this.noData);
         }
-        console.log("Leak noData: ", this.noData);
     }
 
     openDialog(dialog: TemplateRef<any>) {

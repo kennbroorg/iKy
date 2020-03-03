@@ -1,4 +1,4 @@
-<nb-card size="xlarge">
+<nb-card size="giant">
   <nb-card-header>
     <div class="cameras-card-header">
       <span class="cameras-card-title">Profile Photos</span>
@@ -14,8 +14,11 @@
   </nb-card-header>
   <nb-card-body>
     <div class="cameras single-view" *ngIf="isSingleView">
-      <div class="camera" [style.background-image]="'url(' + selectedPhoto.picture + ')'">
-        <span>{{ selectedPhoto.title }}</span>
+        <!-- <div class="camera" [style.background-image]="'url(' + selectedPhoto.picture + ')'"> -->
+      <div class="camera" style="text-align: center;">
+          <img id="singleImage" height="100%" src="{{selectedPhoto.picture}}"/>
+          <div id="descImage">{{ selectedPhoto.title }}</div>
+          <!-- <span>{{ selectedPhoto.title }}</span> -->
       </div>
     </div>
     <div class="cameras" *ngIf="!isSingleView">

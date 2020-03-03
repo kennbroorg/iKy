@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./search-hashtag.component.scss']
 })
 export class SearchHashtagComponent implements OnInit, AfterViewInit {
-    @ViewChild('nbCardSearchHashtag') private cardContainer: ElementRef;
+    @ViewChild('nbCardSearchHashtag', { static: false }) private cardContainer: ElementRef;
     @Input() private data: any;
     private searchHashtag : any;
 

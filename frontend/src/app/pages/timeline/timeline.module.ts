@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { NbBadgeModule, NbCardModule } from '@nebular/theme';
+import { NbButtonModule } from '@nebular/theme';
 
 import { ThemeModule } from '../../@theme/theme.module';
 import { TimelineComponent } from './timeline.component';
@@ -10,6 +11,7 @@ import { TimelineComponent } from './timeline.component';
     ThemeModule,
     NbBadgeModule,
     NbCardModule,
+    NbButtonModule,
   ],
   declarations: [
     TimelineComponent,

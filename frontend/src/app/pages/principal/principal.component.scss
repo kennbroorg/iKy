@@ -1,5 +1,4 @@
 @import '../../@theme/styles/themes';
-@import '~@nebular/bootstrap/styles/hero-buttons';
 
 @include nb-install-component() {
 
@@ -12,17 +11,12 @@
        
   .contact {
     display: flex;
-    // align-items: center;
-    // justify-content: space-between;
-    color: nb-theme(color-fg);
+    color: nb-theme(text-basic-color);
     padding: 1rem;
 
-    border-bottom: 1px solid nb-theme(separator);
-    border-top: 1px solid nb-theme(separator);
+    border-bottom: 1px solid nb-theme(divider-color);
+    border-top: 1px solid nb-theme(divider-color);
 
-    // &:not(:last-child) {
-    //   border-bottom: 1px solid nb-theme(separator);
-    // }
   }
 
   .i-contact {
@@ -38,7 +32,7 @@
 
   .time {
     font-size: 0.875rem;
-    font-weight: nb-theme(font-weight-light);
+    font-weight: 300;
     text-transform: uppercase;
   }
 
@@ -48,20 +42,16 @@
   }
 
   .user-name {
-    font-family: nb-theme(font-primary);
-    font-weight: nb-theme(font-weight-bold);
-    color: nb-theme(color-fg-heading);
-    font-size: 1.25rem;
+    font-family: nb-theme(font-family-primary);
+    font-weight: 500;
+    color: nb-theme(text-basic-color);
+    font-size: 1rem;
 
-    @include nb-for-theme(cosmic) {
-      font-weight: nb-theme(font-weight-bolder);
-    }
   }
 
   .user-title {
     font-size: 0.875rem;
-    font-weight: nb-theme(font-weight-light);
-    // text-transform: uppercase;
+    font-weight: nb-theme(text-paragraph-font-weight);
   }
 
   nb-user /deep/ {
@@ -71,55 +61,48 @@
     }
 
     .user-name {
-      font-family: nb-theme(font-primary);
-      font-weight: nb-theme(font-weight-bold);
-      color: nb-theme(color-fg-heading);
+      font-family: nb-theme(font-family-primary);
+      font-weight: nb-theme(text-paragraph-font-weight);
+      color: nb-theme(text-basic-color);
       font-size: 1.25rem;
 
-      @include nb-for-theme(cosmic) {
-        font-weight: nb-theme(font-weight-bolder);
-      }
     }
 
     .user-title {
       font-size: 0.875rem;
-      font-weight: nb-theme(font-weight-light);
-      // text-transform: uppercase;
+      font-weight: 300;
     }
   }
   
   #imagePrincipal {
-    height: calc(#{nb-theme(layout-min-height)} - #{nb-theme(header-height)} - #{nb-theme(footer-height)} - #{nb-theme(header-height)} - #{nb-theme(sidebar-header-gap)}) !important;  
+    // height: calc(#{nb-theme(layout-min-height)} - #{nb-theme(header-height)} - #{nb-theme(footer-height)} - #{nb-theme(header-height)} - #{nb-theme(sidebar-header-gap)}) !important;  
+    height: calc(#{nb-theme(layout-min-height)} - #{nb-theme(header-height)} - #{nb-theme(footer-height)} - #{nb-theme(header-height)}) !important;  
   }
 
   ngx-charts-pie-chart {
     display: block;
-    /* 
-    width: 100%;
-    height: nb-theme(card-height-small);
-    */
 
     /deep/ {
       .pie-label {
-        fill: nb-theme(color-fg-heading);
+        fill: nb-theme(text-basic-color);
       }
 
       .grid-line-path {
-        stroke: nb-theme(separator);
+        stroke: nb-theme(divider-color);
       }
 
       text {
-        fill: nb-theme(color-fg-heading);
+        fill: nb-theme(text-basic-color);
       }
 
       .chart-legend {
         .legend-labels {
-          background: nb-theme(color-bg);
+          background: nb-theme(layout-background-color);
         }
         .legend-label {
-          color: nb-theme(color-fg-heading);
+          color: nb-theme(text-basic-color);
           .active .legend-label-text {
-            color: nb-theme(color-fg-heading);
+            color: nb-theme(text-basic-color);
           }
         }
       }

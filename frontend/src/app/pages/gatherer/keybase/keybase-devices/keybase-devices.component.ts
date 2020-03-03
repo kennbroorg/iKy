@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./keybase-devices.component.scss']
 })
 export class KeybaseDevicesComponent implements OnInit {
-    @ViewChild('nbCardGraphs') private nbCardContainer: ElementRef;
+    @ViewChild('nbCardGraphs', { static: false }) private nbCardContainer: ElementRef;
     @Input() private data: any;
     private keybaseDevices : any;
     private validation : any;

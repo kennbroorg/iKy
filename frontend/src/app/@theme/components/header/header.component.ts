@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { NbMenuService, NbSidebarService } from '@nebular/theme';
-import { LayoutService } from '../../../@core/data/layout.service';
+// import { LayoutService } from '../../../@core/data/layout.service';
+import { LayoutService } from '../../../@core/utils';
 
 @Component({
   selector: 'ngx-header',
@@ -13,7 +14,6 @@ export class HeaderComponent implements OnInit {
   @Input() position = 'normal';
 
   user: any;
-
   userMenu = [{ title: 'Profile' }, { title: 'Log out' }];
 
   constructor(private sidebarService: NbSidebarService,
