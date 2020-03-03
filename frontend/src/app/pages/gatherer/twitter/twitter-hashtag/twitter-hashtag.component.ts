@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./twitter-hashtag.component.scss']
 })
 export class TwitterHashtagComponent implements OnInit, AfterViewInit {
-    @ViewChild('nbCardTwitterHashtag') private cardContainer: ElementRef;
+    @ViewChild('nbCardTwitterHashtag', { static: false }) private cardContainer: ElementRef;
     @Input() private data: any;
     private twitterHashtag : any;
 

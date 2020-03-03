@@ -8,7 +8,7 @@ import { NbDialogService } from '@nebular/theme';
 })
 export class TwitterResumeComponent implements OnInit, AfterViewInit {
 
-    @ViewChild('nbCardTwitterResume') private cardContainer: ElementRef;
+    @ViewChild('nbCardTwitterResume', { static: true }) private cardContainer: ElementRef;
     @Input() private data: any;
     private twitterResume : any;
 
@@ -37,7 +37,7 @@ export class TwitterResumeComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         this.width = this.cardContainer.nativeElement.parentNode.parentNode.clientWidth;
-        this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight;
+        this.height = this.cardContainer.nativeElement.parentNode.clientHeight;
         console.log("Twitter Resume Component");
 
         this.twitterResume = this.data.result[4].graphic[0].resume.children.map(this.arrayAdecuate);

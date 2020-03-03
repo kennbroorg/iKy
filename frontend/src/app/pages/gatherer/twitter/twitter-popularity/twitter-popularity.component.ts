@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./twitter-popularity.component.scss']
 })
 export class TwitterPopularityComponent implements OnInit, AfterViewInit {
-    @ViewChild('nbCardTwitterPopularity') private cardContainer: ElementRef;
+    @ViewChild('nbCardTwitterPopularity', { static: true }) private cardContainer: ElementRef;
     @Input() private data: any;
     private twitterPopularity : any;
 

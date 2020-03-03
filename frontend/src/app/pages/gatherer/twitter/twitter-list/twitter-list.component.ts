@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./twitter-list.component.scss']
 })
 export class TwitterListComponent implements OnInit, AfterViewInit {
-    @ViewChild('nbCardTwitterList') private cardContainer: ElementRef;
+    @ViewChild('nbCardTwitterList', { static: true }) private cardContainer: ElementRef;
     @Input() private data: any;
     private twitterList : any;
 
