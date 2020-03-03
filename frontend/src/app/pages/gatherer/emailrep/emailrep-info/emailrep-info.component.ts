@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./emailrep-info.component.scss']
 })
 export class EmailrepInfoComponent implements OnInit {
-    @ViewChild('nbCardGraphs') private nbCardContainer: ElementRef;
+    @ViewChild('nbCardGraphs', { static: true }) private nbCardContainer: ElementRef;
     @Input() private data: any;
     private emailrepInfo : any;
     private statusFull : any;
@@ -19,8 +19,13 @@ export class EmailrepInfoComponent implements OnInit {
         console.log("EmailRep Info Component");
         this.emailrepInfo = this.data.result[4].graphic[0].details;
         this.validation = this.data.result[2].validation;
-        this.statusFull = this.data.result[3].raw[0].title;
-        console.log("EmailRep status: ", this.statusFull);
+        try {
+             this.statusFull = this.data.result[3].raw[0].title;
+        }
+        catch (e) {
+             this.statusFull = "";
+        }
+        console.log("Emailrep Status: ", this.statusFull);
     }
 
     openDialog(dialog: TemplateRef<any>) {

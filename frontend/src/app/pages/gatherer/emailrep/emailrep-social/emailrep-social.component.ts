@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./emailrep-social.component.scss']
 })
 export class EmailrepSocialComponent implements OnInit {
-    @ViewChild('nbCardGraphs') private nbCardContainer: ElementRef;
+    @ViewChild('nbCardGraphs', { static: false }) private nbCardContainer: ElementRef;
     @Input() private data: any;
     private emailrepSocial : any;
     private validation : any;
