@@ -11,7 +11,7 @@ export class LinkedinCertsComponent implements OnInit, AfterViewInit {
     contacts: any[];
     recent: any[];
 
-    @ViewChild('nbCardLinkedinCert') private cardContainer: ElementRef;
+    @ViewChild('nbCardLinkedinCert', { static: false }) private cardContainer: ElementRef;
     @Input() private data: any;
     private linkedinCerts : any;
     private linkedinPositions : any;

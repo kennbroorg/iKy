@@ -1,5 +1,4 @@
 @import '../../../../@theme/styles/themes';
-@import '~@nebular/bootstrap/styles/hero-buttons';
 
 @include nb-install-component() {
   nb-tabset {
@@ -18,15 +17,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color: nb-theme(color-fg);
+    color: nb-theme(text-basic-color);
     padding: 1rem;
 
     &:not(:last-child) {
-      border-bottom: 1px solid nb-theme(separator);
+      border-bottom: 1px solid nb-theme(divider-color);
 
-      @include nb-for-theme(corporate) {
-        border-bottom-color: nb-theme(tabs-separator);
-      }
     }
   }
 
@@ -37,7 +33,7 @@
 
   .time {
     font-size: 0.875rem;
-    font-weight: nb-theme(font-weight-light);
+    font-weight: nb-theme(text-paragraph-font-weight);
     text-transform: uppercase;
   }
 
@@ -48,31 +44,17 @@
     }
 
     .user-name {
-      font-family: nb-theme(font-secondary);
-      font-weight: nb-theme(font-weight-bold);
-      color: nb-theme(color-fg-heading);
-      font-size: 1.25rem;
-
-      @include nb-for-theme(cosmic) {
-        font-weight: nb-theme(font-weight-bolder);
-      }
+      font-family: nb-theme(font-family-secondary);
+      font-weight: nb-theme(text-paragraph-font-weight);
+      color: nb-theme(text-basic-color);
+      font-size: 1rem;
     }
 
     .user-title {
       font-size: 0.875rem;
-      font-weight: nb-theme(font-weight-light);
+      font-weight: nb-theme(text-paragraph-font-weight);
       text-transform: uppercase;
     }
   }
 
-  /* borders  */ 
-
-  .border-default {
-    border: 2px solid transparent;
-    border-image: url("assets/images/border-1-default.svg") ;
-    border-image-slice: 20;
-    border-image-repeat: stretch;
-    border-image-outset: 1;
-    border-image-width: 5;
-  }
 }

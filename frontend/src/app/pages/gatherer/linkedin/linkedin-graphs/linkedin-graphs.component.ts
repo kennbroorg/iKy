@@ -8,7 +8,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./linkedin-graphs.component.scss']
 })
 export class LinkedinGraphsComponent implements OnInit {
-    @ViewChild('nbCardLinkedinGraphs') private nbCardContainer: ElementRef;
+    @ViewChild('nbCardLinkedinGraphs', { static: false }) private nbCardContainer: ElementRef;
     @Input() private data: any;
     private linkedinGraphs : any;
     private validation : any;
