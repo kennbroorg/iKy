@@ -460,7 +460,11 @@ def t_search(username, from_m="Initial"):
     # Different name
     names = [item['name'].strip() for item in output['names']]
     names_refined = collections.Counter(names)
-    best_match = process.extractBests(collections.Counter(names).most_common(2)[0][0], names, limit=len(names), score_cutoff=80)
+
+    try:
+        best_match = process.extractBests(collections.Counter(names).most_common(2)[0][0], names, limit=len(names), score_cutoff=80)
+    except:
+        best_match = []
 
     # Tokenize
     name_tokens = []

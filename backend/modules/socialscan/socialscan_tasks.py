@@ -32,7 +32,7 @@ def t_socialscan(email, from_m="Initial"):
     # Total
     total = []
     total.append({'module': 'socialscan'})
-    total.append({'param': username})
+    total.append({'param': email})
     total.append({'validation': 'no'})
 
     # Icons unicode
