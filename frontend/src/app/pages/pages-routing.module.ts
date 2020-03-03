@@ -13,29 +13,33 @@ import { NotFoundComponent } from './miscellaneous/not-found/not-found.component
 const routes: Routes = [{
   path: '',
   component: PagesComponent,
-  children: [{
-    path: 'principal',
-    component: PrincipalComponent,
-  }, {
-    path: 'gatherer',
-    component: GathererComponent,
-  }, {
-    path: 'profile',
-    component: ProfileComponent,
-  }, {
-    path: 'timeline',
-    component: TimelineComponent,
-  }, {
-    path: 'apikeys',
-    component: ApiKeysComponent,
-  }, {
-    path: '',
-    redirectTo: 'principal',
-    pathMatch: 'full',
-  }, {
-    path: '**',
-    component: NotFoundComponent,
-  }],
+  children: [
+    {
+      path: 'principal',
+      component: PrincipalComponent,
+    }, {
+      path: 'gatherer',
+      component: GathererComponent,
+    }, {
+      path: 'profile',
+      component: ProfileComponent,
+    }, {
+      path: 'timeline',
+      component: TimelineComponent,
+    }, {
+      path: 'apikeys',
+      component: ApiKeysComponent,
+    }, 
+    {
+      path: '',
+      redirectTo: 'principal',
+      pathMatch: 'full',
+    }, 
+    {
+      path: '**',
+      component: NotFoundComponent,
+    },
+  ],
 }];
 
 @NgModule({
