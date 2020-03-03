@@ -36,12 +36,12 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      color: nb-theme(color-fg);
+      color: nb-theme(text-basic-color);
     }
 
     a:first-child {
-      @include nb-ltr(border-left, 1px solid nb-theme(separator));
-      @include nb-rtl(border-right, 1px solid nb-theme(separator));
+      @include nb-ltr(border-left, 1px solid nb-theme(divider-color));
+      @include nb-rtl(border-right, 1px solid nb-theme(divider-color));
     }
 
     a:last-child {
@@ -50,8 +50,8 @@
     }
 
     a.active {
-      background-color: nb-theme(color-bg-active);
-      color: nb-theme(color-fg-heading);
+      background-color: nb-theme(layout-background-color);
+      color: nb-theme(header-background-color);
       border: none;
     }
   }
@@ -68,9 +68,22 @@
     .camera {
       height: 100%;
       width: 100%;
+      overflow-x: hidden;
 
       &::before {
         height: 100%;
+      }
+
+      #descImage {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        color: black;
+        background: rgba(5, 252, 252, 0.4);
+        font-family: nb-theme(font-family-secondary);
+        font-weight: nb-theme(text-paragraph-2-font-weight);
+        font-size: 1.25rem;
+        padding: 0.5rem 1rem;
       }
     }
   }
@@ -88,8 +101,8 @@
       width: 100%;
       color: white;
       background: rgba(0, 0, 0, 0.4);
-      font-family: nb-theme(font-secondary);
-      font-weight: nb-theme(font-weight-bolder);
+      font-family: nb-theme(font-family-secondary);
+      font-weight: nb-theme(text-paragraph-2-font-weight);
       font-size: 1.25rem;
       padding: 0.5rem 1rem;
     }
@@ -112,31 +125,27 @@
     padding: 0 0.5rem 0 0;
 
     i {
-      color: nb-theme(color-fg);
+      color: nb-theme(text-basic-color);
       font-size: 3rem;
       margin-right: 0.5rem;
 
-      @include nb-for-theme(corporate) {
-        color: nb-theme(actions-fg);
-      }
     }
 
     span {
-      font-family: nb-theme(font-secondary);
-      font-weight: nb-theme(font-weight-bold);
-      color: nb-theme(color-fg-heading);
+      font-family: nb-theme(font-family-secondary);
+      font-weight: nb-theme(text-paragraph-2-font-weight);
+      color: nb-theme(header-background-color);
       text-transform: uppercase;
     }
   }
 
   @include nb-for-theme(cosmic) {
     .cameras-filter a.active {
-      color: nb-theme(color-fg-highlight);
+      color: nb-theme(text-basic-color);
     }
 
     .camera {
       span {
-        // background: rgba(88, 73, 184, 0.5);
         background: rgba(5, 254, 254, 0.5);
         color : black;
       }
@@ -147,20 +156,7 @@
     }
 
     nb-action span {
-      font-weight: nb-theme(font-weight-bolder);
-    }
-  }
-
-  @include nb-for-theme(corporate) {
-    .cameras-filter a {
-      &.active {
-        color: nb-theme(color-primary);
-      }
-
-      &:first-child {
-        @include nb-ltr(border-left, 1px solid nb-theme(border-color));
-        @include nb-rtl(border-right, 1px solid nb-theme(border-color));
-      }
+      font-weight: nb-theme(text-paragraph-2-font-weight);
     }
   }
 

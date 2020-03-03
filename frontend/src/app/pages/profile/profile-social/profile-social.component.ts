@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { icon, findIconDefinition } from '@fortawesome/fontawesome-svg-core'
+/* import { icon, findIconDefinition } from '@fortawesome/fontawesome-svg-core' */
 
 @Component({
     selector: 'ngx-profile-social',

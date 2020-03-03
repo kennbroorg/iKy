@@ -17,6 +17,7 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
 
     export class ProfileComponent implements OnInit {
     private email: string;
+    private datas: any;
     public  gathered: any = [];
     public  searchSubs: any;
     public  profile: any = [];
@@ -26,6 +27,7 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
     public  social: any = [];
     public  photo: any = [];
     public  organization: any = [];
+    public  flipped = false;
 
     constructor(private router: Router,
                 private searchService: NbSearchService, 
@@ -114,4 +116,33 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
     ngOnDestroy () {
         this.searchSubs.unsubscribe();
     }
+
+    toggleFlipViewAndSearch(email, twitter, instagram, linkedin, github) {
+        this.flipped = !this.flipped;
+        console.log("Advance Search");
+        console.log("email", email);
+        console.log("twitter", twitter);
+        console.log("instagram", instagram);
+        console.log("linkedin", linkedin);
+        console.log("github", github);
+
+        // JSON datas
+        this.datas = {email: email, 
+            twitter: twitter, 
+            instagram: instagram,
+            linkedin: linkedin,
+            github: github
+        };
+        
+        this.gathered = this.dataGatherService.initialize();
+        console.log("Global data initialize", this.gathered);
+
+        this.gathered = this.dataGatherService.gathererInfoAdvance(this.datas); 
+        this.router.navigate(['/pages/gatherer'])
+    }
+
+    toggleFlipView() {
+        this.flipped = !this.flipped;
+    }
+
 }
