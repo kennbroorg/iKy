@@ -10,7 +10,7 @@ import { NbDialogService } from '@nebular/theme';
     templateUrl: './principal.component.html'
 })
 export class PrincipalComponent implements AfterViewInit {
-    @ViewChild('nbCardGitlabCode') private cardContainer: ElementRef;
+    @ViewChild('nbCardGitlabCode', { static: false }) private cardContainer: ElementRef;
     private card: any;
     private width: number = 0;
     private height: number = 0;
