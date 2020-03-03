@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./search-names.component.scss']
 })
 export class SearchNamesComponent implements OnInit, AfterViewInit {
-    @ViewChild('nbCardSearchNames') private cardContainer: ElementRef;
+    @ViewChild('nbCardSearchNames', { static: false }) private cardContainer: ElementRef;
     @Input() private data: any;
     private searchNames : any;
 

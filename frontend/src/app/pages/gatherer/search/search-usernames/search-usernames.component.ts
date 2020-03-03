@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./search-usernames.component.scss']
 })
 export class SearchUsernamesComponent implements OnInit, AfterViewInit {
-    @ViewChild('nbCardSearchUsernames') private cardContainer: ElementRef;
+    @ViewChild('nbCardSearchUsernames', { static: false }) private cardContainer: ElementRef;
     @Input() private data: any;
     private searchUsernames : any;
 

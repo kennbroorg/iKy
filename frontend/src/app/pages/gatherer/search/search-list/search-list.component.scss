@@ -1,5 +1,4 @@
 @import '../../../../@theme/styles/themes';
-@import '~@nebular/bootstrap/styles/hero-buttons';
 
 @include nb-install-component() {
 
@@ -13,16 +12,9 @@
   .contact {
     display: flex;
     align-items: center;
-    // justify-content: space-between;
-    color: nb-theme(color-fg);
+    color: nb-theme(text-basic-color);
     padding: 0px;
 
-    // border-bottom: 1px solid nb-theme(separator);
-    // border-top: 1px solid nb-theme(separator);
-
-    // &:not(:last-child) {
-    //   border-bottom: 1px solid nb-theme(separator);
-    // }
   }
 
   .i-contact {
@@ -31,53 +23,37 @@
   }
 
   .pf-char:before{
-      font-family: Arial; /* your font family here! */
+      font-family: Arial;
       font-weight: bold;
       content: attr(data-char-content);
   }
 
   .time {
     font-size: 0.875rem;
-    font-weight: nb-theme(font-weight-light);
+    font-weight: nb-theme(text-paragraph-font-weight);
     text-transform: uppercase;
   }
 
   .info-container {
-    // @include nb-ltr(margin-left, 0.875rem);
-    // @include nb-rtl(margin-right, 0.875rem);
-    @include nb-ltr(margin-left, 0rem);
+    @include nb-ltr(margin-left, 0.3rem);
     @include nb-rtl(margin-right, 0rem);
   }
 
   .user-name {
-    font-family: nb-theme(font-primary);
-    font-weight: nb-theme(font-weight-bold);
-    color: nb-theme(color-fg-heading);
-    font-size: 1rem;
+    font-family: nb-theme(font-family-primary);
+    font-weight: 500;
+    color: nb-theme(text-basic-color);
+    font-size: 0.8rem;
     white-space: nowrap; 
-    width: 300px;
     overflow: hidden;
     text-overflow: ellipsis; 
-
-    @include nb-for-theme(cosmic) {
-      font-weight: nb-theme(font-weight-bolder);
-    }
+    text-align: left;
   }
 
-  .user-title {
-    font-size: 0.875rem;
-    font-weight: nb-theme(font-weight-light);
-    // text-transform: uppercase;
+  .user-title p {
+    font-size: 0.8rem;
+    font-weight: 300;
+    line-height: 1rem;
   }
 
-  /* borders  */ 
-
-  .border-default {
-    border: 2px solid transparent;
-    border-image: url("assets/images/border-1-default.svg") ;
-    border-image-slice: 20;
-    border-image-repeat: stretch;
-    border-image-outset: 1;
-    border-image-width: 5;
-  }
 }
