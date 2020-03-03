@@ -6,7 +6,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
     styleUrls: ['./fullcontact-cloud.component.scss']
 })
 export class FullcontactCloudComponent implements OnInit {
-    @ViewChild('nbCardFullcontactCloud') private nbCardContainer: ElementRef;
+    @ViewChild('nbCardFullcontactCloud', { static: false }) private nbCardContainer: ElementRef;
     @Input() private data: any;
     private fullcontactCloud : any;
     private validation : any;

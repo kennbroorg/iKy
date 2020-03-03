@@ -7,7 +7,7 @@ import { TextScrambleComponent } from '../../../shared/text-scramble/text-scramb
     styleUrls: ['./fullcontact-scramble.component.scss']
 })
 export class FullcontactScrambleComponent implements OnInit {
-    @ViewChild('nbCardScramble') private nbCardContainer: ElementRef;
+    @ViewChild('nbCardScramble', { static: true }) private nbCardContainer: ElementRef;
     @Input() private data: any;
     private fullcontactScramble : any;
     private validation : any;
