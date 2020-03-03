@@ -14,7 +14,7 @@ import { mergeMap } from 'rxjs/operators';
 import { ToasterConfig } from 'angular2-toaster';
 import 'style-loader!angular2-toaster/toaster.css';
 import { NbGlobalLogicalPosition, NbGlobalPhysicalPosition, NbGlobalPosition, NbToastrService } from '@nebular/theme';
-import { NbToastStatus } from '@nebular/theme/components/toastr/model';
+// import { NbToastStatus } from '@nebular/theme/components/toastr/model';
 
 
 // Data Service
@@ -37,8 +37,9 @@ import html2canvas from 'html2canvas';
 })
 
 export class GathererComponent implements OnInit {
-    @ViewChild('pageGather') private nbCardContainer: ElementRef;
+    @ViewChild('pageGather', { static: false }) private nbCardContainer: ElementRef;
     public  gathered: any = [];
+    public  datas: any;
     public  processing: boolean = false;
     public  searchSubs: any;
     public  svg: any;
@@ -64,6 +65,8 @@ export class GathererComponent implements OnInit {
         soft: true,
         no: true,
     };
+
+    public  flipped = false;
 
 
     constructor(private searchService: NbSearchService, 
@@ -120,6 +123,36 @@ export class GathererComponent implements OnInit {
 
     checkValidation(val: any) {
         return this.validationShow[val]
+    }
+
+    toggleFlipViewAndSearch(email, twitter, instagram, linkedin, github) {
+        console.log("Advance Search");
+        console.log("email", email);
+        console.log("twitter", twitter);
+        console.log("instagram", instagram);
+        console.log("linkedin", linkedin);
+        console.log("github", github);
+
+        this.flipped = !this.flipped;
+
+        // JSON datas
+        this.datas = {email: email, 
+            twitter: twitter, 
+            instagram: instagram,
+            linkedin: linkedin,
+            github: github
+        };
+        
+        this.gathered = this.dataGatherService.initialize();
+        console.log("Global data initialize (Advance Gatherer)", this.gathered);
+
+        this.gathered = this.dataGatherService.gathererInfoAdvance(this.datas); 
+        this.gathered = this.dataGatherService.pullGather();
+
+    }
+
+    toggleFlipView() {
+        this.flipped = !this.flipped;
     }
 
     // As All Functions in js are asynchronus, to use await i am using async here
