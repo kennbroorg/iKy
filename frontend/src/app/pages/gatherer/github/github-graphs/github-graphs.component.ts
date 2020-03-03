@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./github-graphs.component.scss']
 })
 export class GithubGraphsComponent implements OnInit {
-    @ViewChild('nbCardGraphs') private nbCardContainer: ElementRef;
+    @ViewChild('nbCardGraphs', { static: false }) private nbCardContainer: ElementRef;
     @Input() private data: any;
     private githubGraphs : any;
     private validation : any;
