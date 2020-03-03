@@ -47,7 +47,7 @@
 
     /deep/ .main-container {
       width: $sidebar-width;
-      background: nb-theme(color-bg);
+      background: nb-theme(layout-background-color);
       transition: width 0.3s ease;
       overflow: hidden;
 
@@ -55,47 +55,26 @@
         width: $sidebar-width;
       }
 
-      @include nb-for-theme(cosmic) {
-        background: nb-theme(layout-bg);
-      }
     }
   }
 
   nb-sidebar.menu-sidebar {
 
-    margin-top: nb-theme(sidebar-header-gap);
+    margin-top: 10px;
+    // margin-top: nb-theme(sidebar-header-gap);
     // margin-top: 0;
-
-    @include nb-for-theme(corporate) {
-      margin-top: 0;
-    }
 
     /deep/ .main-container {
       height:
-        // calc(#{nb-theme(sidebar-height)} - #{nb-theme(header-height)} - #{nb-theme(footer-height)} - #{nb-theme(sidebar-header-gap)}) !important;
-        calc(#{nb-theme(sidebar-height)} - #{nb-theme(header-height)} - #{nb-theme(sidebar-header-gap)}) !important;
-      @include nb-ltr(border-top-right-radius, nb-theme(radius));
-      @include nb-rtl(border-top-left-radius, nb-theme(radius));
+        // calc(#{nb-theme(sidebar-height)} - #{nb-theme(header-height)} - #{nb-theme(sidebar-header-gap)}) !important;
+        calc(#{nb-theme(sidebar-height)} - #{nb-theme(header-height)}) !important;
+      @include nb-ltr(border-top-right-radius, nb-theme(border-radius));
+      @include nb-rtl(border-top-left-radius, nb-theme(border-radius));
 
       -webkit-box-shadow: 0 8px 20px 0 rgba(0,0,0,0.62);
       -moz-box-shadow: 0 8px 20px 0 rgba(0,0,0,0.62);
       box-shadow: 0 8px 20px 0 rgba(0,0,0,0.62);
 
-      @include nb-for-theme(corporate) {
-        border: 1px solid nb-theme(separator);
-        height:
-          calc(#{nb-theme(sidebar-height)} - #{nb-theme(header-height)}) !important;
-      }
-    }
-
-    /deep/ .scrollable {
-      @include nb-for-theme(corporate) {
-        padding-top: 0;
-
-        .menu-item:first-child {
-          border-top: none;
-        }
-      }
     }
 
     /deep/ nb-sidebar-header {
@@ -110,10 +89,6 @@
       margin-top: -2rem;
       font-weight: bold;
       transition: padding 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.48);
-
-      @include nb-for-theme(corporate) {
-        border-radius: nb-theme(radius);
-      }
 
       i {
         font-size: 2rem;

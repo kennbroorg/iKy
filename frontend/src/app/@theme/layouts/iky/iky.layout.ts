@@ -9,7 +9,7 @@ import {
   NbThemeService,
 } from '@nebular/theme';
 
-import { StateService } from '../../../@core/data/state.service';
+// import { StateService } from '../../../@core/data/state.service';
 
 // TODO: move layouts into the framework
 @Component({
@@ -18,7 +18,7 @@ import { StateService } from '../../../@core/data/state.service';
   template: `
     <nb-layout [center]="layout.id === 'center-column'" windowMode>
       <nb-layout-header fixed>
-        <ngx-header [position]="sidebar.id === 'start' ? 'normal': 'inverse'"></ngx-header>
+        <ngx-header></ngx-header>
       </nb-layout-header>
 
       <img style="width: 50%; position: absolute; display: block; left:0px; right: 0px; top: 10px; margin: 0 auto;" src="assets/images/iKy-Logo.png">
@@ -123,20 +123,20 @@ export class IkyLayoutComponent implements OnDestroy {
 
   currentTheme: string;
 
-  constructor(protected stateService: StateService,
+    constructor(// protected stateService: StateService,
               protected menuService: NbMenuService,
               protected themeService: NbThemeService,
               protected bpService: NbMediaBreakpointsService,
               protected sidebarService: NbSidebarService) {
-    this.stateService.onLayoutState()
-      .pipe(takeWhile(() => this.alive))
-      .subscribe((layout: string) => this.layout = layout);
-
-    this.stateService.onSidebarState()
-      .pipe(takeWhile(() => this.alive))
-      .subscribe((sidebar: string) => {
-        this.sidebar = sidebar;
-      });
+        //     this.stateService.onLayoutState()
+        //       .pipe(takeWhile(() => this.alive))
+        //       .subscribe((layout: string) => this.layout = layout);
+        // 
+        //     this.stateService.onSidebarState()
+        //       .pipe(takeWhile(() => this.alive))
+        //       .subscribe((sidebar: string) => {
+        //         this.sidebar = sidebar;
+        //       });
 
     const isBp = this.bpService.getByName('is');
     this.menuService.onItemSelect()

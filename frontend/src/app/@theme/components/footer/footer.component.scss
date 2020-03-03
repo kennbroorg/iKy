@@ -9,17 +9,15 @@
   align-items: center;
 
   .socials {
-    // align-items: flex-end;
-
     font-size: 2rem;
 
     a {
-      padding: 0.1rem;
-      color: nb-theme(color-fg);
+      padding: 0.4rem;
+      color: nb-theme(text-basic-color);
       transition: color ease-out 0.1s;
 
       &:hover {
-        color: nb-theme(color-fg-heading);
+        color: nb-theme(text-basic-color);
       }
     }
   }
