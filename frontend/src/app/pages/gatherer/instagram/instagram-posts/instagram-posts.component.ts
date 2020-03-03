@@ -7,7 +7,7 @@ import { NbDialogService } from '@nebular/theme';
     styleUrls: ['./instagram-posts.component.scss']
 })
 export class InstagramPostsComponent implements OnInit, AfterViewInit {
-    @ViewChild('nbCardInstagramPosts') private cardContainer: ElementRef;
+    @ViewChild('nbCardInstagramPosts', { static: false }) private cardContainer: ElementRef;
     @Input() private data: any;
     private instagramPosts : any;
 

@@ -32,14 +32,14 @@
     }
 
     .leaflet-control-zoom-in {
-      border-top-left-radius: nb-theme(btn-border-radius);
-      border-top-right-radius: nb-theme(btn-border-radius);
+      border-top-left-radius: nb-theme(button-semi-round-border-radius);
+      border-top-right-radius: nb-theme(button-semi-round-border-radius);
     }
 
     .leaflet-control-zoom-out {
       margin-top: 1px;
-      border-bottom-left-radius: nb-theme(btn-border-radius);
-      border-bottom-right-radius: nb-theme(btn-border-radius);
+      border-bottom-left-radius: nb-theme(button-semi-round-border-radius);
+      border-bottom-right-radius: nb-theme(button-semi-round-border-radius);
     }
   }
 
@@ -47,7 +47,7 @@
     background: transparent;
 
     a {
-      color: nb-theme(color-fg);
+      color: nb-theme(text-basic-color);
     }
   }
 
