@@ -12,7 +12,7 @@ import {select as d3Select} from 'd3-selection';
     styleUrls: ['./bubble.component.scss']
 })
 export class BubbleComponent implements OnInit, AfterViewInit {
-    @ViewChild('cardBubble') private cardContainer: ElementRef;
+    @ViewChild('cardBubble', { static: false }) private cardContainer: ElementRef;
     @Input() private data: Array<any>;
 
     private width: number;

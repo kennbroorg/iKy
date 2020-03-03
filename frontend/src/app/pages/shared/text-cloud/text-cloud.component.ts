@@ -12,7 +12,7 @@ import {select as d3Select} from 'd3-selection';
     styleUrls: ['./text-cloud.component.scss']
 })
 export class TextCloudComponent implements OnInit {
-    @ViewChild('cardCloud') private cardContainer: ElementRef;
+    @ViewChild('cardCloud', { static: true }) private cardContainer: ElementRef;
     @Input() private data: Array<any>;
   
     public width: number;
@@ -45,10 +45,12 @@ export class TextCloudComponent implements OnInit {
             opacitySpeed: 6,
             fov: 800,
             speed: .2,
-            fontFamily: 'Oswald, Arial, sans-serif',
+            // fontFamily: 'Oswald, Arial, sans-serif',
+            fontFamily: 'Roboto',
             fontSize: '15',
             fontColor: '#05fcfc',
-            fontWeight: 'normal', //bold
+            // fontWeight: 'normal', //bold
+            fontWeight: 300, //bold
             fontStyle: 'normal', //italic 
             fontStretch: 'normal', //wider, narrower, ultra-condensed, extra-condensed, condensed, semi-condensed, semi-expanded, expanded, extra-expanded, ultra-expanded
             fontToUpperCase: false
