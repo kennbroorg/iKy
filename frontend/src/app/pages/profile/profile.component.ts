@@ -117,7 +117,7 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
         this.searchSubs.unsubscribe();
     }
 
-    toggleFlipViewAndSearch(email, twitter, instagram, linkedin, github) {
+    toggleFlipViewAndSearch(email, twitter, instagram, linkedin, github, tiktok) {
         this.flipped = !this.flipped;
         console.log("Advance Search");
         console.log("email", email);
@@ -125,13 +125,15 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
         console.log("instagram", instagram);
         console.log("linkedin", linkedin);
         console.log("github", github);
+        console.log("tiktok", tiktok);
 
         // JSON datas
         this.datas = {email: email, 
             twitter: twitter, 
             instagram: instagram,
             linkedin: linkedin,
-            github: github
+            github: github,
+            tiktok: tiktok
         };
         
         this.gathered = this.dataGatherService.initialize();
