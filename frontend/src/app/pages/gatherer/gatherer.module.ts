@@ -68,6 +68,8 @@ import { SearchSocialComponent } from './search/search-social/search-social.comp
 import { SearchSearchesComponent } from './search/search-searches/search-searches.component';
 import { SearchListComponent } from './search/search-list/search-list.component';
 
+import { TiktokGraphsComponent } from './tiktok/tiktok-graphs/tiktok-graphs.component';
+
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
@@ -126,6 +128,7 @@ import { SharedModule } from '../shared/shared.module';
     SearchSocialComponent,
     SearchSearchesComponent,
     SearchListComponent,
+    TiktokGraphsComponent,
   ],
   providers: [
     InstagramMapService,

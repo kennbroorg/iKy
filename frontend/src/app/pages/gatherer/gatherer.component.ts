@@ -125,13 +125,14 @@ export class GathererComponent implements OnInit {
         return this.validationShow[val]
     }
 
-    toggleFlipViewAndSearch(email, twitter, instagram, linkedin, github) {
+    toggleFlipViewAndSearch(email, twitter, instagram, linkedin, github, tiktok) {
         console.log("Advance Search");
         console.log("email", email);
         console.log("twitter", twitter);
         console.log("instagram", instagram);
         console.log("linkedin", linkedin);
         console.log("github", github);
+        console.log("tiktok", tiktok);
 
         this.flipped = !this.flipped;
 
@@ -140,7 +141,8 @@ export class GathererComponent implements OnInit {
             twitter: twitter, 
             instagram: instagram,
             linkedin: linkedin,
-            github: github
+            github: github,
+            tiktok: tiktok,
         };
         
         this.gathered = this.dataGatherService.initialize();
