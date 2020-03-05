@@ -74,7 +74,7 @@ export class TimelineComponent implements OnInit {
         this.searchSubs.unsubscribe();
     }
 
-    toggleFlipViewAndSearch(email, twitter, instagram, linkedin, github) {
+    toggleFlipViewAndSearch(email, twitter, instagram, linkedin, github, tiktok) {
         this.flipped = !this.flipped;
         console.log("Advance Search");
         console.log("email", email);
@@ -82,13 +82,15 @@ export class TimelineComponent implements OnInit {
         console.log("instagram", instagram);
         console.log("linkedin", linkedin);
         console.log("github", github);
+        console.log("tiktok", tiktok);
 
         // JSON datas
         this.datas = {email: email, 
             twitter: twitter, 
             instagram: instagram,
             linkedin: linkedin,
-            github: github
+            github: github,
+            tiktok: tiktok
         };
         
         this.gathered = this.dataGatherService.initialize();

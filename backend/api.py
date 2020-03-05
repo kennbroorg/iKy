@@ -267,6 +267,23 @@ def r_instagram(username=None):
 
 
 ################################################
+# Tiktok
+################################################
+@home.route("/tiktok", methods=["POST"])
+def r_tiktok(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("Tiktok - Detected Username : ", username, from_m)
+    res = celery.send_task('modules.tiktok.tiktok_tasks.t_tiktok',
+                           args=(username, ))
+    print("Tiktok - Task : ", res.task_id)
+    return jsonify(module="tiktok", task=res.task_id,
+                   param=username, from_m=from_m)
+
+
+################################################
 # Searches
 ################################################
 @home.route("/search", methods=["POST"])

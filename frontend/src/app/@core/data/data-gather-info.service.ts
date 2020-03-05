@@ -288,7 +288,7 @@ export class DataGatherInfoService {
         
         if (datas['github'] != '') {
             console.log("Github : ", datas['github']);
-            // Linkedin
+            // Github
             if (this.isModuleParamRunTaskExec('github', datas['github'], 'User', 100)) {
                 this.showToast('info', 'Github', 'Send information gathering');
                 this.executeRequest$('github', {username: datas['github'], from: 'User'})
@@ -301,13 +301,26 @@ export class DataGatherInfoService {
         
         if (datas['instagram'] != '') {
             console.log("Instagram : ", datas['instagram']);
-            // Linkedin
+            // Instagram
             if (this.isModuleParamRunTaskExec('instagram', datas['instagram'], 'User', 100)) {
                 this.showToast('info', 'Instagram', 'Send information gathering');
                 this.executeRequest$('instagram', {username: datas['instagram'], from: 'User'})
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
                                () => console.log('Completed Instagram')
+                );
+            };
+        };
+        
+        if (datas['tiktok'] != '') {
+            console.log("Tiktok : ", datas['tiktok']);
+            // Tiktok
+            if (this.isModuleParamRunTaskExec('tiktok', datas['tiktok'], 'User', 100)) {
+                this.showToast('info', 'TikTok', 'Send information gathering');
+                this.executeRequest$('tiktok', {username: datas['tiktok'], from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Tiktok')
                 );
             };
         };

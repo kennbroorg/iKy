@@ -1,0 +1,21 @@
+  <nb-card size="small" class="border-default">
+    <nb-card-header (click)="openDialog(dialogTiktokGraph)">
+      TIKTOK Graphs
+      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+    </nb-card-header>
+    <nb-card-body id="nbCardGraphs" #nbCardGraphs style="text-align: center; overflow: hidden;">
+        <div nbTooltip="The profile does not exist or an error happened" nbTooltipStatus="danger" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 200px; z-index: 2;" *ngIf="statusFull == 'Fail'">
+            <i class="fas fa-times" style="font-size: 200px;"></i>
+        </div>
+        <ngx-graphs [data]="tiktokGraphs"></ngx-graphs>
+    </nb-card-body>
+  </nb-card>
+
+  <ng-template #dialogTiktokGraph let-data let-ref="dialogRef">
+      <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+        <nb-card-header>TIKTOK Graphs</nb-card-header>
+        <nb-card-body style="overflow: hidden; padding: 0px;">
+          <ngx-graphs [data]="tiktokGraphs" modal="true"></ngx-graphs>
+        </nb-card-body>
+      </nb-card>
+  </ng-template>
