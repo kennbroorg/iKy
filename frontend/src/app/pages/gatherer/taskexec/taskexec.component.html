@@ -1,0 +1,73 @@
+    <nb-card>
+      <nb-card-body style="padding-top:0px; padding-bottom: 0px;">
+
+          <!-- <table [nbTreeGrid]="dataSource" [nbSort]="dataSource" (sort)="updateSort($event)"> -->
+          <!-- <table [nbTreeGrid]="dataSource" [nbSort]="dataSource"> -->
+          <table [nbTreeGrid]="data" [nbSort]="dataSource">
+      
+              <!-- <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr> -->
+            <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
+      
+            <!-- Modules -->
+            <ng-container [nbTreeGridColumnDef]="customColumn">
+              <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection(customColumn)" *nbTreeGridHeaderCellDef>
+                  {{customColumn}}
+              </th>
+              <td nbTreeGridCell *nbTreeGridCellDef="let row">
+                  <!-- <ngx-fs-icon [kind]="row.data.module" [expanded]="row.expanded"></ngx-fs-icon> -->
+                <ngx-fs-icon [kind]="row.data.module" [expanded]="true"></ngx-fs-icon>
+                <!-- <div [ngClass]="{
+                    'icon-task-list':row.data[customColumn] != 'TaskList'
+                    }">{{row.data[customColumn]}}</div> -->
+                {{row.data[customColumn]}}
+              </td>
+            </ng-container>
+      
+            <!-- Common Columns -->
+            <ng-container *ngFor="let column of defaultColumns; let index = index"
+                          [nbTreeGridColumnDef]="column"
+                          [showOn]="getShowOn(index)">
+              <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection(column)" *nbTreeGridHeaderCellDef>
+                  {{column}}
+              </th>
+              <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data[column] || '-'}}</td>
+            </ng-container>
+      
+            <!-- Process Score -->
+            <ng-container [nbTreeGridColumnDef]="scoreColumn">
+              <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection(scoreColumn)" *nbTreeGridHeaderCellDef>
+                  {{scoreColumn}}
+              </th>
+              <td nbTreeGridCell *nbTreeGridCellDef="let row">
+                  <div *ngIf="row.data[scoreColumn] == 'Score'">{{row.data[scoreColumn]}}</div>
+                  <div *ngIf="row.data[scoreColumn] < 10"><i class="far fa-check-circle" style="color: red;"></i><span> - {{row.data[scoreColumn]}}</span></div>
+                  <div *ngIf="row.data[scoreColumn] >= 10 && row.data[scoreColumn] < 99"><i class="far fa-check-circle" style="color: yellow;"></i><span> - {{row.data[scoreColumn]}}</span></div>
+                  <div *ngIf="row.data[scoreColumn] >= 100"><i class="far fa-check-circle" style="color: green;"></i><span> - {{row.data[scoreColumn]}}</span></div>
+              </td>
+            </ng-container>
+      
+            <!-- Process Status -->
+            <ng-container [nbTreeGridColumnDef]="stateColumn">
+              <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection(stateColumn)" *nbTreeGridHeaderCellDef>
+                  {{stateColumn}}
+              </th>
+              <td nbTreeGridCell *nbTreeGridCellDef="let row">
+                  <div [ngClass]="{
+                          'alert-pending':row.data[stateColumn] === 'PENDING',
+                          'alert-success':row.data[stateColumn] === 'SUCCESS',
+                          'alert-process':row.data[stateColumn] === 'PROCESS'
+                          }">{{row.data[stateColumn]}}</div>
+              </td>
+            </ng-container>
+      
+          </table>
+    
+          <!--
+          <div style="margin-top: 10px;">
+            <label class="search-label" for="search">FILTER</label>
+            <input nbInput [nbFilterInput]="dataSource" id="search" class="search-input">
+          </div>
+          -->
+      
+      </nb-card-body>
+    </nb-card>
