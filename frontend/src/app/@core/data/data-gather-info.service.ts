@@ -142,6 +142,7 @@ export class DataGatherInfoService {
         // Split email in username and domain
         this.username = email.split("@")[0];
         this.globalGather['taskexec'] = [];
+        this.globalGather['taskresume'] = [{PP: 0, PS: 0, PE: 0}]; // Process PENDING // Process SUCCESS // Process ERROR
         console.log("Username : ", this.username);
     
         // Generic executer
@@ -155,6 +156,7 @@ export class DataGatherInfoService {
         if (this.isModuleParamRunTaskExec('emailrep', this.email, 'User', 100)) {
             // KKK this.showToast(NbToastStatus.INFO, 'EmailRepIO', 'Send information gathering');
             this.showToast('info', 'EmailRepIO', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('emailrep', {username: this.email, from: 'User'})
                 .subscribe(this.processResponse,
                            err => console.error('Ops: ', err.message),
@@ -165,6 +167,7 @@ export class DataGatherInfoService {
         // Search
         if (this.isModuleParamRunTaskExec('search', this.username, 'Username', 1)) {
             this.showToast('info', 'Searchers', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('search', {username: this.username, from: 'Username'})
                 .subscribe(this.processResponse,
                            err => console.error('Ops: ', err.message),
@@ -175,6 +178,7 @@ export class DataGatherInfoService {
         // Fullcontact
         if (this.isModuleParamRunTaskExec('fullcontact', this.email, 'User', 100)) {
             this.showToast('info', 'Fullcontact', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('fullcontact', {username: this.email, from: 'User'})
                 .subscribe(this.processResponse,
                            err => console.error('Ops: ', err.message),
@@ -185,6 +189,7 @@ export class DataGatherInfoService {
         // Github
         if (this.isModuleParamRunTaskExec('github', this.username, 'Username', 1)) {
             this.showToast('info', 'GitHub', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('github', {username: this.username, from: 'Username'})
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
@@ -213,6 +218,7 @@ export class DataGatherInfoService {
         // Keybase
         if (this.isModuleParamRunTaskExec('keybase', this.username, 'Username', 1)) {
             this.showToast('info', 'Keybase', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('keybase', {username: this.username, from: 'Username'})
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
@@ -223,6 +229,7 @@ export class DataGatherInfoService {
         // Leaks 
         if (this.isModuleParamRunTaskExec('leaks', this.email, 'User', 100)) {
             this.showToast('info', 'Leaks (HIBP)', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('leaks', {username: this.email, from: 'User'})
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
@@ -233,6 +240,7 @@ export class DataGatherInfoService {
         // SocialScan
         if (this.isModuleParamRunTaskExec('socialscan', this.email, 'User', 100)) {
             this.showToast('info', 'SocialScan', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('socialscan', {username: this.email, from: 'User'})
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
@@ -249,6 +257,7 @@ export class DataGatherInfoService {
         this.pushGather('email', data); // Temporary fix
         var datas = data;
         this.globalGather['taskexec'] = [];
+        this.globalGather['taskresume'] = [{PP: 0, PS: 0, PE: 0}]; // Process PENDING // Process SUCCESS // Process ERROR
         console.log("====================================================");
         console.log("Datas : ", datas);
 
@@ -265,6 +274,7 @@ export class DataGatherInfoService {
             // Twitter
             if (this.isModuleParamRunTaskExec('twitter', datas['twitter'], 'User', 100)) {
                 this.showToast('info', 'Twitter', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('twitter', {username: datas['twitter'], from: 'User'})
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
@@ -278,6 +288,7 @@ export class DataGatherInfoService {
             // Linkedin
             if (this.isModuleParamRunTaskExec('linkedin', datas['linkedin'], 'User', 100)) {
                 this.showToast('info', 'Linkedin', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('linkedin', {username: datas['linkedin'], from: 'User'})
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
@@ -291,6 +302,7 @@ export class DataGatherInfoService {
             // Github
             if (this.isModuleParamRunTaskExec('github', datas['github'], 'User', 100)) {
                 this.showToast('info', 'Github', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('github', {username: datas['github'], from: 'User'})
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
@@ -304,6 +316,7 @@ export class DataGatherInfoService {
             // Instagram
             if (this.isModuleParamRunTaskExec('instagram', datas['instagram'], 'User', 100)) {
                 this.showToast('info', 'Instagram', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('instagram', {username: datas['instagram'], from: 'User'})
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
@@ -317,6 +330,7 @@ export class DataGatherInfoService {
             // Tiktok
             if (this.isModuleParamRunTaskExec('tiktok', datas['tiktok'], 'User', 100)) {
                 this.showToast('info', 'TikTok', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('tiktok', {username: datas['tiktok'], from: 'User'})
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
@@ -335,6 +349,7 @@ export class DataGatherInfoService {
 
             if (this.isModuleParamRunTaskExec('emailrep', this.email, 'User', 100)) {
                 this.showToast('info', 'EmailRepIO', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('emailrep', {username: this.email, from: 'User'})
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
@@ -345,6 +360,7 @@ export class DataGatherInfoService {
             // Search
             if (this.isModuleParamRunTaskExec('search', this.username, 'Username', 1)) {
                 this.showToast('info', 'Searchers', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('search', {username: this.username, from: 'Username'})
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
@@ -355,6 +371,7 @@ export class DataGatherInfoService {
             // Fullcontact
             if (this.isModuleParamRunTaskExec('fullcontact', this.email, 'User', 100)) {
                 this.showToast('info', 'Fullcontact', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('fullcontact', {username: this.email, from: 'User'})
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
@@ -365,6 +382,7 @@ export class DataGatherInfoService {
             // Github
             if (this.isModuleParamRunTaskExec('github', this.username, 'Username', 1)) {
                 this.showToast('info', 'GitHub', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('github', {username: this.username, from: 'Username'})
                         .subscribe(this.processResponse,
                                    err => console.error('Ops: ', err.message),
@@ -375,6 +393,7 @@ export class DataGatherInfoService {
             // Linkedin TODO : This doesn't work anymore with mail
             if (this.isModuleParamRunTaskExec('linkedin', this.email, 'User', 100)) {
                 this.showToast('info', 'Linkedin', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('linkedin', {username: this.email, from: 'User'})
                         .subscribe(this.processResponse,
                                    err => console.error('Ops: ', err.message),
@@ -385,6 +404,7 @@ export class DataGatherInfoService {
             // Keybase
             if (this.isModuleParamRunTaskExec('keybase', this.username, 'Username', 1)) {
                 this.showToast('info', 'Keybase', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('keybase', {username: this.username, from: 'Username'})
                         .subscribe(this.processResponse,
                                    err => console.error('Ops: ', err.message),
@@ -395,6 +415,7 @@ export class DataGatherInfoService {
             // Leaks 
             if (this.isModuleParamRunTaskExec('leaks', this.email, 'User', 100)) {
                 this.showToast('info', 'Leaks (HIBP)', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('leaks', {username: this.email, from: 'User'})
                         .subscribe(this.processResponse,
                                    err => console.error('Ops: ', err.message),
@@ -405,6 +426,7 @@ export class DataGatherInfoService {
             // SocialScan
             if (this.isModuleParamRunTaskExec('socialscan', this.email, 'User', 100)) {
                 this.showToast('info', 'SocialScan', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('socialscan', {username: this.email, from: 'User'})
                         .subscribe(this.processResponse,
                                    err => console.error('Ops: ', err.message),
@@ -514,6 +536,7 @@ export class DataGatherInfoService {
                                                   module_name, 10)) {
                             // Execute another tasks
                             this.showToast('info', tasks[indexTask].module, 'Send information gathering');
+                            this.globalGather['taskresume'][0].PP++;
                             this.executeRequest$(tasks[indexTask].module, {username: tasks[indexTask].param, from: module_name})
                                     .subscribe(this.processResponse,
                                                err => console.error('Ops: ', err.message),
@@ -526,6 +549,7 @@ export class DataGatherInfoService {
         }
     
         this.showToast('success', module_name, 'Gather ended');
+        this.globalGather['taskresume'][0].PS++;
         this.globalGather[module_name] = data;
 
         for (let indexTaskexec in this.globalGather['taskexec']) {
