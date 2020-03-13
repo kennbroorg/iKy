@@ -52,7 +52,7 @@
     </nb-card>
 
     <!-- <nb-card size="xsmall" style="background-color: rgba(0, 0, 0, 0); box-shadow: none;" *ngIf="gathered && gathered['email'] && jsonLength(gathered) > 3"> -->
-    <nb-card style="background-color: rgba(0, 0, 0, 0); box-shadow: none;" *ngIf="gathered && gathered['email'] && jsonLength(gathered) > 3">
+    <nb-card style="background-color: rgba(0, 0, 0, 0); box-shadow: none;" *ngIf="gathered && gathered['email'] && jsonLength(gathered) > 4">
         <div class="row" id="pageGather" #pageGather>
         <!-- <div class="row" id="pageGather" #pageGather [nbSpinner]="processing" nbSpinnerStatus="info" nbSpinnerSize="xxlarge"> -->
 
@@ -83,6 +83,10 @@
             
               </nb-card-body>
             </nb-card>
+          </div>
+
+          <div class="col-md-12" *ngIf="gathered && gathered['taskexec']">
+              <ngx-taskexec [dataTask]="gathered['taskexec']" [TaskPP]="gathered['taskresume'][0].PP" [TaskPS]="gathered['taskresume'][0].PS"></ngx-taskexec>
           </div>
 
           <!-- Principal Search

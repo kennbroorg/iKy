@@ -14,7 +14,12 @@ import {
     NbTabsetModule, 
     NbDialogModule, 
     NbTooltipModule,
+    NbInputModule,
+    NbTreeGridModule,
+    NbAccordionModule,
     NbWindowModule } from '@nebular/theme';
+
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 import { NbBadgeModule } from '@nebular/theme';
 import { TreeModule } from 'angular-tree-component';
@@ -70,6 +75,8 @@ import { SearchListComponent } from './search/search-list/search-list.component'
 
 import { TiktokGraphsComponent } from './tiktok/tiktok-graphs/tiktok-graphs.component';
 
+import { FsIconComponent, TaskexecComponent } from './taskexec/taskexec.component';
+
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
@@ -89,6 +96,10 @@ import { SharedModule } from '../shared/shared.module';
     TreeModule,
     NbCardModule,
     NbTooltipModule,
+    NbInputModule,
+    NbTreeGridModule,
+    Ng2SmartTableModule,
+    NbAccordionModule,
     SharedModule,
     LeafletModule,
     NbDialogModule.forChild(),
@@ -129,6 +140,8 @@ import { SharedModule } from '../shared/shared.module';
     SearchSearchesComponent,
     SearchListComponent,
     TiktokGraphsComponent,
+    TaskexecComponent,
+    FsIconComponent,
   ],
   providers: [
     InstagramMapService,
