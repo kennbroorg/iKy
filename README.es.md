@@ -25,8 +25,11 @@
     <img alt="github" src="https://img.shields.io/badge/module-github-blue.svg">
     <img alt="keybase" src="https://img.shields.io/badge/module-keybase-blue.svg">
     <img alt="ghostproject" src="https://img.shields.io/badge/module-ghostproject-red.svg">
-    <img alt="emailrep.io" src="https://img.shields.io/badge/module-emailrep.io-blue.svg">
     <img alt="haveibeenpwned" src="https://img.shields.io/badge/module-haveibeenpwned-blue.svg">
+    <img alt="emailrep.io" src="https://img.shields.io/badge/module-emailrep.io-blue.svg">
+    <img alt="socialscan" src="https://img.shields.io/badge/module-socialscan-blue.svg">
+    <img alt="instagram" src="https://img.shields.io/badge/module-instagram-blue.svg">
+    <img alt="tiktok" src="https://img.shields.io/badge/module-tiktok-blue.svg">
 </div>
 
 ---
@@ -160,9 +163,8 @@ Una vez que la aplicación esté cargada en el browser, deberá ir a la opción 
 - Fullcontact : Generar las APIs desde [aquí](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs)
 - Twitter : Generar las APIs desde [aquí](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
 - Linkedin : Solo se debe cargar el usuario y contraseña de su cuenta 
-
 - HaveIBeenPwned : Generar las APIs desde [aquí](https://haveibeenpwned.com/API/Key) (Paga)
-
+- Emailrep.io : Generar las APIs desde [here](https://emailrep.io/key)
 
 
 # Wiki
@@ -174,13 +176,19 @@ Una vez que la aplicación esté cargada en el browser, deberá ir a la opción 
   - [Vagrant](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Vagrant)
   - [Manual install (Compacted)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Compacted))
   - [Manual install (Detailed)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Detailed))
+- Update
+  - [Soft Update](https://gitlab.com/kennbroorg/iKy/-/wikis/Update/Soft)
+- Wake Up 
+  - [Turn on the project](https://gitlab.com/kennbroorg/iKy/-/wikis/Wakeup/WakeUp)
 - APIs
   - [APIs through frontend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-through-the-browser)
   - [APIs through backend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/APIs-through-the-backend)
 - Backend
   - [Backend through URL](https://gitlab.com/kennbroorg/iKy/-/wikis/Backend/Backend-through-url)
+- Videos
+  - [Installation videos](https://gitlab.com/kennbroorg/iKy/-/wikis/Videos/Installations)
+  - [Demo videos](https://gitlab.com/kennbroorg/iKy/-/wikis/Videos/Demos)
 - [Disclaimer](https://gitlab.com/kennbroorg/iKy/-/wikis/Disclaimer)
-
 
 
 ## Aviso Legal

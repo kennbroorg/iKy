@@ -27,6 +27,9 @@
     <img alt="ghostproject" src="https://img.shields.io/badge/module-ghostproject-red.svg">
     <img alt="haveibeenpwned" src="https://img.shields.io/badge/module-haveibeenpwned-blue.svg">
     <img alt="emailrep.io" src="https://img.shields.io/badge/module-emailrep.io-blue.svg">
+    <img alt="socialscan" src="https://img.shields.io/badge/module-socialscan-blue.svg">
+    <img alt="instagram" src="https://img.shields.io/badge/module-instagram-blue.svg">
+    <img alt="tiktok" src="https://img.shields.io/badge/module-tiktok-blue.svg">
 </div>
 
 ---
@@ -159,8 +162,7 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 - Twitter: Generate the APIs from [here](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
 - Linkedin: Only the user and password of your account must be loaded
 - HaveIBeenPwned : Generate the APIs from [here](https://haveibeenpwned.com/API/Key) (Paid)
-
-
+- Emailrep.io : Generate the APIs from [here](https://emailrep.io/key)
 
 # Wiki
 
@@ -171,14 +173,19 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
   - [Vagrant](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Vagrant)
   - [Manual install (Compacted)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Compacted))
   - [Manual install (Detailed)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Detailed))
+- Update
+  - [Soft Update](https://gitlab.com/kennbroorg/iKy/-/wikis/Update/Soft)
+- Wake Up 
+  - [Turn on the project](https://gitlab.com/kennbroorg/iKy/-/wikis/Wakeup/WakeUp)
 - APIs
   - [APIs through frontend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-through-the-browser)
   - [APIs through backend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/APIs-through-the-backend)
 - Backend
   - [Backend through URL](https://gitlab.com/kennbroorg/iKy/-/wikis/Backend/Backend-through-url)
+- Videos
+  - [Installation videos](https://gitlab.com/kennbroorg/iKy/-/wikis/Videos/Installations)
+  - [Demo videos](https://gitlab.com/kennbroorg/iKy/-/wikis/Videos/Demos)
 - [Disclaimer](https://gitlab.com/kennbroorg/iKy/-/wikis/Disclaimer)
-
-
 
 ## Disclaimer
 
