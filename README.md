@@ -166,26 +166,26 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 
 # Wiki
 
-- [iKy Wiki](home)
+- [iKy Wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/home)
 - [iKy Page](https://kennbroorg.gitlab.io/ikyweb/)
 - Installation
-  - [Easy Install](Installation/EasyInstall)
-  - [Vagrant](Installation/Vagrant)
-  - [Manual install (Compacted)](Installation/Manual-install-(Compacted))
-  - [Manual install (Detailed)](Installation/Manual-install-(Detailed))
+  - [Easy Install](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/EasyInstall)
+  - [Vagrant](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Vagrant)
+  - [Manual install (Compacted)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Compacted))
+  - [Manual install (Detailed)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Detailed))
 - Update
-  - [Soft Update](Update/Soft)
+  - [Soft Update](https://gitlab.com/kennbroorg/iKy/-/wikis/Update/Soft)
 - Wake Up 
-  - [Turn on the project](Wakeup/WakeUp)
+  - [Turn on the project](https://gitlab.com/kennbroorg/iKy/-/wikis/Wakeup/WakeUp)
 - APIs
-  - [APIs through frontend](APIs/ApiKeys-through-the-browser)
-  - [APIs through backend](APIs/APIs-through-the-backend)
+  - [APIs through frontend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-through-the-browser)
+  - [APIs through backend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/APIs-through-the-backend)
 - Backend
-  - [Backend through URL](Backend/Backend-through-url)
+  - [Backend through URL](https://gitlab.com/kennbroorg/iKy/-/wikis/Backend/Backend-through-url)
 - Videos
-  - [Installation videos](Videos/Installations)
-  - [Demo videos](Videos/Demos)
-- [Disclaimer](Disclaimer)
+  - [Installation videos](https://gitlab.com/kennbroorg/iKy/-/wikis/Videos/Installations)
+  - [Demo videos](https://gitlab.com/kennbroorg/iKy/-/wikis/Videos/Demos)
+- [Disclaimer](https://gitlab.com/kennbroorg/iKy/-/wikis/Disclaimer)
 
 ## Disclaimer
 
