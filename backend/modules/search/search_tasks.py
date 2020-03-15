@@ -455,11 +455,18 @@ def t_search(username, from_m="Initial"):
                              ], output)
 
     # Different usernames
-    users = [item['usernames'].strip() for item in output['usernames']]
+    try:
+        users = [item['usernames'].strip() for item in output['usernames']]
+    except:
+        users = []
 
     # Different name
-    names = [item['name'].strip() for item in output['names']]
-    names_refined = collections.Counter(names)
+    try:
+        names = [item['name'].strip() for item in output['names']]
+        names_refined = collections.Counter(names)
+    except:
+        names = []
+        names_refined = []
 
     try:
         best_match = process.extractBests(collections.Counter(names).most_common(2)[0][0], names, limit=len(names), score_cutoff=80)
