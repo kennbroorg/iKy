@@ -24,6 +24,7 @@ def get_config():
                           'modules.socialscan.socialscan_tasks',
                           'modules.instagram.instagram_tasks',
                           'modules.tiktok.tiktok_tasks',
+                          'modules.sherlock.sherlock_tasks',
                           'modules.search.search_tasks',
                           'modules.emailrep.emailrep_tasks')
     return Config
