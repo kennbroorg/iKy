@@ -202,6 +202,18 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 </figure>
 <p><a href="https://vimeo.com/397862772">JuanEko15</a> from <a href="https://vimeo.com/user85580359">Kennbro</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
 
+<figure class="video_container">
+  <iframe src="https://player.vimeo.com/video/397862772" frameborder="0" allowfullscreen="true"> </iframe>
+</figure>
+
+
+<figure class="video_container">
+  <iframe src="https://drive.google.com/file/d/0B6m34D8cFdpMZndKTlBRU0tmczg/preview" frameborder="0" allowfullscreen="true"> </iframe>
+</figure>
+
+<iframe src="https://www.youtube.com/embed/enMumwvLAug" width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+<p><a href="https://vimeo.com/397862772">JuanEko15</a> from <a href="https://vimeo.com/user85580359">Kennbro</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+
 ## Disclaimer
 
 Anyone who contributes or contributed to the project, including me, is not responsible for the use of the tool (Neither the legal use nor the illegal use, nor the "other" use).
