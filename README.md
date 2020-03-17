@@ -199,32 +199,32 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 ## Demo Videos
 
 <div align="center">
-    <a href="https://vimeo.com/397862772"><img alt="Kali 2019" src="uploads/8ef7b21b6c6e5450cc919b3ab74b4b40/iKyEko15.png"></a>
+    <a href="https://vimeo.com/397862772"><img alt="Kali 2019" src="frontend/src/assets/images/iKyEko15.png"></a>
     <p>iKy eko15</p>
 </div>
 
 <div align="center">
-    <a href="https://vimeo.com/347085110"><img alt="Kali 2019" src="uploads/75d9b968c865bd54f9bfb538b6a3d394/Ikyv2.png"></a>
+    <a href="https://vimeo.com/347085110"><img alt="Kali 2019" src="frontend/src/assets/images/Ikyv2.png"></a>
     <p>iKy Version 2</p>
 </div>
 
 <div align="center">
-    <a href="https://vimeo.com/349011105"><img src="uploads/49a5525dbe4bc7e42b97739aedf9380f/Emiliano.png"></a>
+    <a href="https://vimeo.com/349011105"><img src="frontend/src/assets/images/Emiliano.png"></a>
     <p>Testing iKy with Emiliano</p>
 </div>
 
 <div align="center">
-    <a href="https://vimeo.com/342843348"><img src="uploads/1adfd331102577141c6905a247bb4216/Giba.png"></a>
+    <a href="https://vimeo.com/342843348"><img src="frontend/src/assets/images/Giba.png"></a>
     <p>Testing iKy with Giba</p>
 </div>
 
 <div align="center">
-    <a href="https://vimeo.com/326114716"><img src="uploads/8dfaed2ea390fed9725926a384ede50d/ikyDemoV1.png"></a>
+    <a href="https://vimeo.com/326114716"><img src="frontend/src/assets/images/ikyDemoV1.png"></a>
     <p>iKy version 1</p>
 </div>
 
 <div align="center">
-    <a href="https://vimeo.com/272495754"><img src="uploads/8413daae9082f8668d2efe9a46ac8531/ikyDemov0.png"></a>
+    <a href="https://vimeo.com/272495754"><img src="frontend/src/assets/images/ikyDemov0.png"></a>
     <p>iKy version 0</p>
 </div>
 
