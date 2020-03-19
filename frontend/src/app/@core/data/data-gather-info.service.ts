@@ -248,6 +248,17 @@ export class DataGatherInfoService {
             );
         };
 
+        // Sherlock
+        if (this.isModuleParamRunTaskExec('sherlock', this.username, 'User', 100)) {
+            this.showToast('info', 'Sherlock', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('sherlock', {username: this.username, from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Sherlock')
+            );
+        };
+
     }
 
     /* Gather Info Advance */
@@ -433,6 +444,18 @@ export class DataGatherInfoService {
                                    () => console.log('Completed SocialScan')
                 );
             };
+
+            // Sherlock
+            if (this.isModuleParamRunTaskExec('sherlock', this.username, 'User', 100)) {
+                this.showToast('info', 'Sherlock', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('sherlock', {username: this.username, from: 'User'})
+                        .subscribe(this.processResponse,
+                                   err => console.error('Ops: ', err.message),
+                                   () => console.log('Completed Sherlock')
+                );
+            };
+
         };
     }
     
