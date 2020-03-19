@@ -315,6 +315,15 @@
             <ngx-socialscan-user [data]="gathered['socialscan']"></ngx-socialscan-user>
           </div>
 
+
+          <!-- Sherlock -->
+          <div class="col-md-12" id="divSherlock" #divSherlock *ngIf="gathered['sherlock'] && gathered['sherlock'].result[4] && gathered['sherlock'].result[4].graphic[0].sherlock?.length > 0 && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <div class="row">
+              <ngx-sherlock-graph class="col-md-8" [data]="gathered['sherlock']"></ngx-sherlock-graph>
+              <ngx-sherlock-list class="col-md-4" [data]="gathered['sherlock']"></ngx-sherlock-list>
+            </div>
+          </div>
+          
           <div class="col-md-12" *ngIf="gathered && gathered['email'] && jsonLength(gathered) > 4">
             <nb-card>
               <nb-card-body>

@@ -75,6 +75,9 @@ import { SearchListComponent } from './search/search-list/search-list.component'
 
 import { TiktokGraphsComponent } from './tiktok/tiktok-graphs/tiktok-graphs.component';
 
+import { SherlockGraphComponent } from './sherlock/sherlock-graphs/sherlock-graphs.component';
+import { SherlockListComponent } from './sherlock/sherlock-list/sherlock-list.component';
+
 import { FsIconComponent, TaskexecComponent } from './taskexec/taskexec.component';
 
 import { SharedModule } from '../shared/shared.module';
@@ -142,6 +145,8 @@ import { SharedModule } from '../shared/shared.module';
     TiktokGraphsComponent,
     TaskexecComponent,
     FsIconComponent,
+    SherlockGraphComponent,
+    SherlockListComponent,
   ],
   providers: [
     InstagramMapService,
