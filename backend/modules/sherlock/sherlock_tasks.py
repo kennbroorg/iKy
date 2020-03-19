@@ -14,6 +14,7 @@ try:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
+    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 except ImportError:
@@ -22,6 +23,7 @@ except ImportError:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
+    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
@@ -49,6 +51,9 @@ def t_sherlock(username):
     total.append({'param': username})
     total.append({'validation': 'hard'})
 
+    # Icons unicode
+    font_list = fontawesome_cheat_5()
+
     # Graphic Array
     graphic = []
 
@@ -60,25 +65,37 @@ def t_sherlock(username):
 
     # Gather Array
     gather = []
+    lists = []
 
     # Social
     social = []
 
     link = "Sherlock"
     gather_item = {"name-node": "Sherlock", "title": username,
-                   "subtitle": "", "icon": "fas fa-unlock-alt",
+                   "subtitle": "", "icon": "fas fa-share-alt",
                    "link": link}
     gather.append(gather_item)
 
     for rrss in raw_node:
+        lists_item = {"title": rrss,
+                      "subtitle": raw_node[rrss]["url_main"],
+                      "status": raw_node[rrss]["http_status"],
+                      "response": raw_node[rrss]["response_time_ms"]}
+        lists.append(lists_item)
         if (raw_node[rrss]["exists"] == 'yes'):
+            fa_icon = search_icon_5(rrss, font_list)
+            if (fa_icon is None):
+                fa_icon = search_icon_5("dot-circle", font_list)
+
             gather_item = {"name-node": rrss,
                            "title": rrss,
-                           "subtitle": raw_node[rrss]["url_user"],
+                           "icon": fa_icon,
+                           "help": raw_node[rrss]["url_user"],
                            "link": link}
             gather.append(gather_item)
             social_item = {"name": rrss,
                            "url": raw_node[rrss]["url_user"],
+                           "origin": "sherlock",
                            "username": username}
             social.append(social_item)
     profile.append({"social": social})
@@ -89,6 +106,7 @@ def t_sherlock(username):
     # if (len(gather) != 1):
     #     graphic.append({'leaks': gather})
     graphic.append({'sherlock': gather})
+    graphic.append({'lists': lists})
     total.append({'graphic': graphic})
     total.append({'profile': profile})
     total.append({'timeline': timeline})
