@@ -39,7 +39,7 @@ export class TaskexecComponent {
   private data: TreeNode<FSEntry>[] = [
 
     {
-      data: { module: 'TASKLIST', param: 'Param', from: 'From', score: 'Score', stateIcon: 'State' },
+      data: { module: 'Tasklist', param: 'Param', from: 'From', score: 'Score', stateIcon: 'State' },
       children: [
       ],
     },
@@ -63,7 +63,7 @@ export class TaskexecComponent {
 
     this.data = [
       {
-        data: { module: 'TASKLIST', param: 'Param', from: 'From', score: 'Score', stateIcon: 'State' },
+        data: { module: 'Tasklist', param: 'Param', from: 'From', score: 'Score', stateIcon: 'State' },
         children: [
         ],
       },
@@ -122,6 +122,6 @@ export class FsIconComponent {
   @Input() expanded: boolean;
 
   isDir(): boolean {
-    return this.kind === 'TASKLIST';
+    return this.kind === 'Tasklist';
   }
 }
