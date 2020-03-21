@@ -175,6 +175,17 @@ export class DataGatherInfoService {
             );
         };
 
+        // Sherlock
+        if (this.isModuleParamRunTaskExec('sherlock', this.username, 'User', 100)) {
+            this.showToast('info', 'Sherlock', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('sherlock', {username: this.username, from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Sherlock')
+            );
+        };
+
         // Fullcontact
         if (this.isModuleParamRunTaskExec('fullcontact', this.email, 'User', 100)) {
             this.showToast('info', 'Fullcontact', 'Send information gathering');
@@ -248,17 +259,6 @@ export class DataGatherInfoService {
             );
         };
 
-        // Sherlock
-        if (this.isModuleParamRunTaskExec('sherlock', this.username, 'User', 100)) {
-            this.showToast('info', 'Sherlock', 'Send information gathering');
-            this.globalGather['taskresume'][0].PP++;
-            this.executeRequest$('sherlock', {username: this.username, from: 'User'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed Sherlock')
-            );
-        };
-
     }
 
     /* Gather Info Advance */
@@ -278,6 +278,31 @@ export class DataGatherInfoService {
             .subscribe(this.processTasklist, 
                        err => console.error('Ops: ', err.message)
         );
+        
+        // Evaluation of datas
+        if (datas['username'] != '') {
+            console.log("Username : ", datas['username']);
+            // Sherlock
+            if (this.isModuleParamRunTaskExec('sherlock', datas['username'], 'User', 100)) {
+                this.showToast('info', 'Sherlock', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('sherlock', {username: datas['username'], from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Sherlock')
+                );
+            };
+            // Search
+            if (this.isModuleParamRunTaskExec('search', datas['username'], 'User', 100)) {
+                this.showToast('info', 'Searchers', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('search', {username: datas['username'], from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Searchers')
+                );
+            };
+        };
         
         // Evaluation of datas
         if (datas['twitter'] != '') {
@@ -402,7 +427,7 @@ export class DataGatherInfoService {
             };
 
             // Linkedin TODO : This doesn't work anymore with mail
-            if (this.isModuleParamRunTaskExec('linkedin', this.email, 'User', 100)) {
+            if (this.isModuleParamRunTaskExec('linkedin', this.email, 'Username', 1)) {
                 this.showToast('info', 'Linkedin', 'Send information gathering');
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('linkedin', {username: this.email, from: 'User'})
@@ -446,7 +471,7 @@ export class DataGatherInfoService {
             };
 
             // Sherlock
-            if (this.isModuleParamRunTaskExec('sherlock', this.username, 'User', 100)) {
+            if (this.isModuleParamRunTaskExec('sherlock', this.username, 'Username', 1)) {
                 this.showToast('info', 'Sherlock', 'Send information gathering');
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('sherlock', {username: this.username, from: 'User'})
