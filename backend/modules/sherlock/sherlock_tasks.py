@@ -95,7 +95,8 @@ def t_sherlock(username):
             gather.append(gather_item)
             social_item = {"name": rrss,
                            "url": raw_node[rrss]["url_user"],
-                           "origin": "sherlock",
+                           "icon": fa_icon,
+                           "source": "sherlock",
                            "username": username}
             social.append(social_item)
     profile.append({"social": social})
