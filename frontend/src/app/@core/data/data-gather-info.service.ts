@@ -176,7 +176,7 @@ export class DataGatherInfoService {
         };
 
         // Sherlock
-        if (this.isModuleParamRunTaskExec('sherlock', this.username, 'User', 100)) {
+        if (this.isModuleParamRunTaskExec('sherlock', this.username, 'Username', 1)) {
             this.showToast('info', 'Sherlock', 'Send information gathering');
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('sherlock', {username: this.username, from: 'User'})
