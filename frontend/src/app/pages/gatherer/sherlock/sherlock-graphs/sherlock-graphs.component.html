@@ -1,5 +1,5 @@
   <nb-card size="large">
-    <nb-card-header>
+    <nb-card-header (click)="openDialog(dialogSherlockGraph)">
       SHERLOCK Graphs
       <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
     </nb-card-header>
@@ -13,9 +13,7 @@
     <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
       <nb-card-header>SHERLOCK Graphs</nb-card-header>
       <nb-card-body>
-
-        <ngx-graphs [data]="sherlockGraph" modal="true"></ngx-graphs>
-
+          <ngx-graphs [data]="sherlockGraph"></ngx-graphs>
       </nb-card-body>
     </nb-card>
   </ng-template>
