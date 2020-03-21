@@ -125,9 +125,10 @@ export class GathererComponent implements OnInit {
         return this.validationShow[val]
     }
 
-    toggleFlipViewAndSearch(email, twitter, instagram, linkedin, github, tiktok) {
+    toggleFlipViewAndSearch(email, username, twitter, instagram, linkedin, github, tiktok) {
         console.log("Advance Search");
         console.log("email", email);
+        console.log("username", username);
         console.log("twitter", twitter);
         console.log("instagram", instagram);
         console.log("linkedin", linkedin);
@@ -138,6 +139,7 @@ export class GathererComponent implements OnInit {
 
         // JSON datas
         this.datas = {email: email, 
+            username: username, 
             twitter: twitter, 
             instagram: instagram,
             linkedin: linkedin,
