@@ -1,0 +1,45 @@
+  <nb-card size="large" class="border-defaulti list-card">
+    <nb-card-header (click)="openDialog(dialogSherlockList)">
+      SHERLOCK List
+      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+    </nb-card-header>
+    <nb-card-body id="nbCardSherlockList" style="text-align: center; margin: 0px; padding: 0px;">
+      <nb-list>
+        <nb-list-item *ngFor="let c of sherlockList">
+          <div class="contact">
+            <div class="info-container">
+              <div class="user-name ng-star-inserted">{{c.title}}</div> 
+              <div class="user-title ng-star-inserted">
+                 <p align="left" style="margin: 0px; padding:0px; padding-top: 5px;"><strong style="font-weight: 500;">URL</strong> : {{c.subtitle}}</p>
+                 <p align="left" style="margin: 0px; padding:0px;"><strong style="font-weight: 500;">Status</strong> : {{c.status}}</p>
+              </div>
+            </div>
+          </div>
+        </nb-list-item>
+      </nb-list>
+
+    </nb-card-body>
+  </nb-card>
+
+
+  <ng-template #dialogSherlockList let-data let-ref="dialogRef">
+    <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+      <nb-card-header>SHERLOCK List</nb-card-header>
+      <nb-card-body id="nbCardSherlockList" style="text-align: center; margin: 0px; padding: 0px;">
+        <nb-list>
+          <nb-list-item *ngFor="let c of sherlockList">
+            <div class="contact">
+              <div class="info-container">
+                <div class="user-name ng-star-inserted">{{c.title}}</div> 
+                <div class="user-title ng-star-inserted">
+                   <p align="left" style="margin: 0px; padding:0px; padding-top: 5px;"><strong style="font-weight: 500;">URL</strong> : {{c.subtitle}}</p>
+                   <p align="left" style="margin: 0px; padding:0px;"><strong style="font-weight: 500;">Status</strong> : {{c.status}}</p>
+                </div>
+              </div>
+            </div>
+          </nb-list-item>
+        </nb-list>
+
+      </nb-card-body>
+    </nb-card>
+  </ng-template>

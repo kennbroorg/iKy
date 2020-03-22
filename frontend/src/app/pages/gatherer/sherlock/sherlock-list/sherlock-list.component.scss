@@ -1,0 +1,59 @@
+@import '../../../../@theme/styles/themes';
+
+@include nb-install-component() {
+
+  .fa-stack { font-size: 1.0em; }
+
+  i { 
+    vertical-align: middle; 
+    margin-right: 10px; 
+  }
+       
+  .contact {
+    display: flex;
+    align-items: center;
+    color: nb-theme(text-basic-color);
+    padding: 0px;
+
+  }
+
+  .i-contact {
+    font-size: 2rem;
+    cursor: pointer;
+  }
+
+  .pf-char:before{
+      font-family: Arial;
+      font-weight: bold;
+      content: attr(data-char-content);
+  }
+
+  .time {
+    font-size: 0.875rem;
+    font-weight: nb-theme(text-paragraph-font-weight);
+    text-transform: uppercase;
+  }
+
+  .info-container {
+    @include nb-ltr(margin-left, 0.3rem);
+    @include nb-rtl(margin-right, 0rem);
+  }
+
+  .user-name {
+    font-family: nb-theme(font-family-primary);
+    font-weight: 500;
+    color: nb-theme(text-basic-color);
+    font-size: 0.8rem;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    text-align: left;
+  }
+
+  .user-title p {
+    font-size: 0.8rem;
+    font-weight: 300;
+    line-height: 1rem;
+  }
+
+}

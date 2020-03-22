@@ -2,7 +2,10 @@ import { NgModule } from '@angular/core';
 
 import { NgxEchartsModule } from 'ngx-echarts';
 
-import { NbBadgeModule, NbCardModule, NbButtonModule } from '@nebular/theme';
+import { NbBadgeModule, 
+         NbCardModule, 
+         NbTooltipModule,
+         NbButtonModule } from '@nebular/theme';
 
 import { ThemeModule } from '../../@theme/theme.module';
 import { ProfileComponent } from './profile.component';
@@ -19,6 +22,7 @@ import { SharedModule } from '../shared/shared.module';
     NgxEchartsModule,
     NbBadgeModule,
     NbCardModule,
+    NbTooltipModule,
     NbButtonModule,
     SharedModule,
   ],

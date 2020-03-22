@@ -180,6 +180,8 @@ def t_tiktok(username, from_m="Initial"):
 
         social_item = {"name": "tiktok",
                        "url": url,
+                       "source": "TikTok",
+                       "icon": "fas fa-play-circle",
                        "username": profile_data["username"]}
         social.append(social_item)
         profile.append({"social": social})

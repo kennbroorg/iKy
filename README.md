@@ -30,6 +30,7 @@
     <img alt="socialscan" src="https://img.shields.io/badge/module-socialscan-blue.svg">
     <img alt="instagram" src="https://img.shields.io/badge/module-instagram-blue.svg">
     <img alt="tiktok" src="https://img.shields.io/badge/module-tiktok-blue.svg">
+    <img alt="sherlock" src="https://img.shields.io/badge/module-sherlock-blue.svg">
 </div>
 
 ---

@@ -91,37 +91,41 @@
     <nb-card>
       <nb-card-header>ADVANCED SEARCH</nb-card-header>
       <nb-card-body>
-        <div class="form-group row" style="padding-top:20px;padding-right:20px;">
-          <label for="inputEmail" class="col-sm-1 col-form-label" style="text-align: center;"><i class="fas fa-envelope fa-2x"></i></label>
-          <div class="col-sm-11">
-            <input type="email" class="form-control" #email id="email" placeholder="Email" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
+        <div class="form-group row" style="padding-top: 20px; padding-right:20px; margin-bottom: 10px;">
+      <label for="inputEmail" class="col-sm-1 col-form-label" nbTooltip="Email address" nbTooltipStatus="primary" style="text-align: center;"><i class="fas fa-envelope fa-2x"></i></label>
+      <div class="col-sm-5">
+            <input type="text" class="form-control" #email id="email" placeholder="Email" autocomplete="off" style="background-color: rgba(0, 0, 0,0.5); border: none;">
+          </div>
+          <label for="inputUsername" class="col-sm-1 col-form-label" nbTooltip="Posible Username (Used in sherlock and search module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fas fa-user fa-2x"></i></label>
+          <div class="col-sm-5">
+            <input type="text" class="form-control" #username id="username" placeholder="Username" autocomplete="off" style="background-color: rgba(0, 0, 0,0.5); border: none;">
           </div>
         </div>
     
-        <div class="form-group row" style="padding-top: 20px;padding-right:20px;">
-          <label for="inputTwitter" class="col-sm-1 col-form-label" style="text-align: center;"><i class="fab fa-twitter-square fa-2x"></i></label>
+        <div class="form-group row" style="padding-top: 10px;padding-right:20px; margin-bottom: 10px;">
+          <label for="inputTwitter" class="col-sm-1 col-form-label" nbTooltip="Posible Twitter Account (Used in twitter module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fab fa-twitter-square fa-2x"></i></label>
           <div class="col-sm-5">
             <input type="text" class="form-control" #twitter id="twitter" placeholder="Twitter" autocomplete="off" style="background-color: rgba(0, 0, 0,0.5); border: none;">
           </div>
-          <label for="inputInstagram" class="col-sm-1 col-form-label" style="text-align: center;"><i class="fab fa-instagram fa-2x"></i></label>
+          <label for="inputInstagram" class="col-sm-1 col-form-label" nbTooltip="Posible Instagram Account (Used in instagram module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fab fa-instagram fa-2x"></i></label>
           <div class="col-sm-5">
             <input type="text" class="form-control" #instagram id="instagram" placeholder="Instagram" autocomplete="off" style="background-color: rgba(0, 0, 0,0.5); border: none;">
           </div>
         </div>
     
-        <div class="form-group row" style="padding-top: 20px;padding-right:20px;">
-          <label for="inputLinkedin" class="col-sm-1 col-form-label" style="text-align: center;"><i class="fab fa-linkedin fa-2x"></i></label>
+        <div class="form-group row" style="padding-top: 10px;padding-right:20px; margin-bottom: 10px;">
+          <label for="inputLinkedin" class="col-sm-1 col-form-label" nbTooltip="Posible Linkedin Account (Used in linkedin module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fab fa-linkedin fa-2x"></i></label>
           <div class="col-sm-5">
             <input type="text" class="form-control" #linkedin id="linkedin" placeholder="Linkedin" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
           </div>
-          <label for="inputGithub" class="col-sm-1 col-form-label" style="text-align: center;"><i class="fab fa-github-square fa-2x"></i></label>
+          <label for="inputGithub" class="col-sm-1 col-form-label" nbTooltip="Posible Github Account (Used in github module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fab fa-github-square fa-2x"></i></label>
           <div class="col-sm-5">
             <input type="text" class="form-control" #github id="github" placeholder="Github" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
           </div>
         </div>
 
-        <div class="form-group row" style="padding-top: 20px;padding-right:20px;">
-          <label for="inputTiktok" class="col-sm-1 col-form-label" style="text-align: center;"><i class="fas fa-play-circle fa-2x"></i></label>
+        <div class="form-group row" style="padding-top: 10px;padding-right:20px; margin-bottom: 10px;">
+          <label for="inputTiktok" class="col-sm-1 col-form-label" nbTooltip="Posible TikTok Account (Used in tiktok module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fas fa-play-circle fa-2x"></i></label>
           <div class="col-sm-5">
             <input type="text" class="form-control" #tiktok id="tiktok" placeholder="Tiktok" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
           </div>
@@ -129,7 +133,7 @@
 
       </nb-card-body>
       <nb-card-footer>
-          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value)" style="border: none; margin-left:30px; font-weight: 400;">
+          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, username.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value)" style="border: none; margin-left:30px; font-weight: 400;">
               <i class="fas fa-search" style="padding-right: 5px"></i> SEARCH 
           </button>
 

@@ -14,5 +14,6 @@ app = Celery('celery_config', broker='redis://localhost:6379/0',
                       'modules.socialscan.socialscan_tasks',
                       'modules.search.search_tasks',
                       'modules.instagram.instagram_tasks',
-                      'modules.tiktok.tiktok_tasks'
+                      'modules.tiktok.tiktok_tasks',
+                      'modules.sherlock.sherlock_tasks'
                       ])

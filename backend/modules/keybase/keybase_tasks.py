@@ -160,6 +160,8 @@ def t_keybase(username, from_m):
 
                 social_profile_item = {"name": soc.get("proof_type"),
                                        "username": soc.get("nametag"),
+                                       "Source": "Keybase",
+                                       "icon": fa_icon,
                                        "url": soc.get("service_url")}
                 social_profile.append(social_profile_item)
 

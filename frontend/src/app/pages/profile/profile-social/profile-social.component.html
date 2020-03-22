@@ -11,12 +11,12 @@
           <a [attr.href]="item.url" target="_blank">
             <div class="icon-container">
               <div class="icon default">
-                    <i class="fab fa-{{ item.name }}"></i>
+                    <i class="fab {{ item.icon }}"></i>
               </div>
             </div>
           </a>
             
-            <div class="details">
+            <div class="details" nbTooltip="Source {{item.source}}" nbTooltipStatus="primary">
               <div class="title">{{ item.name }}</div>
             </div>
         </nb-card>

@@ -197,6 +197,8 @@ def t_fullcontact(email):
                 socialp.append(social_item)
                 social_profile_item = {
                                        "name": social.get("type"),
+                                       "icon": fa_icon,
+                                       "source": "Fullcontact",
                                        "username": social.get("username"),
                                        "url": social.get("url")}
                 social_profile.append(social_profile_item)
