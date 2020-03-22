@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cd ~
 mkdir log
 mkdir .config
