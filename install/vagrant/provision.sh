@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ~
+cd $HOME
 mkdir log
 mkdir .config
 echo
@@ -10,20 +10,6 @@ sudo apt-get upgrade -y
 sudo apt-get install -y build-essential
 echo "========================================================================"
 echo 
-
-## echo "Installing pyenv and python3.7..."
-## sudo apt-get install -y libffi-dev build-essential libbz2-dev libssl-dev libreadline-dev libsqlite3-dev tk-dev libxml2-dev libxslt1-dev git
-## curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
-## export PATH="~/.pyenv/bin:$PATH" >> ~/.bashrc
-## echo export PATH="~/.pyenv/bin:$PATH" >> ~/.bashrc
-## echo eval "$(pyenv init -)" >> ~/.bashrc
-## echo eval "$(pyenv virtualenv-init -)" >> ~/.bashrc
-## source ~/.bashrc
-## pyenv install 3.7.4
-## pyenv global 3.7.4
-## # Falta setear el environment
-## echo "========================================================================"
-## echo 
 
 echo "Installing python3.7..."
 sudo apt-get install -y libffi-dev build-essential libbz2-dev libssl-dev libreadline-dev libsqlite3-dev tk-dev libxml2-dev libxslt1-dev git
@@ -41,14 +27,13 @@ cd redis-stable
 make
 sudo make install
 echo 
-echo "Execute redis-server..."
-redis-server > $HOME/log/redis.log 2>&1 &
-cd /home/vagrant
-pwd
-echo "========================================================================"
-echo 
+# echo "Execute redis-server..."
+# redis-server > $HOME/log/redis.log 2>&1 &
+# cd /home/vagrant
+# pwd
+# echo "========================================================================"
+# echo 
 
-# sudo apt-get install -y curl python-software-properties  # 16.04
 sudo apt-get install -y curl software-properties-common  # 18.04
 curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 echo
@@ -60,17 +45,10 @@ echo "========================================================================"
 echo
 
 echo "Cloning Repo"
-# su vagrant -c 'git clone https://gitlab.com/kennbroorg/iKy.git'
 git clone https://gitlab.com/kennbroorg/iKy.git
-cd iKy/
+cd $HOME/iKy
 pwd
-## echo "Setting pyenv..."
-## export PATH="~/.pyenv/bin:$PATH"
-## pyenv virtualenv 3.7.4 iKy374
-## echo iKy374 > .python-version
-## echo "Installing celery and package from pip..."
 sudo apt-get install -y python3-pip
-## sudo apt-get install -y python3-celery
 echo "Installing pip and requirements..."
 python3.7 -m pip install --upgrade pip
 python3.7 -m pip install --user -r requirements.txt
@@ -79,25 +57,21 @@ echo export PATH="/home/vagrant/.local/bin:$PATH" >> ~/.bashrc
 echo "========================================================================"
 echo 
 
-echo "Execute celery..."
-cd backend 
-pwd
-./celery.sh >$HOME/log/celery.log 2>&1 &
-echo "Execute app..."
-python3.7 app.py -i 0.0.0.0 >$HOME/log/app.log 2>&1 &
-# su vagrant -c 'python app.py &'
-echo "========================================================================"
-echo
+# echo "Execute celery..."
+# cd backend 
+# pwd
+# ./celery.sh >$HOME/log/celery.log 2>&1 &
+# echo "Execute app..."
+# python3.7 app.py -i 0.0.0.0 >$HOME/log/app.log 2>&1 &
+# # su vagrant -c 'python app.py &'
+# echo "========================================================================"
+# echo
 
 echo "Installing package from frontend..."
-cd ..
-cd frontend
+cd $HOME/iKy/frontend
 pwd
 sed -i -e 's/ng serve/ng serve --host 0.0.0.0/g' package.json
 npm install >$HOME/log/npm_install.log 2>&1
-npm start >$HOME/log/npm.log 2>&1 &
+# npm start >$HOME/log/npm.log 2>&1 &
 sleep 180
-tail -n 50 $HOME/log/npm.log
-
-# Make some checks
-/vagrant/checks.sh
+tail -n 50 $HOME/log/npm_install.log
