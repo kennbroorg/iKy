@@ -28,6 +28,3 @@ touch $HOME/log/npm.log
 npm start >$HOME/log/npm.log 2>&1 &
 sleep 180
 tail -n 50 $HOME/log/npm.log
-
-# Make some checks
-/vagrant/checks.sh

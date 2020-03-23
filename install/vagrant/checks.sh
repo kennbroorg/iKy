@@ -5,7 +5,7 @@ GREEN='\033[1;32m'
 NC='\033[0m' # No Color
 
 echo ""
-echo "Running checks..."
+echo "${NC}Running checks..."
 echo "Checking NODE..."
 
 CHECK_NPM=$(curl --head --silent -S localhost:4200 2>&1)
@@ -20,7 +20,7 @@ fi
 
 echo ""
 echo "Checking CELERY..."
-CHECK_CELERY=$(curl --head --silent -S --header "Content-Type: application/json" --request POST --data '{"username": "x", "from": ""}' http://127.0.0.1:5000/github 2>&1)
+CHECK_CELERY=$(curl --silent -S --header "Content-Type: application/json" --request POST --data '{"username": "x", "from": ""}' http://127.0.0.1:5000/github 2>&1)
 STATUS=$?
 MSG=$(echo "${CHECK_CELERY}" | head -n 1)
 
