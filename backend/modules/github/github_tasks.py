@@ -4,6 +4,7 @@
 import sys
 import json
 import requests
+import re
 from datetime import date, datetime
 
 try:
@@ -31,9 +32,50 @@ try:
 except NameError:
     unicode = str
 
+
+def findReposFromUsername(username):
+	response = requests.get('https://api.github.com/users/%s/repos?per_page=100&sort=pushed' % username).text
+	repos = re.findall(r'"full_name":"%s/(.*?)",.*?"fork":(.*?),' % username, response)
+	nonForkedRepos = []
+	for repo in repos:
+		if repo[1] == 'false':
+			nonForkedRepos.append(repo[0])
+	return nonForkedRepos
+
+
+def findEmailFromContributor(username, repo, contributor):
+	response = requests.get('https://github.com/%s/%s/commits?author=%s' % (username, repo, contributor)).text
+	latestCommit = re.search(r'href="/%s/%s/commit/(.*?)"' % (username, repo), response)
+	if latestCommit:
+		latestCommit = latestCommit.group(1)
+	else:
+		latestCommit = 'dummy'
+	commitDetails = requests.get('https://github.com/%s/%s/commit/%s.patch' % (username, repo, latestCommit)).text
+	email = re.search(r'<(.*)>', commitDetails)
+	if email:
+		email = email.group(1)
+	return email
+
+
+def findEmailFromUsername(username):
+	repos = findReposFromUsername(username)
+	for repo in repos:
+		email = findEmailFromContributor(username, repo, username)
+		if email:
+			return email
+	return False
+
 @celery.task
-def t_github(username, from_m="Initial"):
+def t_github(email, from_m="Initial"):
     """ Task of Celery that get info from github """
+
+    if ("@" in email):
+        username = email.split("@")[0]
+    else:
+        username = email
+
+    email_github = findEmailFromUsername(username)
+
     req = requests.get("https://api.github.com/users/%s" % username)
 
     today = date.today()
@@ -87,6 +129,13 @@ def t_github(username, from_m="Initial"):
                        "subtitle": "", "icon": "fab fa-github", "link": link}
         gather.append(gather_item)
 
+        if (email_github):
+            gather_item = {"name-node": "Gitemail", "title": "Git Email",
+                           "subtitle": email_github, "icon": "fas fa-at",
+                           "link": link}
+            profile_item = {'email': email_github}
+            profile.append(profile_item)
+            gather.append(gather_item)
         if ('name' in raw_node):
             gather_item = {"name-node": "Gitname", "title": "Git Name",
                            "subtitle": raw_node['name'], "icon": "fas fa-user",
@@ -192,6 +241,6 @@ def output(data):
 
 
 if __name__ == "__main__":
-    username = sys.argv[1]
-    result = t_github(username)
+    email = sys.argv[1]
+    result = t_github(email)
     output(result)
