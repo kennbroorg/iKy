@@ -45,6 +45,7 @@ echo "========================================================================"
 echo
 
 echo "Cloning Repo"
+cd $HOME
 git clone https://gitlab.com/kennbroorg/iKy.git
 cd $HOME/iKy
 pwd
