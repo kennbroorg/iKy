@@ -62,7 +62,7 @@ def t_linkedin(email, from_m):
         and (expiration_date < datetime.fromtimestamp(
             os.path.getmtime(cookie_file)).strftime('%Y-%m-%d'))):
 
-        with open('cookie-linkedin.json', 'r') as f:
+        with open(cookie_file, 'r') as f:
             s.cookies = requests.utils.cookiejar_from_dict(json.load(f))
 
     else:
