@@ -4,6 +4,7 @@
 import sys
 import json
 import requests
+import os
 
 import re
 from bs4 import BeautifulSoup
@@ -48,7 +49,10 @@ def date_convert(date):
 @celery.task
 def t_linkedin(email, from_m):
 
-    cookie_file = "cookie-linkedin.json"
+    cookie_file = os.path.join(os.path.dirname(
+        os.path.realpath(__file__)), "cookie-linkedin.json")
+
+    # cookie_file = "cookie-linkedin.json"
     expiration_date = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
 
     s = requests.Session()
@@ -58,7 +62,7 @@ def t_linkedin(email, from_m):
         and (expiration_date < datetime.fromtimestamp(
             os.path.getmtime(cookie_file)).strftime('%Y-%m-%d'))):
 
-        with open('cookie-linkedin.json', 'r') as f:
+        with open(cookie_file, 'r') as f:
             s.cookies = requests.utils.cookiejar_from_dict(json.load(f))
 
     else:
@@ -107,8 +111,9 @@ def t_linkedin(email, from_m):
             "viewByEmail/%s" % email
         req = s.get(url, headers=headers)
         if "Sorry, we couldn't find a matching LinkedIn" not in req.text:
-            url = "https://www.linkedin.com/sales/gmail/profile/proxy/%s" % \
-                (email)
+            soup = BeautifulSoup(req.content, "lxml")
+            a = soup.find("a", {"id": "profile-link"})
+            url = a['href']
             found = True
 
     if found:

@@ -216,15 +216,16 @@ export class DataGatherInfoService {
         //                    () => console.log('Completed ghostproject')
         // );
     
-        // Linkedin TODO : This doesn't work anymore with mail
-        // if (this.isModuleParamRunTaskExec('linkedin', this.email, 'User', 100)) {
-        //     this.showToast(NbToastStatus.INFO, 'Linkedin', 'Send information gathering');
-        //     this.executeRequest$('linkedin', {username: this.email, from: 'User'})
-        //             .subscribe(this.processResponse,
-        //                        err => console.error('Ops: ', err.message),
-        //                        () => console.log('Completed linkedin')
-        //     );
-        // };
+        // Linkedin 
+        if (this.isModuleParamRunTaskExec('linkedin', this.email, 'User', 100)) {
+            this.showToast('info', 'Linkedin', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('linkedin', {username: this.email, from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed linkedin')
+            );
+        };
     
         // Keybase
         if (this.isModuleParamRunTaskExec('keybase', this.username, 'Username', 1)) {
@@ -448,6 +449,19 @@ export class DataGatherInfoService {
                 );
             };
     
+            if (datas['linkedin'] == '') {
+                // Linkedin 
+                if (this.isModuleParamRunTaskExec('linkedin', this.email, 'User', 100)) {
+                    this.showToast('info', 'Linkedin', 'Send information gathering');
+                    this.globalGather['taskresume'][0].PP++;
+                    this.executeRequest$('linkedin', {username: this.email, from: 'User'})
+                            .subscribe(this.processResponse,
+                                       err => console.error('Ops: ', err.message),
+                                       () => console.log('Completed linkedin')
+                    );
+                };
+            }
+
             // Leaks 
             if (this.isModuleParamRunTaskExec('leaks', this.email, 'User', 100)) {
                 this.showToast('info', 'Leaks (HIBP)', 'Send information gathering');
