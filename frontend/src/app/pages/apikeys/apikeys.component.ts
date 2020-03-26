@@ -93,4 +93,17 @@ export class ApiKeysComponent implements OnInit {
             );
     }
 
+    generateDownloadJsonUri() {
+        let Json = this.source.getAll();
+        console.log(Json);
+        let sJson = JSON.stringify(Json['__zone_symbol__value']);
+        let element = document.createElement('a');
+        element.setAttribute('href', "data:text/json;charset=UTF-8," + encodeURIComponent(sJson));
+        element.setAttribute('download', "apikeys.json");
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click(); // simulate click
+        document.body.removeChild(element);
+    }
+
 }
