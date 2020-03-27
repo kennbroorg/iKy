@@ -5,6 +5,7 @@ import sys
 import json
 import requests
 import os
+from collections import Counter
 
 import re
 from bs4 import BeautifulSoup
@@ -119,34 +120,20 @@ def t_linkedin(email, from_m):
     if found:
         req = s.get(url, headers=headers)
 
-        id = re.findall(
-            '\/voyager\/api\/identity\/profiles\/([a-z]*)\/',
+        ids = re.findall(
+            '\/voyager\/api\/identity\/profiles\/(.*)\/',
             req.text)
-
-        # url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
-        #     id[0] + "/recentActivities"
-        # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
-        # req = s.get(url)
-        # Recent Activities
-        # x = json.loads(req.text)
-        # print(json.dumps(x, indent=4, separators=(". ", " = ")))
-
-        # url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
-        #     id[0] + "/posts"
-        # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
-        # req = s.get(url)
-        # Posts
-        # x = json.loads(req.text)
+        id = Counter(ids).most_common(1)
 
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
-            id[0] + "/following?q=followedEntities&count=17"
+            id[0][0] + "/following?q=followedEntities&count=17"
         s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         req = s.get(url, headers=headers)
         # Following
         following_view = json.loads(req.text)
 
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
-            id[0] + "/skillCategory?includeHiddenEndorsers=true"
+            id[0][0] + "/skillCategory?includeHiddenEndorsers=true"
         s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         req = s.get(url, headers=headers)
         content = re.sub("\. ?\n", ",\n", unicode(req.text))
@@ -155,7 +142,7 @@ def t_linkedin(email, from_m):
         skill_category = json.loads(content)
 
         # url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
-        #     id[0] + "/skills?q=pendingFollowUpEndorsements&count=20"
+        #     id[0][0] + "/skills?q=pendingFollowUpEndorsements&count=20"
         # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         # req = s.get(url)
         # Skill
@@ -163,7 +150,7 @@ def t_linkedin(email, from_m):
 
         # TODO : KKK : For person relationship
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
-            id[0] + \
+            id[0][0] + \
             "/recommendations?q=received&recommendationStatuses=List(VISIBLE)"
         s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         req = s.get(url, headers=headers)
@@ -172,14 +159,14 @@ def t_linkedin(email, from_m):
 
         # TODO : KKK : For person relationship
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
-            id[0] + "/recommendations?q=given"
+            id[0][0] + "/recommendations?q=given"
         s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         req = s.get(url, headers=headers)
         # Recomendaciones 2
         recommend_given = json.loads(req.text)
 
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
-            id[0] + "/profileView"
+            id[0][0] + "/profileView"
         s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         req = s.get(url, headers=headers)
         content = re.sub("\. ?\n", ",\n", unicode(req.text))
@@ -188,14 +175,14 @@ def t_linkedin(email, from_m):
         profile_view = json.loads(content)
 
         # url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
-        #     id[0] + "/memberBadges"
+        #     id[0][0] + "/memberBadges"
         # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         # req = s.get(url)
         # MemberBadget
         # x = json.loads(req.text)
 
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
-            id[0] + "/networkinfo"
+            id[0][0] + "/networkinfo"
         s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         req = s.get(url, headers=headers)
         content = re.sub("\. ?\n", ",\n", unicode(req.text))
@@ -204,28 +191,28 @@ def t_linkedin(email, from_m):
         network_info = json.loads(content)
 
         # url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
-        #     id[0] + "/treasuryMediaItems?q=backgroundMedia&section=POSITION"
+        #     id[0][0] + "/treasuryMediaItems?q=backgroundMedia&section=POSITION"
         # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         # req = s.get(url)
         # MediaItems
         # x = json.loads(req.text)
 
         # url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
-        #     id[0] + "/treasuryMediaItems?q=backgroundMedia&section=EDUCATION"
+        #     id[0][0] + "/treasuryMediaItems?q=backgroundMedia&section=EDUCATION"
         # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         # req = s.get(url)
         # Education
         # x = json.loads(req.text)
 
         # url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
-        #     id[0] + "/memberConnections?q=connections"
+        #     id[0][0] + "/memberConnections?q=connections"
         # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         # req = s.get(url)
         # MemberConnections
         # x = json.loads(req.text)
 
         # url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
-        #     id[0] + "/privacySettings"
+        #     id[0][0] + "/privacySettings"
         # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         # req = s.get(url)
         # PrivacySettings
