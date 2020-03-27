@@ -1,0 +1,56 @@
+<nb-card size="small">
+  <nb-card-header (click)="openDialog(dialogLinkedinPos)">
+    LINKEDIN Positions
+    <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+  </nb-card-header>
+  <nb-card-body id="nbCardLinkedinPos" #nbCardLinkedinPos>
+      <div class="contact" *ngFor="let c of linkedinPositions">
+        <nb-user [name]="c.label"></nb-user>
+      </div>
+  </nb-card-body>
+</nb-card>
+
+<!--
+<nb-card size="small" class="border-default">
+  <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+  <nb-tabset fullWidth #nbCardLinkedinCert>
+      <nb-tab tabTitle="LINKEDIN Certs" (dblclick)="openDialog(dialogLinkedinCert)">
+      <div class="contact" *ngFor="let c of linkedinCerts">
+        <nb-user [name]="c.desc" [title]="c.name"></nb-user>
+      </div>
+    </nb-tab>
+    <nb-tab tabTitle="LINKEDIN Positions" (dblclick)="openDialog(dialogLinkedinCert)">
+      <div class="contact" *ngFor="let c of linkedinPositions">
+        <nb-user [name]="c.label"></nb-user>
+      </div>
+    </nb-tab>
+  </nb-tabset>
+</nb-card>
+
+  <ng-template #dialogLinkedinCert let-data let-ref="dialogRef">
+      <nb-tabset fullWidth #nbCardLinkedinCert ngClass="dialog-link" style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+          <nb-tab tabTitle="LINKEDIN Certs">
+          <div style="padding: 1rem;border-bottom: 1px solid rgba(255, 255, 255, 0.2);" 
+              *ngFor="let c of linkedinCerts">
+            <nb-user style="font-size: 20px;font-family: Exo;" [name]="c.desc" [title]="c.name"></nb-user>
+          </div>
+        </nb-tab>
+        <nb-tab tabTitle="LINKEDIN Positions">
+          <div style="padding: 1rem;border-bottom: 1px solid rgba(255, 255, 255, 0.2);" *ngFor="let c of linkedinPositions">
+            <nb-user style="font-size: 20px;font-family: Exo;" [name]="c.label"></nb-user>
+          </div>
+        </nb-tab>
+      </nb-tabset>
+  </ng-template>
+-->
+
+  <ng-template #dialogLinkedinPos let-data let-ref="dialogRef">
+      <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+        <nb-card-header>LINKEDIN Positions</nb-card-header>
+          <div style="padding: 1rem;border-bottom: 1px solid rgba(255, 255, 255, 0.2);" *ngFor="let c of linkedinPositions">
+            <nb-user style="font-size: 20px;font-family: Exo;" [name]="c.label"></nb-user>
+          </div>
+        <nb-card-body style="overflow: hidden; padding: 0px;">
+        </nb-card-body>
+      </nb-card>
+  </ng-template>
