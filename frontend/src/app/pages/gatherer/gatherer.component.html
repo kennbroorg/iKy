@@ -236,6 +236,12 @@
             <ngx-linkedin-certs [data]="gathered['linkedin']"></ngx-linkedin-certs>
           </div>
 
+          <!-- Linkedin Positions -->
+          <div class="col-md-4" id="divLinkedinPos" #divLinkedinPos *ngIf="gathered['linkedin'] && 
+                                       gathered['linkedin'].result[4] && validationShow[gathered['linkedin'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-linkedin-pos [data]="gathered['linkedin']"></ngx-linkedin-pos>
+          </div>
+
           <!-- Github Graphs -->
           <div id="divGithubGraphs" id="divGithubGraphs" #divGithubGraphs class="col-md-4" *ngIf="gathered['github'] && 
                                        gathered['github'].result[4] && validationShow[gathered['github'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">

@@ -48,6 +48,7 @@ import { TwitterUsersComponent } from './twitter/twitter-users/twitter-users.com
 import { LinkedinGraphsComponent } from './linkedin/linkedin-graphs/linkedin-graphs.component';
 import { LinkedinBubbleComponent } from './linkedin/linkedin-bubble/linkedin-bubble.component';
 import { LinkedinCertsComponent } from './linkedin/linkedin-certs/linkedin-certs.component';
+import { LinkedinPosComponent } from './linkedin/linkedin-pos/linkedin-pos.component';
 
 import { KeybaseSocialComponent } from './keybase/keybase-social/keybase-social.component';
 import { KeybaseDevicesComponent } from './keybase/keybase-devices/keybase-devices.component';
@@ -125,6 +126,7 @@ import { SharedModule } from '../shared/shared.module';
     LinkedinGraphsComponent,
     LinkedinBubbleComponent,
     LinkedinCertsComponent,
+    LinkedinPosComponent,
     KeybaseSocialComponent,
     KeybaseDevicesComponent,
     LeakGraphsComponent,
