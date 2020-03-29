@@ -301,6 +301,57 @@ def r_sherlock(username=None):
 
 
 ################################################
+# Tinder
+################################################
+@home.route("/tinder", methods=["POST"])
+def r_tinder(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("Tinder - Detected Username : ", username, from_m)
+    res = celery.send_task('modules.tinder.tinder_tasks.t_tinder',
+                           args=(username, ))
+    print("Tinder - Task : ", res.task_id)
+    return jsonify(module="tinder", task=res.task_id,
+                   param=username, from_m=from_m)
+
+
+################################################
+# Venmo
+################################################
+@home.route("/venmo", methods=["POST"])
+def r_venmo(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("Venmo - Detected Username : ", username, from_m)
+    res = celery.send_task('modules.venmo.venmo_tasks.t_venmo',
+                           args=(username, ))
+    print("Venmo - Task : ", res.task_id)
+    return jsonify(module="venmo", task=res.task_id,
+                   param=username, from_m=from_m)
+
+
+################################################
+# Skype
+################################################
+@home.route("/skype", methods=["POST"])
+def r_skype(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("Skype - Detected Username : ", username, from_m)
+    res = celery.send_task('modules.skype.skype_tasks.t_skype',
+                           args=(username, ))
+    print("Skype - Task : ", res.task_id)
+    return jsonify(module="skype", task=res.task_id,
+                   param=username, from_m=from_m)
+
+
+################################################
 # Searches
 ################################################
 @home.route("/search", methods=["POST"])
