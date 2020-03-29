@@ -249,6 +249,17 @@ export class DataGatherInfoService {
             );
         };
 
+        // Darkpass 
+        if (this.isModuleParamRunTaskExec('darkpass', this.email, 'User', 100)) {
+            this.showToast('info', 'Darkpass (Darknet)', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('darkpass', {username: this.email, from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Darkpass (Darknet)')
+            );
+        };
+
         // SocialScan
         if (this.isModuleParamRunTaskExec('socialscan', this.email, 'User', 100)) {
             this.showToast('info', 'SocialScan', 'Send information gathering');
@@ -531,6 +542,17 @@ export class DataGatherInfoService {
                         .subscribe(this.processResponse,
                                    err => console.error('Ops: ', err.message),
                                    () => console.log('Completed Leaks (HIBP)')
+                );
+            };
+
+            // Darkpass 
+            if (this.isModuleParamRunTaskExec('darkpass', this.email, 'User', 100)) {
+                this.showToast('info', 'Darkpass (Darknet)', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('darkpass', {username: this.email, from: 'User'})
+                        .subscribe(this.processResponse,
+                                   err => console.error('Ops: ', err.message),
+                                   () => console.log('Completed Darkpass (Darknet)')
                 );
             };
 
