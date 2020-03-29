@@ -159,6 +159,11 @@
             <ngx-fullcontact-scramble [data]="gathered['fullcontact']"></ngx-fullcontact-scramble>
           </div>
 
+          <!-- Skype -->
+          <div class="col-md-4" *ngIf="gathered['skype'] && gathered['skype'].result[4] && gathered['skype'].result[4]['graphic'][0] && validationShow[gathered['skype'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-skype [data]="gathered['skype']"></ngx-skype>
+          </div>
+
           <!-- Twitter List -->
           <div class="col-md-4" id="divTwitterList" #divTwitterList *ngIf="gathered['twitter'] &&
                                        gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
@@ -193,11 +198,6 @@
           <div class="col-md-4" id="divTwitterUsers" #divTwitterUsers *ngIf="gathered['twitter'] && 
                                        gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-users [data]="gathered['twitter']"></ngx-twitter-users>
-          </div>
-
-          <!-- Tiktok graphs-->
-          <div class="col-md-4" id="divTiktokSocial" #divTiktokSocial *ngIf="gathered['tiktok'] && gathered['tiktok'].result[4] && validationShow[gathered['tiktok'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
-            <ngx-tiktok-graphs [data]="gathered['tiktok']"></ngx-tiktok-graphs>
           </div>
 
           <!-- Instagram graphs-->
@@ -264,6 +264,31 @@
           <div class="col-md-4" id="divKeybaseSocial" #divKeybaseSocial *ngIf="gathered['keybase'] && 
                                        gathered['keybase'].result[4] && validationShow[gathered['keybase'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-keybase-social [data]="gathered['keybase']"></ngx-keybase-social>
+          </div>
+
+          <!-- Tiktok graphs-->
+          <div class="col-md-4" id="divTiktokSocial" #divTiktokSocial *ngIf="gathered['tiktok'] && gathered['tiktok'].result[4] && validationShow[gathered['tiktok'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-tiktok-graphs [data]="gathered['tiktok']"></ngx-tiktok-graphs>
+          </div>
+
+          <!-- Tinder graphs-->
+          <div class="col-md-4" id="divTinderGraphs" #divTinderGraphs *ngIf="gathered['tinder'] && gathered['tinder'].result[4] && validationShow[gathered['tinder'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-tinder-graphs [data]="gathered['tinder']"></ngx-tinder-graphs>
+          </div>
+
+          <!-- Venmo User -->
+          <div class="col-md-4" id="divVenmoUser" #divVenmoUser *ngIf="gathered['venmo'] && gathered['venmo'].result[4] && gathered['venmo'].result[4].graphic[0].user?.length > 1 && validationShow[gathered['venmo'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-venmo-graphs [data]="gathered['venmo']"></ngx-venmo-graphs>
+          </div>
+
+          <!-- Venmo Friends -->
+          <div class="col-md-4" id="divVenmoUser" #divVenmoUser *ngIf="gathered['venmo'] && gathered['venmo'].result[4] && gathered['venmo'].result[4].graphic[1].friends?.length > 0 && validationShow[gathered['venmo'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-venmo-friends [data]="gathered['venmo']"></ngx-venmo-friends>
+          </div>
+
+          <!-- Venmo Transactions -->
+          <div class="col-md-4" id="divVenmoTrans" #divVenmoTrans *ngIf="gathered['venmo'] && gathered['venmo'].result[4] && gathered['venmo'].result[4].graphic[2].trans?.length > 0 && validationShow[gathered['venmo'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-venmo-trans [data]="gathered['venmo']"></ngx-venmo-trans>
           </div>
 
           <!-- Leaks -->
@@ -405,11 +430,22 @@
           <div class="col-sm-5">
             <input type="text" class="form-control" #tiktok id="tiktok" placeholder="Tiktok" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
           </div>
+          <label for="inputTinder" class="col-sm-1 col-form-label" nbTooltip="Posible Tinder Account (Used in tinder module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fas fa-fire fa-2x"></i></label>
+          <div class="col-sm-5">
+            <input type="text" class="form-control" #tinder id="tinder" placeholder="Tinder" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
+          </div>
+        </div>
+
+        <div class="form-group row" style="padding-top: 10px;padding-right:20px; margin-bottom: 10px;">
+          <label for="inputVenmo" class="col-sm-1 col-form-label" nbTooltip="Posible Venmo Account (Used in venmo module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fab fa-vimeo-v fa-2x"></i></label>
+          <div class="col-sm-5">
+            <input type="text" class="form-control" #venmo id="venmo" placeholder="Venmo" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
+          </div>
         </div>
 
       </nb-card-body>
       <nb-card-footer>
-          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, username.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value)" style="border: none; margin-left:30px; font-weight: 400;">
+          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, username.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value, tinder.value, venmo.value)" style="border: none; margin-left:30px; font-weight: 400;">
               <i class="fas fa-search" style="padding-right: 5px"></i> SEARCH 
           </button>
 
