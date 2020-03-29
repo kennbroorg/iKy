@@ -182,6 +182,23 @@ def r_leaks():
 
 
 ################################################
+# Darkpass
+################################################
+@home.route("/darkpass", methods=["POST"])
+def r_darkpass():
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("Darkpass - Detected Username : ", username, from_m)
+    res = celery.send_task('modules.darkpass.darkpass_tasks.t_darkpass',
+                           args=(username, ))
+    print("Darkpass - Task : ", res.task_id)
+    return jsonify(module="leaks", task=res.task_id,
+                   param=username, from_m=from_m)
+
+
+################################################
 # Gitlab
 ################################################
 @home.route("/gitlab", methods=["POST"])
