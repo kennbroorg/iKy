@@ -1,0 +1,44 @@
+<nb-card size="small">
+  <nb-card-header (click)="openDialog(dialogVenmoTrans)">
+    VENMO Transactions
+    <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+  </nb-card-header>
+  <nb-card-body id="nbCardVenmoTrans" #nbCardVenmoTrans style="text-align: center; margin: 0px; padding: 0px;">
+    <nb-list>
+      <nb-list-item *ngFor="let c of venmoTrans">
+        <div class="contact">
+          <div class="info-container">
+            <div class="user-name ng-star-inserted"><strong>{{c.date}}</strong></div> 
+            <div class="user-title ng-star-inserted">
+               <p align="left" style="margin: 0px; padding:0px;"><strong>From</strong> : {{c.donor_username}} | {{c.donor_name}}</p>
+               <p align="left" style="margin: 0px; padding:0px;"><strong>To</strong> : {{c.recipient_username}} | {{c.recipient_name}}</p>
+               <p align="left" style="margin: 0px; padding:0px;"><strong>Text</strong> : {{c.text}}</p>
+            </div>
+          </div>
+        </div>
+      </nb-list-item>
+    </nb-list>
+  </nb-card-body>
+</nb-card>
+
+<ng-template #dialogVenmoTrans let-data let-ref="dialogRef">
+  <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+    <nb-card-header>VENMO Trans</nb-card-header>
+      <nb-card-body id="nbCardVenmoTrans" #nbCardVenmoTrans style="text-align: center; margin: 0px; padding: 0px;">
+        <nb-list>
+          <nb-list-item *ngFor="let c of venmoTrans">
+            <div class="contact">
+              <div class="info-container">
+                <div class="user-name ng-star-inserted">{{c.date}}</div> 
+                <div class="user-title ng-star-inserted">
+                   <p align="left" style="margin: 0px; padding:0px; padding-top: 5px;"><strong style="font-weight: 500;">From</strong> : {{c.donor_username}} | {{c.donor_name}}</p>
+                   <p align="left" style="margin: 0px; padding:0px; padding-top: 5px;"><strong style="font-weight: 500;">To</strong> : {{c.recipient_username}} | {{c.recipient_name}}</p>
+                   <p align="left" style="margin: 0px; padding:0px;"><strong style="font-weight: 500;">Text</strong> : {{c.text}}</p>
+                </div>
+              </div>
+            </div>
+          </nb-list-item>
+        </nb-list>
+      </nb-card-body>
+  </nb-card>
+</ng-template>
