@@ -29,6 +29,7 @@ def get_config():
                           'modules.tinder.tinder_tasks',
                           'modules.skype.skype_tasks',
                           'modules.venmo.venmo_tasks',
+                          'modules.darkpass.darkpass_tasks',
                           'modules.emailrep.emailrep_tasks')
     return Config
 

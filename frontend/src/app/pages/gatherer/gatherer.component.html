@@ -297,6 +297,11 @@
             <ngx-leak-graphs [data]="gathered['leaks']"></ngx-leak-graphs>
           </div>
 
+          <!-- Darkpass -->
+          <div class="col-md-4" id="divDarkpassList" #divDarkpassList *ngIf="gathered['darkpass'] && gathered['darkpass'].result[4] && validationShow[gathered['darkpass'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-darkpass-list [data]="gathered['darkpass']"></ngx-darkpass-list>
+          </div>
+
           <!-- Search Names -->
           <div class="col-md-4" id="divSearchNames" #divSearchNames *ngIf="gathered['search'] && gathered['search'].result[4] && gathered['search'].result[4].graphic[0].names?.length > 0 && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-search-names [data]="gathered['search']"></ngx-search-names>

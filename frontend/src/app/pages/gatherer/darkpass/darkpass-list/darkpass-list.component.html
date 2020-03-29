@@ -1,0 +1,45 @@
+<nb-card size="small">
+  <nb-card-header (click)="openDialog(dialogDarkpassList)">
+    DARKPASS List
+    <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+  </nb-card-header>
+  <nb-card-body id="nbCardDarkpassList" #nbCardDarkpassList style="text-align: center; margin: 0px; padding: 0px;">
+    <div style="height: 150px; margin-top: 20px; margin-bottom: 10px;">
+        <i class="fas fa-skull-crossbones" style="font-size: 150px;"></i>
+    </div>
+    <div class="notor" style="font-weight: 700;" *ngIf="statusFull == 'No TOR'"><strong>TOR is not enabled in 127.0.0.1:9050</strong></div> 
+    <div class="nopass" style="font-weight: 700;" *ngIf="statusFull == 'No password leaked'"><strong>NO plain text password leaked</strong></div> 
+    <nb-list>
+      <nb-list-item *ngFor="let c of darkpassList">
+        <div class="contact">
+          <div class="info-container">
+            <div class="user-name ng-star-inserted"><strong>{{c.password}}</strong></div> 
+          </div>
+        </div>
+      </nb-list-item>
+    </nb-list>
+  </nb-card-body>
+</nb-card>
+
+<ng-template #dialogDarkpassList let-data let-ref="dialogRef">
+  <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+    <nb-card-header>DARKPASS List</nb-card-header>
+      <nb-card-body id="nbCardDarkpassList" #nbCardDarkpassList style="text-align: center; margin: 0px; padding: 0px;">
+        <div style="height: 150px; margin-top: 10px; margin-bottom: 10px;">
+            <i class="fas fa-skull-crossbones" style="font-size: 150px;"></i>
+        </div>
+        <div class="notor" style="font-weight: 700;" *ngIf="statusFull == 'No TOR'"><strong>TOR is not enabled in 127.0.0.1:9050</strong></div> 
+        <div class="nopass" style="font-weight: 700;" *ngIf="statusFull == 'No password leaked'"><strong>NO plain text password leaked</strong></div> 
+        <nb-list>
+          <nb-list-item *ngFor="let c of darkpassList">
+            <div class="contact">
+              <div class="info-container">
+                <div class="user-name ng-star-inserted"><strong>{{c.password}}</strong></div> 
+              </div>
+            </div>
+          </nb-list-item>
+        </nb-list>
+
+      </nb-card-body>
+  </nb-card>
+</ng-template>
