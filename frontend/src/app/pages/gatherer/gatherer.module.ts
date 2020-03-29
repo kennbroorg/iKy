@@ -79,6 +79,14 @@ import { TiktokGraphsComponent } from './tiktok/tiktok-graphs/tiktok-graphs.comp
 import { SherlockGraphComponent } from './sherlock/sherlock-graphs/sherlock-graphs.component';
 import { SherlockListComponent } from './sherlock/sherlock-list/sherlock-list.component';
 
+import { SkypeComponent } from './skype/skype.component';
+
+import { VenmoGraphsComponent } from './venmo/venmo-graphs/venmo-graphs.component';
+import { VenmoFriendsComponent } from './venmo/venmo-friends/venmo-friends.component';
+import { VenmoTransComponent } from './venmo/venmo-trans/venmo-trans.component';
+
+import { TinderGraphsComponent } from './tinder/tinder-graphs/tinder-graphs.component';
+
 import { FsIconComponent, TaskexecComponent } from './taskexec/taskexec.component';
 
 import { SharedModule } from '../shared/shared.module';
@@ -145,10 +153,15 @@ import { SharedModule } from '../shared/shared.module';
     SearchSearchesComponent,
     SearchListComponent,
     TiktokGraphsComponent,
+    SkypeComponent,
     TaskexecComponent,
     FsIconComponent,
     SherlockGraphComponent,
     SherlockListComponent,
+    VenmoGraphsComponent,
+    VenmoFriendsComponent,
+    VenmoTransComponent,
+    TinderGraphsComponent,
   ],
   providers: [
     InstagramMapService,
