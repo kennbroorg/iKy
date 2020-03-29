@@ -260,6 +260,50 @@ export class DataGatherInfoService {
             );
         };
 
+        // Tiktok
+        if (this.isModuleParamRunTaskExec('tiktok', this.username, 'Username', 1)) {
+            this.showToast('info', 'Tiktok', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('tiktok', {username: this.username, from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Tiktok')
+            );
+        };
+
+        // Skype
+        if (this.isModuleParamRunTaskExec('skype', this.email, 'User', 100)) {
+            this.showToast('info', 'Skype', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('skype', {username: this.email, from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Skype')
+            );
+        };
+
+        // Venmo
+        if (this.isModuleParamRunTaskExec('venmo', this.username, 'Username', 1)) {
+            this.showToast('info', 'Venmo', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('venmo', {username: this.username, from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Venmo')
+            );
+        };
+
+        // Tinder
+        if (this.isModuleParamRunTaskExec('tinder', this.username, 'Username', 1)) {
+            this.showToast('info', 'Tinder', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('tinder', {username: this.username, from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Tinder')
+            );
+        };
+
     }
 
     /* Gather Info Advance */
@@ -376,6 +420,34 @@ export class DataGatherInfoService {
             };
         };
         
+        if (datas['tinder'] != '') {
+            console.log("Tinder : ", datas['tinder']);
+            // Tinder
+            if (this.isModuleParamRunTaskExec('tinder', datas['tinder'], 'User', 100)) {
+                this.showToast('info', 'Tinder', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('tinder', {username: datas['tinder'], from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Tinder')
+                );
+            };
+        };
+        
+        if (datas['venmo'] != '') {
+            console.log("Venmo : ", datas['venmo']);
+            // Venmo
+            if (this.isModuleParamRunTaskExec('venmo', datas['venmo'], 'User', 100)) {
+                this.showToast('info', 'Venmo', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('venmo', {username: datas['venmo'], from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Venmo')
+                );
+            };
+        };
+        
         if (datas['email'] != '') {
             console.log("Email : ", datas['email']);
 
@@ -427,17 +499,6 @@ export class DataGatherInfoService {
                 );
             };
 
-            // Linkedin TODO : This doesn't work anymore with mail
-            if (this.isModuleParamRunTaskExec('linkedin', this.email, 'Username', 1)) {
-                this.showToast('info', 'Linkedin', 'Send information gathering');
-                this.globalGather['taskresume'][0].PP++;
-                this.executeRequest$('linkedin', {username: this.email, from: 'User'})
-                        .subscribe(this.processResponse,
-                                   err => console.error('Ops: ', err.message),
-                                   () => console.log('Completed linkedin')
-                );
-            };
-    
             // Keybase
             if (this.isModuleParamRunTaskExec('keybase', this.username, 'Username', 1)) {
                 this.showToast('info', 'Keybase', 'Send information gathering');
