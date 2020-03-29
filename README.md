@@ -34,6 +34,7 @@
     <img alt="skype" src="https://img.shields.io/badge/module-skype-blue.svg">
     <img alt="tinder" src="https://img.shields.io/badge/module-tinder-blue.svg">
     <img alt="venmo" src="https://img.shields.io/badge/module-venmo-blue.svg">
+    <img alt="darkpass" src="https://img.shields.io/badge/module-darkpass-blue.svg">
 </div>
 
 ---
