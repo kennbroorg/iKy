@@ -87,6 +87,8 @@ import { VenmoTransComponent } from './venmo/venmo-trans/venmo-trans.component';
 
 import { TinderGraphsComponent } from './tinder/tinder-graphs/tinder-graphs.component';
 
+import { DarkpassListComponent } from './darkpass/darkpass-list/darkpass-list.component';
+
 import { FsIconComponent, TaskexecComponent } from './taskexec/taskexec.component';
 
 import { SharedModule } from '../shared/shared.module';
@@ -162,6 +164,7 @@ import { SharedModule } from '../shared/shared.module';
     VenmoFriendsComponent,
     VenmoTransComponent,
     TinderGraphsComponent,
+    DarkpassListComponent,
   ],
   providers: [
     InstagramMapService,
