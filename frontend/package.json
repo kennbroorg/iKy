@@ -66,7 +66,7 @@
     "@angular/compiler-cli": "^8.0.0",
     "@angular/language-service": "8.0.0",
     "@compodoc/compodoc": "^1.1.11",
-    "@fortawesome/fontawesome-free": "^5.2.0",
+    "@fortawesome/fontawesome-free": "^5.4.0",
     "@types/d3-color": "1.0.5",
     "@types/googlemaps": "^3.30.4",
     "@types/jasmine": "2.5.54",
