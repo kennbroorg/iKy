@@ -1,0 +1,24 @@
+  <nb-card size="small">
+    <nb-card-header (click)="openDialog(dialogSkype)">
+      SKYPE
+      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+    </nb-card-header>
+    <nb-card-body id="nbCardGraphs" #nbCardGraphs style="text-align: center; overflow: hidden;">
+        <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 200px; z-index: 2;">
+            <i class="fab fa-skype" style="font-size: 200px;"></i>
+            <p>{{statusFull}}</p>
+        </div>
+    </nb-card-body>
+  </nb-card>
+
+  <ng-template #dialogSkyp let-data let-ref="dialogRef">
+      <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+        <nb-card-header>SKYPE</nb-card-header>
+        <nb-card-body style="overflow: hidden; padding: 0px;">
+            <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 200px; z-index: 2;">
+                <i class="fab fa-skype" style="font-size: 200px;"></i>
+                <p>{{statusFull}}</p>
+            </div>
+        </nb-card-body>
+      </nb-card>
+  </ng-template>
