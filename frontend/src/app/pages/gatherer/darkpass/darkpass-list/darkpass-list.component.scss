@@ -1,0 +1,49 @@
+@import '../../../../@theme/styles/themes';
+
+@include nb-install-component() {
+
+  .i-contact {
+    font-size: 2rem;
+    cursor: pointer;
+  }
+
+  // .time {
+  //   font-size: 0.875rem;
+  //   font-weight: nb-theme(text-paragraph-font-weight);
+  //   text-transform: uppercase;
+  // }
+
+  nb-list-item /deep/ {
+    .info-container {
+      padding: 0px;
+      width: 100%;
+      // @include nb-ltr(margin-left, 0.875rem);
+      // @include nb-rtl(margin-right, 0.875rem);
+    }
+
+    .user-title {
+      font-weight: 300;
+      color: nb-theme(text-basic-color);
+      font-size: 0.8rem;
+
+      p {
+        font-weight: 300;
+        font-size: 0.8rem;
+        padding: 0px;
+        margin: 0px;
+      }
+
+      strong {
+        font-weight: 700;
+      }
+    }
+
+    .user-name {
+      font-size: 0.8rem;
+      font-weight: 500;
+      // font-weight: nb-theme(text-paragraph-font-weight);
+      // text-transform: uppercase;
+    }
+  }
+
+}
