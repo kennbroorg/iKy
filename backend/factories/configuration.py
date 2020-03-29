@@ -26,6 +26,9 @@ def get_config():
                           'modules.tiktok.tiktok_tasks',
                           'modules.sherlock.sherlock_tasks',
                           'modules.search.search_tasks',
+                          'modules.tinder.tinder_tasks',
+                          'modules.skype.skype_tasks',
+                          'modules.venmo.venmo_tasks',
                           'modules.emailrep.emailrep_tasks')
     return Config
 

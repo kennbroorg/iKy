@@ -122,11 +122,22 @@
           <div class="col-sm-5">
             <input type="text" class="form-control" #tiktok id="tiktok" placeholder="Tiktok" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
           </div>
+          <label for="inputTinder" class="col-sm-1 col-form-label" nbTooltip="Posible Tinder Account (Used in tinder module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fas fa-fire fa-2x"></i></label>
+          <div class="col-sm-5">
+            <input type="text" class="form-control" #tinder id="tinder" placeholder="Tinder" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
+          </div>
+        </div>
+
+        <div class="form-group row" style="padding-top: 10px;padding-right:20px; margin-bottom: 10px;">
+          <label for="inputVenmo" class="col-sm-1 col-form-label" nbTooltip="Posible Venmo Account (Used in venmo module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fab fa-vimeo-v fa-2x"></i></label>
+          <div class="col-sm-5">
+            <input type="text" class="form-control" #venmo id="venmo" placeholder="Venmo" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
+          </div>
         </div>
 
       </nb-card-body>
       <nb-card-footer>
-          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, username.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value)" style="border: none; margin-left:30px; font-weight: 400;">
+          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, username.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value, tinder.value, venmo.value)" style="border: none; margin-left:30px; font-weight: 400;">
               <i class="fas fa-search" style="padding-right: 5px"></i> SEARCH 
           </button>
 
