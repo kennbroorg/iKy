@@ -31,6 +31,9 @@
     <img alt="instagram" src="https://img.shields.io/badge/module-instagram-blue.svg">
     <img alt="tiktok" src="https://img.shields.io/badge/module-tiktok-blue.svg">
     <img alt="sherlock" src="https://img.shields.io/badge/module-sherlock-blue.svg">
+    <img alt="skype" src="https://img.shields.io/badge/module-skype-blue.svg">
+    <img alt="tinder" src="https://img.shields.io/badge/module-tinder-blue.svg">
+    <img alt="venmo" src="https://img.shields.io/badge/module-venmo-blue.svg">
 </div>
 
 ---
@@ -169,7 +172,6 @@ Una vez que la aplicación esté cargada en el browser, deberá ir a la opción 
 
 
 # Wiki
-
 - [iKy Wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/home)
 - [iKy Page](https://kennbroorg.gitlab.io/ikyweb/)
 - Installation
@@ -188,7 +190,16 @@ Una vez que la aplicación esté cargada en el browser, deberá ir a la opción 
   - [Backend through URL](https://gitlab.com/kennbroorg/iKy/-/wikis/Backend/Backend-through-url)
 - Videos
   - [Installation videos](https://gitlab.com/kennbroorg/iKy/-/wikis/Videos/Installations)
+    - [Installation in Kali 2019](https://vimeo.com/350877994) 
+    - [Installation in ubuntu 18.04](https://vimeo.com/347435255) 
+    - [Installation in ubuntu 16.04](https://vimeo.com/332359273) 
   - [Demo videos](https://gitlab.com/kennbroorg/iKy/-/wikis/Videos/Demos)
+    - [iKy eko15](https://vimeo.com/397862772)
+    - [iKy version 2](https://vimeo.com/347085110)
+    - [Testing iKy with Emiliano](https://vimeo.com/349011105)
+    - [Testing iKy with Giba](https://vimeo.com/342843348)
+    - [iKy version 1](https://vimeo.com/326114716)
+    - [iKy version 0](https://vimeo.com/272495754)
 - [Disclaimer](https://gitlab.com/kennbroorg/iKy/-/wikis/Disclaimer)
 
 
