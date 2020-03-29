@@ -106,3 +106,6 @@ cookie*.json
 ####################
 .vagrant
 
+# Pyenv #
+#########
+.python-version
