@@ -4,8 +4,8 @@
       <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
     </nb-card-header>
     <nb-card-body id="nbCardGraphs" #nbCardGraphs style="text-align: center; overflow: hidden;">
-        <div nbTooltip="The profile does not exist or an error happened" nbTooltipStatus="danger" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 200px; z-index: 2;" *ngIf="statusFull == 'Fail'">
-            <i class="fas fa-times" style="font-size: 200px;"></i>
+        <div nbTooltip="The profile does not exist or an error happened" nbTooltipStatus="danger" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 150px; z-index: 2;" *ngIf="statusFull == 'Fail'">
+            <i class="far fa-times-circle" style="font-size: 150px;"></i>
         </div>
         <ngx-graphs [data]="tiktokGraphs"></ngx-graphs>
     </nb-card-body>
