@@ -187,10 +187,8 @@ def t_twitter(username, from_m):
     graphic.append({'users': users})
     graphic.append({'tweetslist': tweetslist})
     total.append({'graphic': graphic})
-    if (profile != []):
-        total.append({'profile': profile})
-    if (timeline != []):
-        total.append({'timeline': timeline})
+    total.append({'profile': profile})
+    total.append({'timeline': timeline})
 
     return total
 
