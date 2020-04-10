@@ -692,6 +692,26 @@ export class DataGatherInfoService {
                 }
             }
         }
+
+        // Chained process
+        if (module_name == 'twitter') {
+            console.log("Launch tweetiment")
+            let task_id
+            for (let indexTaskexec in this.globalGather['taskexec']) {
+                if (this.globalGather['taskexec'][indexTaskexec].module == "twitter") {
+                    task_id = this.globalGather['taskexec'][indexTaskexec].task_id;
+                } 
+            }
+            // Tweetiment
+            this.showToast('info', 'Twetiment', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('tweetiment', {username: param, from: 'User', task_id: task_id })
+                .subscribe(this.processResponse,
+                           err => console.error('Ops: ', err.message),
+                           () => console.log('Completed tweetiment')
+            );
+        }
+
     
         this.showToast('success', module_name, 'Gather ended');
         this.globalGather['taskresume'][0].PS++;
