@@ -200,6 +200,11 @@
             <ngx-twitter-users [data]="gathered['twitter']"></ngx-twitter-users>
           </div>
 
+          <!-- Twitter Sentiment -->
+          <div class="col-md-8" id="divTweetimentLines" #divTweetimentLines *ngIf="gathered['tweetiment'] && gathered['tweetiment'].result[4] && validationShow[gathered['tweetiment'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-tweetiment-lines [data]="gathered['tweetiment']"></ngx-tweetiment-lines>
+          </div>
+
           <!-- Instagram graphs-->
           <div class="col-md-4" id="divInstagramSocial" #divInstagramSocial *ngIf="gathered['instagram'] && 
                                        gathered['instagram'].result[4] && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
