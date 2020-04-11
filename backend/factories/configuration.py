@@ -30,6 +30,7 @@ def get_config():
                           'modules.skype.skype_tasks',
                           'modules.venmo.venmo_tasks',
                           'modules.darkpass.darkpass_tasks',
+                          'modules.tweetiment.tweetiment_tasks',
                           'modules.emailrep.emailrep_tasks')
     return Config
 

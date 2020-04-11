@@ -383,3 +383,21 @@ def r_search(username=None):
     print("Search - Task : ", res.task_id)
     return jsonify(module="search", task=res.task_id,
                    param=username, from_m=from_m)
+
+
+################################################
+# Tweetiment
+################################################
+@home.route("/tweetiment", methods=["POST"])
+def r_tweetiment(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    task_id = json_result.get("task_id", "")
+    print("Tweetiment - Detected Username : ", username, from_m, task_id)
+    res = celery.send_task('modules.tweetiment.tweetiment_tasks.t_tweetiment',
+                           args=(username, task_id, from_m))
+    print("Tweetiment - Task : ", res.task_id)
+    return jsonify(module="tweetiment", task=res.task_id,
+                   param=username, from_m=from_m)
