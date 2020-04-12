@@ -22,4 +22,5 @@ services:
         build:
             context: .
             dockerfile: ./install/docker/backend/Dockerfile.celery
+        links:
             - "redis:redis"
