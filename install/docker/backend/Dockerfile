@@ -13,5 +13,18 @@ RUN sed -i "s/CELERY_RESULT_BACKEND.*/CELERY_RESULT_BACKEND = 'redis:\/\/redis:6
 
 RUN sed -i "s/redis:\/\/localhost/redis:\/\/redis/g" /app/factories/celery_config.py
 
+# supervisor installation &&
+# create directory for child images to store configuration in
+RUN apt-get update && \
+    apt-get -y upgrade
+RUN apt-get -y install supervisor && \
+  mkdir -p /var/log/supervisor && \
+  mkdir -p /etc/supervisor/conf.d
+
+# supervisor base configuration
+ADD install/docker/backend/supervisor.conf /etc/supervisor.conf
+
 EXPOSE 5000
-CMD ["python", "app.py", "-i", "0.0.0.0"]
+
+# default command
+CMD ["supervisord", "-c", "/etc/supervisor.conf"]
