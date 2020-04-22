@@ -1,0 +1,20 @@
+version: '3'
+services:
+    frontend:
+        build:
+            context: .
+            dockerfile: ./install/docker/frontend/Dockerfile
+        ports:
+            - "4200:4200"
+    backend:
+        build:
+            context: .
+            dockerfile: ./install/docker/backend/Dockerfile
+        ports:
+            - "5000:5000"
+        links:
+            - "redis:redis"
+    redis:
+        image: redis
+        ports:
+            - "6379:6379"
