@@ -63,10 +63,22 @@ case "$__os_id" in
             bash scripts/ubuntu1804.sh
         fi
         ;;
+    Kali)
+        if compareVersions "$__os_release" lt 2020; then
+            error="You need Kali 2020 or newer"
+        else
+            # if no apt-get we need to fail
+            [[ -z "$(which apt-get)" ]] && echo "Unsupported OS - No apt-get command found"
+            echo " "
+            echo "Launch Provisioning..."
+            echo " "
+            bash scripts/ubuntu1804.sh
+        fi
+        ;;
     *)
         error="Unsupported OS"
         ;;
 esac
 
-[[ -n "$error" ]] && fatalError "$error\n\n$(lsb_release -idrc)"
+[[ -n "$error" ]] && echo "$error\n\n$(lsb_release -idrc)"
 
