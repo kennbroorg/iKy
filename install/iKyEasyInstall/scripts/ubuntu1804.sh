@@ -1,7 +1,12 @@
+#!/usr/bin/bash
 echo "========================================================================"
-echo " PROVISIONING - Ubuntu 18.04"
+echo " PROVISIONING"
 echo "========================================================================"
-cd ../../
+
+while [ `echo $PWD | grep install` ]
+    do
+       cd ..
+    done
 WD=$PWD
 echo "Working directory $WD"
 
@@ -15,20 +20,6 @@ sudo apt-get upgrade -y
 sudo apt-get install -y build-essential
 echo "========================================================================"
 echo 
-
-## echo "Installing pyenv and python3.7..."
-## sudo apt-get install -y libffi-dev build-essential libbz2-dev libssl-dev libreadline-dev libsqlite3-dev tk-dev libxml2-dev libxslt1-dev git
-## curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
-## export PATH="~/.pyenv/bin:$PATH" >> ~/.bashrc
-## echo export PATH="~/.pyenv/bin:$PATH" >> ~/.bashrc
-## echo eval "$(pyenv init -)" >> ~/.bashrc
-## echo eval "$(pyenv virtualenv-init -)" >> ~/.bashrc
-## source ~/.bashrc
-## pyenv install 3.7.4
-## pyenv global 3.7.4
-## # Falta setear el environment
-## echo "========================================================================"
-## echo 
 
 echo "Installing python3.7..."
 sudo apt-get install -y libffi-dev build-essential libbz2-dev libssl-dev libreadline-dev libsqlite3-dev tk-dev libxml2-dev libxslt1-dev git
