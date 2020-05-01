@@ -20,5 +20,6 @@ app = Celery('celery_config', broker='redis://localhost:6379/0',
                       'modules.skype.skype_tasks',
                       'modules.venmo.venmo_tasks',
                       'modules.darkpass.darkpass_tasks',
-                      'modules.tweetiment.tweetiment_tasks'
+                      'modules.tweetiment.tweetiment_tasks',
+                      'modules.reddit.reddit_tasks'
                       ])

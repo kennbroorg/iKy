@@ -31,6 +31,7 @@ def get_config():
                           'modules.venmo.venmo_tasks',
                           'modules.darkpass.darkpass_tasks',
                           'modules.tweetiment.tweetiment_tasks',
+                          'modules.reddit.reddit_tasks',
                           'modules.emailrep.emailrep_tasks')
     return Config
 
