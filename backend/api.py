@@ -412,10 +412,9 @@ def r_reddit(username=None):
     json_result = request.get_json()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
-    task_id = json_result.get("task_id", "")
-    print("Reddit - Detected Username : ", username, from_m, task_id)
+    print("Reddit - Detected Username : ", username, from_m)
     res = celery.send_task('modules.reddit.reddit_tasks.t_reddit',
-                           args=(username, task_id, from_m))
+                           args=(username, ))
     print("Reddit - Task : ", res.task_id)
     return jsonify(module="reddit", task=res.task_id,
                    param=username, from_m=from_m)

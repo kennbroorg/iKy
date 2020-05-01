@@ -8,11 +8,11 @@ from datetime import datetime
 from collections import Counter
 import time
 import random
+import os
 
 try:
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.configuration import api_keys_search
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 except ImportError:
@@ -20,7 +20,6 @@ except ImportError:
     sys.path.append('../../')
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.configuration import api_keys_search
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
@@ -29,16 +28,9 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
-# Compatibility code
-# try:
-#     # Python 2: "unicode" is built-in
-#     unicode
-# except NameError:
-#     unicode = str
-
 
 @celery.task
-def t_reddit(username, from_m):
+def t_reddit(username, from_m='Initial'):
 
     user_agents = [
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
@@ -145,8 +137,11 @@ def t_reddit(username, from_m):
         # And create a set for comparison purposes
         sublistset = set(subList)
 
+        location_file = os.path.join(os.path.dirname(
+            os.path.realpath(__file__)), "all-locations.txt")
+
         # Load subreddits from file and check them against comments
-        locList = [line.rstrip('\n').lower() for line in open('all-locations.txt')]
+        locList = [line.rstrip('\n').lower() for line in open(location_file)]
         loclistset = set(locList)
 
         counter = Counter(subList)
@@ -351,26 +346,13 @@ def t_reddit(username, from_m):
     # bios = []
 
     total.append({'raw': raw_node})
-    graphic.append({'gather': gather})
+    graphic.append({'social': gather})
     graphic.append({'hour': hourset})
     graphic.append({'week': weekset})
     graphic.append({'topics': topics_bubble})
     total.append({'graphic': graphic})
     total.append({'profile': profile})
     total.append({'timeline': timeline})
-
-    # print("userdata")
-    # print(userdata)
-    # print("hour ")
-    # print(hourset)
-    # print("week ")
-    # print(weekset)
-    # print("wdCounter ")
-    # print(wdCounter)
-    # print("gdata ")
-    # print(topics_bubble)
-    # print("Loc ")
-    # print(str(sublistset.intersection(loclistset)))
 
     return total
 
