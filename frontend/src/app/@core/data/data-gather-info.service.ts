@@ -315,6 +315,17 @@ export class DataGatherInfoService {
             );
         };
 
+        // Reddit
+        if (this.isModuleParamRunTaskExec('reddit', this.username, 'Username', 1)) {
+            this.showToast('info', 'Reddit', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('reddit', {username: this.username, from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Reddit')
+            );
+        };
+
     }
 
     /* Gather Info Advance */
@@ -459,6 +470,20 @@ export class DataGatherInfoService {
             };
         };
         
+        if (datas['reddit'] != '') {
+            console.log("Reddit : ", datas['reddit']);
+            // Venmo
+            if (this.isModuleParamRunTaskExec('reddit', datas['reddit'], 'User', 100)) {
+                this.showToast('info', 'Reddit', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('reddit', {username: datas['reddit'], from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Reddit')
+                );
+            };
+        };
+        
         if (datas['email'] != '') {
             console.log("Email : ", datas['email']);
 
@@ -578,8 +603,21 @@ export class DataGatherInfoService {
                 );
             };
 
+            if (datas['reddit'] == '') {
+                // Reddit
+                if (this.isModuleParamRunTaskExec('reddit', this.username, 'User', 100)) {
+                    this.showToast('info', 'Linkedin', 'Send information gathering');
+                    this.globalGather['taskresume'][0].PP++;
+                    this.executeRequest$('reddit', {username: this.username, from: 'User'})
+                            .subscribe(this.processResponse,
+                                       err => console.error('Ops: ', err.message),
+                                       () => console.log('Completed Reddit')
+                    );
+                };
+            };
+
         };
-    }
+    };
     
     // Tasklist Callback
     private processTasklist = (data: any): any => {
