@@ -133,11 +133,15 @@
           <div class="col-sm-5">
             <input type="text" class="form-control" #venmo id="venmo" placeholder="Venmo" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
           </div>
+          <label for="inputReddit" class="col-sm-1 col-form-label" nbTooltip="Posible Reddit Account (Used in reddit module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fab fa-reddit-square fa-2x"></i></label>
+          <div class="col-sm-5">
+            <input type="text" class="form-control" #reddit id="reddit" placeholder="Reddit" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
+          </div>
         </div>
 
       </nb-card-body>
       <nb-card-footer>
-          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, username.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value, tinder.value, venmo.value)" style="border: none; margin-left:30px; font-weight: 400;">
+          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, username.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value, tinder.value, venmo.value, reddit.value)" style="border: none; margin-left:30px; font-weight: 400;">
               <i class="fas fa-search" style="padding-right: 5px"></i> SEARCH 
           </button>
 

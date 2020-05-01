@@ -117,7 +117,7 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
         this.searchSubs.unsubscribe();
     }
 
-    toggleFlipViewAndSearch(email, username, twitter, instagram, linkedin, github, tiktok, tinder, venmo) {
+    toggleFlipViewAndSearch(email, username, twitter, instagram, linkedin, github, tiktok, tinder, venmo, reddit) {
         console.log("Advance Search");
         console.log("email", email);
         console.log("username", username);
@@ -128,6 +128,7 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
         console.log("tiktok", tiktok);
         console.log("tinder", tinder);
         console.log("venmo", venmo);
+        console.log("reddit", reddit);
 
         this.flipped = !this.flipped;
 
@@ -141,6 +142,7 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
             tiktok: tiktok,
             tinder: tinder,
             venmo: venmo,
+            reddit: reddit,
         };
         
         this.gathered = this.dataGatherService.initialize();

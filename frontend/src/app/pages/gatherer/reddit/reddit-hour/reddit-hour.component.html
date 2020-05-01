@@ -1,0 +1,42 @@
+  <nb-card size="small" class="border-default">
+    <nb-card-header  (click)="openDialog(dialogRedditHour)">
+      REDDIT Hour
+      <!-- <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div> -->
+    </nb-card-header>
+    <nb-card-body style="margin: 0px; padding: 0px; text-align: center; overflow: hidden;">
+
+        <div #nbCardRedditHour id="nbCardRedditHour">
+            <ngx-charts-bar-vertical
+              [view]="[width, height - 50]"
+              [scheme]="colorScheme"
+              [results]="redditHour"
+              showDataLabel="true"
+              xAxis="true"
+              yAxis="true"
+            >
+            </ngx-charts-bar-vertical>
+         </div>
+
+    </nb-card-body>
+  </nb-card>
+
+
+  <ng-template #dialogRedditHour let-data let-ref="dialogRef">
+    <nb-card [style.width]="width * 2" [style.height]="height * 2" style="background-color: rgba(0, 0, 0, 0.8);">
+      <nb-card-header>REDDIT Hour</nb-card-header>
+      <nb-card-body style="overflow: hidden;">
+
+        <div style="fill: #05fcfc !important; font-size: 35px !important;">
+            <ngx-charts-bar-vertical
+              [view]="[width * 1.8, height * 1.8]"
+              [scheme]="colorScheme"
+              [results]="redditHour"
+              showDataLabel="true"
+              xAxis="true"
+              yAxis="true">
+            </ngx-charts-bar-vertical>
+        </div>
+
+      </nb-card-body>
+    </nb-card>
+  </ng-template>

@@ -1,0 +1,18 @@
+  <nb-card size="small" class="border-default">
+    <nb-card-header (click)="openDialog(dialogRedditBubble)">
+      REDDIT Topics
+      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+    </nb-card-header>
+    <nb-card-body id="nbCardRedditBubble" #nbCardRedditBubble style="margin: 0px; padding: 0px; text-align: center; overflow: hidden;">
+        <ngx-bubble [data]="redditBubble"></ngx-bubble>
+    </nb-card-body>
+  </nb-card>
+
+  <ng-template #dialogRedditBubble let-data let-ref="dialogRef">
+      <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+        <nb-card-header>REDDIT Topics</nb-card-header>
+        <nb-card-body style="overflow: hidden; padding: 0px;">
+          <ngx-bubble [data]="redditBubble"></ngx-bubble>
+        </nb-card-body>
+      </nb-card>
+  </ng-template>
