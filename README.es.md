@@ -35,6 +35,8 @@
     <img alt="tinder" src="https://img.shields.io/badge/module-tinder-blue.svg">
     <img alt="venmo" src="https://img.shields.io/badge/module-venmo-blue.svg">
     <img alt="darkpass" src="https://img.shields.io/badge/module-darkpass-blue.svg">
+    <img alt="tweetiment" src="https://img.shields.io/badge/module-tweetiment-blue.svg">
+    <img alt="reddit" src="https://img.shields.io/badge/module-reddit-blue.svg">
 </div>
 
 ---
