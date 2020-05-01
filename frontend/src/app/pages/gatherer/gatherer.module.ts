@@ -91,6 +91,11 @@ import { DarkpassListComponent } from './darkpass/darkpass-list/darkpass-list.co
 
 import { TweetimentLinesComponent } from './tweetiment/tweetiment-lines/tweetiment-lines.component';
 
+import { RedditSocialComponent } from './reddit/reddit-social/reddit-social.component';
+import { RedditHourComponent } from './reddit/reddit-hour/reddit-hour.component';
+import { RedditWeekComponent } from './reddit/reddit-week/reddit-week.component';
+import { RedditBubbleComponent } from './reddit/reddit-bubble/reddit-bubble.component';
+
 import { FsIconComponent, TaskexecComponent } from './taskexec/taskexec.component';
 
 import { SharedModule } from '../shared/shared.module';
@@ -168,6 +173,10 @@ import { SharedModule } from '../shared/shared.module';
     TinderGraphsComponent,
     DarkpassListComponent,
     TweetimentLinesComponent,
+    RedditSocialComponent,
+    RedditHourComponent,
+    RedditWeekComponent,
+    RedditBubbleComponent,
   ],
   providers: [
     InstagramMapService,
