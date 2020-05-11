@@ -1,0 +1,8 @@
+<nb-card size="small" class="border-default">
+  <nb-card-header>
+      <span><i class="fas fa-map-marked-alt"></i> - </span> Posible Geolocation
+  </nb-card-header>
+  <nb-card-body style="padding: 0px;">
+    <div leaflet [leafletOptions]="options" [leafletLayers]="layers" (leafletMapReady)="mapReady($event)"></div>
+  </nb-card-body>
+</nb-card>
