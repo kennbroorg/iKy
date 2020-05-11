@@ -197,6 +197,17 @@ export class DataGatherInfoService {
             );
         };
     
+        // Peopledatalabs
+        if (this.isModuleParamRunTaskExec('peopledatalabs', this.email, 'User', 100)) {
+            this.showToast('info', 'Peopledatalabs', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('peopledatalabs', {username: this.email, from: 'User'})
+                .subscribe(this.processResponse,
+                           err => console.error('Ops: ', err.message),
+                           () => console.log('Completed Peopledatalabs')
+            );
+        };
+    
         // Github
         if (this.isModuleParamRunTaskExec('github', this.username, 'Username', 1)) {
             this.showToast('info', 'GitHub', 'Send information gathering');
@@ -217,15 +228,15 @@ export class DataGatherInfoService {
         // );
     
         // Linkedin 
-        if (this.isModuleParamRunTaskExec('linkedin', this.email, 'User', 100)) {
-            this.showToast('info', 'Linkedin', 'Send information gathering');
-            this.globalGather['taskresume'][0].PP++;
-            this.executeRequest$('linkedin', {username: this.email, from: 'User'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed linkedin')
-            );
-        };
+        // if (this.isModuleParamRunTaskExec('linkedin', this.email, 'User', 100)) {
+        //     this.showToast('info', 'Linkedin', 'Send information gathering');
+        //     this.globalGather['taskresume'][0].PP++;
+        //     this.executeRequest$('linkedin', {username: this.email, from: 'User'})
+        //             .subscribe(this.processResponse,
+        //                        err => console.error('Ops: ', err.message),
+        //                        () => console.log('Completed linkedin')
+        //     );
+        // };
     
         // Keybase
         if (this.isModuleParamRunTaskExec('keybase', this.username, 'Username', 1)) {
@@ -546,18 +557,18 @@ export class DataGatherInfoService {
                 );
             };
     
-            if (datas['linkedin'] == '') {
-                // Linkedin 
-                if (this.isModuleParamRunTaskExec('linkedin', this.email, 'User', 100)) {
-                    this.showToast('info', 'Linkedin', 'Send information gathering');
-                    this.globalGather['taskresume'][0].PP++;
-                    this.executeRequest$('linkedin', {username: this.email, from: 'User'})
-                            .subscribe(this.processResponse,
-                                       err => console.error('Ops: ', err.message),
-                                       () => console.log('Completed linkedin')
-                    );
-                };
-            }
+            // if (datas['linkedin'] == '') {
+            //     // Linkedin 
+            //     if (this.isModuleParamRunTaskExec('linkedin', this.email, 'User', 100)) {
+            //         this.showToast('info', 'Linkedin', 'Send information gathering');
+            //         this.globalGather['taskresume'][0].PP++;
+            //         this.executeRequest$('linkedin', {username: this.email, from: 'User'})
+            //                 .subscribe(this.processResponse,
+            //                            err => console.error('Ops: ', err.message),
+            //                            () => console.log('Completed linkedin')
+            //         );
+            //     };
+            // }
 
             // Leaks 
             if (this.isModuleParamRunTaskExec('leaks', this.email, 'User', 100)) {

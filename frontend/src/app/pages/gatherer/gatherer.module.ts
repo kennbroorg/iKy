@@ -96,6 +96,9 @@ import { RedditHourComponent } from './reddit/reddit-hour/reddit-hour.component'
 import { RedditWeekComponent } from './reddit/reddit-week/reddit-week.component';
 import { RedditBubbleComponent } from './reddit/reddit-bubble/reddit-bubble.component';
 
+import { PeopledatalabsSocialComponent } from './peopledatalabs/peopledatalabs-social/peopledatalabs-social.component';
+import { PeopledatalabsGraphsComponent } from './peopledatalabs/peopledatalabs-graphs/peopledatalabs-graphs.component';
+
 import { FsIconComponent, TaskexecComponent } from './taskexec/taskexec.component';
 
 import { SharedModule } from '../shared/shared.module';
@@ -177,6 +180,8 @@ import { SharedModule } from '../shared/shared.module';
     RedditHourComponent,
     RedditWeekComponent,
     RedditBubbleComponent,
+    PeopledatalabsSocialComponent,
+    PeopledatalabsGraphsComponent,
   ],
   providers: [
     InstagramMapService,

@@ -36,6 +36,7 @@ try:
 except NameError:
     unicode = str
 
+
 def load_dirty_json(dirty_json):
     regex_replace = [(r"([ \{,:\[])(u)?'([^']+)'", r'\1"\3"'),
                      (r" False([, \}\]])", r' false\1'),
@@ -80,7 +81,7 @@ def t_instagram(username, from_m="Initial"):
     url = "https://www.instagram.com/%s/" % username
     geolocator = Nominatim(user_agent="iKy")
     req = requests.get(url, headers={'User-Agent':
-                      random.choice(user_agents)})
+                       random.choice(user_agents)})
     soup = BeautifulSoup(req.text, 'html.parser')
 
     general_data = soup.find_all('meta', attrs={'property': 'og:description'})
@@ -296,6 +297,7 @@ def t_instagram(username, from_m="Initial"):
         # Geo and Bar
         postlist = []
         postloc = []
+        postloc_item = []
         for post in posts:
             post_item = {"name": int(post), "series": [
                         {"name": "Comments",
@@ -307,14 +309,16 @@ def t_instagram(username, from_m="Initial"):
                 location = load_dirty_json(posts[post]['Location'])
                 time_post = datetime.fromtimestamp(float(posts[post][
                     'Taken At Timestamp']))
-                postloc.append({'Caption': posts[post]['Caption'],
+                postloc_item = {'Caption': posts[post]['Caption'],
                                 'Accessability': posts[post][
                                     'Accessability Caption'],
                                 'Latitude': posts[post]['Latitude'],
                                 'Longitude': posts[post]['Longitude'],
                                 'Name': location['name'],
                                 'Time': time_post.strftime("%Y/%m/%d %H:%M:%S")
-                                })
+                                }
+                postloc.append(postloc_item)
+                profile.append({'geo': postloc_item})
 
         total.append({'raw': raw_node})
         graphic.append({'instagram': gather})

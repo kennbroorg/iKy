@@ -79,6 +79,23 @@ def r_fullcontact():
 
 
 ################################################
+# Peopledatalabs
+################################################
+@home.route("/peopledatalabs", methods=["POST"])
+def r_peopledatalabs():
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("Peopledatalabs - Detected Username : ", username, from_m)
+    res = celery.send_task('modules.peopledatalabs.peopledatalabs_tasks.' +
+                           't_peopledatalabs', args=(username, ))
+    print("Peopledatalabs - Task : ", res.task_id)
+    return jsonify(module="peopledatalabs", task=res.task_id,
+                   param=username, from_m=from_m)
+
+
+################################################
 # Github
 ################################################
 @home.route("/github", methods=["POST"])
