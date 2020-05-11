@@ -23,9 +23,12 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
     public  profile: any = [];
     public  name: any = [];
     public  location: any = [];
+    public  geo: any = [];
     public  gender: any = [];
     public  social: any = [];
     public  photo: any = [];
+    public  phone: any = [];
+    public  emails: any = [];
     public  organization: any = [];
     public  flipped = false;
 
@@ -51,6 +54,8 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
         // Check global data
         this.gathered = this.dataGatherService.pullGather();
 
+        // Mail from search
+        // TODO: Add mail from search
         for (let i in this.gathered) {
             console.log("i", i)
           for (let j in this.gathered[i]) {
@@ -81,6 +86,15 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
                         case 'location':
                           this.location.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
                           break;
+                        case 'email':
+                          this.emails.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
+                          break;
+                        case 'phone':
+                          this.phone.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
+                          break;
+                        case 'geo':
+                          this.geo.push(this.gathered[i][j][k][l][p][q]);
+                          break;
                         case 'organization':
                           if (Array.isArray(this.gathered[i][j][k][l][p][q])) {
                               for (let r in this.gathered[i][j][k][l][p][q]) {
@@ -107,6 +121,7 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
         // TODO : Analize profile information
         console.log("name", this.name);
         console.log("location", this.location);
+        console.log("geo", this.geo);
         console.log("gender", this.gender);
         console.log("social", this.social);
         console.log("photo", this.photo);
