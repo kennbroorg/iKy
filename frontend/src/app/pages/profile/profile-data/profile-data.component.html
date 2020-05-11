@@ -1,15 +1,9 @@
-<nb-card size="medium" class="border-default">
-  <nb-card-header>
-      Profile Data
-  </nb-card-header>
-  <nb-card-body>
-
   <div class="row">
 
     <div class="col-md-4" *ngIf="name?.length > 0">
       <nb-card size="small" class="border-default">
         <nb-card-header>
-          Posible Name
+            <span><i class="fas fa-signature"></i> - </span> Posible Name
         </nb-card-header>
         <nb-card-body id="nbCardProfileName" #nbCardProfileName style="text-align: center; overflow: hidden;">
             <ngx-text-cloud [data]="name"></ngx-text-cloud>
@@ -17,10 +11,14 @@
       </nb-card>
     </div>
 
+    <div class="col-md-8" *ngIf="geo?.length > 0">
+      <ngx-profile-map [data]="geo"></ngx-profile-map>
+    </div>
+
     <div class="col-md-4" *ngIf="location?.length > 0">
       <nb-card size="small" class="border-default">
         <nb-card-header>
-          Posible Location
+            <span><i class="fas fa-globe-americas"></i> - </span> Posible Location
         </nb-card-header>
         <nb-card-body id="nbCardProfileLocation" #nbCardProfileLocation style="text-align: center; overflow: hidden;">
             <ngx-text-cloud [data]="location"></ngx-text-cloud>
@@ -31,7 +29,7 @@
     <div class="col-md-4" *ngIf="organization?.length > 0">
       <nb-card size="small" class="border-default">
         <nb-card-header>
-          Posible Organization
+            <span><i class="fas fa-sitemap"></i> - </span> Posible Organization
         </nb-card-header>
         <nb-card-body id="nbCardProfileOrganization" #nbCardProfileOrganization style="text-align: center; overflow: hidden;">
             <ngx-text-cloud [data]="organization"></ngx-text-cloud>
@@ -39,7 +37,26 @@
       </nb-card>
     </div>
 
-  </div>
+    <div class="col-md-4" *ngIf="emails?.length > 0">
+      <nb-card size="small" class="border-default">
+        <nb-card-header>
+            <span><i class="fas fa-envelope"></i> - </span> Posible Emails
+        </nb-card-header>
+        <nb-card-body id="nbCardProfileEmails" #nbCardProfileEmails style="text-align: center; overflow: hidden;">
+            <ngx-text-cloud [data]="emails"></ngx-text-cloud>
+        </nb-card-body>
+      </nb-card>
+    </div>
 
-  </nb-card-body>
-</nb-card>
+    <div class="col-md-4" *ngIf="phone?.length > 0">
+      <nb-card size="small" class="border-default">
+        <nb-card-header>
+            <span><i class="fas fa-mobile-alt"></i> - </span> Posible Phones
+        </nb-card-header>
+        <nb-card-body id="nbCardProfilePhone" #nbCardProfilePhone style="text-align: center; overflow: hidden;">
+            <ngx-text-cloud [data]="phone"></ngx-text-cloud>
+        </nb-card-body>
+      </nb-card>
+    </div>
+
+  </div>

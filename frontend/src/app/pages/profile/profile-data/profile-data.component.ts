@@ -9,6 +9,9 @@ export class ProfileDataComponent implements OnInit {
     @Input() private name: any;
     @Input() private organization: any;
     @Input() private location: any;
+    @Input() private geo: any;
+    @Input() private emails: any;
+    @Input() private phone: any;
 
     constructor() {}
 
