@@ -32,6 +32,7 @@ def get_config():
                           'modules.darkpass.darkpass_tasks',
                           'modules.tweetiment.tweetiment_tasks',
                           'modules.reddit.reddit_tasks',
+                          'modules.peopledatalabs.peopledatalabs_tasks',
                           'modules.emailrep.emailrep_tasks')
     return Config
 
