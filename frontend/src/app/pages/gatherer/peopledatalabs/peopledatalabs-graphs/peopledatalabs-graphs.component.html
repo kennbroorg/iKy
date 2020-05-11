@@ -1,0 +1,27 @@
+  <nb-card size="small" class="border-default">
+    <nb-card-header (click)="openDialog(dialogPeopledatalabsGraph)">
+      PEOPLEDATALABS Data
+      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+    </nb-card-header>
+    <nb-card-body style="text-align: center; overflow: hidden;">
+        <ngx-graphs [data]="peopledatalabsGraphs"></ngx-graphs>
+        <div nbTooltip="No information found about the mail" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 200px; z-index: 2;" *ngIf="statusFull == 404">
+            <i class="fas fa-shield-alt" style="font-size: 200px;"></i>
+        </div>
+        <div nbTooltip="The PeopleDataLabs API is missing or invalid" nbTooltipStatus="danger" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 150px; z-index: 2;" *ngIf="statusFull == 401">
+            <i class="fas fa-key" style="font-size: 150px;"></i>
+        </div>
+        <div nbTooltip="{{statusMessages.message}}" nbTooltipStatus="danger" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 150px; z-index: 2;" *ngIf="statusFull !== 200 && statusFull !== 401 && statusFull !== 404">
+            <i class="fas fa-exclamation-circle" style="font-size: 150px;"></i>
+        </div>
+    </nb-card-body>
+  </nb-card>
+
+  <ng-template #dialogPeopledatalabsGraph let-data let-ref="dialogRef">
+      <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+        <nb-card-header>PEOPLEDATALABS Data</nb-card-header>
+        <nb-card-body style="overflow: hidden; padding: 0px;">
+          <ngx-graphs [data]="peopledatalabsGraphs" modal="true"></ngx-graphs>
+        </nb-card-body>
+      </nb-card>
+  </ng-template>
