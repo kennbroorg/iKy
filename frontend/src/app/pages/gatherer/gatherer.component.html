@@ -159,6 +159,16 @@
             <ngx-fullcontact-scramble [data]="gathered['fullcontact']"></ngx-fullcontact-scramble>
           </div>
 
+          <!-- Peopledatalabs Data -->
+          <div id="divPeopledatalabsGraphs" #divPeopledatalabsGraphs class="col-md-4" *ngIf="gathered['peopledatalabs'] && gathered['peopledatalabs'].result && validationShow[gathered['peopledatalabs'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-peopledatalabs-graphs [data]="gathered['peopledatalabs']"></ngx-peopledatalabs-graphs>
+          </div>
+
+          <!-- Peopledatalabs Social -->
+          <div id="divPeopledatalabsSocial" #divPeopledatalabsSocial class="col-md-4" *ngIf="gathered['peopledatalabs'] && gathered['peopledatalabs'].result && gathered['peopledatalabs'].result[4].graphic[1].social?.length > 1 && validationShow[gathered['peopledatalabs'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-peopledatalabs-social [data]="gathered['peopledatalabs']"></ngx-peopledatalabs-social>
+          </div>
+
           <!-- Skype -->
           <div class="col-md-4" *ngIf="gathered['skype'] && gathered['skype'].result[4] && gathered['skype'].result[4]['graphic'][0] && validationShow[gathered['skype'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-skype [data]="gathered['skype']"></ngx-skype>
