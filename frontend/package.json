@@ -54,7 +54,7 @@
     "rxjs": "6.5.2",
     "rxjs-compat": "6.3.0",
     "socicon": "3.0.5",
-    "tinymce": "4.9.7",
+    "tinymce": "4.9.10",
     "tslib": "^1.9.0",
     "typeface-exo": "0.0.22",
     "web-animations-js": "github:angular/web-animations-js#release_pr208",
