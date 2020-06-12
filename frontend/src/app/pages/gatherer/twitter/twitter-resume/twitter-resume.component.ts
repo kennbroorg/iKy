@@ -40,7 +40,7 @@ export class TwitterResumeComponent implements OnInit, AfterViewInit {
         this.height = this.cardContainer.nativeElement.parentNode.clientHeight;
         console.log("Twitter Resume Component");
 
-        this.twitterResume = this.data.result[4].graphic[0].resume.children.map(this.arrayAdecuate);
+        this.twitterResume = this.data.result[4].graphic[1].resume.children.map(this.arrayAdecuate);
         console.log("Twitter Resume data", this.twitterResume);
     }
 

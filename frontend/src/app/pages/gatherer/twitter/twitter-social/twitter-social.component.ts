@@ -2,14 +2,14 @@ import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, Templat
 import { NbDialogService } from '@nebular/theme';
 
 @Component({
-    selector: 'ngx-twitter-users',
-    templateUrl: './twitter-users.component.html',
-    styleUrls: ['./twitter-users.component.scss']
+    selector: 'ngx-twitter-social',
+    templateUrl: './twitter-social.component.html',
+    styleUrls: ['./twitter-social.component.scss']
 })
-export class TwitterUsersComponent implements OnInit, AfterViewInit {
-    @ViewChild('nbCardTwitterUsers', { static: false }) private cardContainer: ElementRef;
+export class TwitterSocialComponent implements OnInit, AfterViewInit {
+    @ViewChild('nbCardTwitterSocial', { static: false }) private cardContainer: ElementRef;
     @Input() private data: any;
-    private twitterUsers : any;
+    private twitterSocial : any;
 
     private card: any;
     private width: number;
@@ -18,13 +18,13 @@ export class TwitterUsersComponent implements OnInit, AfterViewInit {
     constructor(private dialogService: NbDialogService) {}
 
     ngOnInit() {
-        this.twitterUsers = this.data.result[4].graphic[5].users;
+        this.twitterSocial = this.data.result[4].graphic[0].social;
     }
 
     ngAfterViewInit() {
 
-        console.log("Twitter Users Component");
-        console.log(this.twitterUsers);
+        console.log("Twitter Social Component");
+        console.log(this.twitterSocial);
     }
 
     openDialog(dialog: TemplateRef<any>) {

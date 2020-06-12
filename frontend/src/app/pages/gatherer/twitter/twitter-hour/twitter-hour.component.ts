@@ -2,22 +2,20 @@ import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, Templat
 import { NbDialogService } from '@nebular/theme';
 
 @Component({
-    selector: 'ngx-twitter-approval',
-    templateUrl: './twitter-approval.component.html',
-    styleUrls: ['./twitter-approval.component.scss']
+    selector: 'ngx-twitter-hour',
+    templateUrl: './twitter-hour.component.html',
+    styleUrls: ['./twitter-hour.component.scss']
 })
-export class TwitterApprovalComponent implements OnInit, AfterViewInit {
-    showLegend = true;
-    showLabels = true;
-    themeSubscription: any;
-
-    @ViewChild('nbCardTwitterApproval', { static: false }) private cardContainer: ElementRef;
+export class TwitterHourComponent implements OnInit, AfterViewInit {
+    @ViewChild('nbCardTwitterHour', { static: true }) private cardContainer: ElementRef;
     @Input() private data: any;
-    private twitterApproval : any;
+    private twitterHour : any;
 
     private card: any;
     private width: number;
     private height: number;
+    showLegend = false;
+    showLabels = true;
 
     colorScheme = {
       domain: [ 
@@ -35,24 +33,18 @@ export class TwitterApprovalComponent implements OnInit, AfterViewInit {
     constructor(private dialogService: NbDialogService) {}
 
     ngOnInit() {
+        this.card = this.cardContainer.nativeElement;
     }
 
     ngAfterViewInit() {
-        this.card = this.cardContainer.nativeElement;
         this.width = this.cardContainer.nativeElement.parentNode.parentNode.clientWidth;
         this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight - 55;
+        console.log("Twitter Hour Component");
+        console.log("Width", this.width);
+        console.log("Height", this.height);
 
-        console.log("Twitter Approval Component");
-
-        this.twitterApproval = this.data.result[4].graphic[3].approval.map(this.arrayAdecuate);
-    }
-
-    arrayAdecuate(item, index, array) {
-        if (array[index]['title']) {
-            array[index].name = array[index]['title'];
-            delete array[index].title;  
-        }
-        return item;
+        this.twitterHour = this.data.result[4].graphic[8].hour;
+        console.log("TwitterHour", this.twitterHour);
     }
 
     openDialog(dialog: TemplateRef<any>) {
