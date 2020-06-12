@@ -174,40 +174,49 @@
             <ngx-skype [data]="gathered['skype']"></ngx-skype>
           </div>
 
+          <!-- Twitter Social -->
+          <div class="col-md-4" id="divTwitterSocial" #divTwitterSocial *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitter-social [data]="gathered['twitter']"></ngx-twitter-social>
+          </div>
+
           <!-- Twitter List -->
-          <div class="col-md-4" id="divTwitterList" #divTwitterList *ngIf="gathered['twitter'] &&
-                                       gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-8" id="divTwitterList" #divTwitterList *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-list [data]="gathered['twitter']"></ngx-twitter-list>
           </div>
 
           <!-- Twitter Popularity -->
-          <div class="col-md-4" id="divTwitterPopularity" #divTwitterPopularity *ngIf="gathered['twitter'] &&
-                                       gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterPopularity" #divTwitterPopularity *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-popularity [data]="gathered['twitter']"></ngx-twitter-popularity>
           </div>
 
           <!-- Twitter Resume -->
-          <div class="col-md-4" id="divTwitterResume" #divTwitterResume *ngIf="gathered['twitter'] && 
-                                       gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterResume" #divTwitterResume *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-resume [data]="gathered['twitter']"></ngx-twitter-resume>
           </div>
 
           <!-- Twitter Approval -->
-          <div class="col-md-4" id="divTwitterApproval" #divTwitterApproval *ngIf="gathered['twitter'] && 
-                                       gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterApproval" #divTwitterApproval *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-approval [data]="gathered['twitter']"></ngx-twitter-approval>
           </div>
 
           <!-- Twitter Hashtag -->
-          <div class="col-md-4" id="divTwitterHashtag" #divTwitterHashtag *ngIf="gathered['twitter'] && 
-                                       gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterHashtag" #divTwitterHashtag *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-hashtag [data]="gathered['twitter']"></ngx-twitter-hashtag>
           </div>
 
           <!-- Twitter Users -->
-          <div class="col-md-4" id="divTwitterUsers" #divTwitterUsers *ngIf="gathered['twitter'] && 
-                                       gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterUsers" #divTwitterUsers *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-users [data]="gathered['twitter']"></ngx-twitter-users>
+          </div>
+
+          <!-- Twitter Hour -->
+          <div class="col-md-4" id="divTwitterHour" #divTwitterHour *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitter-hour [data]="gathered['twitter']"></ngx-twitter-hour>
+          </div>
+
+          <!-- Twitter Week -->
+          <div class="col-md-4" id="divTwitterWeek" #divTwitterWeek *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitter-week [data]="gathered['twitter']"></ngx-twitter-week>
           </div>
 
           <!-- Twitter Sentiment -->
@@ -216,56 +225,47 @@
           </div>
 
           <!-- Instagram graphs-->
-          <div class="col-md-4" id="divInstagramSocial" #divInstagramSocial *ngIf="gathered['instagram'] && 
-                                       gathered['instagram'].result[4] && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divInstagramSocial" #divInstagramSocial *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-instagram-graphs [data]="gathered['instagram']"></ngx-instagram-graphs>
           </div>
 
           <!-- Instagram Posts -->
-          <div class="col-md-4" id="divInstagramPosts" #divInstagramPosts *ngIf="gathered['instagram'] && 
-                                       gathered['instagram'].result[4] && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divInstagramPosts" #divInstagramPosts *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-instagram-posts [data]="gathered['instagram']"></ngx-instagram-posts>
           </div>
 
           <!-- Instagram Map -->
-          <div class="col-md-8" id="divInstagramMap" #divInstagramMap *ngIf="gathered['instagram'] && 
-                                       gathered['instagram'].result[4] && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-8" id="divInstagramMap" #divInstagramMap *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-instagram-map [data]="gathered['instagram']"></ngx-instagram-map>
           </div>
 
           <!-- Linkedin Graphs -->
-          <div class="col-md-4" id="divLinkedinGraphs" #divLinkedinGraphs *ngIf="gathered['linkedin'] && 
-                                       gathered['linkedin'].result[4] && validationShow[gathered['linkedin'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divLinkedinGraphs" #divLinkedinGraphs *ngIf="gathered['linkedin'] && gathered['linkedin'].result[4] && validationShow[gathered['linkedin'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-linkedin-graphs [data]="gathered['linkedin']"></ngx-linkedin-graphs>
           </div>
 
           <!-- Linkedin Bubble -->
-          <div class="col-md-4" id="divLinkedinBubble" #divLinkedinBubble *ngIf="gathered['linkedin'] && 
-                                       gathered['linkedin'].result[4] && validationShow[gathered['linkedin'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divLinkedinBubble" #divLinkedinBubble *ngIf="gathered['linkedin'] && gathered['linkedin'].result[4] && validationShow[gathered['linkedin'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-linkedin-bubble [data]="gathered['linkedin']"></ngx-linkedin-bubble>
           </div>
 
           <!-- Linkedin Certs -->
-          <div class="col-md-4" id="divLinkedinCerts" #divLinkedinCerts *ngIf="gathered['linkedin'] && 
-                                       gathered['linkedin'].result[4] && validationShow[gathered['linkedin'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divLinkedinCerts" #divLinkedinCerts *ngIf="gathered['linkedin'] && gathered['linkedin'].result[4] && gathered['linkedin'].result[4].graphic[2].certificationView?.length > 0 && gathered['linkedin'].result[4] && validationShow[gathered['linkedin'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-linkedin-certs [data]="gathered['linkedin']"></ngx-linkedin-certs>
           </div>
 
           <!-- Linkedin Positions -->
-          <div class="col-md-4" id="divLinkedinPos" #divLinkedinPos *ngIf="gathered['linkedin'] && 
-                                       gathered['linkedin'].result[4] && validationShow[gathered['linkedin'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divLinkedinPos" #divLinkedinPos *ngIf="gathered['linkedin'] && gathered['linkedin'].result[4] && gathered['linkedin'].result[4].graphic[3].positionGroupView?.length > 0 && gathered['linkedin'].result[4] && validationShow[gathered['linkedin'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-linkedin-pos [data]="gathered['linkedin']"></ngx-linkedin-pos>
           </div>
 
           <!-- Github Graphs -->
-          <div id="divGithubGraphs" id="divGithubGraphs" #divGithubGraphs class="col-md-4" *ngIf="gathered['github'] && 
-                                       gathered['github'].result[4] && validationShow[gathered['github'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div id="divGithubGraphs" id="divGithubGraphs" #divGithubGraphs class="col-md-4" *ngIf="gathered['github'] && gathered['github'].result[4] && validationShow[gathered['github'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-github-graphs [data]="gathered['github']"></ngx-github-graphs>
           </div>
 
           <!-- Github Calendar -->
-          <div class="col-md-8" id="divGithubCalendar" #divGithubCalendar *ngIf="gathered['github'] && 
-                                       gathered['github'].result[4] && validationShow[gathered['github'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-8" id="divGithubCalendar" #divGithubCalendar *ngIf="gathered['github'] && gathered['github'].result[4] && validationShow[gathered['github'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-github-calendar [data]="gathered['github']"></ngx-github-calendar>
           </div>
 
@@ -275,17 +275,17 @@
           </div>
 
           <!-- Reddit Bubble-->
-          <div class="col-md-4" id="divRedditBubble" #divRedditBubble *ngIf="gathered['reddit'] && gathered['reddit'].result[4] && gathered['reddit'].result[4].graphic[0].social?.length > 0 && validationShow[gathered['reddit'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divRedditBubble" #divRedditBubble *ngIf="gathered['reddit'] && gathered['reddit'].result[4] && gathered['reddit'].result[4].graphic[0].social?.length > 1 && validationShow[gathered['reddit'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-reddit-bubble [data]="gathered['reddit']"></ngx-reddit-bubble>
           </div>
 
           <!-- Reddit Hour-->
-          <div class="col-md-4" id="divRedditHour" #divRedditHour *ngIf="gathered['reddit'] && gathered['reddit'].result[4] && gathered['reddit'].result[4].graphic[0].social?.length > 0 && validationShow[gathered['reddit'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divRedditHour" #divRedditHour *ngIf="gathered['reddit'] && gathered['reddit'].result[4] && gathered['reddit'].result[4].graphic[0].social?.length > 1 && validationShow[gathered['reddit'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-reddit-hour [data]="gathered['reddit']"></ngx-reddit-hour>
           </div>
 
           <!-- Reddit Week-->
-          <div class="col-md-4" id="divRedditWeek" #divRedditWeek *ngIf="gathered['reddit'] && gathered['reddit'].result[4] && gathered['reddit'].result[4].graphic[0].social?.length > 0 && validationShow[gathered['reddit'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divRedditWeek" #divRedditWeek *ngIf="gathered['reddit'] && gathered['reddit'].result[4] && gathered['reddit'].result[4].graphic[0].social?.length > 1 && validationShow[gathered['reddit'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-reddit-week [data]="gathered['reddit']"></ngx-reddit-week>
           </div>
 
@@ -327,8 +327,7 @@
           </div>
 
           <!-- Leaks -->
-          <div class="col-md-4" id="divLeakSocial" #divLeakSocial *ngIf="gathered['leaks'] && 
-                                       gathered['leaks'].result[4] && validationShow[gathered['leaks'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divLeakSocial" #divLeakSocial *ngIf="gathered['leaks'] && gathered['leaks'].result[4] && validationShow[gathered['leaks'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-leak-graphs [data]="gathered['leaks']"></ngx-leak-graphs>
           </div>
 
