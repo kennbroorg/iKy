@@ -3,17 +3,14 @@
 
 import sys
 import json
-import requests
-# import urllib3
-import re
+import twint
+from collections import Counter
+from datetime import datetime
 
-import tweepy
-# import oauth2
 
 try:
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.configuration import api_keys_search
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 except ImportError:
@@ -21,46 +18,127 @@ except ImportError:
     sys.path.append('../../')
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.configuration import api_keys_search
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# from requests.packages.urllib3.exceptions import InsecureRequestWarning
+# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
-
-# Compatibility code
-try:
-    # Python 2: "unicode" is built-in
-    unicode
-except NameError:
-    unicode = str
-
 
 @celery.task
 def t_twitter(username, from_m):
 
-    twitter_consumer_key = api_keys_search('twitter_consumer_key')
-    twitter_consumer_secret = api_keys_search('twitter_consumer_secret')
-    # twitter_access_token = api_keys_search('twitter_access_token')
-    # twitter_access_token_secret = api_keys_search(
-    #     'twitter_access_token_secret')
+    c = twint.Config()
+    c.Username = username
+    c.Pandas = True
+    c.User_full = True
+    c.Hide_output = True
 
-    auth = tweepy.OAuthHandler(twitter_consumer_key, twitter_consumer_secret)
-    # auth.set_access_token(twitter_access_token, twitter_access_token_secret)
+    twint.run.Lookup(c)
+    profile_df = twint.storage.panda.User_df
 
-    api = tweepy.API(auth)
-    # consumer = oauth2.Consumer(key=twitter_consumer_key,
-    #                            secret=twitter_consumer_secret)
-    # access_token = oauth2.Token(key=twitter_access_token,
-    #                             secret=twitter_access_token_secret)
-    # client = oauth2.Client(consumer, access_token)
+    c.Limit = 100
+    twint.run.Search(c)
+    tweets_df = twint.storage.panda.Tweets_df
+
+    # hourset
+    hourset = []
+    hournames = '00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23'.split()
+
+    twCounter = Counter(tweets_df['hour'])
+    tgdata = twCounter.most_common()
+    tgdata = sorted(tgdata)
+    e = 0
+    for g in hournames:
+        if (g < tgdata[e][0]):
+            hourset.append({"name": g, "value": 0})
+        elif (g == tgdata[e][0]):
+            hourset.append({"name": g, "value": int(tgdata[e][1])})
+            e += 1
+
+    # weekset
+    weekset = []
+    weekdays = 'Monday Tuesday Wednesday Thursday Friday Saturday Sunday'.split()
+    wdCounter = Counter(tweets_df['day'])
+    wddata = wdCounter.most_common()
+    wddata = sorted(wddata)
+    y = []
+    c = 0
+    for z in weekdays:
+        try:
+            weekset.append({"name": z, "value": int(wddata[c][1])})
+        except:
+            weekset.append({"name": z, "value": 0})
+        c += 1
+    wddata = y
+
+    lk_rt_rp = []
+    mention_temp = []
+    hashtag_temp = []
+    hashtags = []
+    users = []
+    for index, row in tweets_df.iterrows():
+        # Likes, Retweets, Replies
+        series = [{"name": "Likes", "value": str(row['nlikes'])},
+                  {"name": "Retweets", "value": str(row['nretweets'])},
+                  {"name": "Replies", "value": str(row['nreplies'])}]
+        lk_rt_rp.append({"name": str(index), "series": series})
+
+        # Mentions
+        mention_iter = iter(row['reply_to'])
+        next(mention_iter)
+        for user in mention_iter:
+            mention_temp.append(user['username'])
+
+        # Hashtags
+        for h in row['hashtags']:
+            hashtag_temp.append(h)
+
+    # Mentions (continue)
+    mention_counter = Counter(mention_temp)
+    # for k, v in mention_counter.items():
+    #     mentions.append({"label": k, "value": v})
+
+    link_users = "Users"
+    user_item = {"name-node": "Users", "title": "Users",
+                 "subtitle": "",
+                 "link": link_users}
+    users.append(user_item)
+    for k, v in mention_counter.items():
+        user_item = {"name-node": k,
+                     "title": k,
+                     "subtitle": v,
+                     "link": link_users}
+        users.append(user_item)
+
+    # Hashtags (continue)
+    hashtag_counter = Counter(hashtag_temp)
+    for k, v in hashtag_counter.items():
+        hashtags.append({"label": k, "value": v})
+
+    # TODO : location validate
+    # TODO : url validate
+    # TODO : bio validate
 
     # Total
     total = []
-    tweetslist = []
-    hashtags = []
+    # Graphic Array
+    graphic = []
+    resume = []
+    popularity = []
+    approval = []
+    gather = []
+
+    # Profile Array
+    profile = []
+
+    # Timeline Array
+    timeline = []
+
+    # Bios Array
+    bios = []
+
     total.append({'module': 'twitter'})
     total.append({'param': username})
     # Evaluates the module that executed the task and set validation
@@ -69,123 +147,140 @@ def t_twitter(username, from_m):
     else:
         total.append({'validation': 'soft'})
 
-    strings = []
-    tusers = []
-    try:
-        result_api = api.get_user(username)
-    except tweepy.TweepError as e:
-        total.append({'raw_node': e.args})
-        return total
+    link_social = "Twitter"
+    gather_item = {"name-node": "Twitter", "title": "Twitter",
+                   "subtitle": "", "icon": "fab fa-twitter",
+                   "link": link_social}
 
-    prevDate = ''
-    sumTweet = 0
-    sumReTweet = 0
-    raw_node = tweepy.Cursor(api.user_timeline, id=username).items(100)
-    raw_node_tweets = []
+    gather_item = {"name-node": "TwitterName",
+                   "title": "Name",
+                   "subtitle": profile_df['name'][0],
+                   "icon": "fas fa-user-circle",
+                   "link": link_social}
+    gather.append(gather_item)
+    profile_item = {'name': profile_df['name'][0]}
+    profile.append(profile_item)
 
-    for tweet in raw_node:
-        raw_node_tweets.append(tweet._json)
-        if (prevDate != tweet.created_at.strftime("%Y-%m") and prevDate != ''):
-            Tweet_item = {"name": prevDate, "series": [
-                          {"name": "Tweet",
-                           "value": sumTweet},
-                          {"name": "ReTweet",
-                           "value": sumReTweet}]}
-            tweetslist.append(Tweet_item)
-            prevDate = tweet.created_at.strftime("%Y-%m")
-            sumTweet = 0
-            sumReTweet = 0
-        else:
-            prevDate = tweet.created_at.strftime("%Y-%m")
-            if (unicode(tweet.text)[:3] == 'RT '):
-                sumReTweet = sumReTweet + 1
-            else:
-                sumTweet = sumTweet + 1
-        strings = strings + re.findall(r'(?:\#+[\w_]+[\w\'_\-]*[\w_]+)',
-                                       unicode(tweet.text))
-        tusers = tusers + re.findall(r'(?:@[\w_]+)',
-                                     unicode(tweet.text))
-    for hashtag in list(dict.fromkeys(strings)):
-        hashtags.append({"label": hashtag})
+    gather_item = {"name-node": "Twitterphoto",
+                   "title": "Avatar",
+                   "subtitle": "",
+                   "picture": profile_df['avatar'][0],
+                   "link": link_social}
+    gather.append(gather_item)
+    photo_item = {"name-node": "Twitter",
+                  "title": "Twitter",
+                  "subtitle": "",
+                  "picture": profile_df['avatar'][0],
+                  "link": "Photos"}
+    profile.append({'photos': [photo_item]})
 
-    try:
-        Tweet_item = {"name": tweet.created_at.strftime("%Y-%m"), "series": [
-                     {"name": "Tweet", "value": sumTweet},
-                     {"name": "ReTweet", "value": sumReTweet}]}
-    except:
-        Tweet_item = {"name": "-", "series": [
-                     {"name": "Tweet", "value": 0},
-                     {"name": "ReTweet", "value": 0}]}
-    # tweetslist.append(Tweet_item)
-    tweetslist.insert(0, Tweet_item)
+    gather_item = {"name-node": "TwitterLocation",
+                   "title": "Location",
+                   "subtitle": profile_df['location'][0],
+                   "icon": "fas fa-map-marker-alt",
+                   "link": link_social}
+    gather.append(gather_item)
+    if profile_df['location'][0]:
+        profile_item = {'location': profile_df['location'][0]}
+        profile.append(profile_item)
 
-    users = []
-    link_users = "Users"
-    user_item = {"name-node": "Users", "title": "Users",
-                 "subtitle": "",
-                 "link": link_users}
-    users.append(user_item)
-    for e_users in list(dict.fromkeys(tusers)):
-        user_item = {"name-node": e_users,
-                     "title": e_users,
-                     "subtitle": "",
-                     "link": link_users}
-        users.append(user_item)
+    verified = "False" if profile_df['verified'][0] == 0 else "True"
+    gather_item = {"name-node": "TwitterVerified",
+                   "title": "Verified",
+                   "subtitle": verified,
+                   "icon": "fas fa-certificate",
+                   "link": link_social}
+    gather.append(gather_item)
+
+    private = "False" if profile_df['private'][0] == 0 else "True"
+    gather_item = {"name-node": "TwitterPrivate",
+                   "title": "Private",
+                   "subtitle": private,
+                   "icon": "fas fa-user-shield",
+                   "link": link_social}
+    gather.append(gather_item)
+
+    gather_item = {"name-node": "TwitterTweets",
+                   "title": "Tweets",
+                   "subtitle": str(profile_df['tweets'][0]),
+                   "icon": "fab fa-twitter-square",
+                   "link": link_social}
+    gather.append(gather_item)
+
+    gather_item = {"name-node": "TwitterMedia",
+                   "title": "Media",
+                   "subtitle": str(profile_df['media'][0]),
+                   "icon": "fas fa-photo-video",
+                   "link": link_social}
+    gather.append(gather_item)
+
+    gather_item = {"name-node": "TwitterFollowers",
+                   "title": "Followers",
+                   "subtitle": str(profile_df['followers'][0]),
+                   "icon": "fas fa-users",
+                   "link": link_social}
+    gather.append(gather_item)
+
+    gather_item = {"name-node": "TwitterFollowing",
+                   "title": "Following",
+                   "subtitle": str(profile_df['following'][0]),
+                   "icon": "fas fa-user-friends",
+                   "link": link_social}
+    gather.append(gather_item)
+
+    profile.append({'username': profile_df['username'][0]})
+    if profile_df['url'][0]:
+        profile.append({'url': profile_df['url'][0]})
+    if profile_df['bio'][0]:
+        profile.append({'bio': profile_df['bio'][0]})
+
+    raw_node = profile_df.to_json(orient='records')
+    raw_node_tweets = tweets_df.to_json(orient='columns')
 
     raw_node_total = []
-    raw_node_total.append({'raw_node_info': result_api._json})
+    raw_node_total.append({'raw_node_info': raw_node})
     raw_node_total.append({'raw_node_tweets': raw_node_tweets})
 
-    # Graphic Array
-    graphic = []
-    resume = []
-    popularity = []
-    approval = []
-
-    # Profile Array
-    profile = []
-
-    # Timeline Array
-    timeline = []
-
-    # Twitter : TODO : Get hashtags as footprinting
-    # Twitter : TODO : Validations
-    # footprint Array
-    # footprint = []
-
-    # Bios Array
-    # bios = []
-
     children = []
-    children.append({"name": "Likes", "total": result_api.favourites_count})
-    children.append({"name": "Tweets", "total": result_api.statuses_count})
-    children.append({"name": "Followers", "total": result_api.followers_count})
-    children.append({"name": "Following", "total": result_api.friends_count})
+    children.append({"name": "Likes", "total":
+                     str(profile_df['likes'][0])})
+    children.append({"name": "Tweets", "total":
+                     str(profile_df['tweets'][0])})
+    children.append({"name": "Followers", "total":
+                     str(profile_df['followers'][0])})
+    children.append({"name": "Following", "total":
+                     str(profile_df['following'][0])})
     # children.append({"name": "Listed", "total": result_api.listed_count})
     resume = {"name": "twitter", "children": children}
 
     popularity.append({"title": "Followers",
-                       "value": result_api.followers_count})
-    popularity.append({"title": "Listed", "value": result_api.listed_count})
+                       "value": str(profile_df['followers'][0])})
+    # popularity.append({"title": "Listed", "value": result_api.listed_count})
     popularity.append({"title": "Following",
-                       "value": result_api.friends_count})
+                       "value": str(profile_df['following'][0])})
 
-    approval.append({"title": "Tweets", "value": result_api.statuses_count})
-    approval.append({"title": "Likes", "value": result_api.favourites_count})
+    approval.append({"title": "Tweets", "value":
+                     str(profile_df['tweets'][0])})
+    approval.append({"title": "Likes", "value":
+                     str(profile_df['likes'][0])})
 
-    timeline_item = {'date': result_api.created_at.strftime(
-        "%Y/%m/%d %H:%M:%S"),
-        "action": "Twitter : Create Account",
-        "icon": "fa-twitter"}
+    date_format = datetime.strptime(profile_df['join_date'][0], "%d %b %Y")
+    create_date = date_format.strftime("%Y-%m-%d")
+    timeline_item = {"date": str(create_date),
+                     "action": "Twitter : Create Account",
+                     "icon": "fa-twitter"}
     timeline.append(timeline_item)
 
     total.append({'raw': raw_node_total})
+    graphic.append({'social': gather})
     graphic.append({'resume': resume})
     graphic.append({'popularity': popularity})
     graphic.append({'approval': approval})
     graphic.append({'hashtag': hashtags})
     graphic.append({'users': users})
-    graphic.append({'tweetslist': tweetslist})
+    graphic.append({'tweetslist': lk_rt_rp})
+    graphic.append({'week': weekset})
+    graphic.append({'hour': hourset})
     total.append({'graphic': graphic})
     total.append({'profile': profile})
     total.append({'timeline': timeline})
