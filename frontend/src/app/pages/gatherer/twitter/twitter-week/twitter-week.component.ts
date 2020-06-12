@@ -2,22 +2,20 @@ import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, Templat
 import { NbDialogService } from '@nebular/theme';
 
 @Component({
-    selector: 'ngx-twitter-approval',
-    templateUrl: './twitter-approval.component.html',
-    styleUrls: ['./twitter-approval.component.scss']
+    selector: 'ngx-twitter-week',
+    templateUrl: './twitter-week.component.html',
+    styleUrls: ['./twitter-week.component.scss']
 })
-export class TwitterApprovalComponent implements OnInit, AfterViewInit {
-    showLegend = true;
-    showLabels = true;
-    themeSubscription: any;
-
-    @ViewChild('nbCardTwitterApproval', { static: false }) private cardContainer: ElementRef;
+export class TwitterWeekComponent implements OnInit, AfterViewInit {
+    @ViewChild('nbCardTwitterWeek', { static: true }) private cardContainer: ElementRef;
     @Input() private data: any;
-    private twitterApproval : any;
+    private twitterWeek : any;
 
     private card: any;
     private width: number;
     private height: number;
+    showLegend = false;
+    showLabels = true;
 
     colorScheme = {
       domain: [ 
@@ -35,24 +33,15 @@ export class TwitterApprovalComponent implements OnInit, AfterViewInit {
     constructor(private dialogService: NbDialogService) {}
 
     ngOnInit() {
+        this.card = this.cardContainer.nativeElement;
     }
 
     ngAfterViewInit() {
-        this.card = this.cardContainer.nativeElement;
         this.width = this.cardContainer.nativeElement.parentNode.parentNode.clientWidth;
         this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight - 55;
+        console.log("Twitter Week Component");
 
-        console.log("Twitter Approval Component");
-
-        this.twitterApproval = this.data.result[4].graphic[3].approval.map(this.arrayAdecuate);
-    }
-
-    arrayAdecuate(item, index, array) {
-        if (array[index]['title']) {
-            array[index].name = array[index]['title'];
-            delete array[index].title;  
-        }
-        return item;
+        this.twitterWeek = this.data.result[4].graphic[7].week;
     }
 
     openDialog(dialog: TemplateRef<any>) {

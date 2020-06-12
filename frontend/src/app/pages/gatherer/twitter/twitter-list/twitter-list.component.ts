@@ -41,7 +41,7 @@ export class TwitterListComponent implements OnInit, AfterViewInit {
         this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight - 55;
         console.log("Twitter List Component");
 
-        this.twitterList = this.data.result[4].graphic[5].tweetslist;
+        this.twitterList = this.data.result[4].graphic[6].tweetslist;
     }
 
     openDialog(dialog: TemplateRef<any>) {

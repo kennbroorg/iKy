@@ -18,7 +18,7 @@ export class TwitterHashtagComponent implements OnInit, AfterViewInit {
     constructor(private dialogService: NbDialogService) {}
 
     ngOnInit() {
-        this.twitterHashtag = this.data.result[4].graphic[3].hashtag;
+        this.twitterHashtag = this.data.result[4].graphic[4].hashtag;
         console.log("Twitter Hashtag Component");
         console.log(this.twitterHashtag);
     }

@@ -41,7 +41,7 @@ export class TwitterPopularityComponent implements OnInit, AfterViewInit {
         this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight - 55;
         console.log("Twitter Popularity Component");
 
-        this.twitterPopularity = this.data.result[4].graphic[1].popularity.map(this.arrayAdecuate);
+        this.twitterPopularity = this.data.result[4].graphic[2].popularity.map(this.arrayAdecuate);
     }
 
     arrayAdecuate(item, index, array) {

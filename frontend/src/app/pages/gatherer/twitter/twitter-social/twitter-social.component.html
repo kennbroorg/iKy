@@ -1,0 +1,21 @@
+  <nb-card size="small" class="border-default">
+    <nb-card-header (click)="openDialog(dialogTwitterSocial)">
+      TWITTER Social
+      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+    </nb-card-header>
+    <nb-card-body id="nbCardTwitterSocial" #nbCardTwitterSocial style="text-align: center; overflow: hidden; margin: 0px; padding: 0px;">
+        <ngx-graphs [data]="twitterSocial"></ngx-graphs>
+    </nb-card-body>
+  </nb-card>
+
+
+  <ng-template #dialogTwitterSocial let-data let-ref="dialogRef">
+    <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+      <nb-card-header>TWITTER Social</nb-card-header>
+      <nb-card-body style="overflow: hidden; padding: 0px;">
+
+          <ngx-graphs [data]="twitterSocial" modal="true"></ngx-graphs>
+
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
