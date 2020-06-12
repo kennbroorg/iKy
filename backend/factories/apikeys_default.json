@@ -1,53 +1,32 @@
 [
   {
     "id": 1,
-    "name": "twitter_consumer_key",
-    "key": ""
-  },
-  {
-    "id": 2,
-    "name": "twitter_consumer_secret",
-    "key": ""
-  },
-  {
-    "id": 3,
-    "name": "twitter_access_token",
-    "key": ""
-  },
-  {
-    "id": 4,
-    "name": "twitter_access_token_secret",
-    "key": ""
-  },
-  {
-    "id": 5,
     "name": "fullcontact_api",
     "key": ""
   },
   {
-    "id": 6,
+    "id": 2,
     "name": "linkedin_user",
     "key": ""
   },
   {
-    "id": 7,
+    "id": 3,
     "name": "linkedin_pass",
     "key": ""
   },
   {
-    "id": 8,
+    "id": 4,
     "name": "haveibeenpwned_key",
     "key": ""
   },
   {
-    "id": 9,
+    "id": 5,
     "name": "emailrep_key",
     "key": ""
   },
   {
-    "id": 10,
+    "id": 6,
     "name": "peopledatalabs_key",
-    "name": "emailrep_key",
     "key": ""
   }
 ]
