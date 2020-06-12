@@ -226,7 +226,13 @@ export class TextCloudComponent implements OnInit {
                     entry.element.setAttribute( 'y', 0 );
                     entry.element.setAttribute( 'fill', settings.fontColor );
                     entry.element.setAttribute( 'font-family', settings.fontFamily );
-                    entry.element.setAttribute( 'font-size', settings.fontSize );
+                    if ( typeof entryObj.value != 'undefined' ) {
+                        entry.element.setAttribute( 'font-size', +settings.fontSize + +entryObj.value  );
+                        // entry.element.setAttribute( 'font-size', settings.fontSize );
+                        console.log('Fontsize: ', +settings.fontSize + +entryObj.value)
+                    } else {
+                        entry.element.setAttribute( 'font-size', settings.fontSize );
+                    }
                     entry.element.setAttribute( 'font-weight', settings.fontWeight );
                     entry.element.setAttribute( 'font-style', settings.fontStyle );
                     entry.element.setAttribute( 'font-stretch', settings.fontStretch );
