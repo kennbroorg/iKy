@@ -14,9 +14,20 @@ export class TwitterListComponent implements OnInit, AfterViewInit {
     private card: any;
     private width: number;
     private height: number;
-    showLegend = true;
-    showLabels = true;
-
+    // options
+    legend: boolean = true;
+    showLabels: boolean = true;
+    animations: boolean = true;
+    xAxis: boolean = false;
+    // yAxis: boolean = false;
+    yAxis: boolean = true;
+    showYAxisLabel: boolean = true;
+    showXAxisLabel: boolean = true;
+    xAxisLabel: string = '';
+    //yAxisLabel: string = 'Tweets';
+    yAxisLabel: string = '';
+    legendPosition: string = 'below';
+    timeline: boolean = false;
     colorScheme = {
       domain: [ 
           '#80deea', 

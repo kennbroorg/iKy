@@ -20,10 +20,12 @@ export class TweetimentLinesComponent implements OnInit, AfterViewInit {
     animations: boolean = true;
     xAxis: boolean = false;
     yAxis: boolean = true;
+    // yAxis: boolean = false;
     showYAxisLabel: boolean = true;
     showXAxisLabel: boolean = true;
     xAxisLabel: string = '';
-    yAxisLabel: string = 'Sentiments';
+    yAxisLabel: string = '';
+    //yAxisLabel: string = 'Sentiments';
     legendPosition: string = 'below';
     timeline: boolean = false;
     colorScheme = {

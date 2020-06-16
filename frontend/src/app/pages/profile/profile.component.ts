@@ -22,8 +22,11 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
     public  searchSubs: any;
     public  profile: any = [];
     public  name: any = [];
+    public  usern: any = [];
     public  location: any = [];
+    public  url: any = [];
     public  geo: any = [];
+    public  bio: any = [];
     public  gender: any = [];
     public  social: any = [];
     public  photo: any = [];
@@ -83,8 +86,17 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
                               this.social.push(this.gathered[i][j][k][l][p][q][isocial]);
                           };    
                           break;
+                        case 'username':
+                          this.usern.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
+                          break;
                         case 'location':
                           this.location.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
+                          break;
+                        case 'url':
+                          this.url.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
+                          break;
+                        case 'bio':
+                          this.bio.push(this.gathered[i][j][k][l][p][q]);
                           break;
                         case 'email':
                           this.emails.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
@@ -120,12 +132,17 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
         }     
         // TODO : Analize profile information
         console.log("name", this.name);
+        console.log("usern", this.usern);
         console.log("location", this.location);
+        console.log("url", this.url);
+        console.log("bio", this.bio);
         console.log("geo", this.geo);
         console.log("gender", this.gender);
         console.log("social", this.social);
         console.log("photo", this.photo);
         console.log("orgnization", this.organization);
+        console.log("phone", this.phone);
+        console.log("email", this.email);
     }
 
     ngOnDestroy () {
