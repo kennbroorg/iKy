@@ -26,6 +26,17 @@
       </nb-card>
     </div>
 
+    <div class="col-md-4" *ngIf="usern?.length > 0">
+      <nb-card size="small" class="border-default">
+        <nb-card-header>
+            <span><i class="fas fa-user"></i> - </span> Posible Username
+        </nb-card-header>
+        <nb-card-body id="nbCardProfileUsername" #nbCardProfileUsername style="text-align: center; overflow: hidden;">
+            <ngx-text-cloud [data]="usern"></ngx-text-cloud>
+        </nb-card-body>
+      </nb-card>
+    </div>
+
     <div class="col-md-4" *ngIf="organization?.length > 0">
       <nb-card size="small" class="border-default">
         <nb-card-header>
@@ -55,6 +66,29 @@
         </nb-card-header>
         <nb-card-body id="nbCardProfilePhone" #nbCardProfilePhone style="text-align: center; overflow: hidden;">
             <ngx-text-cloud [data]="phone"></ngx-text-cloud>
+        </nb-card-body>
+      </nb-card>
+    </div>
+
+    <div class="col-md-4" *ngIf="url?.length > 0">
+      <nb-card size="small" class="border-default">
+        <nb-card-header>
+            <span><i class="fas fa-code"></i> - </span> Posible Urls
+        </nb-card-header>
+        <nb-card-body id="nbCardProfileUrl" #nbCardProfileUrl style="text-align: center; overflow: hidden;">
+            <ngx-text-cloud [data]="url"></ngx-text-cloud>
+        </nb-card-body>
+      </nb-card>
+    </div>
+
+    <div class="col-md-4" *ngIf="bio?.length > 0">
+      <nb-card size="small" class="border-default">
+        <nb-card-header>
+            <span><i class="fas fa-comment-dots"></i> - </span> Bios
+        </nb-card-header>
+        <nb-card-body id="nbCardProfileBio" #nbCardProfileBio style="text-align: center; overflow: hidden;">
+        <!-- <nb-card-body id="nbCardProfileBio" #nbCardProfileBio style="margin: 0px; padding: 0px; text-align: center; overflow: hidden;"> -->
+            <ngx-text-scramble [data]="bio"></ngx-text-scramble>
         </nb-card-body>
       </nb-card>
     </div>
