@@ -179,11 +179,6 @@
             <ngx-twitter-social [data]="gathered['twitter']"></ngx-twitter-social>
           </div>
 
-          <!-- Twitter List -->
-          <div class="col-md-8" id="divTwitterList" #divTwitterList *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
-            <ngx-twitter-list [data]="gathered['twitter']"></ngx-twitter-list>
-          </div>
-
           <!-- Twitter Popularity -->
           <div class="col-md-4" id="divTwitterPopularity" #divTwitterPopularity *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-popularity [data]="gathered['twitter']"></ngx-twitter-popularity>
@@ -199,9 +194,19 @@
             <ngx-twitter-approval [data]="gathered['twitter']"></ngx-twitter-approval>
           </div>
 
+          <!-- Twitter List -->
+          <div class="col-md-8" id="divTwitterList" #divTwitterList *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitter-list [data]="gathered['twitter']"></ngx-twitter-list>
+          </div>
+
           <!-- Twitter Hashtag -->
           <div class="col-md-4" id="divTwitterHashtag" #divTwitterHashtag *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-hashtag [data]="gathered['twitter']"></ngx-twitter-hashtag>
+          </div>
+
+          <!-- Twitter Sentiment -->
+          <div class="col-md-8" id="divTweetimentLines" #divTweetimentLines *ngIf="gathered['tweetiment'] && gathered['tweetiment'].result[4] && validationShow[gathered['tweetiment'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-tweetiment-lines [data]="gathered['tweetiment']"></ngx-tweetiment-lines>
           </div>
 
           <!-- Twitter Users -->
@@ -217,11 +222,6 @@
           <!-- Twitter Week -->
           <div class="col-md-4" id="divTwitterWeek" #divTwitterWeek *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-week [data]="gathered['twitter']"></ngx-twitter-week>
-          </div>
-
-          <!-- Twitter Sentiment -->
-          <div class="col-md-8" id="divTweetimentLines" #divTweetimentLines *ngIf="gathered['tweetiment'] && gathered['tweetiment'].result[4] && validationShow[gathered['tweetiment'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
-            <ngx-tweetiment-lines [data]="gathered['tweetiment']"></ngx-tweetiment-lines>
           </div>
 
           <!-- Instagram graphs-->
