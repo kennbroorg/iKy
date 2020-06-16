@@ -101,12 +101,12 @@ def t_linkedin(email, from_m):
 
     found = False
     # Get profile from username
-    if ("@" not in email):
+    if ("http" in email):
         total.append({'validation': 'hard'})
-        url = "https://www.linkedin.com/in/%s/" % email
+        url = email
         found = True
     # Get profile from email
-    else:
+    elif ("@" in email):
         total.append({'validation': 'hard'})
         url = "https://www.linkedin.com/sales/gmail/profile/" + \
             "viewByEmail/%s" % email
@@ -116,6 +116,11 @@ def t_linkedin(email, from_m):
             a = soup.find("a", {"id": "profile-link"})
             url = a['href']
             found = True
+    else:
+        total.append({'validation': 'hard'})
+        url = "https://www.linkedin.com/in/%s/" % email
+        found = True
+    # Get profile from http
 
     if found:
         req = s.get(url, headers=headers)
