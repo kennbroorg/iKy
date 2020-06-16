@@ -11,6 +11,8 @@ from datetime import datetime
 try:
     from factories._celery import create_celery
     from factories.application import create_application
+    from factories.iKy_functions import location_geo
+    from factories.iKy_functions import analize_rrss
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 except ImportError:
@@ -18,13 +20,13 @@ except ImportError:
     sys.path.append('../../')
     from factories._celery import create_celery
     from factories.application import create_application
+    from factories.iKy_functions import location_geo
+    from factories.iKy_functions import analize_rrss
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
-# from requests.packages.urllib3.exceptions import InsecureRequestWarning
-# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
 logger = get_task_logger(__name__)
+
 
 @celery.task
 def t_twitter(username, from_m):
@@ -78,12 +80,18 @@ def t_twitter(username, from_m):
     hashtag_temp = []
     hashtags = []
     users = []
+    s_lk = []
+    s_rt = []
+    s_rp = []
     for index, row in tweets_df.iterrows():
         # Likes, Retweets, Replies
-        series = [{"name": "Likes", "value": str(row['nlikes'])},
-                  {"name": "Retweets", "value": str(row['nretweets'])},
-                  {"name": "Replies", "value": str(row['nreplies'])}]
-        lk_rt_rp.append({"name": str(index), "series": series})
+        s_lk.append({"name": str(index), "value": str(row['nlikes'])})
+        s_rt.append({"name": str(index), "value": str(row['nretweets'])})
+        s_rp.append({"name": str(index), "value": str(row['nreplies'])})
+        # series = [{"name": "Likes", "value": str(row['nlikes'])},
+        #           {"name": "Retweets", "value": str(row['nretweets'])},
+        #           {"name": "Replies", "value": str(row['nreplies'])}]
+        # lk_rt_rp.append({"name": str(index), "series": series})
 
         # Mentions
         mention_iter = iter(row['reply_to'])
@@ -95,10 +103,13 @@ def t_twitter(username, from_m):
         for h in row['hashtags']:
             hashtag_temp.append(h)
 
+    # Likes, retweets, replies (continue)
+    lk_rt_rp.append({"name": "Likes", "series": s_lk})
+    lk_rt_rp.append({"name": "Retweets", "series": s_rt})
+    lk_rt_rp.append({"name": "Replies", "series": s_rp})
+
     # Mentions (continue)
     mention_counter = Counter(mention_temp)
-    # for k, v in mention_counter.items():
-    #     mentions.append({"label": k, "value": v})
 
     link_users = "Users"
     user_item = {"name-node": "Users", "title": "Users",
@@ -117,10 +128,6 @@ def t_twitter(username, from_m):
     for k, v in hashtag_counter.items():
         hashtags.append({"label": k, "value": v})
 
-    # TODO : location validate
-    # TODO : url validate
-    # TODO : bio validate
-
     # Total
     total = []
     # Graphic Array
@@ -132,12 +139,17 @@ def t_twitter(username, from_m):
 
     # Profile Array
     profile = []
+    social = []
+    urls = []
 
     # Timeline Array
     timeline = []
 
-    # Bios Array
-    bios = []
+    # Tasks Array
+    tasks = []
+
+    date_format = datetime.strptime(profile_df['join_date'][0], "%d %b %Y")
+    create_date = date_format.strftime("%Y-%m-%d")
 
     total.append({'module': 'twitter'})
     total.append({'param': username})
@@ -183,6 +195,10 @@ def t_twitter(username, from_m):
     if profile_df['location'][0]:
         profile_item = {'location': profile_df['location'][0]}
         profile.append(profile_item)
+
+        geo_item = location_geo(profile_df['location'][0], time=create_date)
+        if(geo_item):
+            profile.append({'geo': geo_item})
 
     verified = "False" if profile_df['verified'][0] == 0 else "True"
     gather_item = {"name-node": "TwitterVerified",
@@ -230,9 +246,33 @@ def t_twitter(username, from_m):
 
     profile.append({'username': profile_df['username'][0]})
     if profile_df['url'][0]:
-        profile.append({'url': profile_df['url'][0]})
+        analyze = analize_rrss(profile_df['url'][0])
+        for item in analyze:
+            if(item == 'url'):
+                for i in analyze['url']:
+                    profile.append(i)
+            if(item == 'tasks'):
+                for i in analyze['tasks']:
+                    tasks.append(i)
+
     if profile_df['bio'][0]:
         profile.append({'bio': profile_df['bio'][0]})
+        analyze = analize_rrss(profile_df['bio'][0])
+        for item in analyze:
+            if(item == 'url'):
+                for i in analyze['url']:
+                    profile.append(i)
+            if(item == 'tasks'):
+                for i in analyze['tasks']:
+                    tasks.append(i)
+
+    social_item = {"name": "Twitter",
+                   "url": "https://twitter.com/" + username,
+                   "icon": "fab fa-twitter",
+                   "source": "Twitter",
+                   "username": username}
+    social.append(social_item)
+    profile.append({"social": social})
 
     raw_node = profile_df.to_json(orient='records')
     raw_node_tweets = tweets_df.to_json(orient='columns')
@@ -264,8 +304,6 @@ def t_twitter(username, from_m):
     approval.append({"title": "Likes", "value":
                      str(profile_df['likes'][0])})
 
-    date_format = datetime.strptime(profile_df['join_date'][0], "%d %b %Y")
-    create_date = date_format.strftime("%Y-%m-%d")
     timeline_item = {"date": str(create_date),
                      "action": "Twitter : Create Account",
                      "icon": "fa-twitter"}
@@ -284,6 +322,7 @@ def t_twitter(username, from_m):
     total.append({'graphic': graphic})
     total.append({'profile': profile})
     total.append({'timeline': timeline})
+    total.append({'tasks': tasks})
 
     return total
 
