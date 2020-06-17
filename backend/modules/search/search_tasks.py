@@ -606,7 +606,8 @@ def t_search(username, from_m="Initial"):
 
     profile.append({"name": name_complete})
 
-    total.append({'raw': raw_node})
+    # TODO : Repair raw-node
+    total.append({'raw': 'raw'})
     graphic.append({'names': name_cloud})
     graphic.append({'username': username_cloud})
     graphic.append({'social': socialp})
