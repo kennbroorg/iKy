@@ -68,6 +68,13 @@ import { InstagramMapComponent } from './instagram/instagram-map/instagram-map.c
 import { InstagramMapService } from './instagram/instagram-map/instagram-map.service';
 import { InstagramGraphsComponent } from './instagram/instagram-graphs/instagram-graphs.component';
 import { InstagramPostsComponent } from './instagram/instagram-posts/instagram-posts.component';
+import { InstagramHashtagComponent } from './instagram/instagram-hashtag/instagram-hashtag.component';
+import { InstagramMentionComponent } from './instagram/instagram-mention/instagram-mention.component';
+import { InstagramTaggedComponent } from './instagram/instagram-tagged/instagram-tagged.component';
+import { InstagramHourComponent } from './instagram/instagram-hour/instagram-hour.component';
+import { InstagramWeekComponent } from './instagram/instagram-week/instagram-week.component';
+import { InstagramMediatypeComponent } from './instagram/instagram-mediatype/instagram-mediatype.component';
+import { InstagramPhotosComponent } from './instagram/instagram-photos/instagram-photos.component';
 
 import { SearchHashtagComponent } from './search/search-hashtag/search-hashtag.component';
 import { SearchMentionsComponent } from './search/search-mention/search-mentions.component';
@@ -163,6 +170,13 @@ import { SharedModule } from '../shared/shared.module';
     InstagramGraphsComponent,
     InstagramMapComponent,
     InstagramPostsComponent,
+    InstagramHashtagComponent,
+    InstagramMentionComponent,
+    InstagramTaggedComponent,
+    InstagramHourComponent,
+    InstagramWeekComponent,
+    InstagramMediatypeComponent,
+    InstagramPhotosComponent,
     SearchHashtagComponent,
     SearchMentionsComponent,
     SearchNamesComponent,

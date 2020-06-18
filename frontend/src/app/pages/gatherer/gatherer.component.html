@@ -224,9 +224,44 @@
             <ngx-twitter-week [data]="gathered['twitter']"></ngx-twitter-week>
           </div>
 
-          <!-- Instagram graphs-->
+          <!-- Instagram graphs -->
           <div class="col-md-4" id="divInstagramSocial" #divInstagramSocial *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-instagram-graphs [data]="gathered['instagram']"></ngx-instagram-graphs>
+          </div>
+
+          <!-- Instagram photos -->
+          <div class="col-md-4" id="divInstagramPhotos" #divInstagramPhotos *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && gathered['instagram'].result[4].graphic[9].photos?.length > 1 && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-instagram-photos [data]="gathered['instagram']"></ngx-instagram-photos>
+          </div>
+
+          <!-- Instagram hashtag -->
+          <div class="col-md-4" id="divInstagramHashtag" #divInstagramHashtag *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && gathered['instagram'].result[4].graphic[3].hashtags?.length > 0 && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-instagram-hashtag [data]="gathered['instagram']"></ngx-instagram-hashtag>
+          </div>
+
+          <!-- Instagram mention -->
+          <div class="col-md-4" id="divInstagramMention" #divInstagramMention *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && gathered['instagram'].result[4].graphic[4].mentions?.length > 0 && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-instagram-mention [data]="gathered['instagram']"></ngx-instagram-mention>
+          </div>
+
+          <!-- Instagram tagged -->
+          <div class="col-md-4" id="divInstagramTagged" #divInstagramTagged *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && gathered['instagram'].result[4].graphic[5].tagged?.length > 0 && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-instagram-tagged [data]="gathered['instagram']"></ngx-instagram-tagged>
+          </div>
+
+          <!-- Instagram hour -->
+          <div class="col-md-4" id="divInstagramHour" #divInstagramHour *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && gathered['instagram'].result[4].graphic[6].hour?.length > 0 && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-instagram-hour [data]="gathered['instagram']"></ngx-instagram-hour>
+          </div>
+
+          <!-- Instagram mediatype -->
+          <div class="col-md-4" id="divInstagramMediatype" #divInstagramMediatype *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && gathered['instagram'].result[4].graphic[8].mediatype?.length > 0 && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-instagram-mediatype [data]="gathered['instagram']"></ngx-instagram-mediatype>
+          </div>
+
+          <!-- Instagram week -->
+          <div class="col-md-4" id="divInstagramWeek" #divInstagramWeek *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && gathered['instagram'].result[4].graphic[7].week?.length > 0 && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-instagram-week [data]="gathered['instagram']"></ngx-instagram-week>
           </div>
 
           <!-- Instagram Posts -->
