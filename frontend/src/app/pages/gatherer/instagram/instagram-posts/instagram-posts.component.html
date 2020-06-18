@@ -6,6 +6,22 @@
     <nb-card-body style="margin: 0px; padding: 0px; text-align: center; overflow: hidden;">
 
         <div #nbCardInstagramPosts id="nbCardInstagramPosts">
+            <ngx-charts-line-chart
+              [view]="[width, height - 60]"
+              [scheme]="colorScheme"
+              [legend]="legend"
+              [legendPosition]="legendPosition"
+              [showXAxisLabel]="showXAxisLabel"
+              [showYAxisLabel]="showYAxisLabel"
+              [xAxis]="xAxis"
+              [yAxis]="yAxis"
+              [xAxisLabel]="xAxisLabel"
+              [yAxisLabel]="yAxisLabel"
+              [timeline]="timeline"
+              [results]="instagramPosts"
+              >
+            </ngx-charts-line-chart>
+            <!--
             <ngx-charts-bar-vertical-stacked
               [view]="[width, height - 50]"
               [scheme]="colorScheme"
@@ -18,6 +34,7 @@
               yAxis="true"
             >
             </ngx-charts-bar-vertical-stacked>
+            -->
          </div>
 
     </nb-card-body>
@@ -30,6 +47,21 @@
       <nb-card-body style="overflow: hidden;">
 
         <div style="fill: #05fcfc !important; font-size: 35px !important;">
+            <ngx-charts-line-chart
+              [view]="[width * 1.8, height * 1.8]"
+              [scheme]="colorScheme"
+              [legend]="legend"
+              [showXAxisLabel]="showXAxisLabel"
+              [showYAxisLabel]="showYAxisLabel"
+              [xAxis]="xAxis"
+              [yAxis]="yAxis"
+              [xAxisLabel]="xAxisLabel"
+              [yAxisLabel]="yAxisLabel"
+              [timeline]="timeline"
+              [results]="instagramPosts"
+              >
+            </ngx-charts-line-chart>
+            <!--
             <ngx-charts-bar-vertical-stacked
               [view]="[width * 1.8, height * 1.8]"
               [scheme]="colorScheme"
@@ -41,6 +73,7 @@
               xAxis="true"
               yAxis="true">
             </ngx-charts-bar-vertical-stacked>
+            -->
         </div>
 
       </nb-card-body>

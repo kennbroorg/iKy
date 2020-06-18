@@ -2,32 +2,21 @@ import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, Templat
 import { NbDialogService } from '@nebular/theme';
 
 @Component({
-    selector: 'ngx-instagram-posts',
-    templateUrl: './instagram-posts.component.html',
-    styleUrls: ['./instagram-posts.component.scss']
+    selector: 'ngx-instagram-week',
+    templateUrl: './instagram-week.component.html',
+    styleUrls: ['./instagram-week.component.scss']
 })
-export class InstagramPostsComponent implements OnInit, AfterViewInit {
-    @ViewChild('nbCardInstagramPosts', { static: false }) private cardContainer: ElementRef;
+export class InstagramWeekComponent implements OnInit, AfterViewInit {
+    @ViewChild('nbCardInstagramWeek', { static: true }) private cardContainer: ElementRef;
     @Input() private data: any;
-    private instagramPosts : any;
+    private instagramWeek : any;
 
     private card: any;
     private width: number;
     private height: number;
-    // options
-    legend: boolean = true;
-    showLabels: boolean = true;
-    animations: boolean = true;
-    xAxis: boolean = false;
-    // yAxis: boolean = false;
-    yAxis: boolean = true;
-    showYAxisLabel: boolean = true;
-    showXAxisLabel: boolean = true;
-    xAxisLabel: string = '';
-    //yAxisLabel: string = 'Tweets';
-    yAxisLabel: string = '';
-    legendPosition: string = 'below';
-    timeline: boolean = false;
+    showLegend = false;
+    showLabels = true;
+
     colorScheme = {
       domain: [ 
           '#80deea', 
@@ -50,10 +39,10 @@ export class InstagramPostsComponent implements OnInit, AfterViewInit {
     ngAfterViewInit() {
         this.width = this.cardContainer.nativeElement.parentNode.parentNode.clientWidth;
         this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight - 55;
-        console.log("Instagram Posts Component");
+        console.log("Instagram Week Component");
 
-        this.instagramPosts = this.data.result[4].graphic[1].postslist;
-        console.log("Instagram Posts Data", this.instagramPosts);
+        this.instagramWeek = this.data.result[4].graphic[7].week;
+        console.log("InstagramWeek", this.instagramWeek);
     }
 
     openDialog(dialog: TemplateRef<any>) {
