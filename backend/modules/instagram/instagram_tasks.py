@@ -3,16 +3,15 @@
 
 import sys
 import json
-import re
-import requests
-from bs4 import BeautifulSoup
+import instaloader
 from datetime import datetime
-import random
-from geopy.geocoders import Nominatim
+from collections import Counter
 
 try:
     from factories._celery import create_celery
     from factories.application import create_application
+    from factories.configuration import api_keys_search
+    from factories.iKy_functions import analize_rrss
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 except ImportError:
@@ -20,163 +19,40 @@ except ImportError:
     sys.path.append('../../')
     from factories._celery import create_celery
     from factories.application import create_application
+    from factories.configuration import api_keys_search
+    from factories.iKy_functions import analize_rrss
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
 
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
 logger = get_task_logger(__name__)
-
-# Compatibility code
-try:
-    # Python 2: "unicode" is built-in
-    unicode
-except NameError:
-    unicode = str
-
-
-def load_dirty_json(dirty_json):
-    regex_replace = [(r"([ \{,:\[])(u)?'([^']+)'", r'\1"\3"'),
-                     (r" False([, \}\]])", r' false\1'),
-                     (r" True([, \}\]])", r' true\1')]
-    for r, s in regex_replace:
-        dirty_json = re.sub(r, s, dirty_json)
-    clean_json = json.loads(dirty_json)
-    return clean_json
 
 
 @celery.task
-def t_instagram(username, from_m="Initial"):
+def t_instagram(username, num=10, from_m="Initial"):
     """ Task of Celery that get info from instagram"""
 
+    instagram_user = api_keys_search('instagram_user')
+    instagram_pass = api_keys_search('instagram_pass')
+    raw_node = []
 
-    user_agents = [
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-        'Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)',
-        'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
-        'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)',
-        'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)',
-        'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)',
-        'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)'
-    ]
+    L = instaloader.Instaloader()
 
-    url = "https://www.instagram.com/%s/" % username
-    geolocator = Nominatim(user_agent="iKy")
-    req = requests.get(url, headers={'User-Agent':
-                       random.choice(user_agents)})
-    soup = BeautifulSoup(req.text, 'html.parser')
-
-    general_data = soup.find_all('meta', attrs={'property': 'og:description'})
-    more_data = soup.find_all('script', attrs={'type': 'text/javascript'})
-    description = soup.find('script', attrs={'type': 'application/ld+json'})
+    if (instagram_user and instagram_pass):
+        try:
+            L.login(instagram_user, instagram_pass)
+        except instaloader.exceptions.BadCredentialsException:
+            raw_node = {'status': 'Bad Credentials'}
+            return raw_node
+        except instaloader.exceptions.ConnectionException:
+            raw_node = {'status': 'Try later'}
+            return raw_node
 
     try:
-        text = general_data[0].get('content').split()
-        description = json.loads(description.get_text())
-        profile_meta = json.loads(more_data[3].get_text()[21:].strip(';'))
-    except:
-        raw_node = {"status": "Fail"}
-
-    profile_data = {"Username": profile_meta['entry_data']['ProfilePage'][0]
-                    ['graphql']['user']['username'],
-                    "Profile name": description['name'],
-                    "URL": description['mainEntityofPage']['@id'],
-                    "Followers": text[0], "Following": text[2],
-                    "Posts": text[4],
-                    "Bio": str(
-                        profile_meta['entry_data']['ProfilePage'][0]['graphql']
-                        ['user']['biography']),
-                    "profile_pic_url": str(profile_meta['entry_data']
-                                           ['ProfilePage'][0]['graphql']
-                                           ['user']['profile_pic_url_hd']),
-                    "is_business_account": str(
-                        profile_meta['entry_data']['ProfilePage'][0]['graphql']
-                        ['user']['is_business_account']),
-                    "connected_to_fb": str(profile_meta['entry_data']
-                                           ['ProfilePage'][0]['graphql']
-                                           ['user']['connected_fb_page']),
-                    "externalurl": str(
-                        profile_meta['entry_data']['ProfilePage'][0]['graphql']
-                        ['user']['external_url']),
-                    "joined_recently": str(profile_meta['entry_data']
-                                           ['ProfilePage'][0]['graphql']
-                                           ['user']['is_joined_recently']),
-                    "business_category_name": str(
-                        profile_meta['entry_data']['ProfilePage'][0]['graphql']
-                        ['user']['business_category_name']),
-                    "is_private": str(
-                        profile_meta['entry_data']['ProfilePage'][0]['graphql']
-                        ['user']['is_private']),
-                    "is_verified": str(
-                        profile_meta['entry_data']['ProfilePage'][0]['graphql']
-                        ['user']['is_verified'])}
-
-    posts = {}
-    if profile_data['is_private'].lower() != 'true':
-        for index, post in enumerate(profile_meta['entry_data']['ProfilePage']
-                                     [0]['graphql']['user']
-                                     ['edge_owner_to_timeline_media']
-                                     ['edges']):
-            loc = unicode(post['node']['location'])
-            try:
-                caption = unicode(post['node']['edge_media_to_caption']
-                                  ['edges'][0]['node']['text'])
-            except:
-                caption = "No caption"
-            if (loc != "None"):
-                locjson = load_dirty_json(loc)
-                try:
-                    latlong = geolocator.geocode(locjson["name"])
-                except:
-                    latlong = False
-                if latlong:
-                    latitude = latlong.latitude
-                    longitude = latlong.longitude
-                else:
-                    latitude = longitude = "None"
-            else:
-                latitude = longitude = "None"
-
-            if ('accessibility_caption' in post['node']):
-                acc_cap = unicode(post['node']['accessibility_caption'])
-            else:
-                acc_cap = "None"
-
-            posts[index] = {"Caption": caption,
-                            "Number of Comments": unicode(post['node'][
-                                'edge_media_to_comment']['count']),
-                            "Comments Disabled": unicode(post['node'][
-                                'comments_disabled']),
-                            "Taken At Timestamp": unicode(post['node'][
-                                'taken_at_timestamp']),
-                            "Number of Likes": unicode(post['node'][
-                                'edge_liked_by']['count']),
-                            "Location": loc,
-                            "Latitude": latitude,
-                            "Longitude": longitude,
-                            "Accessability Caption": acc_cap
-                            }
-
-    # Raw Array
-    raw_node = {"Profile": profile_data, "Posts": posts}
+        profili = instaloader.Profile.from_username(L.context, username)
+    except instaloader.exceptions.ProfileNotExistsException:
+        raw_node = {'status': 'Profile Not Found'}
+        return raw_node
 
     # Total
     total = []
@@ -188,9 +64,10 @@ def t_instagram(username, from_m="Initial"):
     else:
         total.append({'validation': 'soft'})
 
-    if ('Fail' not in raw_node):
+    if (raw_node == []):
         # Graphic Array
         graphic = []
+        photos = []
 
         # Profile Array
         profile = []
@@ -201,6 +78,9 @@ def t_instagram(username, from_m="Initial"):
         # Gather Array
         gather = []
 
+        # Tasks Array
+        tasks = []
+
         link = "Instagram"
         gather_item = {"name-node": "Instagram", "title": "Instagram",
                        "subtitle": "", "icon": "fab fa-instagram",
@@ -208,125 +88,253 @@ def t_instagram(username, from_m="Initial"):
         gather.append(gather_item)
 
         gather_item = {"name-node": "Instname", "title": "Name",
-                       "subtitle": profile_data["Profile name"],
+                       "subtitle": profili.full_name,
                        "icon": "fas fa-user",
                        "link": link}
-        profile_item = {'name': profile_data["Profile name"]}
+        profile_item = {'name': profili.full_name}
         profile.append(profile_item)
         gather.append(gather_item)
 
         gather_item = {"name-node": "InstPosts", "title": "Posts",
-                       "subtitle": profile_data["Posts"],
-                       "icon": "fas fa-file-alt", "link": link}
+                       "subtitle": profili.mediacount,
+                       "icon": "fas fa-photo-video", "link": link}
+        gather.append(gather_item)
+
+        gather_item = {"name-node": "InstPosts", "title": "IGTV",
+                       "subtitle": profili.igtvcount,
+                       "icon": "fas fa-tv", "link": link}
         gather.append(gather_item)
 
         gather_item = {"name-node": "InstFollowers", "title": "Followers",
-                       "subtitle": profile_data["Followers"],
+                       "subtitle": profili.followers,
                        "icon": "fas fa-users", "link": link}
         gather.append(gather_item)
 
         gather_item = {"name-node": "InstFollowing", "title": "Following",
-                       "subtitle": profile_data["Following"],
+                       "subtitle": profili.followees,
                        "icon": "fas fa-users", "link": link}
         gather.append(gather_item)
 
         gather_item = {"name-node": "InstAvatar", "title": "Avatar",
-                       "picture": profile_data["profile_pic_url"],
+                       "picture": profili.profile_pic_url,
                        "subtitle": "",
                        "link": link}
         gather.append(gather_item)
-        profile_item = {'photos': [{"picture": profile_data["profile_pic_url"],
+        profile_item = {'photos': [{"picture": profili.profile_pic_url,
                                     "title": "Instagram"}]}
         profile.append(profile_item)
 
         gather_item = {"name-node": "InstBio", "title": "Bio",
-                       "subtitle": profile_data["Bio"],
+                       "subtitle": profili.biography,
                        "icon": "fas fa-heart",
                        "link": link}
         gather.append(gather_item)
+        profile_item = {'bio': profili.biography}
+        profile.append(profile_item)
+        if profili.biography:
+            analyze = analize_rrss(profili.biography)
+            for item in analyze:
+                if(item == 'url'):
+                    for i in analyze['url']:
+                        profile.append(i)
+                if(item == 'tasks'):
+                    for i in analyze['tasks']:
+                        tasks.append(i)
 
         gather_item = {"name-node": "InstURL", "title": "URL",
-                       "subtitle": profile_data["externalurl"],
+                       "subtitle": profili.external_url,
                        "icon": "fas fa-code",
                        "link": link}
         gather.append(gather_item)
 
-        gather_item = {"name-node": "InstJoin", "title": "Joined Recently",
-                       "subtitle": profile_data["joined_recently"],
-                       "icon": "fas fa-clock",
-                       "link": link}
-        gather.append(gather_item)
-
-        gather_item = {"name-node": "InstFacebook", "title": "Facebook",
-                       "subtitle": profile_data["connected_to_fb"],
-                       "icon": "fab fa-facebook",
-                       "link": link}
-        gather.append(gather_item)
-
         gather_item = {"name-node": "InstPrivate", "title": "Private Account",
-                       "subtitle": profile_data["is_private"],
-                       "icon": "fas fa-user-shield",
-                       "link": link}
-        gather.append(gather_item)
-
-        gather_item = {"name-node": "InstPrivate", "title": "Private Account",
-                       "subtitle": profile_data["is_private"],
+                       "subtitle": profili.is_private,
                        "icon": "fas fa-user-shield",
                        "link": link}
         gather.append(gather_item)
 
         gather_item = {"name-node": "InstUsername", "title": "Username",
-                       "subtitle": profile_data["Username"],
+                       "subtitle": profili.username,
                        "icon": "fas fa-user",
                        "link": link}
         gather.append(gather_item)
 
+        gather_item = {"name-node": "InstUserID", "title": "UserID",
+                       "subtitle": profili.userid,
+                       "icon": "fas fa-user-circle",
+                       "link": link}
+        gather.append(gather_item)
+
         gather_item = {"name-node": "InstBuss", "title": "Bussiness Account",
-                       "subtitle": profile_data["is_business_account"],
+                       "subtitle": profili.is_business_account,
                        "icon": "fas fa-building",
                        "link": link}
         gather.append(gather_item)
 
         gather_item = {"name-node": "InstVerified",
                        "title": "Verified Account",
-                       "subtitle": profile_data["is_verified"],
+                       "subtitle": profili.is_verified,
                        "icon": "fas fa-certificate",
                        "link": link}
         gather.append(gather_item)
 
         # Geo and Bar
-        postlist = []
         postloc = []
         postloc_item = []
-        for post in posts:
-            post_item = {"name": int(post), "series": [
-                        {"name": "Comments",
-                         "value": int(posts[post]['Number of Comments'])},
-                        {"name": "Likes",
-                         "value": int(posts[post]['Number of Likes'])}]}
-            postlist.append(post_item)
-            if (posts[post]['Location'] != 'None'):
-                location = load_dirty_json(posts[post]['Location'])
-                time_post = datetime.fromtimestamp(float(posts[post][
-                    'Taken At Timestamp']))
-                postloc_item = {'Caption': posts[post]['Caption'],
-                                'Accessability': posts[post][
-                                    'Accessability Caption'],
-                                'Latitude': posts[post]['Latitude'],
-                                'Longitude': posts[post]['Longitude'],
-                                'Name': location['name'],
-                                'Time': time_post.strftime("%Y/%m/%d %H:%M:%S")
+        stop = 0
+        captions = []
+        mentions = []
+        mentions_temp = []
+        hashtags = []
+        hashtags_temp = []
+        tagged = []
+        tagged_temp = []
+        tagged = []
+        lk_cm = []
+        s_lk = []
+        s_cm = []
+        week_temp = []
+        hour_temp = []
+        graphImage = graphVideo = graphSidecar = 0
+
+        link = "Instagram"
+        photos_item = {"name-node": "Instagram", "title": "Instagram",
+                       "subtitle": "", "icon": "fab fa-instagram",
+                       "link": link}
+        photos.append(photos_item)
+
+        for post in profili.get_posts():
+            s_lk.append({"name": str(stop), "value": str(post.likes)})
+            s_cm.append({"name": str(stop), "value": str(post.comments)})
+            # Hashtags
+            for h in post.caption_hashtags:
+                hashtags_temp.append(h)
+            # Mentions
+            for m in post.caption_mentions:
+                mentions_temp.append(m)
+            # Tagged users
+            for u in post.tagged_users:
+                tagged_temp.append(u)
+            # Captions
+            captions.append(post.caption)
+
+            # post_date = datetime.strptime(post.date, "%Y-%m-%d %H:%M:%S")
+            week_temp.append(post.date.strftime("%A"))
+            hour_temp.append(post.date.strftime("%H"))
+
+            if (post.typename == 'GraphImage'):
+                photos_item = {"name-node": "Inst" + str(stop),
+                               "title": "Image" + str(stop),
+                               "picture": post.url,
+                               "subtitle": "",
+                               "link": link}
+                photos.append(photos_item)
+                graphImage += 1
+            elif (post.typename == 'GraphVideo'):
+                graphVideo += 1
+            elif (post.typename == 'GraphSidecar'):
+                graphSidecar += 1
+
+            if (post.location):
+                postloc_item = {'Caption': post.location.name,
+                                'Accessability': post.pcaption,
+                                'Latitude': post.location.lat,
+                                'Longitude': post.location.lng,
+                                'Name': post.location.name,
+                                'Time': post.date.strftime("%Y-%m-%d %H:%M:%S")
                                 }
                 postloc.append(postloc_item)
                 profile.append({'geo': postloc_item})
 
+            stop += 1
+            if (stop == num):
+                break
+
+        # Likes, comments (continue)
+        lk_cm.append({"name": "Likes", "series": s_lk})
+        lk_cm.append({"name": "Comments", "series": s_cm})
+
+        # Hashtags (continue)
+        hashtag_counter = Counter(hashtags_temp)
+        for k, v in hashtag_counter.items():
+            hashtags.append({"label": k, "value": v})
+        # Mentions (continue)
+        mention_counter = Counter(mentions_temp)
+        for k, v in mention_counter.items():
+            mentions.append({"label": k, "value": v})
+        # Tagged (continue)
+        tagged_counter = Counter(tagged_temp)
+        for k, v in tagged_counter.items():
+            tagged.append({"label": k, "value": v})
+
+        # hourset
+        hourset = []
+        hournames = '00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23'.split()
+
+        twCounter = Counter(hour_temp)
+        tgdata = twCounter.most_common()
+        tgdata = sorted(tgdata)
+        e = 0
+        for g in hournames:
+            if (g != tgdata[e][0]):
+                hourset.append({"name": g, "value": 0})
+            elif (g == tgdata[e][0]):
+                hourset.append({"name": g, "value": int(tgdata[e][1])})
+                if (e < len(tgdata) - 1):
+                    e += 1
+
+        # # weekset
+        weekset = []
+        weekdays = 'Monday Tuesday Wednesday Thursday Friday Saturday Sunday'.split()
+        wdCounter = Counter(week_temp)
+        wddata = wdCounter.most_common()
+        wddata = sorted(wddata)
+        y = []
+        c = 0
+        for z in weekdays:
+            try:
+                weekset.append({"name": z, "value": int(wddata[c][1])})
+            except:
+                weekset.append({"name": z, "value": 0})
+            c += 1
+        wddata = y
+
+        # children = []
+        # children.append({"name": "Likes", "total":
+        #                 str(profili.likes)})
+        # children.append({"name": "Comments", "total":
+        #                 str(profili.comments)})
+        # children.append({"name": "Media", "total":
+        #                 str(profili.mediacount)})
+        # children.append({"name": "IGTV", "total":
+        #                 str(profili.igtvcount)})
+        # resume = {"name": "instagram", "children": children}
+
+        mediatype = []
+        mediatype.append({"name": "Images",
+                        "value": str(graphImage)})
+        mediatype.append({"name": "Sidecar",
+                        "value": str(graphSidecar)})
+        mediatype.append({"name": "Videos",
+                        "value": str(graphVideo)})
+
+        raw_node = {'captions' : captions}
         total.append({'raw': raw_node})
         graphic.append({'instagram': gather})
-        graphic.append({'postslist': postlist})
+        graphic.append({'postslist': lk_cm})
         graphic.append({'postsloc': postloc})
+        graphic.append({'hashtags': hashtags})
+        graphic.append({'mentions': mentions})
+        graphic.append({'tagged': tagged})
+        graphic.append({'hour': hourset})
+        graphic.append({'week': weekset})
+        graphic.append({'mediatype': mediatype})
+        # graphic.append({'resume': resume})
+        graphic.append({'photos': photos})
         total.append({'graphic': graphic})
         total.append({'profile': profile})
         total.append({'timeline': timeline})
+        total.append({'tasks': tasks})
 
     return total
 
