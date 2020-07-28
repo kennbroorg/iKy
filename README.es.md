@@ -175,7 +175,7 @@ Una vez que la aplicación esté cargada en el browser, deberá ir a la opción 
 - HaveIBeenPwned : Generar las APIs desde [aquí](https://haveibeenpwned.com/API/Key) (Paga)
 - Emailrep.io : Generar las APIs desde [here](https://emailrep.io/key)
 
-- Twitter : Ya no se necesitan
+Twitter : Ya no se necesitan
 
 # Wiki
 - [iKy Wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/home)
