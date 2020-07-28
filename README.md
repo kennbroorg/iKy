@@ -13,7 +13,7 @@
     <img alt="Flask" src="https://img.shields.io/badge/interface-flask-yellowgreen.svg">
 </div>
 <div align="center">
-    <img alt="Node" src="https://img.shields.io/badge/node-%3E%208.x-brightgreen.svg">
+    <img alt="Node" src="https://img.shields.io/badge/node-12.x-brightgreen.svg">
     <img alt="Angular" src="https://img.shields.io/badge/web%20framwork-angular%207-red.svg">
     <img alt="Boostrap" src="https://img.shields.io/badge/toolkit-boostrap-blueviolet.svg">
     <img alt="UI Kit" src="https://img.shields.io/badge/UI%20Kit-Nebular-9cf.svg">
@@ -26,7 +26,7 @@
     <img alt="keybase" src="https://img.shields.io/badge/module-keybase-blue.svg">
     <img alt="ghostproject" src="https://img.shields.io/badge/module-ghostproject-red.svg">
     <img alt="haveibeenpwned" src="https://img.shields.io/badge/module-haveibeenpwned-blue.svg">
-    <img alt="emailrep.io" src="https://img.shields.io/badge/module-emailrep.io-blue.svg">
+    <img alt="emailrep.io" src="https://img.shields.io/badge/amodule-emailrep.io-blue.svg">
     <img alt="socialscan" src="https://img.shields.io/badge/module-socialscan-blue.svg">
     <img alt="instagram" src="https://img.shields.io/badge/module-instagram-blue.svg">
     <img alt="tiktok" src="https://img.shields.io/badge/module-tiktok-blue.svg">
@@ -36,6 +36,7 @@
     <img alt="venmo" src="https://img.shields.io/badge/module-venmo-blue.svg">
     <img alt="darkpass" src="https://img.shields.io/badge/module-darkpass-blue.svg">
     <img alt="tweetiment" src="https://img.shields.io/badge/module-tweetiment-blue.svg">
+    <img alt="peopledatalabs" src="https://img.shields.io/badge/module-peopledatalabs-blue.svg">
     <img alt="reddit" src="https://img.shields.io/badge/module-reddit-blue.svg">
 </div>
 
@@ -63,12 +64,10 @@ Project iKy is a tool that collects information from an email and shows results 
 Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
 
 <div align="center">
-    <a href="https://vimeo.com/347085110"><img src="frontend/src/assets/images/Giba.gif"></a>
+    <a href="https://vimeo.com/434501702"><img src="frontend/src/assets/images/Giba.gif"></a>
 </div>
 
-[Video Demo](https://vimeo.com/347085110 "Video Demo - Click to Watch!")
-
-
+[Video Demo](https://vimeo.com/434501702 "Video Demo - Click to Watch!")
 
 ## Installation
 
@@ -114,8 +113,6 @@ Inside the directory **frontend** install the dependencies
 cd frontend
 npm install
 ```
-
-
 
 ## Wake up iKy Tool
 
@@ -166,10 +163,13 @@ Open the browser in this [url](http://127.0.0.1:4200)
 Once the application is loaded in the browser, you should go to the Api Keys option and load the values of the APIs that are needed.
 
 - Fullcontact: Generate the APIs from [here](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs)
-- Twitter: Generate the APIs from [here](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
+- PeopleDataLabs : Generate the APIs from [aquí](https://www.peopledatalabs.com/signup)
 - Linkedin: Only the user and password of your account must be loaded
+- Instagram: Only the user and password of your account must be loaded
 - HaveIBeenPwned : Generate the APIs from [here](https://haveibeenpwned.com/API/Key) (Paid)
 - Emailrep.io : Generate the APIs from [here](https://emailrep.io/key)
+
+- Twitter: No longer needed
 
 # Wiki
 
@@ -203,36 +203,11 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
     - [iKy version 0](https://vimeo.com/272495754)
 - [Disclaimer](https://gitlab.com/kennbroorg/iKy/-/wikis/Disclaimer)
 
-## Demo Videos
+## Demo Video
 
 <div align="center">
-    <a href="https://vimeo.com/397862772"><img alt="Kali 2019" src="frontend/src/assets/images/iKyEko15.png"></a>
+    <a href="https://vimeo.com/434501702"><img alt="Kali 2019" src="frontend/src/assets/images/iKyEko15.png"></a>
     <p>iKy eko15</p>
-</div>
-
-<div align="center">
-    <a href="https://vimeo.com/347085110"><img alt="Kali 2019" src="frontend/src/assets/images/Ikyv2.png"></a>
-    <p>iKy Version 2</p>
-</div>
-
-<div align="center">
-    <a href="https://vimeo.com/349011105"><img src="frontend/src/assets/images/Emiliano.png"></a>
-    <p>Testing iKy with Emiliano</p>
-</div>
-
-<div align="center">
-    <a href="https://vimeo.com/342843348"><img src="frontend/src/assets/images/Giba.png"></a>
-    <p>Testing iKy with Giba</p>
-</div>
-
-<div align="center">
-    <a href="https://vimeo.com/326114716"><img src="frontend/src/assets/images/ikyDemoV1.png"></a>
-    <p>iKy version 1</p>
-</div>
-
-<div align="center">
-    <a href="https://vimeo.com/272495754"><img src="frontend/src/assets/images/ikyDemov0.png"></a>
-    <p>iKy version 0</p>
 </div>
 
 ## Disclaimer

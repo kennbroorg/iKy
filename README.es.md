@@ -13,7 +13,7 @@
     <img alt="Flask" src="https://img.shields.io/badge/interface-flask-yellowgreen.svg">
 </div>
 <div align="center">
-    <img alt="Node" src="https://img.shields.io/badge/node-%3E%208.x-brightgreen.svg">
+    <img alt="Node" src="https://img.shields.io/badge/node-12.x-brightgreen.svg">
     <img alt="Angular" src="https://img.shields.io/badge/web%20framwork-angular%207-red.svg">
     <img alt="Boostrap" src="https://img.shields.io/badge/toolkit-boostrap-blueviolet.svg">
     <img alt="UI Kit" src="https://img.shields.io/badge/UI%20Kit-Nebular-9cf.svg">
@@ -36,6 +36,7 @@
     <img alt="venmo" src="https://img.shields.io/badge/module-venmo-blue.svg">
     <img alt="darkpass" src="https://img.shields.io/badge/module-darkpass-blue.svg">
     <img alt="tweetiment" src="https://img.shields.io/badge/module-tweetiment-blue.svg">
+    <img alt="peopledatalabs" src="https://img.shields.io/badge/module-peopledatalabs-blue.svg">
     <img alt="reddit" src="https://img.shields.io/badge/module-reddit-blue.svg">
 </div>
 
@@ -67,7 +68,7 @@ Visite el Gitlab Page del [Projecto](https://kennbroorg.gitlab.io/ikyweb/)
     <a href="https://vimeo.com/347085110"><img src="frontend/src/assets/images/Giba.gif"></a>
 </div>
 
-[Video Demo](https://vimeo.com/347085110 "Video Demo - Click to Watch!")
+[Video Demo](https://vimeo.com/434501702 "Video Demo - Click to Watch!")
 
 
 
@@ -168,11 +169,13 @@ Abrir el browser en esta [url](http://127.0.0.1:4200)
 Una vez que la aplicación esté cargada en el browser, deberá ir a la opción Api Keys y llenar los valores de las APIs que se necesitan.
 
 - Fullcontact : Generar las APIs desde [aquí](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs)
-- Twitter : Generar las APIs desde [aquí](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
+- PeopleDataLabs : Generar las APIs desde [aquí](https://www.peopledatalabs.com/signup)
 - Linkedin : Solo se debe cargar el usuario y contraseña de su cuenta 
+- Instagram : Solo se debe cargar el usuario y contraseña de su cuenta 
 - HaveIBeenPwned : Generar las APIs desde [aquí](https://haveibeenpwned.com/API/Key) (Paga)
 - Emailrep.io : Generar las APIs desde [here](https://emailrep.io/key)
 
+- Twitter : Ya no se necesitan
 
 # Wiki
 - [iKy Wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/home)
@@ -205,6 +208,12 @@ Una vez que la aplicación esté cargada en el browser, deberá ir a la opción 
     - [iKy version 0](https://vimeo.com/272495754)
 - [Disclaimer](https://gitlab.com/kennbroorg/iKy/-/wikis/Disclaimer)
 
+## Video Demo
+
+<div align="center">
+    <a href="https://vimeo.com/434501702"><img alt="Kali 2019" src="frontend/src/assets/images/iKyEko15.png"></a>
+    <p>iKy eko15</p>
+</div>
 
 ## Aviso Legal
 
