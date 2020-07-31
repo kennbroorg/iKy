@@ -1,0 +1,40 @@
+<nb-card size="small">
+  <nb-card-header (click)="openDialog(dialogLinkedinCert)">
+    LEAKLOOKUP Email
+    <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+  </nb-card-header>
+  <nb-card-body id="nbCardLeaklookupEmail" #nbCardLeaklookupEmail>
+      <div nbTooltip="{{statusFull}}" nbTooltipStatus="danger" style="text-align: center; position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 150px; z-index: 2;" *ngIf="statusFull != ''">
+      <i class="fas fa-key" style="font-size: 150px;"></i>
+    </div>
+    <div class="accordion-container" *ngIf="statusFull == ''">
+      <nb-accordion multi>
+        <nb-accordion-item *ngFor="let c of leaklookupEmail">
+          <nb-accordion-item-header nbTooltip="Leaked site" nbTooltipPlacement="top" nbTooltipStatus="primary" >
+             {{c.name}}
+          </nb-accordion-item-header>
+          <nb-accordion-item-body>
+            <div class="contact" *ngFor="let i of c.value">
+                <nb-user [name]="i.name" [title]="i.value"></nb-user>
+            </div>
+          </nb-accordion-item-body>
+        </nb-accordion-item>
+      </nb-accordion>
+    </div>
+    <div class="contact" *ngFor="let c of linkedinCerts">
+      <nb-user [name]="c.desc" [title]="c.name"></nb-user>
+    </div>
+  </nb-card-body>
+</nb-card>
+
+  <ng-template #dialogLeaklookupEmail let-data let-ref="dialogRef">
+      <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+        <nb-card-header>LEAKLOOKUP Email</nb-card-header>
+          <div style="padding: 1rem;border-bottom: 1px solid rgba(255, 255, 255, 0.2);" 
+              *ngFor="let c of linkedinCerts">
+            <nb-user style="font-size: 20px;font-family: Exo;" [name]="c.desc" [title]="c.name"></nb-user>
+          </div>
+        <nb-card-body style="overflow: hidden; padding: 0px;">
+        </nb-card-body>
+      </nb-card>
+  </ng-template>
