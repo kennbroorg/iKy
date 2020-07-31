@@ -38,6 +38,7 @@
     <img alt="tweetiment" src="https://img.shields.io/badge/module-tweetiment-blue.svg">
     <img alt="peopledatalabs" src="https://img.shields.io/badge/module-peopledatalabs-blue.svg">
     <img alt="reddit" src="https://img.shields.io/badge/module-reddit-blue.svg">
+    <img alt="leaklookup" src="https://img.shields.io/badge/module-leaklookup-blue.svg">
 </div>
 
 ---
@@ -174,6 +175,7 @@ Una vez que la aplicación esté cargada en el browser, deberá ir a la opción 
 - Instagram : Solo se debe cargar el usuario y contraseña de su cuenta 
 - HaveIBeenPwned : Generar las APIs desde [aquí](https://haveibeenpwned.com/API/Key) (Paga)
 - Emailrep.io : Generar las APIs desde [here](https://emailrep.io/key)
+- Leaklookup : Generate the APIs from [here](https://leak-lookup.com/api)
 
 Twitter : Ya no se necesitan
 
