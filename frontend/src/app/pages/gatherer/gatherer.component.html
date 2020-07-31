@@ -337,12 +337,12 @@
           </div>
 
           <!-- Tiktok graphs-->
-          <div class="col-md-4" id="divTiktokSocial" #divTiktokSocial *ngIf="gathered['tiktok'] && gathered['tiktok'].result[4] && validationShow[gathered['tiktok'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTiktokSocial" #divTiktokSocial *ngIf="gathered['tiktok'] && gathered['tiktok'].result[4] && gathered['tiktok'].result[4].graphic[0].tiktok?.length > 1 && validationShow[gathered['tiktok'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-tiktok-graphs [data]="gathered['tiktok']"></ngx-tiktok-graphs>
           </div>
 
           <!-- Tinder graphs-->
-          <div class="col-md-4" id="divTinderGraphs" #divTinderGraphs *ngIf="gathered['tinder'] && gathered['tinder'].result[4] && validationShow[gathered['tinder'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTinderGraphs" #divTinderGraphs *ngIf="gathered['tinder'] && gathered['tinder'].result[4] && gathered['tinder'].result[4].graphic[0].tinder?.length > 1 && validationShow[gathered['tinder'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-tinder-graphs [data]="gathered['tinder']"></ngx-tinder-graphs>
           </div>
 
@@ -361,9 +361,14 @@
             <ngx-venmo-trans [data]="gathered['venmo']"></ngx-venmo-trans>
           </div>
 
-          <!-- Leaks -->
+          <!-- HIBP -->
           <div class="col-md-4" id="divLeakSocial" #divLeakSocial *ngIf="gathered['leaks'] && gathered['leaks'].result[4] && validationShow[gathered['leaks'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-leak-graphs [data]="gathered['leaks']"></ngx-leak-graphs>
+          </div>
+
+          <!-- LeakLookup -->
+          <div class="col-md-4" id="divLeaklookupEmail" #divLeaklookupEmail *ngIf="gathered['leaklookup'] && gathered['leaklookup'].result[4] && validationShow[gathered['leaklookup'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-leaklookup-email [data]="gathered['leaklookup']"></ngx-leaklookup-email>
           </div>
 
           <!-- Darkpass -->

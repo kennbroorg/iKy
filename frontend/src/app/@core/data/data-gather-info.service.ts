@@ -164,6 +164,17 @@ export class DataGatherInfoService {
             );
         };
 
+        // Leaklookup
+        if (this.isModuleParamRunTaskExec('leaklookup', this.email, 'User', 100)) {
+            this.showToast('info', 'LeakLookup', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('leaklookup', {username: this.email, from: 'User'})
+                .subscribe(this.processResponse,
+                           err => console.error('Ops: ', err.message),
+                           () => console.log('Completed Leaklookup')
+            );
+        };
+
         // Search
         if (this.isModuleParamRunTaskExec('search', this.username, 'Username', 1)) {
             this.showToast('info', 'Searchers', 'Send information gathering');
@@ -503,6 +514,8 @@ export class DataGatherInfoService {
             this.username = datas['email'].split("@")[0];
             console.log("Username : ", this.username);
 
+
+            // EmailrepIO
             if (this.isModuleParamRunTaskExec('emailrep', this.email, 'User', 100)) {
                 this.showToast('info', 'EmailRepIO', 'Send information gathering');
                 this.globalGather['taskresume'][0].PP++;
@@ -510,6 +523,17 @@ export class DataGatherInfoService {
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
                                () => console.log('Completed EmailRep')
+                );
+            };
+
+            // Leaklookup
+            if (this.isModuleParamRunTaskExec('leaklookup', this.email, 'User', 100)) {
+                this.showToast('info', 'LeakLookup', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('leaklookup', {username: this.email, from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Leaklookup')
                 );
             };
 
@@ -532,6 +556,17 @@ export class DataGatherInfoService {
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
                                () => console.log('Completed Fullcontact')
+                );
+            };
+    
+            // Peopledatalabs
+            if (this.isModuleParamRunTaskExec('peopledatalabs', this.email, 'User', 100)) {
+                this.showToast('info', 'Peopledatalabs', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('peopledatalabs', {username: this.email, from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Peopledatalabs')
                 );
             };
     

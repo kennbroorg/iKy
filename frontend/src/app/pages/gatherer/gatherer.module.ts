@@ -57,6 +57,7 @@ import { KeybaseSocialComponent } from './keybase/keybase-social/keybase-social.
 import { KeybaseDevicesComponent } from './keybase/keybase-devices/keybase-devices.component';
 
 import { LeakGraphsComponent } from './leak/leak-graphs/leak-graphs.component';
+import { LeaklookupEmailComponent } from './leaklookup/leaklookup-email/leaklookup-email.component';
 
 import { EmailrepSocialComponent } from './emailrep/emailrep-social/emailrep-social.component';
 import { EmailrepInfoComponent } from './emailrep/emailrep-info/emailrep-info.component';
@@ -202,6 +203,7 @@ import { SharedModule } from '../shared/shared.module';
     RedditBubbleComponent,
     PeopledatalabsSocialComponent,
     PeopledatalabsGraphsComponent,
+    LeaklookupEmailComponent,
   ],
   providers: [
     InstagramMapService,
