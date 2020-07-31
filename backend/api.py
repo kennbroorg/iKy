@@ -435,3 +435,20 @@ def r_reddit(username=None):
     print("Reddit - Task : ", res.task_id)
     return jsonify(module="reddit", task=res.task_id,
                    param=username, from_m=from_m)
+
+
+################################################
+# Leaklookup
+################################################
+@home.route("/leaklookup", methods=["POST"])
+def r_leaklookup(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("Leaklookup - Detected Username : ", username, from_m)
+    res = celery.send_task('modules.leaklookup.leaklookup_tasks.t_leaklookup',
+                           args=(username, ))
+    print("Leaklookup - Task : ", res.task_id)
+    return jsonify(module="leaklookup", task=res.task_id,
+                   param=username, from_m=from_m)

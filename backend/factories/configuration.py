@@ -33,6 +33,7 @@ def get_config():
                           'modules.tweetiment.tweetiment_tasks',
                           'modules.reddit.reddit_tasks',
                           'modules.peopledatalabs.peopledatalabs_tasks',
+                          'modules.leaklookup.leaklookup_tasks',
                           'modules.emailrep.emailrep_tasks')
     return Config
 
