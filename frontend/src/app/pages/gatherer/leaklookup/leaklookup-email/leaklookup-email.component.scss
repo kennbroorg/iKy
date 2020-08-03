@@ -1,0 +1,60 @@
+@import '../../../../@theme/styles/themes';
+
+@include nb-install-component() {
+  nb-tabset {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  nb-tab {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+  }
+
+  .contact {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: nb-theme(text-basic-color);
+    padding: 1rem;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid nb-theme(divider-color);
+
+    }
+  }
+
+  .i-contact {
+    font-size: 2rem;
+    cursor: pointer;
+  }
+
+  .time {
+    font-size: 0.875rem;
+    font-weight: nb-theme(text-paragraph-font-weight);
+    text-transform: uppercase;
+  }
+
+  nb-user /deep/ {
+    .info-container {
+      @include nb-ltr(margin-left, 0.875rem);
+      @include nb-rtl(margin-right, 0.875rem);
+    }
+
+    .user-name {
+      font-family: nb-theme(font-family-secondary);
+      font-weight: nb-theme(text-paragraph-font-weight);
+      color: nb-theme(text-basic-color);
+      font-size: 1rem;
+      text-transform: uppercase;
+    }
+
+    .user-title {
+      font-size: 0.875rem;
+      font-weight: nb-theme(text-paragraph-font-weight);
+    }
+  }
+
+}

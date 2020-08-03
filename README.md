@@ -38,6 +38,7 @@
     <img alt="tweetiment" src="https://img.shields.io/badge/module-tweetiment-blue.svg">
     <img alt="peopledatalabs" src="https://img.shields.io/badge/module-peopledatalabs-blue.svg">
     <img alt="reddit" src="https://img.shields.io/badge/module-reddit-blue.svg">
+    <img alt="leaklookup" src="https://img.shields.io/badge/module-leaklookup-blue.svg">
 </div>
 
 ---
@@ -168,6 +169,7 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 - Instagram: Only the user and password of your account must be loaded
 - HaveIBeenPwned : Generate the APIs from [here](https://haveibeenpwned.com/API/Key) (Paid)
 - Emailrep.io : Generate the APIs from [here](https://emailrep.io/key)
+- Leaklookup : Generate the APIs from [here](https://leak-lookup.com/api)
 
 Twitter: No longer needed
 
