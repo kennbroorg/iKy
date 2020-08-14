@@ -44,4 +44,24 @@
     "name": "leaklookup_key",
     "key": ""
   }
+  {
+    "id": 9,
+    "name": "twitter_consumer_key",
+    "key": ""
+  },
+  {
+    "id": 10,
+    "name": "twitter_consumer_secret",
+    "key": ""
+  },
+  {
+    "id": 11,
+    "name": "twitter_access_token",
+    "key": ""
+  },
+  {
+    "id": 12,
+    "name": "twitter_access_token_secret",
+    "key": ""
+  },
 ]
