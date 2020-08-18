@@ -174,10 +174,10 @@ Una vez que la aplicación esté cargada en el browser, deberá ir a la opción 
 - Linkedin : Solo se debe cargar el usuario y contraseña de su cuenta 
 - Instagram : Solo se debe cargar el usuario y contraseña de su cuenta 
 - HaveIBeenPwned : Generar las APIs desde [aquí](https://haveibeenpwned.com/API/Key) (Paga)
-- Emailrep.io : Generar las APIs desde [here](https://emailrep.io/key)
-- Leaklookup : Generate the APIs from [here](https://leak-lookup.com/api)
+- Emailrep.io : Generar las APIs desde [aqui](https://emailrep.io/key)
+- Leaklookup : Generar las APIs desde [aqui](https://leak-lookup.com/api)
+- Twitter: Generar las APIs desde [aqui](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
 
-Twitter : Ya no se necesitan
 
 # Wiki
 - [iKy Wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/home)

@@ -170,8 +170,7 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 - HaveIBeenPwned : Generate the APIs from [here](https://haveibeenpwned.com/API/Key) (Paid)
 - Emailrep.io : Generate the APIs from [here](https://emailrep.io/key)
 - Leaklookup : Generate the APIs from [here](https://leak-lookup.com/api)
-
-Twitter: No longer needed
+- Twitter: Generate the APIs from [here](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
 
 # Wiki
 
