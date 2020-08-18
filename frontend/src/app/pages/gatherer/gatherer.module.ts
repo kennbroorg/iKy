@@ -47,6 +47,8 @@ import { TwitterHashtagComponent } from './twitter/twitter-hashtag/twitter-hasht
 import { TwitterUsersComponent } from './twitter/twitter-users/twitter-users.component';
 import { TwitterHourComponent } from './twitter/twitter-hour/twitter-hour.component';
 import { TwitterWeekComponent } from './twitter/twitter-week/twitter-week.component';
+import { TwitterSourceComponent } from './twitter/twitter-source/twitter-source.component';
+import { TwitterTwvsrtComponent } from './twitter/twitter-twvsrt/twitter-twvsrt.component';
 
 import { LinkedinGraphsComponent } from './linkedin/linkedin-graphs/linkedin-graphs.component';
 import { LinkedinBubbleComponent } from './linkedin/linkedin-bubble/linkedin-bubble.component';
@@ -157,6 +159,8 @@ import { SharedModule } from '../shared/shared.module';
     TwitterHourComponent,
     TwitterWeekComponent,
     TwitterUsersComponent,
+    TwitterSourceComponent,
+    TwitterTwvsrtComponent,
     LinkedinGraphsComponent,
     LinkedinBubbleComponent,
     LinkedinCertsComponent,
