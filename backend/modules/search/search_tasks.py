@@ -413,15 +413,15 @@ def t_search(username, from_m="Initial"):
     ysearch = YahooSearch()
     bsearch = BingSearch()
     try:
-        gresults = gsearch.search(*search_args)
+        gresults = gsearch.search(*search_args, cache=False)
     except:
         gresults = []
     try:
-        yresults = ysearch.search(*search_args)
+        yresults = ysearch.search(*search_args, cache=False)
     except:
         yresults = []
     try:
-        bresults = bsearch.search(*search_args)
+        bresults = bsearch.search(*search_args, cache=False)
     except:
         bresults = []
 
