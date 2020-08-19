@@ -276,12 +276,14 @@ def t_instagram(username, num=10, from_m="Initial"):
         tgdata = sorted(tgdata)
         e = 0
         for g in hournames:
-            if (g != tgdata[e][0]):
+            if (e >= len(tgdata)):
+                hourset.append({"name": g, "value": 0})
+            elif (g < tgdata[e][0]):
                 hourset.append({"name": g, "value": 0})
             elif (g == tgdata[e][0]):
                 hourset.append({"name": g, "value": int(tgdata[e][1])})
-                if (e < len(tgdata) - 1):
-                    e += 1
+                e += 1
+
 
         # # weekset
         weekset = []
