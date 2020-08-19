@@ -61,6 +61,7 @@ sniffio==1.1.0
 socialscan==1.2.0
 soupsieve==2.0.1
 tqdm==4.46.1
+tweepy==3.9.0
 git+https://github.com/twintproject/twint.git@origin/master#egg=twint
 urllib3==1.25.9
 vaderSentiment==3.3.2
