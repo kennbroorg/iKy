@@ -330,27 +330,31 @@ def t_twitter(username, from_m):
                    "link": link_social}
     gather.append(gather_item)
 
-    for urls in result_api.entities['url']['urls']:
-        if urls['expanded_url']:
-            analyze = analize_rrss(urls['expanded_url'])
-            for item in analyze:
-                if(item == 'url'):
-                    for i in analyze['url']:
-                        profile.append(i)
-                if(item == 'tasks'):
-                    for i in analyze['tasks']:
-                        tasks.append(i)
+    if (result_api.entities.get("url", "") != "" and
+        result_api.entities['url'].get("urls", "") != ""):
+        for urls in result_api.entities['url']['urls']:
+            if urls['expanded_url']:
+                analyze = analize_rrss(urls['expanded_url'])
+                for item in analyze:
+                    if(item == 'url'):
+                        for i in analyze['url']:
+                            profile.append(i)
+                    if(item == 'tasks'):
+                        for i in analyze['tasks']:
+                            tasks.append(i)
 
-    for urls in result_api.entities['description']['urls']:
-        if urls['expanded_url']:
-            analyze = analize_rrss(urls['expanded_url'])
-            for item in analyze:
-                if(item == 'url'):
-                    for i in analyze['url']:
-                        profile.append(i)
-                if(item == 'tasks'):
-                    for i in analyze['tasks']:
-                        tasks.append(i)
+    if (result_api.entities.get("description", "") != "" and
+        result_api.entities['description'].get("urls", "") != ""):
+        for urls in result_api.entities['description']['urls']:
+            if urls['expanded_url']:
+                analyze = analize_rrss(urls['expanded_url'])
+                for item in analyze:
+                    if(item == 'url'):
+                        for i in analyze['url']:
+                            profile.append(i)
+                    if(item == 'tasks'):
+                        for i in analyze['tasks']:
+                            tasks.append(i)
 
     if result_api.description:
         profile.append({'bio': result_api.description})
