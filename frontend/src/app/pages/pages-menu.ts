@@ -27,4 +27,15 @@ export const MENU_ITEMS: NbMenuItem[] = [
     icon: 'key',  
     link: '/pages/apikeys',
   },
+  {
+    title: 'Comparison',
+    icon: 'chart-bar',
+    children: [
+      {
+        title: 'Twitter',
+        icon: { icon: 'twitter', pack: 'fab' },
+        link: '/pages/comparison',
+      },
+    ],
+  },
 ];

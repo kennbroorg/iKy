@@ -7,6 +7,7 @@ import { GathererComponent } from './gatherer/gatherer.component';
 import { ProfileComponent } from './profile/profile.component';
 import { TimelineComponent } from './timeline/timeline.component';
 import { ApiKeysComponent } from './apikeys/apikeys.component';
+import { ComparisonComponent } from './comparison/comparison.component';
 
 import { NotFoundComponent } from './miscellaneous/not-found/not-found.component';
 
@@ -29,13 +30,14 @@ const routes: Routes = [{
     }, {
       path: 'apikeys',
       component: ApiKeysComponent,
-    }, 
-    {
+    },{
+      path: 'comparison',
+      component: ComparisonComponent,
+    },{
       path: '',
       redirectTo: 'principal',
       pathMatch: 'full',
-    }, 
-    {
+    },{
       path: '**',
       component: NotFoundComponent,
     },
