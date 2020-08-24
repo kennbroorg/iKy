@@ -1,0 +1,94 @@
+@import '../../@theme/styles/themes';
+@import '~bootstrap/scss/mixins/breakpoints';
+@import '~@nebular/theme/styles/global/breakpoints';
+
+@include nb-install-component() {
+
+  nb-card {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    border: none;
+  }
+
+  nb-card-body {
+    display: flex;
+    flex-direction: column;
+    padding: 0px;
+    border: none;
+    overflow: hidden;
+  }
+
+  nb-card-footer {
+     justify-content: space-around;
+     padding: 0.75rem 0;
+  }
+
+  button:focus {
+     box-shadow: none !important;
+  }
+
+  .choto {
+     color: yellow;
+  }
+
+  .sep {
+     margin-top: 10px; 
+     margin-bottom: 20px; 
+     height: 2px; 
+     background-color: rgba(0, 214, 143, 1);  
+     width: 80%; 
+     -webkit-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.9);
+     -moz-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.9);
+     box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.9);
+  }
+  .text-sep {
+     color: rgba(0, 214, 143, 1);  
+     width: 100%; 
+     text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.9);
+     text-align: center;
+     vertical-align: text-bottom;
+     font-weight: 300;
+     font-size: 17px;
+  }
+
+  ngx-twitter-popularity,
+  ngx-twitter-approval,
+  ngx-twitter-resume{
+    display: block;
+
+    /deep/ {
+      .pie-label {
+        fill: nb-theme(text-basic-color);
+      }
+
+      .grid-line-path {
+        stroke: nb-theme(divider-color);
+      }
+
+      text {
+        fill: nb-theme(text-basic-color);
+      }
+
+      .chart-legend {
+        .legend-labels {
+          background: nb-theme(layout-background-color);
+        }
+        .legend-label {
+          color: nb-theme(text-basic-color);
+          .active .legend-label-text {
+            color: nb-theme(text-basic-color);
+          }
+        }
+      }
+    }
+  }
+  @include media-breakpoint-down(md) {
+  }
+  @include media-breakpoint-down(sm) {
+  }
+  @include media-breakpoint-down(is) {
+  }
+
+}
+
