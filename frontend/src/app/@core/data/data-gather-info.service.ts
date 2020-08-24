@@ -12,7 +12,6 @@ import { mergeMap } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-// Toaster KKK
 import { ToasterConfig } from 'angular2-toaster';
 import 'style-loader!angular2-toaster/toaster.css';
 import { NbGlobalLogicalPosition, NbGlobalPhysicalPosition, NbGlobalPosition, NbToastrService, NbComponentStatus } from '@nebular/theme';
@@ -50,6 +49,11 @@ export class DataGatherInfoService {
     public pullGather() {  
         console.log('dataService Pull globalGather :', this.globalGather)
         return this.globalGather;
+    }  
+    
+    public removeGather(key) {  
+        delete this.globalGather[key];
+        console.log('dataService Remove globalGather :', this.globalGather)
     }  
     
     /* Http Service */
@@ -95,7 +99,7 @@ export class DataGatherInfoService {
 
                 this.globalGather['taskexec'][indexTaskexec].task_id = task.task;
                 this.globalGather['taskexec'][indexTaskexec].state = "PROCESS";
-                console.log("State change..................");
+                // console.log("State change..................");
 
             } 
         }
@@ -119,17 +123,17 @@ export class DataGatherInfoService {
             // this.fakeGather(); 
         } else {
             // Launch Dialog
-            this.openDialog();
+            this.openDialogError('Invalid e-mail', 'You must enter a valid e-mail address to gather information');
         }
         return this.globalGather;
     }
     
     /* Dialog */
-    public openDialog() {
+    public openDialogError(title, text) {
         this.dialogService.open(ModalDialogComponent, {
             context: {
-                title: 'Invalid e-mail',
-                text: 'You must enter a valid e-mail address to gather information',
+                title: title,
+                text: text,
             },
             hasBackdrop: true,
         });
@@ -146,7 +150,7 @@ export class DataGatherInfoService {
         console.log("Username : ", this.username);
     
         // Generic executer
-        this.showToast('info', 'Tasklist', 'Send Tasklist process');
+        // this.showToast('info', 'Tasklist', 'Send Tasklist process');
         this.getTaskList$()
             .subscribe(this.processTasklist, 
                        err => console.error('Ops: ', err.message)
@@ -362,7 +366,7 @@ export class DataGatherInfoService {
         console.log("Datas : ", datas);
 
         // Generic executer
-        this.showToast('info', 'Tasklist', 'Send Tasklist process');
+        // this.showToast('info', 'Tasklist', 'Send Tasklist process');
         this.getTaskList$()
             .subscribe(this.processTasklist, 
                        err => console.error('Ops: ', err.message)
@@ -665,6 +669,67 @@ export class DataGatherInfoService {
         };
     };
     
+    /* Gather Info for comparison */
+    public gathererComparison(data: string) {
+
+        var datas = data;
+        // Create if dont exist
+        if (this.globalGather['taskresume'] == null) {
+            this.globalGather['taskresume'] = [{PP: 0, PS: 0, PE: 0}]; // Process PENDING // Process SUCCESS // Process ERROR
+        }
+        console.log("====================================================");
+        console.log("Gatherer Comparison Datas : ", datas);
+
+        // Evaluation of datas for first account first period (and second)
+        if (datas['twitterf'] != '') {
+            console.log("Twitterf : ", datas['twitterf']);
+            // Twitter
+            this.showToast('info', 'Twitter first Info', 'Send information gathering');
+            // this.globalGather['taskresume'][1].PP++;
+            this.executeRequest$('twitter_info', {username: datas['twitterf'], from: 'User', module_name: 'twitter_infof'})
+                .subscribe(this.processResponse,
+                           err => console.error('Ops: ', err.message),
+                           () => console.log('Completed Twitter First info')
+            );
+            this.showToast('info', 'Twitter first period', 'Tweets from ' + datas['datef_from'] + ' to ' + datas['datef_to'] );
+            // this.globalGather['taskresume'][1].PP++;
+            this.executeRequest$('twitter_comp', {username: datas['twitterf'], date_from: datas['datef_from'], date_to: datas['datef_to'], from: 'User', module_name: 'twitter_compf'})
+                .subscribe(this.processResponse,
+                           err => console.error('Ops: ', err.message),
+                           () => console.log('Completed Twitter first period')
+            );
+            // Evaluation of second period of same account
+            if (datas['twitters'] == '' && datas['dates_from'] != '' && datas['dates_from'] != "NaN-NaN-NaN") {
+                this.showToast('info', 'Twitter second period', 'Tweets from ' + datas['dates_from'] + ' to ' + datas['dates_to'] );
+                // this.globalGather['taskresume'][1].PP++;
+                this.executeRequest$('twitter_comp', {username: datas['twitterf'], date_from: datas['dates_from'], date_to: datas['dates_to'], from: 'User', module_name: 'twitter_comps'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Twitter second period')
+                );
+            }
+        };
+        // Evaluation of datas for second account second period
+        if (datas['twitters'] != '') {
+            console.log("Twitters : ", datas['twitters']);
+            // Twitter
+            this.showToast('info', 'Twitter second Info', 'Send information gathering');
+            // this.globalGather['taskresume'][1].PP++;
+            this.executeRequest$('twitter_info', {username: datas['twitters'], from: 'User', module_name: 'twitter_infos'})
+                .subscribe(this.processResponse,
+                           err => console.error('Ops: ', err.message),
+                           () => console.log('Completed Twitter second info')
+            );
+            this.showToast('info', 'Twitter second period', 'Tweets from ' + datas['dates_from'] + ' to ' + datas['dates_to'] );
+            // this.globalGather['taskresume'][1].PP++;
+            this.executeRequest$('twitter_comp', {username: datas['twitters'], date_from: datas['dates_from'], date_to: datas['dates_to'], from: 'User', module_name: 'twitter_comps'})
+                .subscribe(this.processResponse,
+                           err => console.error('Ops: ', err.message),
+                           () => console.log('Completed Twitter second period')
+            );
+        };
+    };
+
     // Tasklist Callback
     private processTasklist = (data: any): any => {
         this.globalGather['tasklist'] = data;
@@ -723,16 +788,16 @@ export class DataGatherInfoService {
                 taskexec[indexTaskexec].param == param) {
                 mustRun = false; // Not run
 
-                console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-                console.log('Module :', module);
-                console.log('Param  :', param);
-                console.log('From   :', from);
-                console.log('Score  :', score);
-                console.log('Score Before :', this.globalGather['taskexec'][indexTaskexec].score);
+                // console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+                // console.log('Module :', module);
+                // console.log('Param  :', param);
+                // console.log('From   :', from);
+                // console.log('Score  :', score);
+                // console.log('Score Before :', this.globalGather['taskexec'][indexTaskexec].score);
 
                 this.globalGather['taskexec'][indexTaskexec].score = taskexec[indexTaskexec].score + score;
-                console.log('Score After :', this.globalGather['taskexec'][indexTaskexec].score);
-                console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+                // console.log('Score After :', this.globalGather['taskexec'][indexTaskexec].score);
+                // console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
             } 
         }
         // Evaluate if run
