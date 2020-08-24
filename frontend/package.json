@@ -24,7 +24,6 @@
     "@nebular/eva-icons": "4.4.0",
     "@nebular/security": "4.4.0",
     "@nebular/theme": "4.4.0",
-    "@swimlane/ngx-charts": "^10.0.0",
     "angular-tree-component": "7.2.0",
     "angular2-chartjs": "0.4.1",
     "angular2-toaster": "^7.0.0",
@@ -33,6 +32,7 @@
     "ckeditor": "4.12.1",
     "classlist.js": "1.1.20150312",
     "core-js": "2.5.1",
+    "d3": "^5.16.0",
     "echarts": "^4.0.2",
     "eva-icons": "^1.1.0",
     "html2canvas": "^1.0.0-rc.5",
@@ -67,6 +67,8 @@
     "@angular/language-service": "8.0.0",
     "@compodoc/compodoc": "^1.1.11",
     "@fortawesome/fontawesome-free": "^5.4.0",
+    "@swimlane/ngx-charts": "^11.2.0",
+    "@types/d3": "^5.7.2",
     "@types/d3-color": "1.0.5",
     "@types/googlemaps": "^3.30.4",
     "@types/jasmine": "2.5.54",
@@ -91,6 +93,6 @@
     "ts-node": "3.2.2",
     "tslint": "^5.7.0",
     "tslint-language-service": "^0.9.9",
-    "typescript": "3.4.5"
+    "typescript": "^3.4.5"
   }
 }
