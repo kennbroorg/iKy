@@ -36,13 +36,6 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
-# # Compatibility code
-# try:
-#     # Python 2: "unicode" is built-in
-#     unicode
-# except NameError:
-#     unicode = str
-
 
 @celery.task
 def t_tweetiment(username, task_id, from_m="Initial"):
@@ -85,7 +78,10 @@ def t_tweetiment(username, task_id, from_m="Initial"):
             text = RE_EMOJI.sub(r'', text)
             if (len(text) > 3):
                 translated = text
-                lang_detect = detect(text)
+                try:
+                    lang_detect = detect(text)
+                except:
+                    lang_detect = 'en'
                 if (lang_detect != 'en'):
                     trans = translator.translate(text)
                     translated = trans.text

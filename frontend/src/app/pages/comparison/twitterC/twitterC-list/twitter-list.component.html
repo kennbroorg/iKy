@@ -1,0 +1,69 @@
+  <nb-card size="small" class="border-default">
+    <nb-card-header  (click)="openDialog(dialogTwitterList)">
+      TWITTER Tweets
+      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+    </nb-card-header>
+    <nb-card-body style="margin: 0px; padding: 0px; text-align: center; overflow: hidden;margin-top: 10px;">
+
+        <div #nbCardTwitterList id="nbCardTwitterList">
+            <ngx-charts-line-chart
+              [view]="[width, height - 60]"
+              [scheme]="colorScheme"
+              [legend]="legend"
+              [legendPosition]="legendPosition"
+              [showXAxisLabel]="showXAxisLabel"
+              [showYAxisLabel]="showYAxisLabel"
+              [xAxis]="xAxis"
+              [yAxis]="yAxis"
+              [xAxisLabel]="xAxisLabel"
+              [yAxisLabel]="yAxisLabel"
+              [timeline]="timeline"
+              [results]="twitterList"
+              >
+            </ngx-charts-line-chart>
+         </div>
+
+    </nb-card-body>
+  </nb-card>
+
+
+  <ng-template #dialogTwitterList let-data let-ref="dialogRef">
+    <nb-card [style.width]="width * 2" [style.height]="height * 2" style="background-color: rgba(0, 0, 0, 0.8);">
+      <nb-card-header>TWITTER Tweets</nb-card-header>
+      <nb-card-body style="overflow: hidden;">
+
+        <div style="fill: #05fcfc !important; font-size: 35px !important;">
+            <ngx-charts-line-chart
+              [view]="[width * 1.8, height * 1.8]"
+              [scheme]="colorScheme"
+              [legend]="legend"
+              [showXAxisLabel]="showXAxisLabel"
+              [showYAxisLabel]="showYAxisLabel"
+              [xAxis]="xAxis"
+              [yAxis]="yAxis"
+              [xAxisLabel]="xAxisLabel"
+              [yAxisLabel]="yAxisLabel"
+              [timeline]="timeline"
+              [results]="twitterList"
+              >
+            </ngx-charts-line-chart>
+        </div>
+        <!-- 
+        <div style="fill: #05fcfc !important; font-size: 35px !important;">
+            <ngx-charts-bar-vertical-2d
+              [view]="[width * 1.8, height * 1.8]"
+              [scheme]="colorScheme"
+              [results]="twitterList"
+              showDataLabel="true"
+              legend="true"
+              legendTitle=""
+              legendPosition="below"
+              xAxis="true"
+              yAxis="true">
+            </ngx-charts-bar-vertical-2d>
+        </div>
+        -->
+
+      </nb-card-body>
+    </nb-card>
+  </ng-template>

@@ -47,7 +47,8 @@ export class BubbleComponent implements OnInit, AfterViewInit {
     drawChart(element, data, height, width, diameter) {
 
         var format = d3.format(",d"),
-            color = d3.scaleOrdinal(d3.schemeCategory20c);
+            color = d3.scaleOrdinal(d3.schemeCategory10);
+        // color = d3.scaleOrdinal(d3.schemeCategory20c);
         var bubble = d3.pack()
          // .size([diameter, diameter])
             .size([width, height])

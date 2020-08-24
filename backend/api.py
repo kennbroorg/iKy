@@ -452,3 +452,92 @@ def r_leaklookup(username=None):
     print("Leaklookup - Task : ", res.task_id)
     return jsonify(module="leaklookup", task=res.task_id,
                    param=username, from_m=from_m)
+
+
+################################################
+# Twitter info for comparison (first account)
+################################################
+@home.route("/twitter_info", methods=["POST"])
+def r_twitter_infof(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    if (json_result.get("module_name", "") == ""):
+        module = "twitter_info"
+    else:
+        module = json_result.get("module_name", "")
+    print("Twitter_info first - Detected Username : ", username, from_m,
+          module)
+    res = celery.send_task(
+        'modules.twitter_comparison.twitter_info_tasks.t_twitter_info',
+        args=(username, from_m, module))
+    print("Twitter_infof - Task : ", res.task_id)
+    return jsonify(module=module, task=res.task_id,
+                   param=username, from_m=from_m)
+
+
+################################################
+# Twitter info for comparison (second account)
+################################################
+@home.route("/twitter_infos", methods=["POST"])
+def r_twitter_infos(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("Twitter_info second - Detected Username : ", username, from_m)
+    res = celery.send_task(
+        'modules.twitter_comparison.twitter_info_tasks.t_twitter_info',
+        args=(username, ))
+    print("Twitter_infos - Task : ", res.task_id)
+    return jsonify(module="twitter_infos", task=res.task_id,
+                   param=username, from_m=from_m)
+
+
+################################################
+# Twitter comp for comparison (first period)
+################################################
+@home.route("/twitter_comp", methods=["POST"])
+def r_twitter_compf(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    date_from = json_result.get("date_from", "")
+    date_to = json_result.get("date_to", "")
+    from_m = json_result.get("from", "")
+    if (json_result.get("module_name", "") == ""):
+        module = "twitter_comp"
+    else:
+        module = json_result.get("module_name", "")
+    print("Twitter_compf - Detected Username : ", username, date_from, date_to,
+          from_m, module)
+    res = celery.send_task(
+        'modules.twitter_comparison.twitter_comp_tasks.t_twitter_comp',
+        args=(username, date_from, date_to, from_m, module))
+    print("Twitter_compf - Task : ", res.task_id)
+    return jsonify(module=module, task=res.task_id,
+                   param=username, date_from=date_from,
+                   date_to=date_to, from_m=from_m)
+
+
+################################################
+# Twitter comp for comparison (second period)
+################################################
+@home.route("/twitter_comps", methods=["POST"])
+def r_twitter_comps(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    date_from = json_result.get("date_from", "")
+    date_to = json_result.get("date_to", "")
+    from_m = json_result.get("from", "")
+    print("Twitter_comps - Detected Username : ", username, date_from, date_to,
+          from_m)
+    res = celery.send_task(
+        'modules.twitter_comparison.twitter_comp_tasks.t_twitter_comp',
+        args=(username, date_from, date_to, from_m))
+    print("Twitter_comps - Task : ", res.task_id)
+    return jsonify(module="twitter_comps", task=res.task_id,
+                   param=username, date_from=date_from,
+                   date_to=date_to, from_m=from_m)

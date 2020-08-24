@@ -8,6 +8,7 @@ import { GathererModule } from './gatherer/gatherer.module';
 import { ProfileModule } from './profile/profile.module';
 import { TimelineModule } from './timeline/timeline.module';
 import { ApiKeysModule } from './apikeys/apikeys.module';
+import { ComparisonModule } from './comparison/comparison.module';
 
 import { MiscellaneousModule } from './miscellaneous/miscellaneous.module';
 
@@ -29,6 +30,7 @@ import { SharedModule } from './shared/shared.module';
     ApiKeysModule,
     MiscellaneousModule,
     SharedModule,
+    ComparisonModule,
   ],
   declarations: [
     PagesComponent,

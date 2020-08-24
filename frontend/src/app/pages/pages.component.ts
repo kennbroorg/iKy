@@ -19,6 +19,8 @@ export class PagesComponent {
 
   constructor(iconsLibrary: NbIconLibraries) {
     iconsLibrary.registerFontPack('font-awesome', { packClass: 'fa', iconClassPrefix: 'fa' });
+    iconsLibrary.registerFontPack('fa', { packClass: 'fa', iconClassPrefix: 'fa' });
+    iconsLibrary.registerFontPack('fab', { packClass: 'fab', iconClassPrefix: 'fa' });
     iconsLibrary.setDefaultPack('font-awesome'); 
   }
 

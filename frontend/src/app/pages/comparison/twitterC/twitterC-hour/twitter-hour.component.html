@@ -1,0 +1,41 @@
+  <nb-card size="small" class="border-default">
+    <nb-card-header  (click)="openDialog(dialogTwitterHour)">
+      TWITTER Hour
+    </nb-card-header>
+    <nb-card-body style="margin: 0px; padding: 0px; text-align: center; overflow: hidden;">
+
+        <div #nbCardTwitterHour id="nbCardTwitterHour">
+            <ngx-charts-bar-vertical
+              [view]="[width, height - 50]"
+              [scheme]="colorScheme"
+              [results]="twitterHour"
+              showDataLabel="true"
+              xAxis="true"
+              yAxis="true"
+            >
+            </ngx-charts-bar-vertical>
+         </div>
+
+    </nb-card-body>
+  </nb-card>
+
+
+  <ng-template #dialogTwitterHour let-data let-ref="dialogRef">
+    <nb-card [style.width]="width * 2" [style.height]="height * 2" style="background-color: rgba(0, 0, 0, 0.8);">
+      <nb-card-header>TWITTER Hour</nb-card-header>
+      <nb-card-body style="overflow: hidden;">
+
+        <div style="fill: #05fcfc !important; font-size: 35px !important;">
+            <ngx-charts-bar-vertical
+              [view]="[width * 1.8, height * 1.8]"
+              [scheme]="colorScheme"
+              [results]="twitterHour"
+              showDataLabel="true"
+              xAxis="true"
+              yAxis="true">
+            </ngx-charts-bar-vertical>
+        </div>
+
+      </nb-card-body>
+    </nb-card>
+  </ng-template>

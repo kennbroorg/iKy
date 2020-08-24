@@ -1,0 +1,344 @@
+<nb-flip-card [showToggleButton]="false" [flipped]="flippedCal">
+  <nb-card-front>
+    <nb-card size="xsmall" style="background-color: rgba(0, 0, 0, 0); box-shadow: none;">
+      <div class="row">
+      
+        <div class="col-md-12">
+            <nb-card size="xsmall">
+              <nb-card-header>TWITTER TIME PERIOD COMPARISON</nb-card-header>
+              <nb-card-body>
+
+                <div class="form-group row" style="padding-top: 20px; padding-right:20px; margin-bottom: 10px;">
+
+                  <label for="inputTwitterf" class="col-sm-1 col-form-label" nbTooltip="Twitter Account" nbTooltipStatus="primary" style="text-align: center;"><i class="fab fa-twitter-square fa-2x"></i></label>
+                  <div class="col-sm-2">
+                    <input type="text" class="form-control" #twitterf id="twitterf" placeholder="Twitter account" autocomplete="off" style="background-color: rgba(0, 0, 0,0.5); border: none;">
+                  </div>
+
+                  <label for="inputcalf" class="col-sm-1 col-form-label" nbTooltip="First time period" nbTooltipStatus="primary" style="text-align: center;"><i class="fas fa-calendar-alt fa-2x"></i></label>
+                  <div class="col-sm-2">
+                    <input nbInput #calendarf id="calendarf" placeholder="First Range" [nbDatepicker]="calf" class="form-control" style="background-color: rgba(0, 0, 0,0.5); border: none;">
+                    <nb-rangepicker #calf id="calf"></nb-rangepicker>
+                  </div>
+
+                  <label for="inputTwitters" class="col-sm-1 col-form-label" nbTooltip="Twitter Account (opcional)" nbTooltipStatus="primary" style="text-align: center;"><i class="fab fa-twitter-square fa-2x"></i></label>
+                  <div class="col-sm-2">
+                    <input type="text" class="form-control" #twitters id="twitters" placeholder="Twitter account (opcional)" autocomplete="off" style="background-color: rgba(0, 0, 0,0.5); border: none;">
+                  </div>
+
+                  <label for="inputcals" class="col-sm-1 col-form-label" nbTooltip="Second time period" nbTooltipStatus="primary" style="text-align: center;"><i class="fas fa-calendar-alt fa-2x"></i></label>
+                  <div class="col-sm-2">
+                    <input nbInput #calendars id="calendars" placeholder="Second Range" [nbDatepicker]="cals" class="form-control" style="background-color: rgba(0, 0, 0,0.5); border: none;">
+                    <nb-rangepicker #cals id="cals"></nb-rangepicker>
+                  </div>
+
+                </div>
+            
+              </nb-card-body>
+              <nb-card-footer>
+                      <button class="col-md-12" nbButton outline status="success" (click)="toggleFlipViewAndSearch(twitterf.value, calendarf.value, twitters.value, calendars.value)" style="border: none; font-weight: 400;">
+                          <i class="fas fa-search" style="padding-right: 5px"></i> COMPARE 
+                      </button>
+              </nb-card-footer>
+            </nb-card>
+        </div>
+      </div>
+    </nb-card>
+
+
+
+
+  </nb-card-front>
+
+  <nb-card-back>
+
+    <nb-card size="xsmall" style="background-color: rgba(0, 0, 0, 0); box-shadow: none;">
+
+      <!-- BACK button -->
+      <div class="col-md-12 offset-md-12">
+        <nb-card>
+          <nb-card-body>
+            <button nbButton outline status="success" (click)="toggleFlipView()" style="width: 100%; border: none; font-weight: 400;">
+                <i class="fas fa-arrow-circle-left" style="padding-right: 5px;"></i> BACK  
+            </button>
+          </nb-card-body>
+        </nb-card>
+      </div>
+
+      <div class="col-md-12 offset-md-12" *ngIf="comparison['twitter_infof']">
+        <nb-card>
+          <nb-card-body>
+            <button nbButton outline status="success" style="border: none; font-weight: 600;">
+                GENERAL INFO
+            </button>
+          </nb-card-body>
+        </nb-card>
+      </div>
+
+      <div class="row">
+          <!-- Twitter Error -->
+          <div class="col-md-4 offset-md-4" id="divTwitterErrorC" #divTwitterErrorC *ngIf="comparison['twitter_infof'] && comparison['twitter_infof'].result[3].raw[0].Status != ''">
+            <nb-card size="small" class="border-default">
+              <nb-card-header>
+                TWITTER Error
+              </nb-card-header>
+              <nb-card-body style="margin: 0px; padding: 0px; text-align: center; overflow: hidden;">
+                  <div [nbTooltip]="comparison['twitter_infof'].result[3].raw[0].Status" nbTooltipStatus="danger" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 200px; z-index: 2;">
+                   <i class="fab fa-twitter" style="font-size: 200px;"></i>
+                </div>
+                <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 70px; z-index: 2;">
+                   <i class="fas fa-exclamation" style="font-size: 100px;color:rgba(0, 0, 0, 0.5)"></i>
+                </div>
+              </nb-card-body>
+            </nb-card>
+          </div>
+      </div>
+
+      <div class="row">
+          <!-- Twitter Resume -->
+          <div class="col-md-4" id="divTwitterResumeC" #divTwitterResumeC *ngIf="comparison['twitter_infof'] && comparison['twitter_infof'].result[4] && validationShow[comparison['twitter_infof'].result[2]['validation']]">
+            <ngx-twitter-resume [data]="comparison['twitter_infof']"></ngx-twitter-resume>
+          </div>
+
+          <!-- Twitter Social -->
+          <div class="col-md-4" id="divTwitterSocialC" #divTwitterSocialC *ngIf="comparison['twitter_infof'] && comparison['twitter_infof'].result[4] && validationShow[comparison['twitter_infof'].result[2]['validation']]">
+            <ngx-twitter-social [data]="comparison['twitter_infof']"></ngx-twitter-social>
+          </div>
+
+          <!-- Twitter Social -->
+          <div class="col-md-4" id="divTwitterPopularityC" #divTwitterPopularityC *ngIf="comparison['twitter_infof'] && comparison['twitter_infof'].result[4] && validationShow[comparison['twitter_infof'].result[2]['validation']]">
+            <ngx-twitter-popularity [data]="comparison['twitter_infof']"></ngx-twitter-popularity>
+          </div>
+
+      </div>
+
+      <!-- COMPARISON -->
+      <div class="col-md-12" *ngIf="comparison['twitter_compf']">
+        <nb-card>
+          <nb-card-body>
+            <button nbButton outline status="success" style="border: none; font-weight: 600;">
+                COMPARISON
+            </button>
+            <!--
+            <button nbButton outline status="success" style="border: none; font-weight: 400;font-size: 20px;">
+                COMPARISON : {{datas['date1_from']}} to {{datas['date1_to']}} // {{datas['date2_from']}} to {{datas['date2_to']}}
+            </button>
+            -->
+          </nb-card-body>
+        </nb-card>
+      </div>
+
+      <div class="row">
+
+          <!-- Twitter Sentiment -->
+          <!--
+          <div class="col-md-8" id="divTweetimentLines" #divTweetimentLines *ngIf="comparison['tweetiment'] && comparison['tweetiment'].result[4] && validationShow[comparison['tweetiment'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-tweetiment-lines [data]="comparison['tweetiment']"></ngx-tweetiment-lines>
+          </div>
+          -->
+
+          <!-- Title -->
+          <div class="col-md-5 sep" *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4] && !comparison['data_comp'].twitters">
+          </div>
+          <div class="col-md-2" *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4] && !comparison['data_comp'].twitters">
+              <p class="text-sep">{{comparison['data_comp'].datef_from}} TO {{comparison['data_comp'].datef_to}}</p>
+          </div>
+          <div class="col-md-5 sep" *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4] && !comparison['data_comp'].twitters">
+          </div>
+
+          <div class="col-md-4 sep" *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4] && comparison['data_comp'].twitters">
+          </div>
+          <div class="col-md-4" *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4] && comparison['data_comp'].twitters">
+              <p class="text-sep">ACCOUNT: {{comparison['data_comp'].twitterf}} <span style="padding-left:3em">PERIOD: {{comparison['data_comp'].datef_from}} TO {{comparison['data_comp'].datef_to}}</span></p>
+          </div>
+          <div class="col-md-4 sep" *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4] && comparison['data_comp'].twitters">
+          </div>
+
+
+          <!-- Twitter Hour -->
+          <div class="col-md-4" id="divTwitterHourCf" #divTwitterHourCf *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4] && validationShow[comparison['twitter_compf'].result[2]['validation']]">
+            <ngx-twitter-hour [data]="comparison['twitter_compf']"></ngx-twitter-hour>
+          </div>
+
+          <!-- Twitter Hashtag -->
+          <div class="col-md-4" id="divTwitterHashtagCf" #divTwitterHashtagCf *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4] && validationShow[comparison['twitter_compf'].result[2]['validation']]">
+            <ngx-twitter-hashtag [data]="comparison['twitter_compf']"></ngx-twitter-hashtag>
+          </div>
+
+          <!-- Twitter Week -->
+          <div class="col-md-4" id="divTwitterWeekCf" #divTwitterWeekCf *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4] && validationShow[comparison['twitter_compf'].result[2]['validation']]">
+            <ngx-twitter-week [data]="comparison['twitter_compf']"></ngx-twitter-week>
+          </div>
+
+          <!-- Twitter List -->
+          <div class="col-md-8" id="divTwitterListCf" #divTwitterListCf *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4] && validationShow[comparison['twitter_compf'].result[2]['validation']]">
+            <ngx-twitter-list [data]="comparison['twitter_compf']"></ngx-twitter-list>
+          </div>
+
+          <!-- Twitter Users -->
+          <div class="col-md-4" id="divTwitterUsersCf" #divTwitterUsersCf *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4] && validationShow[comparison['twitter_compf'].result[2]['validation']]">
+            <ngx-twitter-users [data]="comparison['twitter_compf']"></ngx-twitter-users>
+          </div>
+
+          <!-- Twitter Summary -->
+          <div class="col-md-2" *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4]" nbTooltip="Tweets count" nbTooltipStatus="primary">
+              <ngx-status-card [title]="comparison['twitter_compf'].result[4].graphic[5].summary[0].Tweets" type="success"><i class="fab fa-twitter"></i></ngx-status-card>
+          </div>
+          <div class="col-md-2" *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4]" nbTooltip="Retweets count" nbTooltipStatus="primary">
+              <ngx-status-card [title]="comparison['twitter_compf'].result[4].graphic[5].summary[1].Retweets" type="success"><i class="fas fa-retweet"></i></ngx-status-card>
+          </div>
+          <div class="col-md-2" *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4]" nbTooltip="Likes received" nbTooltipStatus="primary">
+              <ngx-status-card [title]="comparison['twitter_compf'].result[4].graphic[5].summary[2].Likes" type="success"><i class="fas fa-heart"></i></ngx-status-card>
+          </div>
+          <div class="col-md-2" *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4]" nbTooltip="Retweets received" nbTooltipStatus="primary">
+              <ngx-status-card [title]="comparison['twitter_compf'].result[4].graphic[5].summary[3].TRetweets" type="success"><i class="fas fa-retweet"></i></ngx-status-card>
+          </div>
+          <!--
+          <div class="col-md-2" *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4]" nbTooltip="Replies count" nbTooltipStatus="primary">
+              <ngx-status-card [title]="comparison['twitter_compf'].result[4].graphic[5].summary[3].Replies" type="success"><i class="fas fa-reply"></i></ngx-status-card>
+          </div>
+          -->
+          <div class="col-md-2" *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4]" nbTooltip="Mentions count" nbTooltipStatus="primary">
+              <ngx-status-card [title]="comparison['twitter_compf'].result[4].graphic[5].summary[4].Users" type="success"><i class="fas fa-users"></i></ngx-status-card>
+          </div>
+          <div class="col-md-2" *ngIf="comparison['twitter_compf'] && comparison['twitter_compf'].result[4]" nbTooltip="Hashtags count" nbTooltipStatus="primary">
+              <ngx-status-card [title]="comparison['twitter_compf'].result[4].graphic[5].summary[5].Hashtags" type="success"><i class="fas fa-hashtag"></i></ngx-status-card>
+          </div>
+
+
+
+          <!-- Title second pediod -->
+          <div class="col-md-5 sep" *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4] && !comparison['data_comp'].twitters">
+          </div>
+          <div class="col-md-2" *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4] && !comparison['data_comp'].twitters">
+              <p class="text-sep">{{comparison['data_comp'].dates_from}} TO {{comparison['data_comp'].dates_to}}</p>
+          </div>
+          <div class="col-md-5 sep" *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4] && !comparison['data_comp'].twitters">
+          </div>
+
+          <div class="col-md-4 sep" *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4] && comparison['data_comp'].twitters">
+          </div>
+          <div class="col-md-4" *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4] && comparison['data_comp'].twitters">
+              <p class="text-sep">ACCOUNT: {{comparison['data_comp'].twitters}} <span style="padding-left:3em">PERIOD: {{comparison['data_comp'].dates_from}} TO {{comparison['data_comp'].dates_to}}</span></p>
+          </div>
+          <div class="col-md-4 sep" *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4] && comparison['data_comp'].twitters">
+          </div>
+
+
+          <!-- Twitter Summary -->
+          <div class="col-md-2" *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4]" nbTooltip="Tweets count" nbTooltipStatus="primary">
+              <ngx-status-card [title]="comparison['twitter_comps'].result[4].graphic[5].summary[0].Tweets" type="success"><i class="fab fa-twitter"></i></ngx-status-card>
+          </div>
+          <div class="col-md-2" *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4]" nbTooltip="Retweets count" nbTooltipStatus="primary">
+              <ngx-status-card [title]="comparison['twitter_comps'].result[4].graphic[5].summary[1].Retweets" type="success"><i class="fas fa-retweet"></i></ngx-status-card>
+          </div>
+          <div class="col-md-2" *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4]" nbTooltip="Likes received" nbTooltipStatus="primary">
+              <ngx-status-card [title]="comparison['twitter_comps'].result[4].graphic[5].summary[2].Likes" type="success"><i class="fas fa-heart"></i></ngx-status-card>
+          </div>
+          <div class="col-md-2" *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4]" nbTooltip="Retweets received" nbTooltipStatus="primary">
+              <ngx-status-card [title]="comparison['twitter_comps'].result[4].graphic[5].summary[3].TRetweets" type="success"><i class="fas fa-retweet"></i></ngx-status-card>
+          </div>
+          <!--
+          <div class="col-md-2" *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4]" nbTooltip="Replies count" nbTooltipStatus="primary">
+              <ngx-status-card [title]="comparison['twitter_comps'].result[4].graphic[5].summary[3].Replies" type="success"><i class="fas fa-reply"></i></ngx-status-card>
+          </div>
+          -->
+          <div class="col-md-2" *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4]" nbTooltip="Mentions count" nbTooltipStatus="primary">
+              <ngx-status-card [title]="comparison['twitter_comps'].result[4].graphic[5].summary[4].Users" type="success"><i class="fas fa-users"></i></ngx-status-card>
+          </div>
+          <div class="col-md-2" *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4]" nbTooltip="Hashtags count" nbTooltipStatus="primary">
+              <ngx-status-card [title]="comparison['twitter_comps'].result[4].graphic[5].summary[5].Hashtags" type="success"><i class="fas fa-hashtag"></i></ngx-status-card>
+          </div>
+
+          <!-- Twitter List -->
+          <div class="col-md-8" id="divTwitterListCs" #divTwitterListCs *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4] && validationShow[comparison['twitter_comps'].result[2]['validation']]">
+            <ngx-twitter-list [data]="comparison['twitter_comps']"></ngx-twitter-list>
+          </div>
+
+          <!-- Twitter Users -->
+          <div class="col-md-4" id="divTwitterUsersCs" #divTwitterUsersCs *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4] && validationShow[comparison['twitter_comps'].result[2]['validation']]">
+            <ngx-twitter-users [data]="comparison['twitter_comps']"></ngx-twitter-users>
+          </div>
+
+          <!-- Twitter Hour -->
+          <div class="col-md-4" id="divTwitterHourCs" #divTwitterHourCs *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4] && validationShow[comparison['twitter_comps'].result[2]['validation']]">
+            <ngx-twitter-hour [data]="comparison['twitter_comps']"></ngx-twitter-hour>
+          </div>
+
+          <!-- Twitter Hashtag -->
+          <div class="col-md-4" id="divTwitterHashtagCs" #divTwitterHashtagCs *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4] && validationShow[comparison['twitter_comps'].result[2]['validation']]">
+            <ngx-twitter-hashtag [data]="comparison['twitter_comps']"></ngx-twitter-hashtag>
+          </div>
+
+          <!-- Twitter Week -->
+          <div class="col-md-4" id="divTwitterWeekCs" #divTwitterWeekCs *ngIf="comparison['twitter_comps'] && comparison['twitter_comps'].result[4] && validationShow[comparison['twitter_comps'].result[2]['validation']]">
+            <ngx-twitter-week [data]="comparison['twitter_comps']"></ngx-twitter-week>
+          </div>
+
+      </div>
+
+
+      <div class="col-md-12 offset-md-12" *ngIf="comparison['twitter_infos']">
+        <nb-card>
+          <nb-card-body>
+            <button nbButton outline status="success" style="border: none; font-weight: 600;">
+                GENERAL INFO
+            </button>
+          </nb-card-body>
+        </nb-card>
+      </div>
+
+      <div class="row">
+          <!-- Twitter Error -->
+          <div class="col-md-4 offset-md-4" id="divTwitterErrorCs" #divTwitterErrorCs *ngIf="comparison['twitter_infos'] && comparison['twitter_infos'].result[3].raw[0].Status != ''">
+            <nb-card size="small" class="border-default">
+              <nb-card-header>
+                TWITTER Error
+              </nb-card-header>
+              <nb-card-body style="margin: 0px; padding: 0px; text-align: center; overflow: hidden;">
+                  <div [nbTooltip]="comparison['twitter_infos'].result[3].raw[0].Status" nbTooltipStatus="danger" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 200px; z-index: 2;">
+                   <i class="fab fa-twitter" style="font-size: 200px;"></i>
+                </div>
+                <div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 70px; z-index: 2;">
+                   <i class="fas fa-exclamation" style="font-size: 100px;color:rgba(0, 0, 0, 0.5)"></i>
+                </div>
+              </nb-card-body>
+            </nb-card>
+          </div>
+      </div>
+
+      <div class="row">
+          <!-- Twitter Resume -->
+          <div class="col-md-4" id="divTwitterResumeCs" #divTwitterResumeCs *ngIf="comparison['twitter_infos'] && comparison['twitter_infos'].result[4] && validationShow[comparison['twitter_infos'].result[2]['validation']]">
+            <ngx-twitter-resume [data]="comparison['twitter_infos']"></ngx-twitter-resume>
+          </div>
+
+          <!-- Twitter Social -->
+          <div class="col-md-4" id="divTwitterSocialCs" #divTwitterSocialCs *ngIf="comparison['twitter_infos'] && comparison['twitter_infos'].result[4] && validationShow[comparison['twitter_infos'].result[2]['validation']]">
+            <ngx-twitter-social [data]="comparison['twitter_infos']"></ngx-twitter-social>
+          </div>
+
+          <!-- Twitter Social -->
+          <div class="col-md-4" id="divTwitterPopularityCs" #divTwitterPopularityCs *ngIf="comparison['twitter_infos'] && comparison['twitter_infos'].result[4] && validationShow[comparison['twitter_infos'].result[2]['validation']]">
+            <ngx-twitter-popularity [data]="comparison['twitter_infos']"></ngx-twitter-popularity>
+          </div>
+
+      </div>
+
+
+    </nb-card>
+
+  </nb-card-back>
+
+</nb-flip-card>
+
+
+<ng-template #dialogComparisonError let-data let-ref="dialogRef">
+  <nb-card>
+    <nb-card-header>ERROR</nb-card-header>
+    <nb-card-body>{{ data }}</nb-card-body>
+    <nb-card-footer>
+      <button class="col-md-12 choto" nbButton outline status="success" (click)="ref.close()" style="border: none; font-weight: 400;">CLOSE</button>
+    </nb-card-footer>
+  </nb-card>
+</ng-template>
