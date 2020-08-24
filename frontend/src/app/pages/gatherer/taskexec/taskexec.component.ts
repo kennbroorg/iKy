@@ -58,8 +58,8 @@ export class TaskexecComponent {
   }
 
   updateTasks() {
-    console.log("taskexec data", this.data);
-    console.log("taskexec dataTask", this.dataTask);
+      // console.log("taskexec data", this.data);
+      // console.log("taskexec dataTask", this.dataTask);
 
     this.data = [
       {
@@ -70,7 +70,7 @@ export class TaskexecComponent {
     ];
 
     for (let i in this.dataTask) {
-        console.log("taskexec", i, this.dataTask[i]);
+        // console.log("taskexec", i, this.dataTask[i]);
         // parse_obj['theTeam'].push({"teamId":"4","status":"pending"});
         this.data[0]['children'].push(
             { data: {
