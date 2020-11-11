@@ -35,14 +35,7 @@
     ],
     "member-access": false,
     "no-arg": true,
-    "no-console": [
-      true,
-      "debug",
-      "log",
-      "time",
-      "timeEnd",
-      "trace"
-    ],
+    "no-console": false,
     "no-construct": true,
     "no-debugger": true,
     "no-duplicate-super": true,
