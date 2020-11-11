@@ -30,14 +30,14 @@ const routes: Routes = [{
     }, {
       path: 'apikeys',
       component: ApiKeysComponent,
-    },{
+    }, {
       path: 'comparison',
       component: ComparisonComponent,
-    },{
+    }, {
       path: '',
       redirectTo: 'principal',
       pathMatch: 'full',
-    },{
+    }, {
       path: '**',
       component: NotFoundComponent,
     },

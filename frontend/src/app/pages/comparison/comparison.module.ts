@@ -3,19 +3,19 @@ import { NgModule } from '@angular/core';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ChartModule } from 'angular2-chartjs';
-import { 
-    NbListModule, 
-    NbUserModule, 
-    NbButtonModule, 
-    NbCardModule, 
-    NbIconModule, 
-    NbTabsetModule, 
-    NbDialogModule, 
+import {
+    NbListModule,
+    NbUserModule,
+    NbButtonModule,
+    NbCardModule,
+    NbIconModule,
+    NbTabsetModule,
+    NbDialogModule,
     NbTooltipModule,
     NbInputModule,
     NbTreeGridModule,
     NbAccordionModule,
-    NbWindowModule, 
+    NbWindowModule,
     NbDatepickerModule,
 } from '@nebular/theme';
 
@@ -45,7 +45,7 @@ import { StatusCardComponent } from './twitterC/status-card/status-card.componen
   imports: [
     ThemeModule,
     NgxEchartsModule,
-    NgxChartsModule, 
+    NgxChartsModule,
     ChartModule,
     NbTabsetModule,
     NbIconModule,

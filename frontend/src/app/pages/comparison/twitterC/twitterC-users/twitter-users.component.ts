@@ -1,19 +1,20 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit, TemplateRef } from '@angular/core';
+// import { ViewChild, ElementRef } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 
 @Component({
     selector: 'ngx-twitter-users',
     templateUrl: './twitter-users.component.html',
-    styleUrls: ['./twitter-users.component.scss']
+    styleUrls: ['./twitter-users.component.scss'],
 })
 export class TwitterCUsersComponent implements OnInit, AfterViewInit {
-    @ViewChild('nbCardTwitterUsers', { static: false }) private cardContainer: ElementRef;
+    // @ViewChild('nbCardTwitterUsers', { static: false }) private cardContainer: ElementRef;
     @Input() private data: any;
-    private twitterUsers : any;
+    private twitterUsers: any;
 
-    private card: any;
-    private width: number;
-    private height: number;
+    public card: any;
+    public width: number;
+    public height: number;
 
     constructor(private dialogService: NbDialogService) {}
 
@@ -23,7 +24,7 @@ export class TwitterCUsersComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
 
-        console.log("Twitter Users Component");
+        console.log('Twitter Users Component');
         console.log(this.twitterUsers);
     }
 
