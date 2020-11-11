@@ -46,7 +46,7 @@ build:
   artifacts:
     expire_in: 2 weeks
     paths:
-      - latest.zip
+      - iKy.zip
   only:
     - iKy
 
