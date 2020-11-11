@@ -24,7 +24,7 @@ install:
 build:
   stage: build
   dependencies:
-      - test:nglint
+      - install
   before_script:
       - apt-get update -qy
       - apt-get -y install zip unzip
