@@ -6,7 +6,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:prod": "npm run build -- --prod --aot"
+    "build:prod": "npm run build -- --prod --aot",
+    "lint": "ng lint",
+    "lint:ci": "npm run lint"
   },
   "dependencies": {
     "@agm/core": "^1.0.0-beta.5",
@@ -66,7 +68,7 @@
     "@angular/compiler-cli": "^8.0.0",
     "@angular/language-service": "8.0.0",
     "@compodoc/compodoc": "^1.1.11",
-    "@fortawesome/fontawesome-free": "^5.4.0",
+    "@fortawesome/fontawesome-free": "^5.14.0",
     "@swimlane/ngx-charts": "^11.2.0",
     "@types/d3": "^5.7.2",
     "@types/d3-color": "1.0.5",
