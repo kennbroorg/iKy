@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
-import { NbThemeService } from '@nebular/theme';
-import {Router} from "@angular/router"
+// import { NbThemeService } from '@nebular/theme';
+import {Router} from '@angular/router';
 
 // Search
 import { NbSearchService } from '@nebular/theme';
@@ -12,11 +12,11 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
     selector: 'ngx-timeline',
     styleUrls: ['./timeline.component.scss'],
     templateUrl: './timeline.component.html',
-    changeDetection: ChangeDetectionStrategy.Default
+    changeDetection: ChangeDetectionStrategy.Default,
 })
 
 export class TimelineComponent implements OnInit {
-    private email: string;
+    // private email: string;
     private datas: any;
     public  gathered: any = [];
     public  searchSubs: any;
@@ -24,7 +24,7 @@ export class TimelineComponent implements OnInit {
     public  flipped = false;
 
     constructor(private router: Router,
-                private searchService: NbSearchService, 
+                private searchService: NbSearchService,
                 private dataGatherService: DataGatherInfoService) {
     }
 
@@ -33,66 +33,62 @@ export class TimelineComponent implements OnInit {
           .subscribe((data: any) => {
             // Initialize global data
             this.gathered = this.dataGatherService.initialize();
-            console.log("Global data initialize");
+            console.log('Global data initialize');
 
-            console.log("Search", data);
-            this.gathered = this.dataGatherService.validateEmail(data.term); 
-            this.router.navigate(['/pages/gatherer'])
-        })
-        console.log("TimelineComponent ngOnInit")
+            console.log('Search', data);
+            this.gathered = this.dataGatherService.validateEmail(data.term);
+            this.router.navigate(['/pages/gatherer']);
+        });
+        console.log('TimelineComponent ngOnInit');
 
         // Check global data
         this.gathered = this.dataGatherService.pullGather();
 
-        for (let i in this.gathered) {
-          for (let j in this.gathered[i]) {
-            for (let k in this.gathered[i][j]) {
-              for (let l in this.gathered[i][j][k]) {
-                if (l == "timeline") {
-                  for (let t in this.gathered[i][j][k][l]) {
+        for (const i in this.gathered) {
+          for (const j in this.gathered[i]) {
+            for (const k in this.gathered[i][j]) {
+              for (const l in this.gathered[i][j][k]) {
+                if (l === 'timeline') {
+                  for (const t in this.gathered[i][j][k][l]) {
                     this.timeline.push(this.gathered[i][j][k][l][t]);
                   }
                 }
               }
             }
           }
-        }     
+        }
 
         // TODO : Normalize dates
 
         this.timeline.sort(function(a, b){
-            var dateA=a.date.toLowerCase(), dateB=b.date.toLowerCase()
-            if (dateA > dateB) //sort string ascending
-                return -1 
+            const dateA = a.date.toLowerCase(), dateB = b.date.toLowerCase();
+            if (dateA > dateB) // sort string ascending
+                return -1;
             if (dateA < dateB)
-                return 1
-            return 0 
-        })
-    }
-
-    ngOnDestroy () {
-        this.searchSubs.unsubscribe();
+                return 1;
+            return 0;
+        });
     }
 
     toggleFlipViewAndSearch(email, username, twitter, instagram, linkedin, github, tiktok, tinder, venmo, reddit) {
-        console.log("Advance Search");
-        console.log("email", email);
-        console.log("username", username);
-        console.log("twitter", twitter);
-        console.log("instagram", instagram);
-        console.log("linkedin", linkedin);
-        console.log("github", github);
-        console.log("tiktok", tiktok);
-        console.log("tinder", tinder);
-        console.log("venmo", venmo);
-        console.log("reddit", reddit);
+        console.log('Advance Search');
+        console.log('email', email);
+        console.log('username', username);
+        console.log('twitter', twitter);
+        console.log('instagram', instagram);
+        console.log('linkedin', linkedin);
+        console.log('github', github);
+        console.log('tiktok', tiktok);
+        console.log('tinder', tinder);
+        console.log('venmo', venmo);
+        console.log('reddit', reddit);
 
         this.flipped = !this.flipped;
 
         // JSON datas
-        this.datas = {email: email, 
-            username: username, 
-            twitter: twitter, 
+        this.datas = {email: email,
+            username: username,
+            twitter: twitter,
             instagram: instagram,
             linkedin: linkedin,
             github: github,
@@ -101,19 +97,23 @@ export class TimelineComponent implements OnInit {
             venmo: venmo,
             reddit: reddit,
         };
-        
-        this.gathered = this.dataGatherService.initialize();
-        console.log("Global data initialize (Advance Gatherer)", this.gathered);
 
-        this.gathered = this.dataGatherService.gathererInfoAdvance(this.datas); 
+        this.gathered = this.dataGatherService.initialize();
+        console.log('Global data initialize (Advance Gatherer)', this.gathered);
+
+        this.gathered = this.dataGatherService.gathererInfoAdvance(this.datas);
         this.gathered = this.dataGatherService.pullGather();
 
-        this.router.navigate(['/pages/gatherer'])
+        this.router.navigate(['/pages/gatherer']);
 
     }
 
     toggleFlipView() {
         this.flipped = !this.flipped;
+    }
+
+    ngOnDestroy () {
+        this.searchSubs.unsubscribe();
     }
 
 }
