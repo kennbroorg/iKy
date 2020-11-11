@@ -50,6 +50,7 @@ Thumbs.db
 ############
 # compiled output
 /dist
+dist/
 /tmp
 /out-tsc
 
@@ -94,7 +95,7 @@ Thumbs.db
 ###########
 *.pyc
 dump.rdb
-*.swp
+*.sw*
 
 # Delete APP temporal #
 #######################
