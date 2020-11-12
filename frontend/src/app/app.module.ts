@@ -54,7 +54,7 @@ import {
   providers: [
     { provide: APP_BASE_HREF, useValue: '/' },
   ],
-  */ 
+  */
 })
 export class AppModule {
 }

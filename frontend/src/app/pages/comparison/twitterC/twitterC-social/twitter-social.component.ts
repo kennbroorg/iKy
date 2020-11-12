@@ -1,19 +1,20 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit, TemplateRef } from '@angular/core';
+// import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, TemplateRef } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 
 @Component({
     selector: 'ngx-twitter-social',
     templateUrl: './twitter-social.component.html',
-    styleUrls: ['./twitter-social.component.scss']
+    styleUrls: ['./twitter-social.component.scss'],
 })
 export class TwitterCSocialComponent implements OnInit, AfterViewInit {
-    @ViewChild('nbCardTwitterSocial', { static: false }) private cardContainer: ElementRef;
+    // @ViewChild('nbCardTwitterSocial', { static: false }) private cardContainer: ElementRef;
     @Input() private data: any;
-    private twitterSocial : any;
+    public twitterSocial: any;
 
-    private card: any;
-    private width: number;
-    private height: number;
+    public card: any;
+    public width: number;
+    public height: number;
 
     constructor(private dialogService: NbDialogService) {}
 
@@ -23,7 +24,7 @@ export class TwitterCSocialComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
 
-        console.log("Twitter Social Component");
+        console.log('Twitter Social Component');
         console.log(this.twitterSocial);
     }
 

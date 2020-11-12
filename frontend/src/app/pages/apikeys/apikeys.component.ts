@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, TemplateRef } from '@angular/core';
-import { NbThemeService } from '@nebular/theme';
+// import { NbThemeService } from '@nebular/theme';
 
 // Gatherer Service
 import { DataGatherInfoService } from '../../@core/data/data-gather-info.service';
@@ -14,7 +14,7 @@ import { NbDialogService } from '@nebular/theme';
             transform: translate3d(0, 0, 0);
         }
     `],
-    changeDetection: ChangeDetectionStrategy.Default
+    changeDetection: ChangeDetectionStrategy.Default,
 })
 
 export class ApiKeysComponent implements OnInit {
@@ -58,14 +58,14 @@ export class ApiKeysComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.log("ApiKeysComponent ngOnInit");
+        console.log('ApiKeysComponent ngOnInit');
 
         // Get Api Keys
         this.executeHttp.getApiKeys$('')
-            .subscribe(data => this.source.load(data.keys), 
-                       err => console.error('Ops: ', err.message)
+            .subscribe(data => this.source.load(data.keys),
+                       err => console.error('Ops: ', err.message),
             );
-        console.log("Source: ", this.source);
+        console.log('Source: ', this.source);
     }
 
     onDeleteConfirm(event): void {
@@ -85,21 +85,21 @@ export class ApiKeysComponent implements OnInit {
             .then(function (data) {
                     // Get Api Keys
                     this.executeHttp.getApiKeys$(data)
-                        .subscribe(data => this.source.load(data.keys), 
-                                   err => console.error('Ops: ', err.message)
+                        .subscribe(datain => this.source.load(datain.keys),
+                                   err => console.error('Ops: ', err.message),
                         );
                   }.bind(this),
-                  err => console.error('Ops: ', err.message)
+                  err => console.error('Ops: ', err.message),
             );
     }
 
     generateDownloadJsonUri() {
-        let Json = this.source.getAll();
+        const Json = this.source.getAll();
         console.log(Json);
-        let sJson = JSON.stringify(Json['__zone_symbol__value']);
-        let element = document.createElement('a');
-        element.setAttribute('href', "data:text/json;charset=UTF-8," + encodeURIComponent(sJson));
-        element.setAttribute('download', "apikeys.json");
+        const sJson = JSON.stringify(Json['__zone_symbol__value']);
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/json;charset=UTF-8,' + encodeURIComponent(sJson));
+        element.setAttribute('download', 'apikeys.json');
         element.style.display = 'none';
         document.body.appendChild(element);
         element.click(); // simulate click

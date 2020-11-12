@@ -1,79 +1,121 @@
-<div align="center">
+<div align="center" style="margin-bottom: 10px;">
     <a href="https://twitter.com/intent/follow?screen_name=kennbroorg">
-	<img alt="follow on Twitter" src="https://img.shields.io/twitter/follow/kennbroorg.svg?label=follow%20%40kennbroorg&style=social">
+	<img alt="follow on Twitter" src="https://img.shields.io/twitter/follow/kennbroorg.svg?label=follow%20&style=for-the-badge&logo=twitter&labelColor=abcdef&color=1da1f2">
     </a>
 </div>
 
----
-
-<div align="center">
-    <img alt="Redis" src="https://img.shields.io/badge/storage-redis-red.svg">
-    <img alt="Python" src="https://img.shields.io/badge/python-3.7-informational.svg">
-    <img alt="Celery" src="https://img.shields.io/badge/multiprocessing-celery-green.svg">
-    <img alt="Flask" src="https://img.shields.io/badge/interface-flask-yellowgreen.svg">
-</div>
-<div align="center">
-    <img alt="Node" src="https://img.shields.io/badge/node-12.x-brightgreen.svg">
-    <img alt="Angular" src="https://img.shields.io/badge/web%20framwork-angular%207-red.svg">
-    <img alt="Boostrap" src="https://img.shields.io/badge/toolkit-boostrap-blueviolet.svg">
-    <img alt="UI Kit" src="https://img.shields.io/badge/UI%20Kit-Nebular-9cf.svg">
-</div>
-<div align="center">
-    <img alt="fullcontact" src="https://img.shields.io/badge/module-fullcontact-blue.svg">
-    <img alt="twitter" src="https://img.shields.io/badge/module-twitter-blue.svg">
-    <img alt="linkedin" src="https://img.shields.io/badge/module-linkedin-blue.svg">
-    <img alt="github" src="https://img.shields.io/badge/module-github-blue.svg">
-    <img alt="keybase" src="https://img.shields.io/badge/module-keybase-blue.svg">
-    <img alt="ghostproject" src="https://img.shields.io/badge/module-ghostproject-red.svg">
-    <img alt="haveibeenpwned" src="https://img.shields.io/badge/module-haveibeenpwned-blue.svg">
-    <img alt="emailrep.io" src="https://img.shields.io/badge/module-emailrep.io-blue.svg">
-    <img alt="socialscan" src="https://img.shields.io/badge/module-socialscan-blue.svg">
-    <img alt="instagram" src="https://img.shields.io/badge/module-instagram-blue.svg">
-    <img alt="tiktok" src="https://img.shields.io/badge/module-tiktok-blue.svg">
-    <img alt="sherlock" src="https://img.shields.io/badge/module-sherlock-blue.svg">
-    <img alt="skype" src="https://img.shields.io/badge/module-skype-blue.svg">
-    <img alt="tinder" src="https://img.shields.io/badge/module-tinder-blue.svg">
-    <img alt="venmo" src="https://img.shields.io/badge/module-venmo-blue.svg">
-    <img alt="darkpass" src="https://img.shields.io/badge/module-darkpass-blue.svg">
-    <img alt="tweetiment" src="https://img.shields.io/badge/module-tweetiment-blue.svg">
-    <img alt="peopledatalabs" src="https://img.shields.io/badge/module-peopledatalabs-blue.svg">
-    <img alt="reddit" src="https://img.shields.io/badge/module-reddit-blue.svg">
-    <img alt="leaklookup" src="https://img.shields.io/badge/module-leaklookup-blue.svg">
+<div align="center" style="margin-bottom: 10px;">
+    <img alt="Redis" src="https://img.shields.io/badge/storage-redis-red.svg?style=for-the-badge">
+    <img alt="Python" src="https://img.shields.io/badge/python-3.7-informational.svg?style=for-the-badge">
+    <img alt="Celery" src="https://img.shields.io/badge/multiprocessing-celery-green.svg?style=for-the-badge">
+    <img alt="Flask" src="https://img.shields.io/badge/interface-flask-yellowgreen.svg?style=for-the-badge">
+    <img alt="Node" src="https://img.shields.io/badge/node-12.x-brightgreen.svg?style=for-the-badge">
+    <img alt="Angular" src="https://img.shields.io/badge/web%20framwork-angular%207-red.svg?style=for-the-badge">
 </div>
 
----
+<!--
+<div align="center" style="margin-bottom: 10px;">
+    <img alt="Boostrap" src="https://img.shields.io/badge/toolkit-boostrap-blueviolet.svg?style=for-the-badge">
+    <img alt="UI Kit" src="https://img.shields.io/badge/UI%20Kit-Nebular-9cf.svg?style=for-the-badge">
+</div>
+-->
 
 <div align="center">
     <a href="https://gitlab.com/kennbroorg/iKy/blob/iKy/README.md">
-	<img alt="README English" src="https://img.shields.io/badge/README-English-orange.svg">
+	<img alt="README English" src="https://img.shields.io/badge/README-English-orange.svg?style=for-the-badge">
     </a>
 </div>
 
 ---
 
-<div align="center" style="background: #111">
+<div align="center">
     <img alt="Logo" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/Logo-Circular.png">
 </div>
 
 ---
 
-# iKy
+<div align="center">   
 
-## Descripción
+[Descripción](#description)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Instalación](#installation)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Website][website]&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Módulos](#modules)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Issues][issues]&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Supporting](#sponsor)
 
+</div>
+
+---
+
+<!--
+Website References
+-->
+[website]:https://kennbroorg.gitlab.io/ikyweb/
+[issues]:https://gitlab.com/kennbroorg/iKy/-/issues/new?issue%5Bassignee_id%5D=&issue%5Bmilestone_id%5D=
+[readmees]: README.es.md
+[readmeen]: README.md
+
+<h1 align="center">iKy</h1>
+
+<h1 id="description">Description</h1>
 El proyecto iKy es una herramienta que colecta información a partir de una dirección de e-mail y muestra los resultados en una interface visual.
 
 Visite el Gitlab Page del [Projecto](https://kennbroorg.gitlab.io/ikyweb/)
 
 <div align="center">
-    <a href="https://vimeo.com/347085110"><img src="frontend/src/assets/images/Giba.gif"></a>
+    <a href="https://vimeo.com/434501702"><img src="https://kennbroorg.gitlab.io/ikyweb/assets/img/Giba.gif"></a>
 </div>
 
 [Video Demo](https://vimeo.com/434501702 "Video Demo - Click to Watch!")
 
+<h1 id="modules">Módulos</h1>
 
+<div align="center" style="margin-bottom: 10px;">
+    <img alt="fullcontact" src="https://img.shields.io/badge/module-fullcontact-blue.svg?style=flat-square">
+    <img alt="twitter" src="https://img.shields.io/badge/module-twitter-blue.svg?style=flat-square">
+    <img alt="linkedin" src="https://img.shields.io/badge/module-linkedin-blue.svg?style=flat-square">
+    <img alt="github" src="https://img.shields.io/badge/module-github-blue.svg?style=flat-square">
+    <img alt="keybase" src="https://img.shields.io/badge/module-keybase-blue.svg?style=flat-square">
+    <img alt="ghostproject" src="https://img.shields.io/badge/module-ghostproject-red.svg?style=flat-square">
+    <img alt="haveibeenpwned" src="https://img.shields.io/badge/module-haveibeenpwned-blue.svg?style=flat-square">
+    <img alt="emailrep.io" src="https://img.shields.io/badge/amodule-emailrep.io-blue.svg?style=flat-square">
+    <img alt="socialscan" src="https://img.shields.io/badge/module-socialscan-blue.svg?style=flat-square">
+    <img alt="instagram" src="https://img.shields.io/badge/module-instagram-blue.svg?style=flat-square">
+    <img alt="tiktok" src="https://img.shields.io/badge/module-tiktok-blue.svg?style=flat-square">
+    <img alt="sherlock" src="https://img.shields.io/badge/module-sherlock-blue.svg?style=flat-square">
+    <img alt="skype" src="https://img.shields.io/badge/module-skype-blue.svg?style=flat-square">
+    <img alt="tinder" src="https://img.shields.io/badge/module-tinder-blue.svg?style=flat-square">
+    <img alt="venmo" src="https://img.shields.io/badge/module-venmo-blue.svg?style=flat-square">
+    <img alt="darkpass" src="https://img.shields.io/badge/module-darkpass-blue.svg?style=flat-square">
+    <img alt="tweetiment" src="https://img.shields.io/badge/module-tweetiment-blue.svg?style=flat-square">
+    <img alt="peopledatalabs" src="https://img.shields.io/badge/module-peopledatalabs-blue.svg?style=flat-square">
+    <img alt="reddit" src="https://img.shields.io/badge/module-reddit-blue.svg?style=flat-square">
+    <img alt="leaklookup" src="https://img.shields.io/badge/module-leaklookup-blue.svg?style=flat-square">
+</div>
 
-## Instalación
+<h1 id="installation">Instalación</h1>
+
+<div align="left" style="margin-bottom: 10px;">
+    <h2><img alt="important" height="30" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/important.png"> Easy installation (Python only)</h2>
+</div>
+
+Se debe instalar Redis
+
+```shell
+wget http://download.redis.io/redis-stable.tar.gz
+tar xvzf redis-stable.tar.gz
+cd redis-stable
+make
+sudo make install
+```
+
+Vaya a nuestro [website][website]. Descargar el ZIP y descomprimirlo.
+```
+unzip iKy.zip
+cd iKy-pack
+pip install -r requirements.txt
+cd backend
+python app.py -e prod
+```
+
+Y finalmente, [browsearlo](#browse).
+
+## Instalación completa (DEV)
 
 ### Clonar el repositorio
 
@@ -118,8 +160,6 @@ cd frontend
 npm install
 ```
 
-
-
 ## Encender iKy Tool
 
 ### Encender el Backend
@@ -155,13 +195,15 @@ Finalmente, ejecutar dentro del directorio **frontend** el siguiente comando :
 npm start
 ```
 
+<!--
 ### Pantalla luego de encender iKy
 
 <div align="center">
     <img src="frontend/src/assets/images/Screens1000.png">
 </div>
+-->
 
-### Browser
+<h3 id="browser">Browse</h3>
 
 Abrir el browser en esta [url](http://127.0.0.1:4200)
 
@@ -213,8 +255,15 @@ Una vez que la aplicación esté cargada en el browser, deberá ir a la opción 
 ## Video Demo
 
 <div align="center">
-    <a href="https://vimeo.com/434501702"><img alt="Kali 2019" src="frontend/src/assets/images/iKyEko15.png"></a>
-    <p>iKy eko15</p>
+    <a href="https://vimeo.com/434501702"><img alt="Kali 2019" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKy-01.png"></a>
+    <p>Vimeo</p>
+</div>
+
+<h1 id="sponsor">Apoyar el proyecto</h1>
+Ya sea que use este proyecto, haya aprendido algo de él o simplemente le guste, por favor considere apoyarlo comprándome un café, para que pueda dedicar más tiempo a proyectos de código abierto como este.
+
+<div align="center" style="margin-top: 30px;">
+<a href="https://www.buymeacoffee.com/kennbro" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 </div>
 
 ## Aviso Legal
@@ -235,6 +284,3 @@ Espero que disfrute la utilizacion de la herramienta tanto como nosotros disfrut
 No use la herramienta si no puede leer claramente las instrucciones y/o el presente Aviso Legal.
 
 Por cierto, para quienes insistan en acordarse de mi madre, ella murió hace muchos años pero la amo como si estuviera aquí mismo.
-
-[readmees]: README.es.md
-[readmeen]: README.md

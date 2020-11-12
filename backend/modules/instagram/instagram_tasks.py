@@ -178,6 +178,13 @@ def t_instagram(username, num=10, from_m="Initial"):
                        "link": link}
         gather.append(gather_item)
 
+        gather_item = {"name": "Instagram",
+                       "url": "https://instagram.com/" + username,
+                       "icon": "fab fa-instagram",
+                       "source": "Instagram",
+                       "username": username}
+        profile.append({"social": [gather_item]})
+
         # Geo and Bar
         postloc = []
         postloc_item = []

@@ -1,0 +1,73 @@
+image: node:12.19.0
+
+stages:
+  - install
+  - build
+  - deploy
+
+install:
+  stage: install
+  script: 
+    - cd frontend
+    - npm install @angular/cli
+    - npm install
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+      - frontend/node_modules/
+  cache:
+    paths:
+      - frontend/node_modules/
+  only:
+    - iKy
+
+build:
+  stage: build
+  dependencies:
+      - install
+  before_script:
+      - apt-get update -qy
+      - apt-get -y install zip unzip
+  script:
+      - cd frontend
+      - npm install @angular/cli
+      - npm install @angular-devkit/build-angular
+      - npm run build
+      - cd ..
+      - mkdir -p /tmp/iKy-pack/frontend
+      - cp -r backend /tmp/iKy-pack
+      - cp requirements.txt /tmp/iKy-pack
+      - cp -r frontend/dist /tmp/iKy-pack/frontend
+      - mv /tmp/iKy-pack/backend/.README.md /tmp/iKy-pack/README.md
+      - cd /tmp
+      - zip -r iKy.zip ./iKy-pack
+      - mv /tmp/iKy.zip "$CI_PROJECT_DIR"
+      - cd $CI_PROJECT_DIR
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+      - iKy.zip
+  only:
+    - iKy
+
+deploy:
+  stage: deploy
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - git config --global user.email "${GITLAB_USER_EMAIL}"
+    - git config --global user.name "${GITLAB_USER_NAME}"
+    - git clone git@gitlab.com:kennbroorg/ikyweb.git /tmp/page
+    - cp iKy.zip /tmp/page/file/iKy.zip
+    - cd /tmp/page
+    - git add file/iKy.zip
+    - git commit -m "iKy ZIP file from $CI_COMMIT_SHORT_SHA" || echo "No changes, nothing to commit!"
+    - git remote rm origin && git remote add origin git@gitlab.com:kennbroorg/ikyweb.git
+    - git push origin master
+  only:
+    - iKy
