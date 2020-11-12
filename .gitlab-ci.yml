@@ -66,7 +66,7 @@ deploy:
     - cp iKy.zip /tmp/page/file/iKy.zip
     - cd /tmp/page
     - git add file/iKy.zip
-    - git commit -m "Fecalface ZIP file from $CI_COMMIT_SHORT_SHA" || echo "No changes, nothing to commit!"
+    - git commit -m "iKy ZIP file from $CI_COMMIT_SHORT_SHA" || echo "No changes, nothing to commit!"
     - git remote rm origin && git remote add origin git@gitlab.com:kennbroorg/ikyweb.git
     - git push origin master
   only:
