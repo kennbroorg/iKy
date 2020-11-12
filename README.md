@@ -36,7 +36,7 @@
 
 <div align="center">   
 
-[Description](#description)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Installation](#installation)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Website][website]&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Modules](#installation)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Issues][issues]&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Supporting](#sponsor)
+[Description](#description)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Installation](#installation)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Website][website]&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Modules](#modules)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Issues][issues]&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Supporting](#sponsor)
 
 </div>
 
@@ -63,7 +63,7 @@ Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
 
 [Video Demo](https://vimeo.com/434501702 "Video Demo - Click to Watch!")
 
-## Modules
+<h2 id="modules">Modules</h2>
 
 <div align="center" style="margin-bottom: 10px;">
     <img alt="fullcontact" src="https://img.shields.io/badge/module-fullcontact-blue.svg?style=flat-square">
@@ -252,14 +252,6 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 - [Disclaimer](https://gitlab.com/kennbroorg/iKy/-/wikis/Disclaimer)
 
 ## Demo Video
-
-<div align="center">
-    <iframe src="https://player.vimeo.com/video/434501702" width="640" height="564" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-</div>
-
-<figure class="video_container">
-  <iframe src="https://player.vimeo.com/video/434501702" width="640" height="564" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-</figure>
 
 <div align="center">
     <a href="https://vimeo.com/434501702"><img alt="Kali 2019" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKy-01.png"></a>
