@@ -4,7 +4,13 @@
 import sys
 import json
 import requests
-from search_engine_parser import YahooSearch, GoogleSearch, BingSearch
+# from search_engine_parser import YahooSearch, GoogleSearch, BingSearch
+from search_engine_parser.core.engines.bing import Search as BingSearch
+from search_engine_parser.core.engines.google import Search as GoogleSearch
+from search_engine_parser.core.engines.yahoo import Search as YahooSearch
+from search_engine_parser.core.engines.duckduckgo import Search as DuckDuckGoSearch
+from search_engine_parser.core.engines.yandex import Search as YandexSearch
+from search_engine_parser.core.engines.baidu import Search as BaiduSearch
 import re
 import urllib.parse
 import collections
@@ -31,13 +37,6 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
-# Compatibility code
-try:
-    # Python 2: "unicode" is built-in
-    unicode
-except NameError:
-    unicode = str
-
 
 def name_match(names, data):
     min_matching = 2 if (len(names) == 2) else len(names) - 1
@@ -50,7 +49,11 @@ def name_match(names, data):
     else:
         return False
 
+
 def simple_analysis(source, type_s, username, data, output):
+    # Resolve
+    # https://www.facebook.com/public/Jezer-Ferreira
+    # https://www.instagram.com/p/BtRNU3vlf1I/ (Descartar)
     # Initialize
     urls = [] if ('urls' not in output) else output['urls']
     usernames = [] if ('usernames' not in output) else output['usernames']
@@ -61,22 +64,36 @@ def simple_analysis(source, type_s, username, data, output):
     emails = [] if ('emails' not in output) else output['emails']
 
     # Decode URL
-    match_decode = re.match("(https?)(.*)(https?[^/]*)(.*)$", data[1])
-    if (match_decode):
-        data[1] = urllib.parse.unquote_plus(match_decode.groups()[2])
+    print("+++++++++++++++++++++++++++++++++++++++++++")
+    print(source)
+    print("+++++++++++++++++++++++++++++++++++++++++++")
+    print("Data 0 :\n{}".format(data[0]))
+    print("Data 1 :\n{}".format(data[1]))
+    # match_decode = re.match("(https?)(.*)(https?[^/]*)(.*)$", data[1])
+    # if (match_decode):
+    #     data[1] = urllib.parse.unquote_plus(match_decode.groups()[2])
 
+    print()
     # Rules
-    match_twitter = re.match("^(http:\/\/www\.|https:\/\/www\.|http:\/\/|htt" +
-                             "ps:\/\/)?[a-z0-9\.]*?(twitter+)\.[a-z]{2,5}(:[" +
-                             "0-9]{1,5})?\/(.*)?(/)?(.*)?$", data[1])
+    # match_twitter = re.match("^(https:\/\/www.google.com\/url\?q=|)(http:\/" +
+    #                          "\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)" +
+    #                          "?[a-z0-9\.]*?(twitter+)\.[a-z]{2,5}(:[0-9]" +
+    #                          "{1,5})?\/(.*?)(%3|\/|&)(.*)", data[1])
+    # New REGEX with w+
+    match_twitter = re.match("^(https:\/\/www.google.com\/url\?q=|)(http:\/" +
+                             "\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)" +
+                             "?[a-z0-9\.]*?(twitter+)\.[a-z]{2,5}(:[0-9]" +
+                             "{1,5})?\/(\w+)", data[1])
     if (match_twitter):
         twitter_user=""
-        if ('/' in match_twitter.groups()[3]):
-            twitter_user = match_twitter.groups()[3].split('/')[0]
+        if ('/' in match_twitter.groups()[4]):
+            twitter_user = match_twitter.groups()[4].split('/')[0]
         else:
-            twitter_user = match_twitter.groups()[3]
+            twitter_user = match_twitter.groups()[4]
         if ('?' in twitter_user):
             twitter_user = twitter_user.split('?')[0]
+        if ('%40' in twitter_user):
+            twitter_user = twitter_user.replace('%40', '')
         usernames.append({"source": source,
                           "type": type_s,
                           "usernames": twitter_user,
@@ -104,15 +121,16 @@ def simple_analysis(source, type_s, username, data, output):
                        "user": twitter_user,
                        "rrss": "twitter"})
 
-    match_github = re.match("^(http:\/\/www\.|https:\/\/www\.|http:\/\/|http" +
+    match_github = re.match("^(https:\/\/www.google.com\/url\?q=|)" +
+                            "(http:\/\/www\.|https:\/\/www\.|http:\/\/|http" +
                             "s:\/\/)?[a-z0-9\.]*?(github+)\.[a-z]{2,5}(:[0-9" +
-                            "]{1,5})?\/(.*)?(/)?(.*)?$", data[1])
+                            "]{1,5})?\/(.*?)(%3|\/|&)(.*)", data[1])
     if (match_github):
         github_user=""
-        if ('/' in match_github.groups()[3]):
-            github_user = match_github.groups()[3].split('/')[0]
+        if ('/' in match_github.groups()[4]):
+            github_user = match_github.groups()[4].split('/')[0]
         else:
-            github_user = match_github.groups()[3]
+            github_user = match_github.groups()[4]
         if ('?' in github_user):
             github_user = github_user.split('?')[0]
         usernames.append({"source": source,
@@ -133,16 +151,17 @@ def simple_analysis(source, type_s, username, data, output):
                        "user": github_user,
                        "rrss": "github"})
 
-    match_instagram = re.match('^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9\.]*?(instagram+)\.[a-z]{2,5}(:[0-9]{1,5})?\/(.*)?(/)?(.*)?$', data[1])
-    # match_instagram = re.match('^(http:\/\/www\.|https:\/\/www\.|http:\/\/|' +
-    #                            'https:\/\/)?[a-z0-9.]?(instagram+)\.[a-z]' +
-    #                            '{2,5}(:[0-9]{1,5})?/(.*)?(/)?(.*)?$', data[1])
+    match_instagram = re.match("^(https:\/\/www.google.com\/url\?q=|)" +
+                               "(http:\/\/www\.|https:\/\/www\.|http:\/\/|" +
+                               "https:\/\/)?[a-z0-9\.]*?(instagram+)\.[a-z]" +
+                               "{2,5}(:[0-9]{1,5})?\/([^p].*?)(%3|\/)(.*)"
+                               , data[1])
     if (match_instagram):
         instagram_user=""
-        if ('/' in match_instagram.groups()[3]):
-            instagram_user = match_instagram.groups()[3].split('/')[0]
+        if ('/' in match_instagram.groups()[4]):
+            instagram_user = match_instagram.groups()[4].split('/')[0]
         else:
-            instagram_user = match_instagram.groups()[3]
+            instagram_user = match_instagram.groups()[4]
         if ('?' in instagram_user):
             instagram_user = instagram_user.split('?')[0]
         usernames.append({"source": source,
@@ -163,16 +182,16 @@ def simple_analysis(source, type_s, username, data, output):
                        "user": instagram_user,
                        "rrss": "instagram"})
 
-    match_keybase = re.match('^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9\.]*?(keybase+)\.[a-z]{2,5}(:[0-9]{1,5})?\/(.*)?(/)?(.*)?$', data[1])
-    # match_keybase = re.match('^(http:\/\/www\.|https:\/\/www\.|http:\/\/|' +
-    #                          'https:\/\/)?[a-z0-9.]?(keybase+)\.[a-z]' +
-    #                          '{2,5}(:[0-9]{1,5})?/(.*)?(/)?(.*)?$', data[1])
+    match_keybase = re.match("^(https:\/\/www.google.com\/url\?q=|)" +
+                             "(http:\/\/www\.|https:\/\/www\.|http:\/\/|" +
+                             "https:\/\/)?[a-z0-9\.]*?(keybase+)\.[a-z]" +
+                             "{2,5}(:[0-9]{1,5})?\/(.*?)(%3|\/|&)(.*)", data[1])
     if (match_keybase):
         keybase_user=""
-        if ('/' in match_keybase.groups()[3]):
-            keybase_user = match_keybase.groups()[3].split('/')[0]
+        if ('/' in match_keybase.groups()[4]):
+            keybase_user = match_keybase.groups()[4].split('/')[0]
         else:
-            keybase_user = match_keybase.groups()[3]
+            keybase_user = match_keybase.groups()[4]
         usernames.append({"source": source,
                           "type": type_s,
                           "usernames": keybase_user,
@@ -184,14 +203,17 @@ def simple_analysis(source, type_s, username, data, output):
                        "user": keybase_user,
                        "rrss": "keybase"})
 
-    match_linkedin = re.match('^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9\.]*?(linkedin+)\.[a-z]{2,5}(:[0-9]{1,5})?\/in\/(.*)?(/)?(.*)?$'
+    match_linkedin = re.match("^(https:\/\/www.google.com\/url\?q=|)" +
+                              "(http:\/\/www\.|https:\/\/www\.|http:\/\/|" +
+                              "https:\/\/)?[a-z0-9\.]*?(linkedin+)\.[a-z]" +
+                              "{2,5}(:[0-9]{1,5})?\/in\/(.*?)(%3|\/|&)(.*)"
                               , data[1])
     if (match_linkedin):
         linkedin_user=""
-        if ('/' in match_linkedin.groups()[3]):
-            linkedin_user = match_linkedin.groups()[3].split('/')[0]
+        if ('/' in match_linkedin.groups()[4]):
+            linkedin_user = match_linkedin.groups()[4].split('/')[0]
         else:
-            linkedin_user = match_linkedin.groups()[3]
+            linkedin_user = match_linkedin.groups()[4]
         if ('?' in linkedin_user):
             linkedin_user = linkedin_user.split('?')[0]
         if (linkedin_user.count("-") < 2):
@@ -213,14 +235,19 @@ def simple_analysis(source, type_s, username, data, output):
                            "user": linkedin_user,
                            "rrss": "linkedin"})
 
-    match_facebook = re.match('^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9\.]*?(facebook+)\.[a-z]{2,5}(:[0-9]{1,5})?\/(.*)?(/)?(.*)?$'
+    match_facebook = re.match("^(https:\/\/www.google.com\/url\?q=|)" +
+                              "(http:\/\/www\.|https:\/\/www\.|http:\/\/|" +
+                              "https:\/\/)?[a-z0-9\.]*?(facebook+)\.[a-z]" +
+                              "{2,5}(:[0-9]{1,5})?\/(.*?)(%3|\/|&)(.*)"
                               , data[1])
     if (match_facebook):
         facebook_user=""
-        if ('/' in match_facebook.groups()[3]):
-            facebook_user = match_facebook.groups()[3].split('/')[0]
+        if ('public' in match_facebook.groups()[4]):
+            facebook_user = match_facebook.groups()[6]
+        elif ('/' in match_facebook.groups()[4]):
+            facebook_user = match_facebook.groups()[4].split('/')[0]
         else:
-            facebook_user = match_facebook.groups()[3]
+            facebook_user = match_facebook.groups()[4]
         if ('?' in facebook_user):
             facebook_user = facebook_user.split('?')[0]
         usernames.append({"source": source,
@@ -242,14 +269,17 @@ def simple_analysis(source, type_s, username, data, output):
                        "user": facebook_user,
                        "rrss": "facebook"})
 
-    match_pinterest = re.match('^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9\.]*?(pinterest+)\.[a-z]{2,5}(:[0-9]{1,5})?\/(.*)?(\/)?(.*)?$'
+    match_pinterest = re.match("^(https:\/\/www.google.com\/url\?q=|)" +
+                               "(http:\/\/www\.|https:\/\/www\.|http:\/\/|" +
+                               "https:\/\/)?[a-z0-9\.]*?(pinterest+)\.[a-z]" +
+                               "{2,5}(:[0-9]{1,5})?\/(.*?)(%3|\/|&)(.*)"
                               , data[1])
     if (match_pinterest):
         pinterest_user=""
-        if ('/' in match_pinterest.groups()[3].strip("/")):
-            pinteres_user = match_pinterest.groups()[3].split('/')[0]
-        elif ("/pin/" not in match_pinterest.groups()[3].strip('/')):
-            pinterest_user = match_pinterest.groups()[3].strip('/')
+        if ('/' in match_pinterest.groups()[4].strip("/")):
+            pinteres_user = match_pinterest.groups()[4].split('/')[0]
+        elif ("/pin/" not in match_pinterest.groups()[4].strip('/')):
+            pinterest_user = match_pinterest.groups()[4].strip('/')
 
         if ('?' in pinterest_user):
             pinterest_user = pinterest_user.split('?')[0]
@@ -271,6 +301,40 @@ def simple_analysis(source, type_s, username, data, output):
                        "name": pinterest_name,
                        "user": pinterest_user,
                        "rrss": "pinterest"})
+
+    match_tiktok = re.match("^(https:\/\/www.google.com\/url\?q=|)" +
+                            "(http:\/\/www\.|https:\/\/www\.|http:\/\/|" +
+                            "https:\/\/)?[a-z0-9\.]*?(tiktok+)\.[a-z]" +
+                            "{2,5}(:[0-9]{1,5})?\/%40(\w+)"
+                              , data[1])
+    if (match_tiktok):
+        tiktok_user=""
+        if ('/' in match_tiktok.groups()[4].strip("/")):
+            tiktok_user = match_tiktok.groups()[4].split('/')[0]
+        elif ("/pin/" not in match_tiktok.groups()[4].strip('/')):
+            tiktok_user = match_tiktok.groups()[4].strip('/')
+
+        if ('?' in tiktok_user):
+            tiktok_user = tiktok_user.split('?')[0]
+
+        usernames.append({"source": source,
+                          "type": type_s,
+                          "usernames": tiktok_user,
+                          "rrss": "tiktok"})
+        match_name = re.match("^(.*) \(@(\w+)\) Official TikTok .*"
+                              , data[0])
+        tiktok_name = ""
+        if (match_name):
+            tiktok_name = match_name.groups()[0].strip()
+            names.append({"source": source,
+                          "type": type_s,
+                          "name": tiktok_name,
+                          "rrss": "tiktok"})
+        social.append({"source": source,
+                       "type": type_s,
+                       "name": tiktok_name,
+                       "user": tiktok_user,
+                       "rrss": "tiktok"})
 
     if (username in data[1]):
         urls.append(data[1])
@@ -306,29 +370,52 @@ def simple_analysis(source, type_s, username, data, output):
 
 def deep_analysis(names, usernames, searcher, data, output):
     # Decode URL
-    match_decode = re.match("(https?)(.*)(https?[^/]*)(.*)$", data[1])
-    if (match_decode):
-        data[1] = urllib.parse.unquote_plus(match_decode.groups()[2])
+    # match_decode = re.match("(https?)(.*)(https?[^/]*)(.*)$", data[1])
+    # if (match_decode):
+    #     data[1] = urllib.parse.unquote_plus(match_decode.groups()[2])
 
     # Initialize
     urls = [] if ('urls' not in output) else output['urls']
     search = [] if ('search' not in output) else output['search']
+    rawresult = [] if ('rawresult' not in output) else output['rawresult']
 
     if (searcher == "google"):
-        icon = "fab fa-yahoo"
-    elif (searcher == "yahoo"):
         icon = "fab fa-google"
+    elif (searcher == "yahoo"):
+        icon = "fab fa-yahoo"
     elif (searcher == "bing"):
         icon = "fab fa-windows"
+    elif (searcher == "duckduckgo"):
+        icon = "fas fa-kiwi-bird"
+    elif (searcher == "yandex"):
+        icon = "fab fa-yandex-international"
+    elif (searcher == "baidu"):
+        icon = "fas fa-paw"
     else:
         icon = "fas fa-search"
 
     if searcher == 'google':
-        end = '.'
+        end = ' '
     elif searcher == 'yahoo':
-        end = '..'
+        end = '  '
     elif searcher == 'bing':
-        end = '...'
+        end = '   '
+    elif searcher == 'duckduckgo':
+        end = '    '
+    elif searcher == 'yandex':
+        end = '     '
+    elif searcher == 'baidu':
+        end = '      '
+
+    rawresult_item = {"name-node": "References", "title": data[0] + end,
+                    "subtitle": "",
+                    "icon": icon,
+                    "simple": data[0],
+                    "url": data[1],
+                    "desc": data[2],
+                    "link": searcher}
+    rawresult.append(rawresult_item)
+
     search_included = False
     # Evaluate usernames in urls
     for user in usernames:
@@ -395,7 +482,8 @@ def deep_analysis(names, usernames, searcher, data, output):
                                "link": searcher}
                 search.append(search_item)
 
-    output['search'] = search
+    output['rawresult']= rawresult
+    output['search']= search
     return output
 
 
@@ -412,25 +500,50 @@ def t_search(username, from_m="Initial"):
     gsearch = GoogleSearch()
     ysearch = YahooSearch()
     bsearch = BingSearch()
+    dsearch = DuckDuckGoSearch()
+    asearch = YandexSearch()
+    usearch = BaiduSearch()
     try:
+        gsearch.clear_cache()
         gresults = gsearch.search(*search_args, cache=False)
     except:
         gresults = []
     try:
+        ysearch.clear_cache()
         yresults = ysearch.search(*search_args, cache=False)
     except:
         yresults = []
     try:
+        bsearch.clear_cache()
         bresults = bsearch.search(*search_args, cache=False)
     except:
         bresults = []
+    try:
+        dsearch.clear_cache()
+        dresults = dsearch.search(*search_args, cache=False)
+    except:
+        dresults = []
+    try:
+        asearch.clear_cache()
+        aresults = asearch.search(*search_args, cache=False)
+    except:
+        aresults = []
+    try:
+        usearch.clear_cache()
+        uresults = usearch.search(*search_args, cache=False)
+    except:
+        uresults = []
 
     # Raw Array
     raw_node = {
         "Google": gresults,
         "Yahoo": yresults,
-        "Bing": bresults}
+        "Bing": bresults,
+        "Yandex": yresults,
+        "Baidu": uresults,
+        "DuckDuckGo": dresults}
 
+    print(raw_node)
     if (raw_node['Google'] != []):
         for i in range(len(raw_node['Google']['titles'])):
             output = simple_analysis("google", "username", username,
@@ -452,6 +565,27 @@ def t_search(username, from_m="Initial"):
                             [raw_node['Bing']['titles'][i],
                              raw_node['Bing']['links'][i],
                              raw_node['Bing']['descriptions'][i]
+                             ], output)
+    if (raw_node['DuckDuckGo'] != []):
+        for i in range(len(raw_node['DuckDuckGo']['titles'])):
+            output = simple_analysis("duckduckgo", "username", username,
+                            [raw_node['DuckDuckGo']['titles'][i],
+                             raw_node['DuckDuckGo']['links'][i],
+                             raw_node['DuckDuckGo']['descriptions'][i]
+                             ], output)
+    if (raw_node['Yandex'] != []):
+        for i in range(len(raw_node['Yandex']['titles'])):
+            output = simple_analysis("yandex", "username", username,
+                            [raw_node['Yandex']['titles'][i],
+                             raw_node['Yandex']['links'][i],
+                             raw_node['Yandex']['descriptions'][i]
+                             ], output)
+    if (raw_node['Baidu'] != []):
+        for i in range(len(raw_node['Baidu']['titles'])):
+            output = simple_analysis("baidu", "username", username,
+                            [raw_node['Baidu']['titles'][i],
+                             raw_node['Baidu']['links'][i],
+                             raw_node['Baidu']['descriptions'][i]
                              ], output)
 
     # Different usernames
@@ -485,11 +619,35 @@ def t_search(username, from_m="Initial"):
     # Search Real Social
     social = sorted(output['social'], key=lambda k: k['rrss'])
     social_count = {}
+    # To Convert Keys
+    social_raw = []
+    link_social = "Social"
+    social_item = {"name-node": "Social", "title": "Social",
+                   "subtitle": "", "icon": search_icon_5(
+                       "child", font_list),
+                   "link": link_social}
+    social_raw.append(social_item)
+    title_count = 0
+    nounce = ''
+    prev = ''
     for s in social:
         if (s['rrss'] + '-|-' + s['user'] + '-|-' + s['name'] not in social_count):
             social_count[s['rrss'] + '-|-' + s['user'] + '-|-' + s['name']] = 1
         else:
             social_count[s['rrss'] + '-|-' + s['user'] + '-|-' + s['name']] = social_count[s['rrss'] + '-|-' + s['user'] + '-|-' + s['name']] + 1
+
+        # Convert keys
+        social_item = {"name-node": "Social" + s['rrss'] + str(title_count),
+                       "title": s['rrss'] + " (" + s['source'] + ")" + nounce,
+                       "subtitle": s['user'],
+                       "icon": search_icon_5(s['rrss'], font_list),
+                       "link": link_social}
+        social_raw.append(social_item)
+        if (s['rrss'] + s['source'] == prev):
+            nounce = nounce + ' '
+        prev = s['rrss'] + s['source']
+        title_count = title_count + 1
+
 
     socialp = []
     rrss = ''
@@ -555,6 +713,77 @@ def t_search(username, from_m="Initial"):
                              raw_node['Bing']['links'][i],
                              raw_node['Bing']['descriptions'][i],
                              ], output)
+    if (raw_node['DuckDuckGo'] != []):
+        for i in range(len(raw_node['DuckDuckGo']['titles'])):
+            output = deep_analysis(name_tokens, username_refined, 'duckduckgo',
+                            [raw_node['DuckDuckGo']['titles'][i],
+                             raw_node['DuckDuckGo']['links'][i],
+                             raw_node['DuckDuckGo']['descriptions'][i],
+                             ], output)
+    if (raw_node['Yandex'] != []):
+        for i in range(len(raw_node['Yandex']['titles'])):
+            output = deep_analysis(name_tokens, username_refined, 'yandex',
+                            [raw_node['Yandex']['titles'][i],
+                             raw_node['Yandex']['links'][i],
+                             raw_node['Yandex']['descriptions'][i],
+                             ], output)
+    if (raw_node['Baidu'] != []):
+        for i in range(len(raw_node['Baidu']['titles'])):
+            output = deep_analysis(name_tokens, username_refined, 'baidu',
+                            [raw_node['Baidu']['titles'][i],
+                             raw_node['Baidu']['links'][i],
+                             raw_node['Baidu']['descriptions'][i],
+                             ], output)
+
+    # Check ENGINE FAILURE
+    if (raw_node['Google'] == []):
+        search_item = {"name-node": "Engine_failure Google",
+                    "title": "Detected and flagged as unusual traffic (Google)",
+                    "subtitle": "",
+                    "icon": "fab fa-google",
+                    "link": "google"}
+        output["rawresult"].append(search_item)
+        output["search"].append(search_item)
+    if (raw_node['Bing'] == []):
+        search_item = {"name-node": "Engine_failure Bing",
+                    "title": "Detected and flagged as unusual traffic (Bing)",
+                    "subtitle": "",
+                    "icon": "fab fa-windows",
+                    "link": "bing"}
+        output["rawresult"].append(search_item)
+        output["search"].append(search_item)
+    if (raw_node['Yahoo'] == []):
+        search_item = {"name-node": "Engine_failure yahoo",
+                    "title": "Detected and flagged as unusual traffic (Yahoo)",
+                    "subtitle": "",
+                    "icon": "fab fa-yahoo",
+                    "link": "yahoo"}
+        output["rawresult"].append(search_item)
+        output["search"].append(search_item)
+    if (raw_node['Yandex'] == []):
+        search_item = {"name-node": "Engine_failure yandex",
+                    "title": "Detected and flagged as unusual traffic (Yandex)",
+                    "subtitle": "",
+                    "icon": "fab fa-yandex",
+                    "link": "yandex"}
+        output["rawresult"].append(search_item)
+        output["search"].append(search_item)
+    if (raw_node['DuckDuckGo'] == []):
+        search_item = {"name-node": "Engine_failure duckduckgo",
+                    "title": "Detected and flagged as unusual traffic (duckduckgo)",
+                    "subtitle": "",
+                    "icon": "fas fa-kiwi-bird",
+                    "link": "duckduckgo"}
+        output["rawresult"].append(search_item)
+        output["search"].append(search_item)
+    if (raw_node['Baidu'] == []):
+        search_item = {"name-node": "Engine_failure baidu",
+                    "title": "Detected and flagged as unusual traffic (Baidu)",
+                    "subtitle": "",
+                    "icon": "fas fa-paw",
+                    "link": "baidu"}
+        output["rawresult"].append(search_item)
+        output["search"].append(search_item)
 
     # Total
     total = []
@@ -591,26 +820,46 @@ def t_search(username, from_m="Initial"):
     for user in users:
         username_cloud.append({"label": user})
 
-    output['search'].append({"name-node": "google", "title": "Searcher",
+    profile.append({"name": name_complete})
+
+    analized_results = output['search']
+    output['search'].append({"name-node": "searcher", "title": "searcher",
                             "subtitle": "",
                             "icon": "fas fa-search",
+                            "link": "searcher"})
+    output['search'].append({"name-node": "google", "title": "Searcher",
+                            "subtitle": "",
+                            "icon": "fab fa-google",
                             "link": "google"})
     output['search'].append({"name-node": "bing", "title": "Searcher",
                             "subtitle": "",
-                            "icon": "fas fa-search",
+                            "icon": "fab fa-windows",
                             "link": "bing"})
     output['search'].append({"name-node": "yahoo", "title": "Searcher",
                             "subtitle": "",
-                            "icon": "fas fa-search",
+                            "icon": "fab fa-yahoo",
                             "link": "yahoo"})
-
-    profile.append({"name": name_complete})
+    output['search'].append({"name-node": "duckduckgo", "title": "Searcher",
+                            "subtitle": "",
+                            "icon": "fas fa-kiwi-bird",
+                            "link": "duckduckgo"})
+    output['search'].append({"name-node": "yandex", "title": "Searcher",
+                            "subtitle": "",
+                            "icon": "fab fa-yandex",
+                            "link": "yandex"})
+    output['search'].append({"name-node": "baidu", "title": "Searcher",
+                            "subtitle": "",
+                            "icon": "fas fa-paw",
+                            "link": "baidu"})
 
     # TODO : Repair raw-node
-    total.append({'raw': 'raw'})
+    total.append({'raw': 'raw_node'})
     graphic.append({'names': name_cloud})
     graphic.append({'username': username_cloud})
-    graphic.append({'social': socialp})
+    graphic.append({'social': social_raw})
+    # graphic.append({'social': socialp})
+    graphic.append({'rawresults': output["rawresult"]})
+    graphic.append({'results': analized_results})
     graphic.append({'searches': output["search"]})
     graphic.append({'mentions': output["users"]})
     graphic.append({'hashtags': output["hashtags"]})
