@@ -86,6 +86,8 @@ import { SearchUsernamesComponent } from './search/search-usernames/search-usern
 import { SearchSocialComponent } from './search/search-social/search-social.component';
 import { SearchSearchesComponent } from './search/search-searches/search-searches.component';
 import { SearchListComponent } from './search/search-list/search-list.component';
+import { SearchRawListComponent } from './search/search-list-raw/search-list-raw.component';
+import { SearchEmailComponent } from './search/search-email/search-email.component';
 
 import { TiktokGraphsComponent } from './tiktok/tiktok-graphs/tiktok-graphs.component';
 
@@ -189,6 +191,8 @@ import { SharedModule } from '../shared/shared.module';
     SearchSocialComponent,
     SearchSearchesComponent,
     SearchListComponent,
+    SearchRawListComponent,
+    SearchEmailComponent,
     TiktokGraphsComponent,
     SkypeComponent,
     TaskexecComponent,
