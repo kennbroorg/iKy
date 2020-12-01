@@ -18,7 +18,7 @@ export class SearchMentionsComponent implements OnInit, AfterViewInit {
     constructor(private dialogService: NbDialogService) {}
 
     ngOnInit() {
-        this.searchMentions = this.data.result[4].graphic[4].mentions;
+        this.searchMentions = this.data.result[4].graphic[6].mentions;
         console.log("Search Mentions Component");
         console.log("Mentions data", this.searchMentions);
     }

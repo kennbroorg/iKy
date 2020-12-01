@@ -18,7 +18,7 @@ export class SearchHashtagComponent implements OnInit, AfterViewInit {
     constructor(private dialogService: NbDialogService) {}
 
     ngOnInit() {
-        this.searchHashtag = this.data.result[4].graphic[5].hashtags;
+        this.searchHashtag = this.data.result[4].graphic[7].hashtags;
         console.log("Search Hashtag Component");
         console.log("Search data total", this.data);
         console.log("Search data", this.searchHashtag);

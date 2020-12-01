@@ -2,18 +2,18 @@ import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit, Templat
 import { NbDialogService } from '@nebular/theme';
 
 @Component({
-    selector: 'ngx-search-list',
-    templateUrl: './search-list.component.html',
-    styleUrls: ['./search-list.component.scss'],
+    selector: 'ngx-search-list-raw',
+    templateUrl: './search-list-raw.component.html',
+    styleUrls: ['./search-list-raw.component.scss'],
 })
-export class SearchListComponent implements OnInit, AfterViewInit {
+export class SearchRawListComponent implements OnInit, AfterViewInit {
 
     contacts: any[];
     recent: any[];
 
-    @ViewChild('nbCardSearchList', { static: false }) private cardContainer: ElementRef;
+    @ViewChild('nbCardSearchRawList', { static: false }) private cardContainer: ElementRef;
     @Input() private data: any;
-    private searchList : any;
+    private searchRawList : any;
     private validation : any;
 
     private card: any;
@@ -23,9 +23,9 @@ export class SearchListComponent implements OnInit, AfterViewInit {
     constructor(private dialogService: NbDialogService) {}
 
     ngOnInit() {
-        this.searchList = this.data.result[4].graphic[4].results;
-        console.log("Search List Component");
-        console.log("Search List data", this.searchList);
+        this.searchRawList = this.data.result[4].graphic[3].rawresults;
+        console.log("Search List Raw Component");
+        console.log("Search List Raw data", this.searchRawList);
     }
 
     ngAfterViewInit() {

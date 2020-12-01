@@ -4,6 +4,26 @@
 
 @include nb-install-component() {
 
+  .sep {
+     margin-top: 10px; 
+     margin-bottom: 20px; 
+     height: 2px; 
+     background-color: rgba(0, 214, 143, 1);  
+     width: 80%; 
+     -webkit-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.9);
+     -moz-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.9);
+     box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.9);
+  }
+  .text-sep {
+     color: rgba(0, 214, 143, 1);  
+     width: 100%; 
+     text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.9);
+     text-align: center;
+     vertical-align: text-bottom;
+     font-weight: 300;
+     font-size: 17px;
+  }
+
   nb-card {
     display: flex;
     flex-direction: column;
