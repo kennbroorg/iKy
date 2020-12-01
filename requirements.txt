@@ -55,7 +55,7 @@ requests==2.23.0
 requests-futures==1.0.0
 rfc3986==1.4.0
 schedule==0.6.0
-search-engine-parser==0.6
+search-engine-parser==0.6.2
 six==1.15.0
 sniffio==1.1.0
 socialscan==1.2.0
