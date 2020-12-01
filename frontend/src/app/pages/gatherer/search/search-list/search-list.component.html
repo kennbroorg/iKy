@@ -1,28 +1,16 @@
   <nb-card size="large" class="border-defaulti list-card">
     <nb-card-header (click)="openDialog(dialogSearchList)">
-      SEARCH List
+      SEARCH Analized Results
       <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
     </nb-card-header>
     <nb-card-body id="nbCardSearchList" style="text-align: center; margin: 0px; padding: 0px;">
       <nb-list>
         <nb-list-item *ngFor="let c of searchList">
           <div class="contact">
-            <div *ngIf="c.link=='google'">
+            <div>
               <span class="fa-stack fa-lg">
                 <i class="fas fa-circle fa-stack-2x"></i>
-                <i class="fab fa-google fa-stack-1x" style="color: #333;"></i> 
-              </span>
-            </div>
-            <div *ngIf="c.link=='yahoo'">
-              <span class="fa-stack fa-lg">
-                <i class="fas fa-circle fa-stack-2x"></i>
-                <i class="fab fa-yahoo fa-stack-1x" style="color: #333;"></i> 
-              </span>
-            </div>
-            <div *ngIf="c.link=='bing'">
-              <span class="fa-stack fa-lg">
-                <i class="fas fa-circle fa-stack-2x"></i>
-                <i class="fab fa-windows fa-stack-1x" style="color: #333;"></i> 
+                <i class="{{c.icon}} fa-stack-1x" style="color: #333;"></i> 
               </span>
             </div>
             <div class="info-container">
@@ -48,24 +36,12 @@
         <nb-list>
           <nb-list-item *ngFor="let c of searchList">
             <div class="contact">
-              <div *ngIf="c.link=='google'">
-                <span class="fa-stack fa-lg">
-                  <i class="fas fa-circle fa-stack-2x"></i>
-                  <i class="fab fa-google fa-stack-1x" style="color: #333;"></i> 
-                </span>
-              </div>
-              <div *ngIf="c.link=='yahoo'">
-                <span class="fa-stack fa-lg">
-                  <i class="fas fa-circle fa-stack-2x"></i>
-                  <i class="fab fa-yahoo fa-stack-1x" style="color: #333;"></i> 
-                </span>
-              </div>
-              <div *ngIf="c.link=='bing'">
-                <span class="fa-stack fa-lg">
-                  <i class="fas fa-circle fa-stack-2x"></i>
-                  <i class="fab fa-windows fa-stack-1x" style="color: #333;"></i> 
-                </span>
-              </div>
+                <div>
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="{{c.icon}} fa-stack-1x" style="color: #333;"></i> 
+                  </span>
+                </div>
               <div class="info-container">
                 <div class="user-name ng-star-inserted">{{c.title}}</div> 
                 <div class="user-title ng-star-inserted">

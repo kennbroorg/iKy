@@ -23,7 +23,7 @@ export class SearchListComponent implements OnInit, AfterViewInit {
     constructor(private dialogService: NbDialogService) {}
 
     ngOnInit() {
-        this.searchList = this.data.result[4].graphic[3].searches;
+        this.searchList = this.data.result[4].graphic[4].results;
         console.log("Search List Component");
         console.log("Search List data", this.searchList);
     }
