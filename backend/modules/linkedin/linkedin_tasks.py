@@ -257,14 +257,18 @@ def t_linkedin(email, from_m):
             if (key == 'certificationView'):
                 for certificate in profile_view.get(key).get("elements", ""):
                     if (certificate.get("company", "") != ""):
-                        rootUrl = certificate.get("company").get(
-                            "logo", "").get("com.linkedin.common.VectorImage",
-                                            "").get("rootUrl", "")
-                        shrink = certificate.get("company").get(
-                            "logo", "").get("com.linkedin.common.VectorImage",
-                                            "").get("artifacts", "")[1].get(
-                                           "fileIdentifyingUrlPathSegment", "")
-                        picture = str(rootUrl) + str(shrink)
+                        try:
+                            rootUrl = certificate.get("company").get(
+                                "logo", "").get("com.linkedin.common.VectorImage",
+                                                "").get("rootUrl", "")
+                            shrink = certificate.get("company").get(
+                                "logo", "").get("com.linkedin.common.VectorImage",
+                                                "").get("artifacts", "")[1].get(
+                                            "fileIdentifyingUrlPathSegment", "")
+                            picture = str(rootUrl) + str(shrink)
+                        except:
+                            picture = "assets/img/app/university.png"
+
                     else:
                         picture = "assets/img/app/university.png"
 
