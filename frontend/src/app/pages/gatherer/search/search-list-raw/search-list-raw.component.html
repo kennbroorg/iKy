@@ -1,0 +1,58 @@
+  <nb-card size="large" class="border-defaulti list-card">
+    <nb-card-header>
+      SEARCH Raw Results
+      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+    </nb-card-header>
+    <nb-card-body id="nbCardSearchListRaw" style="text-align: center; margin: 0px; padding: 0px;">
+      <nb-list>
+        <nb-list-item *ngFor="let c of searchRawList">
+          <div class="contact">
+            <div>
+              <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="{{c.icon}} fa-stack-1x" style="color: #333;"></i> 
+              </span>
+            </div>
+            <div class="info-container">
+              <div class="user-name ng-star-inserted">{{c.title}}</div> 
+              <div class="user-title ng-star-inserted">
+                 <p align="left" style="margin: 0px; padding:0px; padding-top: 5px;"><strong style="font-weight: 500;">Full title</strong> : {{c.simple}}</p>
+                 <p align="left" style="margin: 0px; padding:0px;"><strong style="font-weight: 500;">Description</strong> : {{c.desc}}</p>
+                 <p align="left" style="margin: 0px; padding:0px;"><strong>URL</strong> : {{c.url}}</p>
+              </div>
+            </div>
+          </div>
+        </nb-list-item>
+      </nb-list>
+
+    </nb-card-body>
+  </nb-card>
+
+
+  <ng-template #dialogSearchRawList let-data let-ref="dialogRef">
+    <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+      <nb-card-header>SEARCH List</nb-card-header>
+      <nb-card-body>
+        <nb-list>
+          <nb-list-item *ngFor="let c of searchRawList">
+            <div class="contact">
+              <div>
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="{{c.icon}} fa-stack-1x" style="color: #333;"></i> 
+                </span>
+              </div>
+              <div class="info-container">
+                <div class="user-name ng-star-inserted">{{c.title}}</div> 
+                <div class="user-title ng-star-inserted">
+                    <p><strong>Full title</strong> : {{c.simple}}</p>
+                    <p><strong>Description</strong> : {{c.desc}}</p>
+                    <p><strong>URL</strong> : {{c.url}}</p>
+                </div>
+              </div>
+            </div>
+          </nb-list-item>
+        </nb-list>
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
