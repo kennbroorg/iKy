@@ -25,5 +25,6 @@ app = Celery('celery_config', broker='redis://localhost:6379/0',
                       'modules.peopledatalabs.peopledatalabs_tasks',
                       'modules.leaklookup.leaklookup_tasks',
                       'modules.twitter_comparison.twitter_info_tasks',
-                      'modules.twitter_comparison.twitter_comp_tasks'
+                      'modules.twitter_comparison.twitter_comp_tasks',
+                      'modules.twint.twint_tasks'
                       ])

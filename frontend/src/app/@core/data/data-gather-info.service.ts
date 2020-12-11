@@ -400,14 +400,24 @@ export class DataGatherInfoService {
         // Evaluation of datas
         if (datas['twitter'] != '') {
             console.log("Twitter : ", datas['twitter']);
-            // Twitter
-            if (this.isModuleParamRunTaskExec('twitter', datas['twitter'], 'User', 100)) {
-                this.showToast('info', 'Twitter', 'Send information gathering');
-                this.globalGather['taskresume'][0].PP++;
-                this.executeRequest$('twitter', {username: datas['twitter'], from: 'User'})
+            // twitter
+            if (this.isModuleParamRunTaskExec('twitter', datas['twitter'], 'user', 100)) {
+                this.showToast('info', 'twitter', 'send information gathering');
+                this.globalGather['taskresume'][0].pp++;
+                this.executeRequest$('twitter', {username: datas['twitter'], from: 'user'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed twitter')
+                               err => console.error('ops: ', err.message),
+                               () => console.log('completed twitter')
+                );
+            };
+            // twint
+            if (this.isModuleParamRunTaskExec('twint', datas['twitter'], 'user', 100)) {
+                this.showToast('info', 'twint', 'send information gathering');
+                this.globalGather['taskresume'][0].pp++;
+                this.executeRequest$('twint', {username: datas['twitter'], from: 'user'})
+                    .subscribe(this.processResponse,
+                               err => console.error('ops: ', err.message),
+                               () => console.log('completed twint')
                 );
             };
         };
@@ -836,6 +846,16 @@ export class DataGatherInfoService {
                                                err => console.error('Ops: ', err.message),
                                                () => console.log('Completed' + tasks[indexTask].module)
                             );
+                            // Launch Twint if execute Twitter
+                            if (tasks[indexTask].module === "twitter") {
+                                this.showToast('info', 'Twint', 'Send information gathering');
+                                this.globalGather['taskresume'][0].PP++;
+                                this.executeRequest$('twint', {username: tasks[indexTask].param, from: module_name})
+                                        .subscribe(this.processResponse,
+                                                   err => console.error('Ops: ', err.message),
+                                                   () => console.log('Completed Twint')
+                                );
+                            }
                         }
                     }
                 }
@@ -843,7 +863,7 @@ export class DataGatherInfoService {
         }
 
         // Chained process
-        if (module_name == 'twitter') {
+        if (module_name == 'twint') {
             console.log("Launch tweetiment")
             let task_id
             for (let indexTaskexec in this.globalGather['taskexec']) {
@@ -852,7 +872,7 @@ export class DataGatherInfoService {
                 } 
             }
             // Tweetiment
-            this.showToast('info', 'Twetiment', 'Send information gathering');
+            this.showToast('info', 'Tweetiment', 'Send information gathering');
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('tweetiment', {username: param, from: 'User', task_id: task_id })
                 .subscribe(this.processResponse,

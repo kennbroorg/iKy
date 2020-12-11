@@ -69,7 +69,7 @@
     "@angular/language-service": "8.0.0",
     "@compodoc/compodoc": "^1.1.11",
     "@fortawesome/fontawesome-free": "^5.14.0",
-    "@swimlane/ngx-charts": "^11.2.0",
+    "@swimlane/ngx-charts": "^16.0.0",
     "@types/d3": "^5.7.2",
     "@types/d3-color": "1.0.5",
     "@types/googlemaps": "^3.30.4",

@@ -2,6 +2,7 @@
 # -*- encoding: utf-8 -*-
 
 import sys
+import traceback
 import json
 import requests
 import re
@@ -36,9 +37,7 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 logger = get_task_logger(__name__)
 
 
-@celery.task
-def t_twitter(username, from_m):
-
+def p_twitter(username, from_m):
     twitter_consumer_key = api_keys_search('twitter_consumer_key')
     twitter_consumer_secret = api_keys_search('twitter_consumer_secret')
     twitter_access_token = api_keys_search('twitter_access_token')
@@ -79,6 +78,8 @@ def t_twitter(username, from_m):
     hours = []
     days = []
     t_timeline = []
+    time_value = 1
+    prev_day = "0000-00-00"
     for tweet in raw_node:
         raw_node_tweets.append(tweet._json)
 
@@ -101,7 +102,16 @@ def t_twitter(username, from_m):
             created_at = datetime.strptime(tweet._json['created_at'],
                                         "%a %b %d %X %z %Y")
             tweet_date = created_at.strftime("%Y-%m-%dT%H:%M:%S.009Z")
-            t_timeline.append({"name": tweet_date, "value": 1})
+            tweet_day = created_at.strftime("%Y-%m-%d")
+
+            # Timeline
+            # t_timeline.append({"name": tweet_date, "value": 1})
+            if (prev_day == tweet_day):
+                time_value = time_value + 1
+            else:
+                t_timeline.append({"name": tweet_date, "value": time_value})
+                time_value = 1
+                prev_day = tweet_day
 
             # Sources
             m_source = re.match("<a.*>(.*)</a>", tweet._json['source'])
@@ -211,6 +221,7 @@ def t_twitter(username, from_m):
     raw_node_total.append({'raw_node_tweets': raw_node_tweets})
 
     create_date = created_at.strftime("%Y-%m-%d")
+    last_tweet = created_at.strftime("%Y-%m-%d")
 
     total.append({'module': 'twitter'})
     total.append({'param': username})
@@ -280,6 +291,13 @@ def t_twitter(username, from_m):
                    "link": link_social}
     gather.append(gather_item)
 
+    gather_item = {"name-node": "TwitterID",
+                   "title": "ID",
+                   "subtitle": str(result_api.id_str),
+                   "icon": "fas fa-id-card",
+                   "link": link_social}
+    gather.append(gather_item)
+
     # private = "False" if profile_df['private'][0] == 0 else "True"
     gather_item = {"name-node": "TwitterPrivate",
                    "title": "Protected",
@@ -324,7 +342,7 @@ def t_twitter(username, from_m):
     gather.append(gather_item)
 
     gather_item = {"name-node": "TwitterHeart",
-                   "title": "Favourite",
+                   "title": "Likes",
                    "subtitle": str(result_api.favourites_count),
                    "icon": "fas fa-heart",
                    "link": link_social}
@@ -399,6 +417,12 @@ def t_twitter(username, from_m):
         "icon": "fa-twitter"}
     timeline.append(timeline_item)
 
+    timeline_item = {"date": str(last_tweet),
+                     "action": "Twitter : Last Tweet",
+                     "icon": "fa-twitter"}
+    timeline.append(timeline_item)
+
+
     total.append({'raw': raw_node_total})
     graphic.append({'social': gather})
     graphic.append({'resume': resume})
@@ -417,6 +441,27 @@ def t_twitter(username, from_m):
     total.append({'timeline': timeline})
     total.append({'tasks': tasks})
 
+    return total
+
+
+@celery.task
+def t_twitter(username, from_m):
+    total = []
+    try:
+        total = p_twitter(username, from_m)
+    except Exception as e:
+        traceback.print_exc()
+        traceback_text = traceback.format_exc()
+        total.append({'module': 'twitter'})
+        total.append({'param': username})
+        total.append({'validation': 'not_used'})
+
+        raw_node = []
+        raw_node.append({"status": "fail",
+                         "reason": "{}".format(e),
+                         # "traceback": 1})
+                         "traceback": traceback_text})
+        total.append({"raw": raw_node})
     return total
 
 

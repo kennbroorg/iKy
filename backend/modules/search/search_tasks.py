@@ -546,47 +546,64 @@ def t_search(username, from_m="Initial"):
     print(raw_node)
     if (raw_node['Google'] != []):
         for i in range(len(raw_node['Google']['titles'])):
-            output = simple_analysis("google", "username", username,
-                            [raw_node['Google']['titles'][i],
-                             raw_node['Google']['links'][i],
-                             raw_node['Google']['descriptions'][i],
-                             ], output)
-
+            try:
+                output = simple_analysis("google", "username", username,
+                                [raw_node['Google']['titles'][i],
+                                raw_node['Google']['links'][i],
+                                raw_node['Google']['descriptions'][i],
+                                ], output)
+            except Exception:
+                continue
     if (raw_node['Yahoo'] != []):
         for i in range(len(raw_node['Yahoo']['titles'])):
-            output = simple_analysis("yahoo", "username", username,
-                                     [raw_node['Yahoo']['titles'][i],
-                                     raw_node['Yahoo']['links'][i],
-                                     raw_node['Yahoo']['descriptions'][i]
-                                     ], output)
+            try:
+                output = simple_analysis("yahoo", "username", username,
+                                        [raw_node['Yahoo']['titles'][i],
+                                        raw_node['Yahoo']['links'][i],
+                                        raw_node['Yahoo']['descriptions'][i]
+                                        ], output)
+            except Exception:
+                continue
     if (raw_node['Bing'] != []):
         for i in range(len(raw_node['Bing']['titles'])):
-            output = simple_analysis("bing", "username", username,
-                            [raw_node['Bing']['titles'][i],
-                             raw_node['Bing']['links'][i],
-                             raw_node['Bing']['descriptions'][i]
-                             ], output)
+            try:
+                output = simple_analysis("bing", "username", username,
+                                [raw_node['Bing']['titles'][i],
+                                raw_node['Bing']['links'][i],
+                                raw_node['Bing']['descriptions'][i]
+                                ], output)
+            except Exception:
+                continue
     if (raw_node['DuckDuckGo'] != []):
         for i in range(len(raw_node['DuckDuckGo']['titles'])):
-            output = simple_analysis("duckduckgo", "username", username,
-                            [raw_node['DuckDuckGo']['titles'][i],
-                             raw_node['DuckDuckGo']['links'][i],
-                             raw_node['DuckDuckGo']['descriptions'][i]
-                             ], output)
+            try:
+                output = simple_analysis("duckduckgo", "username", username,
+                                [raw_node['DuckDuckGo']['titles'][i],
+                                raw_node['DuckDuckGo']['links'][i],
+                                raw_node['DuckDuckGo']['descriptions'][i]
+                                ], output)
+            except Exception:
+                continue
     if (raw_node['Yandex'] != []):
         for i in range(len(raw_node['Yandex']['titles'])):
-            output = simple_analysis("yandex", "username", username,
-                            [raw_node['Yandex']['titles'][i],
-                             raw_node['Yandex']['links'][i],
-                             raw_node['Yandex']['descriptions'][i]
-                             ], output)
+            try:
+                output = simple_analysis("yandex", "username", username,
+                                [raw_node['Yandex']['titles'][i],
+                                raw_node['Yandex']['links'][i],
+                                raw_node['Yandex']['descriptions'][i]
+                                ], output)
+            except Exception:
+                continue
     if (raw_node['Baidu'] != []):
         for i in range(len(raw_node['Baidu']['titles'])):
-            output = simple_analysis("baidu", "username", username,
-                            [raw_node['Baidu']['titles'][i],
-                             raw_node['Baidu']['links'][i],
-                             raw_node['Baidu']['descriptions'][i]
-                             ], output)
+            try:
+                output = simple_analysis("baidu", "username", username,
+                                [raw_node['Baidu']['titles'][i],
+                                raw_node['Baidu']['links'][i],
+                                raw_node['Baidu']['descriptions'][i]
+                                ], output)
+            except Exception:
+                continue
 
     # Different usernames
     try:
@@ -694,46 +711,64 @@ def t_search(username, from_m="Initial"):
 
     if (raw_node['Google'] != []):
         for i in range(len(raw_node['Google']['titles'])):
-            output = deep_analysis(name_tokens, username_refined, 'google',
-                            [raw_node['Google']['titles'][i],
-                             raw_node['Google']['links'][i],
-                             raw_node['Google']['descriptions'][i],
-                             ], output)
+            try:
+                output = deep_analysis(name_tokens, username_refined, 'google',
+                                [raw_node['Google']['titles'][i],
+                                raw_node['Google']['links'][i],
+                                raw_node['Google']['descriptions'][i],
+                                ], output)
+            except Exception:
+                pass
     if (raw_node['Yahoo'] != []):
         for i in range(len(raw_node['Yahoo']['titles'])):
-            output = deep_analysis(name_tokens, username_refined, 'yahoo',
-                            [raw_node['Yahoo']['titles'][i],
-                             raw_node['Yahoo']['links'][i],
-                             raw_node['Yahoo']['descriptions'][i],
-                             ], output)
+            try:
+                output = deep_analysis(name_tokens, username_refined, 'yahoo',
+                                [raw_node['Yahoo']['titles'][i],
+                                raw_node['Yahoo']['links'][i],
+                                raw_node['Yahoo']['descriptions'][i],
+                                ], output)
+            except Exception:
+                pass
     if (raw_node['Bing'] != []):
         for i in range(len(raw_node['Bing']['titles'])):
-            output = deep_analysis(name_tokens, username_refined, 'bing',
-                            [raw_node['Bing']['titles'][i],
-                             raw_node['Bing']['links'][i],
-                             raw_node['Bing']['descriptions'][i],
-                             ], output)
+            try:
+                output = deep_analysis(name_tokens, username_refined, 'bing',
+                                [raw_node['Bing']['titles'][i],
+                                raw_node['Bing']['links'][i],
+                                raw_node['Bing']['descriptions'][i],
+                                ], output)
+            except Exception:
+                pass
     if (raw_node['DuckDuckGo'] != []):
         for i in range(len(raw_node['DuckDuckGo']['titles'])):
-            output = deep_analysis(name_tokens, username_refined, 'duckduckgo',
-                            [raw_node['DuckDuckGo']['titles'][i],
-                             raw_node['DuckDuckGo']['links'][i],
-                             raw_node['DuckDuckGo']['descriptions'][i],
-                             ], output)
+            try:
+                output = deep_analysis(name_tokens, username_refined, 'duckduckgo',
+                                [raw_node['DuckDuckGo']['titles'][i],
+                                raw_node['DuckDuckGo']['links'][i],
+                                raw_node['DuckDuckGo']['descriptions'][i],
+                                ], output)
+            except Exception:
+                pass
     if (raw_node['Yandex'] != []):
         for i in range(len(raw_node['Yandex']['titles'])):
-            output = deep_analysis(name_tokens, username_refined, 'yandex',
-                            [raw_node['Yandex']['titles'][i],
-                             raw_node['Yandex']['links'][i],
-                             raw_node['Yandex']['descriptions'][i],
-                             ], output)
+            try:
+                output = deep_analysis(name_tokens, username_refined, 'yandex',
+                                [raw_node['Yandex']['titles'][i],
+                                raw_node['Yandex']['links'][i],
+                                raw_node['Yandex']['descriptions'][i],
+                                ], output)
+            except Exception:
+                pass
     if (raw_node['Baidu'] != []):
         for i in range(len(raw_node['Baidu']['titles'])):
-            output = deep_analysis(name_tokens, username_refined, 'baidu',
-                            [raw_node['Baidu']['titles'][i],
-                             raw_node['Baidu']['links'][i],
-                             raw_node['Baidu']['descriptions'][i],
-                             ], output)
+            try:
+                output = deep_analysis(name_tokens, username_refined, 'baidu',
+                                [raw_node['Baidu']['titles'][i],
+                                raw_node['Baidu']['links'][i],
+                                raw_node['Baidu']['descriptions'][i],
+                                ], output)
+            except Exception:
+                pass
 
     # Check ENGINE FAILURE
     if (raw_node['Google'] == []):
