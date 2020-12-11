@@ -169,23 +169,39 @@
             <ngx-peopledatalabs-social [data]="gathered['peopledatalabs']"></ngx-peopledatalabs-social>
           </div>
 
-          <!-- Skype -->
+          <!-- Skype (It isnt longer working)
           <div class="col-md-4" *ngIf="gathered['skype'] && gathered['skype'].result[4] && gathered['skype'].result[4]['graphic'][0] && validationShow[gathered['skype'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-skype [data]="gathered['skype']"></ngx-skype>
           </div>
+          -->
+
+          <!-- Twint Social -->
+          <div class="col-md-4" id="divTwintSocial" #divTwintSocial *ngIf="gathered['twint'] && gathered['twint'].result[4] && validationShow[gathered['twint'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitter-social [data]="gathered['twint']"></ngx-twitter-social>
+          </div>
 
           <!-- Twitter Social -->
-          <div class="col-md-4" id="divTwitterSocial" #divTwitterSocial *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterSocial" #divTwitterSocial *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-social [data]="gathered['twitter']"></ngx-twitter-social>
           </div>
 
+          <!-- Twint Popularity -->
+          <div class="col-md-4" id="divTwintPopularity" #divTwintPopularity *ngIf="gathered['twint'] && gathered['twint'].result[4] && validationShow[gathered['twint'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitter-popularity [data]="gathered['twint']"></ngx-twitter-popularity>
+          </div>
+
           <!-- Twitter Popularity -->
-          <div class="col-md-4" id="divTwitterPopularity" #divTwitterPopularity *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterPopularity" #divTwitterPopularity *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-popularity [data]="gathered['twitter']"></ngx-twitter-popularity>
           </div>
 
+          <!-- Twint Resume -->
+          <div class="col-md-4" id="divTwintResume" #divTwintResume *ngIf="gathered['twint'] && gathered['twint'].result[4] && validationShow[gathered['twint'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitter-resume [data]="gathered['twint']"></ngx-twitter-resume>
+          </div>
+
           <!-- Twitter Resume -->
-          <div class="col-md-4" id="divTwitterResume" #divTwitterResume *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterResume" #divTwitterResume *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-resume [data]="gathered['twitter']"></ngx-twitter-resume>
           </div>
 
@@ -194,18 +210,43 @@
             <ngx-twitter-approval [data]="gathered['twitter']"></ngx-twitter-approval>
           </div> -->
 
-          <!-- Twitter Tweets vs Retweets -->
-          <div class="col-md-4" id="divTwitterTwvsrt" #divTwitterTwvsrt *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
-            <ngx-twitter-twvsrt [data]="gathered['twitter']"></ngx-twitter-twvsrt>
+          <!-- Twint Timeline -->
+          <div class="col-md-8" id="divTwintTimeline" #divTwintTimeline *ngIf="gathered['twint'] && gathered['twint'].result[4] && validationShow[gathered['twint'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+              <ngx-twitter-timeline [data]="gathered['twint']"></ngx-twitter-timeline>
+          </div>
+
+          <!-- Twitter Timeline -->
+          <div class="col-md-8" id="divTwitterTimeline" #divTwitterTimeline *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+              <ngx-twitter-timeline [data]="gathered['twitter']"></ngx-twitter-timeline>
+          </div>
+
+          <!-- Twint Users -->
+          <div class="col-md-4" id="divTwintUsers" #divTwintUsers *ngIf="gathered['twint'] && gathered['twint'].result[4] && validationShow[gathered['twint'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitter-users [data]="gathered['twint']"></ngx-twitter-users>
+          </div>
+
+          <!-- Twitter Users -->
+          <div class="col-md-4" id="divTwitterUsers" #divTwitterUsers *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitter-users [data]="gathered['twitter']"></ngx-twitter-users>
+          </div>
+
+          <!-- Twint List -->
+          <div class="col-md-8" id="divTwintList" #divTwintList *ngIf="gathered['twint'] && gathered['twint'].result[4] && validationShow[gathered['twint'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitter-list [data]="gathered['twint']"></ngx-twitter-list>
           </div>
 
           <!-- Twitter List -->
-          <div class="col-md-8" id="divTwitterList" #divTwitterList *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-8" id="divTwitterList" #divTwitterList *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-list [data]="gathered['twitter']"></ngx-twitter-list>
           </div>
 
+          <!-- Twint Hashtag -->
+          <div class="col-md-4" id="divTwintHashtag" #divTwintHashtag *ngIf="gathered['twint'] && gathered['twint'].result[4] && validationShow[gathered['twint'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitter-hashtag [data]="gathered['twint']"></ngx-twitter-hashtag>
+          </div>
+
           <!-- Twitter Hashtag -->
-          <div class="col-md-4" id="divTwitterHashtag" #divTwitterHashtag *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterHashtag" #divTwitterHashtag *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-hashtag [data]="gathered['twitter']"></ngx-twitter-hashtag>
           </div>
 
@@ -214,18 +255,28 @@
             <ngx-tweetiment-lines [data]="gathered['tweetiment']"></ngx-tweetiment-lines>
           </div>
 
-          <!-- Twitter Users -->
-          <div class="col-md-4" id="divTwitterUsers" #divTwitterUsers *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
-            <ngx-twitter-users [data]="gathered['twitter']"></ngx-twitter-users>
+          <!-- Twint Hour -->
+          <div class="col-md-4" id="divTwintHour" #divTwintHour *ngIf="gathered['twint'] && gathered['twint'].result[4] && validationShow[gathered['twint'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitter-hour [data]="gathered['twint']"></ngx-twitter-hour>
           </div>
 
           <!-- Twitter Hour -->
-          <div class="col-md-4" id="divTwitterHour" #divTwitterHour *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterHour" #divTwitterHour *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-hour [data]="gathered['twitter']"></ngx-twitter-hour>
           </div>
 
+          <!-- Twitter Tweets vs Retweets -->
+          <div class="col-md-4" id="divTwitterTwvsrt" #divTwitterTwvsrt *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitter-twvsrt [data]="gathered['twitter']"></ngx-twitter-twvsrt>
+          </div>
+
+          <!-- Twint Week -->
+          <div class="col-md-4" id="divTwintWeek" #divTwintWeek *ngIf="gathered['twint'] && gathered['twint'].result[4] && validationShow[gathered['twint'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitter-week [data]="gathered['twint']"></ngx-twitter-week>
+          </div>
+
           <!-- Twitter Week -->
-          <div class="col-md-4" id="divTwitterWeek" #divTwitterWeek *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterWeek" #divTwitterWeek *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-week [data]="gathered['twitter']"></ngx-twitter-week>
           </div>
 
@@ -233,11 +284,6 @@
           <div class="col-md-4" id="divTwitterSource" #divTwitterSource *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-source [data]="gathered['twitter']"></ngx-twitter-source>
           </div>
-
-          <!-- Twitter Timeline
-          <div class="col-md-8" id="divTwitterTimeline" #divTwitterTimeline *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
-            <ngx-twitter-timeline [data]="gathered['twitter']"></ngx-twitter-timeline>
-          </div> -->
 
           <!-- Instagram graphs -->
           <div class="col-md-4" id="divInstagramSocial" #divInstagramSocial *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
@@ -411,12 +457,12 @@
           </div>
 
           <!-- Search Module -->
-           <div class="col-md-5 sep" *ngIf="gathered['search'] && gathered['search'].result[4]">
-          </div>
-          <div class="col-md-2" *ngIf="gathered['search'] && gathered['search'].result[4]">
-              <p class="text-sep"> SEARCH MODULE </p>
-          </div>
-          <div class="col-md-5 sep" *ngIf="gathered['search'] && gathered['search'].result[4]">
+          <div class="col-md-12" *ngIf="gathered['search'] && gathered['search'].result[4]">
+            <div class="row">
+              <div class="col-md-5 sep" *ngIf="gathered['search'] && gathered['search'].result[4]"> </div>
+              <div class="col-md-2" *ngIf="gathered['search'] && gathered['search'].result[4]"> <p class="text-sep"> SEARCH MODULE </p> </div>
+              <div class="col-md-5 sep" *ngIf="gathered['search'] && gathered['search'].result[4]"> </div>
+            </div>
           </div>
          
           <!-- Search Names -->
