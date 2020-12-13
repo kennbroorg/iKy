@@ -201,6 +201,17 @@ export class DataGatherInfoService {
             );
         };
 
+        // Holehe
+        if (this.isModuleParamRunTaskExec('holehe', this.email, 'User', 100)) {
+            this.showToast('info', 'Holehe', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('holehe', {username: this.email, from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Holehe')
+            );
+        };
+
         // Fullcontact
         if (this.isModuleParamRunTaskExec('fullcontact', this.email, 'User', 100)) {
             this.showToast('info', 'Fullcontact', 'Send information gathering');
@@ -660,6 +671,17 @@ export class DataGatherInfoService {
                         .subscribe(this.processResponse,
                                    err => console.error('Ops: ', err.message),
                                    () => console.log('Completed Sherlock')
+                );
+            };
+
+            // Holehe
+            if (this.isModuleParamRunTaskExec('holehe', this.email, 'User', 100)) {
+                this.showToast('info', 'Holehe', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('holehe', {username: this.email, from: 'User'})
+                        .subscribe(this.processResponse,
+                                   err => console.error('Ops: ', err.message),
+                                   () => console.log('Completed Holehe')
                 );
             };
 

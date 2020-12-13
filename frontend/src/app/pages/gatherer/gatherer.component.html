@@ -447,6 +447,14 @@
             <ngx-socialscan-user [data]="gathered['socialscan']"></ngx-socialscan-user>
           </div>
 
+          <!-- Holehe
+          <div class="col-md-12" id="divHolehe" #divHolehe *ngIf="gathered['holehe'] && gathered['holehe'].result[4] && gathered['holehe'].result[4].graphic[0].holehe?.length > 0 && validationShow[gathered['holehe'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage=""> -->
+          <div class="col-md-12" id="divHolehe" #divHolehe *ngIf="gathered['holehe'] && gathered['holehe'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <div class="row">
+              <ngx-holehe-list class="col-md-4" [data]="gathered['holehe']"></ngx-holehe-list>
+              <ngx-holehe-graph class="col-md-8" [data]="gathered['holehe']"></ngx-holehe-graph>
+            </div>
+          </div>
 
           <!-- Sherlock -->
           <div class="col-md-12" id="divSherlock" #divSherlock *ngIf="gathered['sherlock'] && gathered['sherlock'].result[4] && gathered['sherlock'].result[4].graphic[0].sherlock?.length > 0 && validationShow[gathered['sherlock'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
