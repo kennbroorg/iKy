@@ -352,6 +352,23 @@ def r_sherlock(username=None):
 
 
 ################################################
+# Holehe
+################################################
+@home.route("/holehe", methods=["POST"])
+def r_holehe(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("Holehe - Detected Username : ", username, from_m)
+    res = celery.send_task('modules.holehe.holehe_tasks.t_holehe',
+                           args=(username, ))
+    print("Holehe - Task : ", res.task_id)
+    return jsonify(module="holehe", task=res.task_id,
+                   param=username, from_m=from_m)
+
+
+################################################
 # Tinder
 ################################################
 @home.route("/tinder", methods=["POST"])

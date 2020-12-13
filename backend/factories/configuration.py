@@ -26,6 +26,7 @@ def get_config():
                           'modules.instagram.instagram_tasks',
                           'modules.tiktok.tiktok_tasks',
                           'modules.sherlock.sherlock_tasks',
+                          'modules.holehe.holehe_tasks',
                           'modules.search.search_tasks',
                           'modules.tinder.tinder_tasks',
                           'modules.skype.skype_tasks',
