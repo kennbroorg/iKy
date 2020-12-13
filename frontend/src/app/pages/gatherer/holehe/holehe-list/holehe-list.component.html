@@ -1,0 +1,94 @@
+  <nb-card size="medium">
+    <nb-card-header>
+      <div (click)="openDialog(dialogHoleheList)">
+        HOLEHE List
+      </div>
+      <div class="help" style="top: 13px; right: 50px;" [nbPopover]="holeheListHelp" nbPopoverPlacement="bottom"><i class="far fa-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+    </nb-card-header>
+    <nb-card-body id="nbCardHoleheList" style="text-align: center; margin: 0px; padding: 0px;">
+      <nb-list>
+        <nb-list-item *ngFor="let c of holeheList">
+          <div class="contact">
+            <div class="info-container">
+              <div class="user-name ng-star-inserted" style="font-size: 15px; text-align: left;">{{c.title}}</div>
+              <div class="user-title ng-star-inserted">
+                  <p align="left" style="margin: 0px; padding:0px; padding-top: 5px;"><strong style="font-weight: 500;">Exist</strong> : {{c.exists}} | <strong style="font-weight: 500;">RateLimit</strong> : {{c.rateLimit}}</p>
+                  <p align="left" style="margin: 0px; padding:0px; padding-top: 5px;"><strong style="font-weight: 500;">Email Recovery</strong> : {{c.emailrecovery}} | <strong style="font-weight: 500;">Phone Number</strong> : {{c.phoneNumber}}</p>
+              </div>
+            </div>
+          </div>
+        </nb-list-item>
+      </nb-list>
+
+    </nb-card-body>
+  </nb-card>
+
+
+  <ng-template #dialogHoleheList let-data let-ref="dialogRef">
+    <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+      <nb-card-header>HOLEHE List</nb-card-header>
+      <nb-card-body id="nbCardHoleheList" style="text-align: center; margin: 0px; padding: 0px;">
+        <nb-list>
+          <nb-list-item *ngFor="let c of holeheList">
+            <div class="contact">
+              <div class="info-container">
+                <div class="user-name ng-star-inserted">{{c.title}}</div> 
+                <div class="user-title ng-star-inserted">
+                  <p align="left" style="margin: 0px; padding:0px; padding-top: 5px;"><strong style="font-weight: 500;">Exist</strong> : {{c.exists}}</p>
+                  <p align="left" style="margin: 0px; padding:0px;"><strong style="font-weight: 500;">RateLimit</strong> : {{c.rateLimit}}</p>
+                  <p align="left" style="margin: 0px; padding:0px;"><strong style="font-weight: 500;">Email Recovery</strong> : {{c.emailrecovery}}</p>
+                  <p align="left" style="margin: 0px; padding:0px;"><strong style="font-weight: 500;">Phone Number</strong> : {{c.phoneNumber}}</p>
+                </div>
+              </div>
+            </div>
+          </nb-list-item>
+        </nb-list>
+
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
+
+  <ng-template #holeheListHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        HOLEHE List Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : Holehe</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        This graph shows in list mode all the sites where the forgotten password function was tested and its result regardless of whether the mail is registered or not
+        </p>
+        <p style="text-align: justify;">
+        The field <strong style="font-weight: 600;">Exists</strong> indicates if the mail is registered (true) or not (false)
+        </p>
+        <p style="text-align: justify;">
+        The field <strong style="font-weight: 600;">RateLimit</strong> indicates if there were restrictions to determine if the mail is registered
+        </p>
+        <p style="text-align: justify;">
+        The fields <strong style="font-weight: 600;">Email Recovery</strong> and <strong style="font-weight: 600;">Phone Number</strong> are additional data found during the process
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module can be executed only by entering an email in the <strong style="font-weight: 600;">email</strong> field of the advanced search or in normal search, being its validation indicator high since it has been entered by the user
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p style="text-align: justify;">
+        The data collected arise from the integration of the holehe project which can be found at 
+        </p> 
+
+        <p style="text-align: justify;">
+        https://github.com/megadose/holehe
+        </p> 
+
+        <p style="text-align: justify;">
+        holehe allows you to check if the mail is used on different sites like twitter, instagram and will retrieve information on sites with the forgotten password function
+        </p> 
+        <p style="font-weight: 600;">Important</p> 
+        <p style="text-align: justify;">
+        Holehe does not alert the target email (https://github.com/megadose/holehe/issues/12)
+        </p> 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>

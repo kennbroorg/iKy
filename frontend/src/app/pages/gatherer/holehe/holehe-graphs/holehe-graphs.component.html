@@ -1,0 +1,58 @@
+  <nb-card size="medium">
+    <nb-card-header>
+      <div (click)="openDialog(dialogHoleheGraph)">
+        HOLEHE Graphs
+      </div>
+      <div class="help" [nbPopover]="holeheGraphsHelp" nbPopoverPlacement="bottom"><i class="far fa-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+    </nb-card-header>
+    <nb-card-body id="nbCardHoleheGraph" #nbCardHoleheGraph style="text-align: center; overflow: hidden;">
+          <ngx-graphs [data]="holeheGraph"></ngx-graphs>
+    </nb-card-body>
+  </nb-card>
+
+
+  <ng-template #dialogHoleheGraph let-data let-ref="dialogRef">
+    <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+      <nb-card-header>HOLEHE Graphs</nb-card-header>
+      <nb-card-body>
+          <ngx-graphs [data]="holeheGraph" modal="true"></ngx-graphs>
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
+
+  <ng-template #holeheGraphsHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        HOLEHE Graphs Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : Holehe</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        This graph shows in the network nodes the sites where the mail was successfully found using the forgotten password function 
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module can be executed only by entering an email in the <strong style="font-weight: 600;">email</strong> field of the advanced search or in normal search, being its validation indicator high since it has been entered by the user
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p style="text-align: justify;">
+        The data collected arise from the integration of the holehe project which can be found at 
+        </p> 
+
+        <p style="text-align: justify;">
+        https://github.com/megadose/holehe
+        </p> 
+
+        <p style="text-align: justify;">
+        holehe allows you to check if the mail is used on different sites like twitter, instagram and will retrieve information on sites with the forgotten password function
+        </p> 
+        <p style="font-weight: 600;">Important</p> 
+        <p style="text-align: justify;">
+        Holehe does not alert the target email (https://github.com/megadose/holehe/issues/12)
+        </p> 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
+
