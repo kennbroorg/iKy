@@ -10,6 +10,7 @@ import {
     NbButtonModule, 
     NbCardModule, 
     NbIconModule, 
+    NbPopoverModule,
     NbSpinnerModule, 
     NbTabsetModule, 
     NbDialogModule, 
@@ -95,6 +96,9 @@ import { TiktokGraphsComponent } from './tiktok/tiktok-graphs/tiktok-graphs.comp
 import { SherlockGraphComponent } from './sherlock/sherlock-graphs/sherlock-graphs.component';
 import { SherlockListComponent } from './sherlock/sherlock-list/sherlock-list.component';
 
+import { HoleheGraphComponent } from './holehe/holehe-graphs/holehe-graphs.component';
+import { HoleheListComponent } from './holehe/holehe-list/holehe-list.component';
+
 import { SkypeComponent } from './skype/skype.component';
 
 import { VenmoGraphsComponent } from './venmo/venmo-graphs/venmo-graphs.component';
@@ -135,6 +139,7 @@ import { SharedModule } from '../shared/shared.module';
     NbBadgeModule,
     TreeModule,
     NbCardModule,
+    NbPopoverModule,
     NbTooltipModule,
     NbInputModule,
     NbTreeGridModule,
@@ -201,6 +206,8 @@ import { SharedModule } from '../shared/shared.module';
     FsIconComponent,
     SherlockGraphComponent,
     SherlockListComponent,
+    HoleheGraphComponent,
+    HoleheListComponent,
     VenmoGraphsComponent,
     VenmoFriendsComponent,
     VenmoTransComponent,
