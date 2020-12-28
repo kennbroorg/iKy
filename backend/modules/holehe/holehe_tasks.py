@@ -32,8 +32,6 @@ async def p_holehe(email, from_m):
     modules = holehe.core.import_submodules("holehe.modules")
     websites = holehe.core.get_functions(modules)
 
-    email = "jpdborgna@gmail.com"
-
     client = httpx.AsyncClient(timeout=60)
     out = []
     async with trio.open_nursery() as nursery:
