@@ -151,7 +151,7 @@ python3 -m pip install -r requirements.txt
 
 First of all, install [nodejs](https://nodejs.org/en/).
 
-#### Dependencias
+#### Dependencies
 
 Inside the directory **frontend** install the dependencies
 
