@@ -267,7 +267,7 @@ Una vez que la aplicación esté cargada en el browser, deberá ir a la opción 
 Ya sea que use este proyecto, haya aprendido algo de él o simplemente le guste, por favor considere apoyarlo comprándome un café, para que pueda dedicar más tiempo a proyectos de código abierto como este.
 
 <div align="center" style="margin-top: 30px;">
-<a href="https://www.buymeacoffee.com/kennbro" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 20px !important;width: 72px !important;" ></a>
+<a href="https://www.buymeacoffee.com/kennbro" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="80" ></a>
 </div>
 
 ## Aviso Legal
