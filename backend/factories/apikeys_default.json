@@ -63,5 +63,15 @@
     "id": 12,
     "name": "twitter_access_token_secret",
     "key": ""
+  },
+  {
+    "id": 13,
+    "name": "spotify_client_id",
+    "key": ""
+  },
+  {
+    "id": 14,
+    "name": "spotify_client_secret",
+    "key": ""
   }
 ]

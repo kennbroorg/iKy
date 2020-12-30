@@ -355,6 +355,31 @@
             <ngx-linkedin-pos [data]="gathered['linkedin']"></ngx-linkedin-pos>
           </div>
 
+          <!-- Spotify Social -->
+          <div class="col-md-4" id="divSpotifySocial" #divSpotifySocial *ngIf="gathered['spotify'] && gathered['spotify'].result[4] && validationShow[gathered['spotify'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-spotify-social [data]="gathered['spotify']"></ngx-spotify-social>
+          </div>
+
+          <!-- Spotify Playlists -->
+          <div class="col-md-4" id="divSpotifyPlaylists" #divSpotifyPlaylists *ngIf="gathered['spotify'] && gathered['spotify'].result[4] && validationShow[gathered['spotify'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-spotify-playlists [data]="gathered['spotify']"></ngx-spotify-playlists>
+          </div>
+
+          <!-- Spotify Autors -->
+          <div class="col-md-4" id="divSpotifyAutors" #divSpotifyAutors *ngIf="gathered['spotify'] && gathered['spotify'].result[4] && validationShow[gathered['spotify'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-spotify-autors [data]="gathered['spotify']"></ngx-spotify-autors>
+          </div>
+
+          <!-- Spotify Language -->
+          <div class="col-md-4" id="divSpotifyLang" #divSpotifyLang *ngIf="gathered['spotify'] && gathered['spotify'].result[4] && validationShow[gathered['spotify'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-spotify-lang [data]="gathered['spotify']"></ngx-spotify-lang>
+          </div>
+
+          <!-- Spotify Words -->
+          <div class="col-md-4" id="divSpotifyWords" #divSpotifyWords *ngIf="gathered['spotify'] && gathered['spotify'].result[4] && validationShow[gathered['spotify'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-spotify-words [data]="gathered['spotify']"></ngx-spotify-words>
+          </div>
+
           <!-- Github Graphs -->
           <div id="divGithubGraphs" id="divGithubGraphs" #divGithubGraphs class="col-md-4" *ngIf="gathered['github'] && gathered['github'].result[4] && validationShow[gathered['github'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-github-graphs [data]="gathered['github']"></ngx-github-graphs>
@@ -616,9 +641,16 @@
           </div>
         </div>
 
+        <div class="form-group row" style="padding-top: 10px;padding-right:20px; margin-bottom: 10px;">
+          <label for="inputSpotify" class="col-sm-1 col-form-label" nbTooltip="Posible Spotify Account (Used in spotify module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fab fa-spotify fa-2x"></i></label>
+          <div class="col-sm-5">
+            <input type="text" class="form-control" #spotify id="spotify" placeholder="Spotify" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
+          </div>
+        </div>
+
       </nb-card-body>
       <nb-card-footer>
-          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, username.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value, tinder.value, venmo.value, reddit.value)" style="border: none; margin-left:30px; font-weight: 400;">
+          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, username.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value, tinder.value, venmo.value, reddit.value, spotify.value)" style="border: none; margin-left:30px; font-weight: 400;">
               <i class="fas fa-search" style="padding-right: 5px"></i> SEARCH 
           </button>
 

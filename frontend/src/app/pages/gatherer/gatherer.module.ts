@@ -119,6 +119,12 @@ import { RedditBubbleComponent } from './reddit/reddit-bubble/reddit-bubble.comp
 import { PeopledatalabsSocialComponent } from './peopledatalabs/peopledatalabs-social/peopledatalabs-social.component';
 import { PeopledatalabsGraphsComponent } from './peopledatalabs/peopledatalabs-graphs/peopledatalabs-graphs.component';
 
+import { SpotifySocialComponent } from './spotify/spotify-social/spotify-social.component';
+import { SpotifyPlaylistsComponent } from './spotify/spotify-playlists/spotify-playlists.component';
+import { SpotifyAutorsComponent } from './spotify/spotify-autors/spotify-autors.component';
+import { SpotifyLangComponent } from './spotify/spotify-lang/spotify-lang.component';
+import { SpotifyWordsComponent } from './spotify/spotify-words/spotify-words.component';
+
 import { FsIconComponent, TaskexecComponent } from './taskexec/taskexec.component';
 
 import { SharedModule } from '../shared/shared.module';
@@ -221,6 +227,11 @@ import { SharedModule } from '../shared/shared.module';
     PeopledatalabsSocialComponent,
     PeopledatalabsGraphsComponent,
     LeaklookupEmailComponent,
+    SpotifySocialComponent,
+    SpotifyPlaylistsComponent,
+    SpotifyAutorsComponent,
+    SpotifyLangComponent,
+    SpotifyWordsComponent,
   ],
   providers: [
     InstagramMapService,

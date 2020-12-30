@@ -85,7 +85,9 @@ Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
     <img alt="tweetiment" src="https://img.shields.io/badge/module-tweetiment-blue.svg?style=flat-square">
     <img alt="peopledatalabs" src="https://img.shields.io/badge/module-peopledatalabs-blue.svg?style=flat-square">
     <img alt="reddit" src="https://img.shields.io/badge/module-reddit-blue.svg?style=flat-square">
-    <img alt="leaklookup" src="https://img.shields.io/badge/module-leaklookup-blue.svg?style=flat-square">
+    <img alt="leaklookup" src="https://img.shields.io/badge/module-twint-blue.svg?style=flat-square">
+    <img alt="leaklookup" src="https://img.shields.io/badge/module-holehe-blue.svg?style=flat-square">
+    <img alt="leaklookup" src="https://img.shields.io/badge/module-spotify-blue.svg?style=flat-square">
 </div>
 
 <h1 id="installation">Installation</h1>
@@ -218,6 +220,7 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 - Emailrep.io : Generate the APIs from [here](https://emailrep.io/key)
 - Leaklookup : Generate the APIs from [here](https://leak-lookup.com/api)
 - Twitter: Generate the APIs from [here](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
+- Spotify: Generate the APIs from [here](https://developer.spotify.com/dashboard/applications)
 
 # Wiki
 
@@ -262,7 +265,7 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 Whether you use this project, have learned something from it, or just like it, please consider supporting it by buying me a coffee, so I can dedicate more time on open-source projects like this.
 
 <div align="center" style="margin-top: 30px;">
-<a href="https://www.buymeacoffee.com/kennbro" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+<a href="https://www.buymeacoffee.com/kennbro" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="80" ></a>
 </div>
 
 # Disclaimer

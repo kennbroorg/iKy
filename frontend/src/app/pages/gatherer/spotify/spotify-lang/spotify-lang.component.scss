@@ -4,10 +4,6 @@
 
 @include nb-install-component() {
 
-  nb-card-body {
-    padding: 0;
-  }
-
   @include media-breakpoint-down(md) {
   }
   @include media-breakpoint-down(sm) {
@@ -15,8 +11,3 @@
   @include media-breakpoint-down(is) {
   }
 }
-
-
-
-
-

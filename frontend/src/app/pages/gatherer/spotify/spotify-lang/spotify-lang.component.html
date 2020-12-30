@@ -1,0 +1,53 @@
+  <nb-card size="small">
+    <nb-card-header>
+      <div (click)="openDialog(dialogSpotifyLang)">
+          SPOTIFY Language
+      </div>
+      <div class="help" [nbPopover]="spotifyLangHelp" nbPopoverPlacement="bottom"><i class="far fa-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
+    </nb-card-header>
+    <nb-card-body id="nbCardSpotifyLang" #nbCardSpotifyLang style="margin: 0px; padding: 0px; text-align: center; overflow: hidden;">
+        <ngx-bubble [data]="spotifyLang"></ngx-bubble>
+    </nb-card-body>
+  </nb-card>
+
+  <ng-template #dialogSpotifyLang let-data let-ref="dialogRef">
+      <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+        <nb-card-header>SPOTIFY Language</nb-card-header>
+        <nb-card-body style="overflow: hidden; padding: 0px;">
+          <ngx-bubble [data]="spotifyLang"></ngx-bubble>
+        </nb-card-body>
+      </nb-card>
+  </ng-template>
+
+  <ng-template #spotifyLangHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        SPOTIFY Language Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : Spotify</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        This Bubble chart shows the predominant languages in the songs
+        </p>
+        <p style="text-align: justify;">
+        The size of the bubbles are proportional
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module can be executed by entering a username in the <strong style="font-weight: 600;">spotify</strong> field of the advanced search, being its validation indicator high since it has been entered by the user
+        </p> 
+        <p style="text-align: justify;">
+        It can also be executed if another module has found a spotify username (Fullcontact, Keybase, Searchs, PeopleDataLabs, etc). Its validation indicator will be medium since its discovery is indirect
+        </p> 
+        <p style="text-align: justify;">
+        Finally, and with a low validation indicator, the module can be executed if a username was entered in the "username" field of the advanced search or if a mail was entered in the mail or advanced search. In this case the @domain.ext is cut out and the username is used as input
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p>
+        Spotify API
+        </p> 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>

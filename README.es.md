@@ -86,6 +86,9 @@ Visite el Gitlab Page del [Projecto](https://kennbroorg.gitlab.io/ikyweb/)
     <img alt="peopledatalabs" src="https://img.shields.io/badge/module-peopledatalabs-blue.svg?style=flat-square">
     <img alt="reddit" src="https://img.shields.io/badge/module-reddit-blue.svg?style=flat-square">
     <img alt="leaklookup" src="https://img.shields.io/badge/module-leaklookup-blue.svg?style=flat-square">
+    <img alt="leaklookup" src="https://img.shields.io/badge/module-twint-blue.svg?style=flat-square">
+    <img alt="leaklookup" src="https://img.shields.io/badge/module-holehe-blue.svg?style=flat-square">
+    <img alt="leaklookup" src="https://img.shields.io/badge/module-spotify-blue.svg?style=flat-square">
 </div>
 
 <h1 id="installation">Instalación</h1>
@@ -219,6 +222,7 @@ Una vez que la aplicación esté cargada en el browser, deberá ir a la opción 
 - Emailrep.io : Generar las APIs desde [aqui](https://emailrep.io/key)
 - Leaklookup : Generar las APIs desde [aqui](https://leak-lookup.com/api)
 - Twitter: Generar las APIs desde [aqui](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
+- Spotify: Generar las APIs desde [aqui](https://developer.spotify.com/dashboard/applications)
 
 
 # Wiki
@@ -263,7 +267,7 @@ Una vez que la aplicación esté cargada en el browser, deberá ir a la opción 
 Ya sea que use este proyecto, haya aprendido algo de él o simplemente le guste, por favor considere apoyarlo comprándome un café, para que pueda dedicar más tiempo a proyectos de código abierto como este.
 
 <div align="center" style="margin-top: 30px;">
-<a href="https://www.buymeacoffee.com/kennbro" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+<a href="https://www.buymeacoffee.com/kennbro" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="80" ></a>
 </div>
 
 ## Aviso Legal

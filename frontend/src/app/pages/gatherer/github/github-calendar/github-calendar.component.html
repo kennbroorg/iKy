@@ -1,10 +1,39 @@
   <nb-card size="small" class="border-default">
     <nb-card-header>
-      GITHUB Calendar
-      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+        GITHUB Calendar
+      <div class="help" [nbPopover]="githubCalendarHelp" nbPopoverPlacement="bottom"><i class="far fa-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
     </nb-card-header>
     <nb-card-body style="text-align: center; overflow: visible; padding: 0px;"> 
         <div id="git-cal-1" align="center" style="margin: 0; position: absolute; top: 50%; left: 10%; right: 10%; -ms-transform: translateY(-50%); transform: translateY(-50%);" [innerHTML]="githubCalendar | safe: 'html'"></div>
         <!-- <div id="git-cal-2" align="center" style="padding:0px;" height="500" [innerHTML]="githubCalendarPrev | safe: 'html'"></div> -->
     </nb-card-body>
   </nb-card>
+
+  <ng-template #githubCalendarHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        GITHUB Graphs Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : Github</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        This graph shows the github calendar that reflects the amount of contributions made over a year
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module can be executed by entering a username in the <strong style="font-weight: 600;">github</strong> field of the advanced search, being its validation indicator high since it has been entered by the user
+        </p> 
+        <p style="text-align: justify;">
+        It can also be executed if another module has found a github username (Fullcontact, Keybase, Searchs, PeopleDataLabs, etc). Its validation indicator will be medium since its discovery is indirect
+        </p> 
+        <p style="text-align: justify;">
+        Finally, and with a low validation indicator, the module can be executed if a username was entered in the "username" field of the advanced search or if a mail was entered in the mail or advanced search. In this case the @domain.ext is cut out and the username is used as input
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p>Public Github API</p> 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
+
