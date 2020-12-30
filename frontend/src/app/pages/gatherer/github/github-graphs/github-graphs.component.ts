@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, TemplateRef } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
+import { NbPopoverDirective, NbPosition, NbTrigger } from '@nebular/theme';
 
 @Component({
     selector: 'ngx-github-graphs',

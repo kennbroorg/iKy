@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Pipe, Sanitizer } from '@angular/core';
+import { NbPopoverDirective, NbPosition, NbTrigger } from '@nebular/theme';
 
 @Component({
     selector: 'ngx-github-calendar',
