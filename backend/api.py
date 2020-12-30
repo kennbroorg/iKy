@@ -369,6 +369,24 @@ def r_holehe(username=None):
 
 
 ################################################
+# Spotify
+################################################
+@home.route("/spotify", methods=["POST"])
+def r_spotify(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "initial")
+    proc = json_result.get("proc", 1)
+    print("Spotify - Detected Username : ", username, from_m, proc)
+    res = celery.send_task('modules.spotify.spotify_tasks.t_spotify',
+                           args=(username, from_m, proc))
+    print("Spotify - Task : ", res.task_id)
+    return jsonify(module="spotify", task=res.task_id,
+                   param=username, from_m=from_m, proc=proc)
+
+
+################################################
 # Tinder
 ################################################
 @home.route("/tinder", methods=["POST"])
