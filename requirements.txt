@@ -34,7 +34,7 @@ httpcore==0.9.1
 httpx==0.13.3
 hyperframe==5.2.0
 idna==2.9
-instaloader==4.4.4
+instaloader==4.5.5
 itsdangerous==1.1.0
 Jinja2==2.11.2
 kombu==4.6.10
@@ -63,10 +63,12 @@ soupsieve==2.0.1
 tqdm==4.46.1
 tweepy==3.9.0
 git+https://github.com/twintproject/twint.git@origin/master#egg=twint
-git+https://github.com/megadose/holehe.git@origin/master#egg=holehe
+holehe
 urllib3==1.25.9
 vaderSentiment==3.3.2
 vine==1.3.0
 Werkzeug==1.0.1
 yarl==1.4.2
 termcolor==1.1.0
+spotipy==2.16.1
+stop-words==2018.7.23
