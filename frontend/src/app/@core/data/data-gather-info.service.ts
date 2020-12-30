@@ -363,6 +363,17 @@ export class DataGatherInfoService {
             );
         };
 
+        // Spotify
+        if (this.isModuleParamRunTaskExec('spotify', this.username, 'Username', 1)) {
+            this.showToast('info', 'Spotify', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('spotify', {username: this.username, from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Spotify')
+            );
+        };
+
     }
 
     /* Gather Info Advance */
@@ -382,31 +393,6 @@ export class DataGatherInfoService {
             .subscribe(this.processTasklist, 
                        err => console.error('Ops: ', err.message)
         );
-        
-        // Evaluation of datas
-        if (datas['username'] != '') {
-            console.log("Username : ", datas['username']);
-            // Sherlock
-            if (this.isModuleParamRunTaskExec('sherlock', datas['username'], 'User', 100)) {
-                this.showToast('info', 'Sherlock', 'Send information gathering');
-                this.globalGather['taskresume'][0].PP++;
-                this.executeRequest$('sherlock', {username: datas['username'], from: 'User'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed Sherlock')
-                );
-            };
-            // Search
-            if (this.isModuleParamRunTaskExec('search', datas['username'], 'User', 100)) {
-                this.showToast('info', 'Searchers', 'Send information gathering');
-                this.globalGather['taskresume'][0].PP++;
-                this.executeRequest$('search', {username: datas['username'], from: 'User'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed Searchers')
-                );
-            };
-        };
         
         // Evaluation of datas
         if (datas['twitter'] != '') {
@@ -519,7 +505,7 @@ export class DataGatherInfoService {
         
         if (datas['reddit'] != '') {
             console.log("Reddit : ", datas['reddit']);
-            // Venmo
+            // Reddit
             if (this.isModuleParamRunTaskExec('reddit', datas['reddit'], 'User', 100)) {
                 this.showToast('info', 'Reddit', 'Send information gathering');
                 this.globalGather['taskresume'][0].PP++;
@@ -527,6 +513,45 @@ export class DataGatherInfoService {
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
                                () => console.log('Completed Reddit')
+                );
+            };
+        };
+        
+        if (datas['spotify'] != '') {
+            console.log("Spotify : ", datas['spotify']);
+            // Spotify
+            if (this.isModuleParamRunTaskExec('spotify', datas['spotify'], 'User', 100)) {
+                this.showToast('info', 'Spotify', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('spotify', {username: datas['spotify'], from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Spotify')
+                );
+            };
+        };
+        
+        // Evaluation of datas
+        if (datas['username'] != '') {
+            console.log("Username : ", datas['username']);
+            // Sherlock
+            if (this.isModuleParamRunTaskExec('sherlock', datas['username'], 'User', 100)) {
+                this.showToast('info', 'Sherlock', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('sherlock', {username: datas['username'], from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Sherlock')
+                );
+            };
+            // Search
+            if (this.isModuleParamRunTaskExec('search', datas['username'], 'User', 100)) {
+                this.showToast('info', 'Searchers', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('search', {username: datas['username'], from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Searchers')
                 );
             };
         };
@@ -592,28 +617,6 @@ export class DataGatherInfoService {
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
                                () => console.log('Completed Peopledatalabs')
-                );
-            };
-    
-            // Github
-            if (this.isModuleParamRunTaskExec('github', this.username, 'Username', 1)) {
-                this.showToast('info', 'GitHub', 'Send information gathering');
-                this.globalGather['taskresume'][0].PP++;
-                this.executeRequest$('github', {username: this.username, from: 'Username'})
-                        .subscribe(this.processResponse,
-                                   err => console.error('Ops: ', err.message),
-                                   () => console.log('Completed GitHub')
-                );
-            };
-
-            // Keybase
-            if (this.isModuleParamRunTaskExec('keybase', this.username, 'Username', 1)) {
-                this.showToast('info', 'Keybase', 'Send information gathering');
-                this.globalGather['taskresume'][0].PP++;
-                this.executeRequest$('keybase', {username: this.username, from: 'Username'})
-                        .subscribe(this.processResponse,
-                                   err => console.error('Ops: ', err.message),
-                                   () => console.log('Completed Keybase')
                 );
             };
     
@@ -685,12 +688,38 @@ export class DataGatherInfoService {
                 );
             };
 
+            if (datas['github'] == '') {
+                // Github
+                if (this.isModuleParamRunTaskExec('github', this.username, 'Username', 1)) {
+                    this.showToast('info', 'Github', 'Send information gathering');
+                    this.globalGather['taskresume'][0].PP++;
+                    this.executeRequest$('github', {username: this.username, from: 'Username'})
+                            .subscribe(this.processResponse,
+                                       err => console.error('Ops: ', err.message),
+                                       () => console.log('Completed Github')
+                    );
+                };
+            };
+
+            if (datas['keybase'] == '') {
+                // Keybase
+                if (this.isModuleParamRunTaskExec('keybase', this.username, 'Username', 1)) {
+                    this.showToast('info', 'Keybase', 'Send information gathering');
+                    this.globalGather['taskresume'][0].PP++;
+                    this.executeRequest$('keybase', {username: this.username, from: 'Username'})
+                            .subscribe(this.processResponse,
+                                       err => console.error('Ops: ', err.message),
+                                       () => console.log('Completed Keybase')
+                    );
+                };
+            };
+
             if (datas['reddit'] == '') {
                 // Reddit
-                if (this.isModuleParamRunTaskExec('reddit', this.username, 'User', 100)) {
-                    this.showToast('info', 'Linkedin', 'Send information gathering');
+                if (this.isModuleParamRunTaskExec('reddit', this.username, 'Username', 1)) {
+                    this.showToast('info', 'Reddit', 'Send information gathering');
                     this.globalGather['taskresume'][0].PP++;
-                    this.executeRequest$('reddit', {username: this.username, from: 'User'})
+                    this.executeRequest$('reddit', {username: this.username, from: 'Username'})
                             .subscribe(this.processResponse,
                                        err => console.error('Ops: ', err.message),
                                        () => console.log('Completed Reddit')
@@ -766,7 +795,7 @@ export class DataGatherInfoService {
     private processTasklist = (data: any): any => {
         this.globalGather['tasklist'] = data;
         // this.tasklist = data;
-        this.showToast('success', 'Tasklist', 'Process ended');
+        // this.showToast('success', 'Tasklist', 'Process ended');
     };
     
     private isTaskImplemented(module) {
@@ -889,7 +918,7 @@ export class DataGatherInfoService {
             console.log("Launch tweetiment")
             let task_id
             for (let indexTaskexec in this.globalGather['taskexec']) {
-                if (this.globalGather['taskexec'][indexTaskexec].module == "twitter") {
+                if (this.globalGather['taskexec'][indexTaskexec].module == "twint") {
                     task_id = this.globalGather['taskexec'][indexTaskexec].task_id;
                 } 
             }
