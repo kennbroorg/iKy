@@ -1,0 +1,82 @@
+  <nb-card size="small">
+    <nb-card-header>
+      <div (click)="openDialog(dialogSpotifyPlaylists)">
+        SPOTIFY Playlists
+      </div>
+      <div class="help" [nbPopover]="spotifyPlaylistsHelp" nbPopoverPlacement="bottom"><i class="far fa-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
+    </nb-card-header>
+    <nb-card-body style="margin: 0px; padding: 0px; text-align: center; overflow: hidden;">
+
+        <div #nbCardSpotifyPlaylists>
+            <ngx-charts-bar-horizontal
+              [view]="[width, height]"
+              [scheme]="colorScheme"
+              [results]="spotifyPlaylists"
+              [gradient]="gradient"
+              [xAxis]="showXAxis"
+              [yAxis]="showYAxis"
+              [legend]="showLegend"
+              [showXAxisLabel]="showXAxisLabel"
+              [showYAxisLabel]="showYAxisLabel"
+              [xAxisLabel]="xAxisLabel"
+              [yAxisLabel]="yAxisLabel">
+            </ngx-charts-bar-horizontal>
+        </div>
+
+    </nb-card-body>
+  </nb-card>
+
+  <ng-template #dialogSpotifyPlaylists let-data let-ref="dialogRef">
+    <nb-card [style.width]="width * 2" [style.height]="height * 2" style="background-color: rgba(0, 0, 0, 0.8);">
+      <nb-card-header>SPOTIFY Playlists</nb-card-header>
+      <nb-card-body style="overflow: hidden;">
+
+        <div style="fill: #05fcfc !important; font-size: 35px !important;">
+            <ngx-charts-bar-horizontal
+              [view]="[width * 1.8, height * 1.8]"
+              [scheme]="colorScheme"
+              [results]="spotifyPlaylists"
+              [gradient]="gradient"
+              [xAxis]="showXAxis"
+              [yAxis]="showYAxis"
+              [legend]="showLegend"
+              [showXAxisLabel]="showXAxisLabel"
+              [showYAxisLabel]="showYAxisLabel"
+              [xAxisLabel]="xAxisLabel"
+              [yAxisLabel]="yAxisLabel">
+            </ngx-charts-bar-horizontal>
+        </div>
+
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
+
+  <ng-template #spotifyPlaylistsHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        SPOTIFY Playlists Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : Spotify</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        This chart shows the playlistis and the number of tracks in each
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module can be executed by entering a username in the <strong style="font-weight: 600;">spotify</strong> field of the advanced search, being its validation indicator high since it has been entered by the user
+        </p> 
+        <p style="text-align: justify;">
+        It can also be executed if another module has found a spotify username (Fullcontact, Keybase, Searchs, PeopleDataLabs, etc). Its validation indicator will be medium since its discovery is indirect
+        </p> 
+        <p style="text-align: justify;">
+        Finally, and with a low validation indicator, the module can be executed if a username was entered in the "username" field of the advanced search or if a mail was entered in the mail or advanced search. In this case the @domain.ext is cut out and the username is used as input
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p style="text-align: justify;">
+        Spotify API
+        </p> 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
