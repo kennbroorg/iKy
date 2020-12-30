@@ -1,7 +1,10 @@
-  <nb-card size="small" class="border-default">
-    <nb-card-header (click)="openDialog(dialogTwitterSource)">
-      TWITTER Source
-      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+  <nb-card size="small">
+    <nb-card-header>
+      <div (click)="openDialog(dialogTwitterSource)">
+        TWITTER Source
+      </div>
+      <div class="help" [nbPopover]="twitterSourceHelp" nbPopoverPlacement="bottom"><i class="far fa-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
     </nb-card-header>
     <nb-card-body style="margin: 0px; padding: 0px; text-align: center; overflow: hidden;">
 
@@ -24,7 +27,6 @@
     </nb-card-body>
   </nb-card>
 
-
   <ng-template #dialogTwitterSource let-data let-ref="dialogRef">
     <nb-card [style.width]="width * 2" [style.height]="height * 2" style="background-color: rgba(0, 0, 0, 0.8);">
       <nb-card-header>TWITTER Source</nb-card-header>
@@ -46,6 +48,35 @@
             </ngx-charts-bar-horizontal>
         </div>
 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
+
+  <ng-template #twitterSourceHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        TWITTER Source Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : Twitter</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        With this graph you can determine the sources and devices used to create the tweets
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module can be executed by entering a username in the <strong style="font-weight: 600;">twitter</strong> field of the advanced search, being its validation indicator high since it has been entered by the user
+        </p> 
+        <p style="text-align: justify;">
+        It can also be executed if another module has found a twitter username (Fullcontact, Keybase, Searchs, PeopleDataLabs, etc). Its validation indicator will be medium since its discovery is indirect
+        </p> 
+        <p style="text-align: justify;">
+        Finally, and with a low validation indicator, the module can be executed if a username was entered in the "username" field of the advanced search or if a mail was entered in the mail or advanced search. In this case the @domain.ext is cut out and the username is used as input
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p style="text-align: justify;">
+        <strong style="font-weight: 600;">Important</strong> : This information is only available with Twitter API Key
+        </p> 
       </nb-card-body>
     </nb-card>
   </ng-template>

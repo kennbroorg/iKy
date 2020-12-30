@@ -1,7 +1,10 @@
-  <nb-card size="small" class="border-default">
-    <nb-card-header (click)="openDialog(dialogTwitterSocial)">
-      TWITTER Social
-      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+  <nb-card size="small">
+    <nb-card-header>
+      <div (click)="openDialog(dialogTwitterSocial)">
+          TWITTER Social
+      </div>
+      <div class="help" [nbPopover]="twitterSocialHelp" nbPopoverPlacement="bottom"><i class="far fa-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
     </nb-card-header>
     <nb-card-body id="nbCardTwitterSocial" #nbCardTwitterSocial style="text-align: center; overflow: hidden; margin: 0px; padding: 0px;">
         <ngx-graphs [data]="twitterSocial"></ngx-graphs>
@@ -16,6 +19,33 @@
 
           <ngx-graphs [data]="twitterSocial" modal="true"></ngx-graphs>
 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
+
+  <ng-template #twitterSocialHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        TWITTER Approval Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : Twitter</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        This graph shows in network nodes the basic information extracted, such as name, followers, ID, following, avatar, likes, etc
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module can be executed by entering a username in the <strong style="font-weight: 600;">twitter</strong> field of the advanced search, being its validation indicator high since it has been entered by the user
+        </p> 
+        <p style="text-align: justify;">
+        It can also be executed if another module has found a twitter username (Fullcontact, Keybase, Searchs, PeopleDataLabs, etc). Its validation indicator will be medium since its discovery is indirect
+        </p> 
+        <p style="text-align: justify;">
+        Finally, and with a low validation indicator, the module can be executed if a username was entered in the "username" field of the advanced search or if a mail was entered in the mail or advanced search. In this case the @domain.ext is cut out and the username is used as input
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p>Twitter API or Twint, depending on whether the Twitter API Key was entered</p> 
       </nb-card-body>
     </nb-card>
   </ng-template>

@@ -1,7 +1,10 @@
   <nb-card size="small" class="border-default">
-    <nb-card-header  (click)="openDialog(dialogTwitterList)">
-      TWITTER Tweets Retweets (100 last tweets)
-      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+    <nb-card-header>
+      <div (click)="openDialog(dialogTwitterList)">
+          TWITTER Tweets Retweets (100 last tweets)
+      </div>
+      <div class="help" [nbPopover]="twitterListHelp" nbPopoverPlacement="bottom"><i class="far fa-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
     </nb-card-header>
     <nb-card-body style="margin: 0px; padding: 0px; text-align: center; overflow: hidden;margin-top: 10px;">
 
@@ -22,26 +25,9 @@
               >
             </ngx-charts-line-chart>
          </div>
-        <!-- 
-        <div #nbCardTwitterList id="nbCardTwitterList">
-            <ngx-charts-bar-vertical-2d
-              [view]="[width, height - 50]"
-              [scheme]="colorScheme"
-              [results]="twitterList"
-              showDataLabel="true"
-              legend="true"
-              legendTitle=""
-              legendPosition="below"
-              xAxis="true"
-              yAxis="true"
-            >
-            </ngx-charts-bar-vertical-2d>
-         </div>
-        -->
 
     </nb-card-body>
   </nb-card>
-
 
   <ng-template #dialogTwitterList let-data let-ref="dialogRef">
     <nb-card [style.width]="width * 2" [style.height]="height * 2" style="background-color: rgba(0, 0, 0, 0.8);">
@@ -64,22 +50,37 @@
               >
             </ngx-charts-line-chart>
         </div>
-        <!-- 
-        <div style="fill: #05fcfc !important; font-size: 35px !important;">
-            <ngx-charts-bar-vertical-2d
-              [view]="[width * 1.8, height * 1.8]"
-              [scheme]="colorScheme"
-              [results]="twitterList"
-              showDataLabel="true"
-              legend="true"
-              legendTitle=""
-              legendPosition="below"
-              xAxis="true"
-              yAxis="true">
-            </ngx-charts-bar-vertical-2d>
-        </div>
-        -->
 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
+
+  <ng-template #twitterListHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+          TWITTER Tweets Retweets (100 last tweets)
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : Twitter</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        This line chart shows for each of the last 100 tweets its retweets, likes and replies
+        </p>
+        <p style="text-align: justify;">
+        Through this graph you can see if the characteristics (retweets, likes and replies) are sustained and similar or some tweet stands out from the rest
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module can be executed by entering a username in the <strong style="font-weight: 600;">twitter</strong> field of the advanced search, being its validation indicator high since it has been entered by the user
+        </p> 
+        <p style="text-align: justify;">
+        It can also be executed if another module has found a twitter username (Fullcontact, Keybase, Searchs, PeopleDataLabs, etc). Its validation indicator will be medium since its discovery is indirect
+        </p> 
+        <p style="text-align: justify;">
+        Finally, and with a low validation indicator, the module can be executed if a username was entered in the "username" field of the advanced search or if a mail was entered in the mail or advanced search. In this case the @domain.ext is cut out and the username is used as input
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p>Twitter API or Twint, depending on whether the Twitter API Key was entered</p> 
       </nb-card-body>
     </nb-card>
   </ng-template>
