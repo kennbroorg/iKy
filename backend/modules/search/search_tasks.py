@@ -539,7 +539,7 @@ def t_search(username, from_m="Initial"):
         "Google": gresults,
         "Yahoo": yresults,
         "Bing": bresults,
-        "Yandex": yresults,
+        "Yandex": aresults,
         "Baidu": uresults,
         "DuckDuckGo": dresults}
 

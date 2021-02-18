@@ -85,9 +85,11 @@ Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
     <img alt="tweetiment" src="https://img.shields.io/badge/module-tweetiment-blue.svg?style=flat-square">
     <img alt="peopledatalabs" src="https://img.shields.io/badge/module-peopledatalabs-blue.svg?style=flat-square">
     <img alt="reddit" src="https://img.shields.io/badge/module-reddit-blue.svg?style=flat-square">
-    <img alt="leaklookup" src="https://img.shields.io/badge/module-twint-blue.svg?style=flat-square">
-    <img alt="leaklookup" src="https://img.shields.io/badge/module-holehe-blue.svg?style=flat-square">
-    <img alt="leaklookup" src="https://img.shields.io/badge/module-spotify-blue.svg?style=flat-square">
+    <img alt="leaklookup" src="https://img.shields.io/badge/module-leaklookup-blue.svg?style=flat-square">
+    <img alt="twint" src="https://img.shields.io/badge/module-twint-blue.svg?style=flat-square">
+    <img alt="holehe" src="https://img.shields.io/badge/module-holehe-blue.svg?style=flat-square">
+    <img alt="spotify" src="https://img.shields.io/badge/module-spotify-blue.svg?style=flat-square">
+    <img alt="twitch" src="https://img.shields.io/badge/module-twitch-blue.svg?style=flat-square">
 </div>
 
 <h1 id="installation">Installation</h1>
@@ -221,6 +223,7 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 - Leaklookup : Generate the APIs from [here](https://leak-lookup.com/api)
 - Twitter: Generate the APIs from [here](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
 - Spotify: Generate the APIs from [here](https://developer.spotify.com/dashboard/applications)
+- Twitch: Generate the APIs from [here](https://dev.twitch.tv/docs/api/)
 
 # Wiki
 

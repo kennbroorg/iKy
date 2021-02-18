@@ -149,7 +149,7 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
         this.searchSubs.unsubscribe();
     }
 
-    toggleFlipViewAndSearch(email, username, twitter, instagram, linkedin, github, tiktok, tinder, venmo, reddit, spotify) {
+    toggleFlipViewAndSearch(email, username, twitter, instagram, linkedin, github, tiktok, tinder, venmo, reddit, spotify, twitch) {
         console.log("Advance Search");
         console.log("email", email);
         console.log("username", username);
@@ -162,6 +162,7 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
         console.log("venmo", venmo);
         console.log("reddit", reddit);
         console.log("spotify", spotify);
+        console.log("twitch", twitch);
 
         this.flipped = !this.flipped;
 
@@ -177,6 +178,7 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
             venmo: venmo,
             reddit: reddit,
             spotify: spotify,
+            twitch: twitch,
         };
         
         this.gathered = this.dataGatherService.initialize();

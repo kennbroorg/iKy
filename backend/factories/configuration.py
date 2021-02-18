@@ -38,6 +38,7 @@ def get_config():
                           'modules.emailrep.emailrep_tasks',
                           'modules.leaklookup.leaklookup_tasks',
                           'modules.spotify.spotify_tasks',
+                          'modules.twitch.twitch_tasks',
                           'modules.twitter_comparison.twitter_info_tasks',
                           'modules.twitter_comparison.twitter_comp_tasks')
     return Config

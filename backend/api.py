@@ -507,6 +507,23 @@ def r_leaklookup(username=None):
 
 
 ################################################
+# Twitch
+################################################
+@home.route("/twitch", methods=["POST"])
+def r_twitch(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("Twitch - Detected Username : ", username, from_m)
+    res = celery.send_task('modules.twitch.twitch_tasks.t_twitch',
+                           args=(username, ))
+    print("Twitch - Task : ", res.task_id)
+    return jsonify(module="twitch", task=res.task_id,
+                   param=username, from_m=from_m)
+
+
+################################################
 # Twitter info for comparison (first account)
 ################################################
 @home.route("/twitter_info", methods=["POST"])

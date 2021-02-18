@@ -12,7 +12,7 @@ tweepy==3.10.0
 geopy==1.22.0
 git+https://github.com/twintproject/twint.git@origin/master#egg=twint
 socialscan==1.4.1
-instaloader==4.5.5
+instaloader==4.6.1
 requests-futures==1.0.0
 torrequest
 holehe
@@ -25,3 +25,4 @@ vaderSentiment==3.3.2
 emailrep==0.0.4
 stop_words
 spotipy==2.16.1
+twitch-python

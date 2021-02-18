@@ -64,8 +64,9 @@
                   <nb-action nbTooltip="Search information" nbTooltipPlacement="top" nbTooltipStatus="primary" >
                       <i (click)="searchService.activateSearch()" class="fas fa-search" style="font-size: 14px;"></i><span (click)="searchService.activateSearch()">Search&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span><i (click)="toggleFlipView()" class="fab fa-searchengin" style="font-size: 16px;"></i><span (click)="toggleFlipView()">Advance</span>
                   </nb-action>
-                  <!-- <nb-action (click)="generateAllPdf()" nbTooltip="Generate report" nbTooltipPlacement="top" nbTooltipStatus="default"> -->
-                  <nb-action disabled nbTooltip="Generate report" nbTooltipPlacement="top" nbTooltipStatus="primary" style="color: rgba(5, 252, 252, 0.2)">
+                  <!-- <nb-action (click)="generateAllPdf()" nbTooltip="Generate report" nbTooltipPlacement="top" nbTooltipStatus="default"> 
+                  <nb-action disabled nbTooltip="Generate report" nbTooltipPlacement="top" nbTooltipStatus="primary" style="color: rgba(5, 252, 252, 0.2)"> -->
+                  <nb-action (click)="generateAllPdf()" nbTooltip="Generate report" nbTooltipPlacement="top" nbTooltipStatus="primary" style="color: rgba(5, 252, 252, 0.2)">
                     <i class="fas fa-file-alt" style="font-size: 14px; color: rgba(5, 252,252, 0.2);"></i><span style="color: rgba(5, 252,252, 0.2);">Report</span>
                   </nb-action>
                   <nb-action (click)="generateDownloadJsonUri()" nbTooltip="Download raw JSON" nbTooltipPlacement="top" nbTooltipStatus="primary">
@@ -275,11 +276,6 @@
             <ngx-twitter-week [data]="gathered['twint']"></ngx-twitter-week>
           </div>
 
-          <!-- Twitter Week -->
-          <div class="col-md-4" id="divTwitterWeek" #divTwitterWeek *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
-            <ngx-twitter-week [data]="gathered['twitter']"></ngx-twitter-week>
-          </div>
-
           <!-- Twitter Source -->
           <div class="col-md-4" id="divTwitterSource" #divTwitterSource *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-source [data]="gathered['twitter']"></ngx-twitter-source>
@@ -341,7 +337,7 @@
           </div>
 
           <!-- Linkedin Bubble -->
-          <div class="col-md-4" id="divLinkedinBubble" #divLinkedinBubble *ngIf="gathered['linkedin'] && gathered['linkedin'].result[4] && validationShow[gathered['linkedin'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divLinkedinBubble" #divLinkedinBubble *ngIf="gathered['linkedin'] && gathered['linkedin'].result[4] && gathered['linkedin'].result[4].graphic[0].social?.length > 1 && validationShow[gathered['linkedin'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-linkedin-bubble [data]="gathered['linkedin']"></ngx-linkedin-bubble>
           </div>
 
@@ -445,6 +441,41 @@
           <!-- Venmo Transactions -->
           <div class="col-md-4" id="divVenmoTrans" #divVenmoTrans *ngIf="gathered['venmo'] && gathered['venmo'].result[4] && gathered['venmo'].result[4].graphic[2].trans?.length > 0 && validationShow[gathered['venmo'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-venmo-trans [data]="gathered['venmo']"></ngx-venmo-trans>
+          </div>
+
+          <!-- Twitch Error -->
+          <div class="col-md-4" id="divTwitchError" #divTwitchError *ngIf="gathered['twitch'] && gathered['twitch'].result[3] && gathered['twitch'].result[3].raw[0].code > 0" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-error-graphs [data]="gathered['twitch']"></ngx-error-graphs>
+          </div>
+
+          <!-- Twitch Social -->
+          <div class="col-md-4" id="divTwitchSocial" #divTwitchSocial *ngIf="gathered['twitch'] && gathered['twitch'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitch-social [data]="gathered['twitch']"></ngx-twitch-social>
+          </div>
+
+          <!-- Twitch Timeline -->
+          <div class="col-md-4" id="divTwitchTimeline" #divTwitchTimeline *ngIf="gathered['twitch'] && gathered['twitch'].result[4] && gathered['twitch'].result[4].graphic[1].table?.length > 0" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+              <ngx-twitch-timeline [data]="gathered['twitch']"></ngx-twitch-timeline>
+          </div>
+
+          <!-- Twitch Hour -->
+          <div class="col-md-4" id="divTwitchHour" #divTwitchHour *ngIf="gathered['twitch'] && gathered['twitch'].result[4] && gathered['twitch'].result[4].graphic[1].table?.length > 0" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitch-hour [data]="gathered['twitch']"></ngx-twitch-hour>
+          </div>
+
+          <!-- Twitch Video Lists -->
+          <div class="col-md-8" id="divTwitchVideos" #divTwitchVideos *ngIf="gathered['twitch'] && gathered['twitch'].result[4] && gathered['twitch'].result[4].graphic[1].table?.length > 0" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+              <ngx-twitch-list [data]="gathered['twitch']"></ngx-twitch-list>
+          </div>
+          
+          <!-- Twitch Week -->
+          <div class="col-md-4" id="divTwitchWeek" #divTwitchWeek *ngIf="gathered['twitch'] && gathered['twitch'].result[4] && gathered['twitch'].result[4].graphic[1].table?.length > 0" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitch-week [data]="gathered['twitch']"></ngx-twitch-week>
+          </div>
+
+          <!-- Twitch Duration -->
+          <div class="col-md-4" id="divTwitchDuration" #divTwitchDuration *ngIf="gathered['twitch'] && gathered['twitch'].result[4] && gathered['twitch'].result[4].graphic[1].table?.length > 0" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-twitch-duration [data]="gathered['twitch']"></ngx-twitch-duration>
           </div>
 
           <!-- HIBP -->
@@ -646,11 +677,15 @@
           <div class="col-sm-5">
             <input type="text" class="form-control" #spotify id="spotify" placeholder="Spotify" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
           </div>
+          <label for="inputTwitch" class="col-sm-1 col-form-label" nbTooltip="Posible Twitch Account (Used in twitch module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fab fa-twitch fa-2x"></i></label>
+          <div class="col-sm-5">
+            <input type="text" class="form-control" #twitch id="twitch" placeholder="Twitch" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
+          </div>
         </div>
 
       </nb-card-body>
       <nb-card-footer>
-          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, username.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value, tinder.value, venmo.value, reddit.value, spotify.value)" style="border: none; margin-left:30px; font-weight: 400;">
+          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, username.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value, tinder.value, venmo.value, reddit.value, spotify.value, twitch.value)" style="border: none; margin-left:30px; font-weight: 400;">
               <i class="fas fa-search" style="padding-right: 5px"></i> SEARCH 
           </button>
 

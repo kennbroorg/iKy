@@ -73,5 +73,15 @@
     "id": 14,
     "name": "spotify_client_secret",
     "key": ""
+  },
+  {
+    "id": 15,
+    "name": "twitch_client_id",
+    "key": ""
+  },
+  {
+    "id": 16,
+    "name": "twitch_client_secret",
+    "key": ""
   }
 ]

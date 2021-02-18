@@ -1,0 +1,99 @@
+  <nb-card size="small" class="border-defaulti list-card">
+    <nb-card-header>
+      <div (click)="openDialog(dialogTwitchList)">
+          TWITCH Video List
+      </div>
+      <div class="help" [nbPopover]="twitchListHelp" nbPopoverPlacement="bottom"><i class="far fa-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
+    </nb-card-header>
+    <nb-card-body id="nbCardTwitchList" style="text-align: center; margin: 0px; padding: 0px; overflow: hidden;">
+    <div class="row">
+    <nb-card class="col-md-6" style="background-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; box-shadow: none; height: 270px; max-height:270px;">
+      <nb-card-body style="padding: 0px; height: 260px; max-height: 260px; padding-top: 10px;">
+        <nb-list>
+          <nb-list-item *ngFor="let c of twitchList">
+            <div class="contact">
+              <div>
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-twitch fa-stack-1x" style="color: #333;"></i> 
+                </span>
+              </div>
+              <div class="info-container">
+                <div class="user-name ng-star-inserted">{{c.title}}</div> 
+                <div class="user-title ng-star-inserted">
+                   <p align="left" style="margin: 0px; padding:0px; padding-top: 5px;"><strong style="font-weight: 500;">Created at</strong> : {{c.created}}</p>
+                   <p align="left" style="margin: 0px; padding:0px;"><strong style="font-weight: 500;">Description</strong> : {{c.desc}}</p>
+                   <p align="left" style="margin: 0px; padding:0px;"><strong>URL</strong> : {{c.url}}</p>
+                </div>
+              </div>
+            </div>
+          </nb-list-item>
+        </nb-list>
+      </nb-card-body>
+    </nb-card>
+    <nb-card class="col-md-6" style="background-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; overflow: hidden; box-shadow: none; height: 270px; max-height: 270px;">
+      <nb-card-body id="nbCardTwitchThumb" #nbCardTwitchThumb style="text-align: center; overflow: hidden; margin: 0px; padding: 0px; height: 270px; max-height: 270px; padding-top: 10px;">
+         <ngx-graphs [data]="twitchThumb"></ngx-graphs>
+      </nb-card-body>
+    </nb-card>
+    </div>
+
+    </nb-card-body>
+  </nb-card>
+
+
+  <ng-template #dialogTwitchList let-data let-ref="dialogRef">
+    <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+      <nb-card-header>TWITCH Video List</nb-card-header>
+      <nb-card-body>
+        <nb-list>
+          <nb-list-item *ngFor="let c of twitchList">
+            <div class="contact">
+                <div>
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-twitch fa-stack-1x" style="color: #333;"></i> 
+                  </span>
+                </div>
+              <div class="info-container">
+                <div class="user-name ng-star-inserted">{{c.title}}</div> 
+                <div class="user-title ng-star-inserted">
+                    <p><strong>Created at</strong> : {{c.created}}</p>
+                    <p><strong>Description</strong> : {{c.desc}}</p>
+                    <p><strong>URL</strong> : {{c.url}}</p>
+                </div>
+              </div>
+            </div>
+          </nb-list-item>
+        </nb-list>
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
+
+  <ng-template #twitchListHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        TWITCH Video List Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : Twitch</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        This chart shows a list of videos storage in twitch
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module can be executed by entering a username in the <strong style="font-weight: 600;">twitch</strong> field of the advanced search, being its validation indicator high since it has been entered by the user
+        </p> 
+        <p style="text-align: justify;">
+        It can also be executed if another module has found a twitch username (Fullcontact, Keybase, Searchs, PeopleDataLabs, etc). Its validation indicator will be medium since its discovery is indirect
+        </p> 
+        <p style="text-align: justify;">
+        Finally, and with a low validation indicator, the module can be executed if a username was entered in the "username" field of the advanced search or if a mail was entered in the mail or advanced search. In this case the @domain.ext is cut out and the username is used as input
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p>Twitch API</p> 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
