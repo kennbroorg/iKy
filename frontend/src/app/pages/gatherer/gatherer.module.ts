@@ -125,9 +125,17 @@ import { SpotifyAutorsComponent } from './spotify/spotify-autors/spotify-autors.
 import { SpotifyLangComponent } from './spotify/spotify-lang/spotify-lang.component';
 import { SpotifyWordsComponent } from './spotify/spotify-words/spotify-words.component';
 
+import { TwitchSocialComponent } from './twitch/twitch-social/twitch-social.component';
+import { TwitchListComponent } from './twitch/twitch-list/twitch-list.component';
+import { TwitchTimelineComponent } from './twitch/twitch-timeline/twitch-timeline.component';
+import { TwitchHourComponent } from './twitch/twitch-hour/twitch-hour.component';
+import { TwitchWeekComponent } from './twitch/twitch-week/twitch-week.component';
+import { TwitchDurationComponent } from './twitch/twitch-duration/twitch-duration.component';
+
 import { FsIconComponent, TaskexecComponent } from './taskexec/taskexec.component';
 
 import { SharedModule } from '../shared/shared.module';
+import { ErrorGraphsComponent } from './error/error-graphs.component';
 
 @NgModule({
   imports: [
@@ -158,6 +166,7 @@ import { SharedModule } from '../shared/shared.module';
   ],
   declarations: [
     GathererComponent,
+    ErrorGraphsComponent,
     ValidationFilterComponent,
     GithubGraphsComponent,
     GithubCalendarComponent,
@@ -232,6 +241,12 @@ import { SharedModule } from '../shared/shared.module';
     SpotifyAutorsComponent,
     SpotifyLangComponent,
     SpotifyWordsComponent,
+    TwitchSocialComponent,
+    TwitchListComponent,
+    TwitchTimelineComponent,
+    TwitchHourComponent,
+    TwitchWeekComponent,
+    TwitchDurationComponent,
   ],
   providers: [
     InstagramMapService,
