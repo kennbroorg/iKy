@@ -70,7 +70,7 @@ export class TimelineComponent implements OnInit {
         });
     }
 
-    toggleFlipViewAndSearch(email, username, twitter, instagram, linkedin, github, tiktok, tinder, venmo, reddit, spotify) {
+    toggleFlipViewAndSearch(email, username, twitter, instagram, linkedin, github, tiktok, tinder, venmo, reddit, spotify, twitch) {
         console.log('Advance Search');
         console.log('email', email);
         console.log('username', username);
@@ -83,6 +83,7 @@ export class TimelineComponent implements OnInit {
         console.log('venmo', venmo);
         console.log('reddit', reddit);
         console.log('spotify', spotify);
+        console.log('twitch', twitch);
 
         this.flipped = !this.flipped;
 
@@ -98,6 +99,7 @@ export class TimelineComponent implements OnInit {
             venmo: venmo,
             reddit: reddit,
             spotify: spotify,
+            twitch: twitch,
         };
 
         this.gathered = this.dataGatherService.initialize();
