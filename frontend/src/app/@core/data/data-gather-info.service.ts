@@ -374,6 +374,17 @@ export class DataGatherInfoService {
             );
         };
 
+        // Twitch
+        if (this.isModuleParamRunTaskExec('twitch', this.username, 'Username', 1)) {
+            this.showToast('info', 'Twitch', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('twitch', {username: this.username, from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Twitch')
+            );
+        };
+
     }
 
     /* Gather Info Advance */
@@ -527,6 +538,20 @@ export class DataGatherInfoService {
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
                                () => console.log('Completed Spotify')
+                );
+            };
+        };
+        
+        if (datas[''] != '') {
+            console.log("Twitch : ", datas['twitch']);
+            // Spotify
+            if (this.isModuleParamRunTaskExec('twitch', datas['twitch'], 'User', 100)) {
+                this.showToast('info', 'Twitch', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('twitch', {username: datas['twitch'], from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Twitch')
                 );
             };
         };
@@ -723,6 +748,32 @@ export class DataGatherInfoService {
                             .subscribe(this.processResponse,
                                        err => console.error('Ops: ', err.message),
                                        () => console.log('Completed Reddit')
+                    );
+                };
+            };
+
+            if (datas['spotify'] == '') {
+                // Spotify
+                if (this.isModuleParamRunTaskExec('spotify', this.username, 'Username', 1)) {
+                    this.showToast('info', 'Spotify', 'Send information gathering');
+                    this.globalGather['taskresume'][0].PP++;
+                    this.executeRequest$('spotify', {username: this.username, from: 'Username'})
+                            .subscribe(this.processResponse,
+                                       err => console.error('Ops: ', err.message),
+                                       () => console.log('Completed Spotify')
+                    );
+                };
+            };
+
+            if (datas['twitch'] == '') {
+                // Twitch
+                if (this.isModuleParamRunTaskExec('twitch', this.username, 'Username', 1)) {
+                    this.showToast('info', 'Twitch', 'Send information gathering');
+                    this.globalGather['taskresume'][0].PP++;
+                    this.executeRequest$('twitch', {username: this.username, from: 'Username'})
+                            .subscribe(this.processResponse,
+                                       err => console.error('Ops: ', err.message),
+                                       () => console.log('Completed Twitch')
                     );
                 };
             };
