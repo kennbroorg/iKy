@@ -1,0 +1,50 @@
+  <nb-card size="small">
+    <nb-card-header>
+      <div>
+          {{titleGraphs}} Error
+      </div>
+      <div class="help" [nbPopover]="ErrorHelp" nbPopoverPlacement="bottom"><i class="far fa-circle"></i></div>
+    </nb-card-header>
+
+    <nb-card-body style="margin: 0px; padding: 0px; text-align: center; overflow: hidden;">
+
+        <!--
+        <div nbTooltip="No information found about the mail" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 200px; z-index: 2;" *ngIf="statusFull == 404">
+            <i class="fas fa-shield-alt" style="font-size: 200px;"></i>
+        </div>
+        <div nbTooltip="Please load Fullcontact API Key" nbTooltipStatus="danger" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 150px; z-index: 2;" *ngIf="statusFull == 400">
+            <i class="fas fa-key" style="font-size: 150px;"></i>
+        </div>
+        <div nbTooltip="The Fullcontact API Key is wrong" nbTooltipStatus="danger" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 150px; z-index: 2;" *ngIf="statusFull == 401">
+            <i class="fas fa-exclamation-circle" style="font-size: 150px;"></i>
+        </div>
+        -->
+
+        <div nbTooltip="{{reasonGraphs}}" nbTooltipStatus="danger" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 150px; z-index: 2;">
+            <i class="{{iconGraphs}}" style="font-size: 150px;"></i>
+        </div>
+        <div style="position: absolute; top: 10px; width: 100%; text-align: center;">
+            {{reasonGraphs}}
+        </div>
+
+    </nb-card-body>
+  </nb-card>
+
+  <ng-template #ErrorHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        ERROR Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : Error {{titleGraphs}}</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        {{reasonGraphs}}
+        </p>
+        <p style="font-weight: 600;">Traceback</p> 
+        <p style="text-align: justify;">
+        {{tracebackGraphs}}
+        </p> 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
