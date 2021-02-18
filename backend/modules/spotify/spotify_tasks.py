@@ -220,8 +220,8 @@ def p_spotify(username, from_m, level):
 
     social_item = {"name": "Spotify",
                    "url": user['external_urls']['spotify'],
-                   "icon": "fab fa-twitter",
-                   "source": "Twitter",
+                   "icon": "fab fa-spotify",
+                   "source": "Spotify",
                    "username": username}
     social.append(social_item)
     profile.append({"social": social})
