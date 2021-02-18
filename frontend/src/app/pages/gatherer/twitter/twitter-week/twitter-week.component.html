@@ -1,7 +1,7 @@
   <nb-card size="small">
     <nb-card-header>
       <div (click)="openDialog(dialogTwitterWeek)">
-          TWiTTER WeekDay
+          TWITTER WeekDay
       </div>
       <div class="help" [nbPopover]="twitterWeekHelp" nbPopoverPlacement="bottom"><i class="far fa-circle"></i></div>
       <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
@@ -26,7 +26,7 @@
 
   <ng-template #dialogTwitterWeek let-data let-ref="dialogRef">
     <nb-card [style.width]="width * 2" [style.height]="height * 2" style="background-color: rgba(0, 0, 0, 0.8);">
-      <nb-card-header>Twitter WeekDay</nb-card-header>
+      <nb-card-header>TWITTER WeekDay</nb-card-header>
       <nb-card-body style="overflow: hidden;">
 
         <div style="fill: #05fcfc !important; font-size: 35px !important;">
@@ -47,7 +47,7 @@
   <ng-template #twitterWeekHelp>
     <nb-card style="margin: 0px; max-width: 50rem;">
       <nb-card-header status="warning">
-        TWiTTER WeekDay Help
+        TWITTER WeekDay Help
       </nb-card-header>
       <nb-card-body>
         <p><strong style="font-weight: 600;">Module</strong> : Twitter</p> 
