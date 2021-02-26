@@ -1,5 +1,5 @@
 chardet==3.0.4
-aiohttp==3.6.2
+aiohttp==3.7.4
 beautifulsoup4==4.9.1
 httpx==0.13.3
 Flask==1.1.2
