@@ -12,6 +12,7 @@ try:
     from factories.application import create_application
     from factories.configuration import api_keys_search
     from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.iKy_functions import location_geo
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 except ImportError:
@@ -21,6 +22,7 @@ except ImportError:
     from factories.application import create_application
     from factories.configuration import api_keys_search
     from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.iKy_functions import location_geo
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
@@ -72,9 +74,10 @@ def t_peopledatalabs(email):
 
     headers = {'User-Agent': random.choice(user_agents)}
 
-    url = "https://api.peopledatalabs.com/v4/person"
+    api_version = "v5"
+    url = "https://api.peopledatalabs.com/" + api_version + "/person"
     params = {"api_key": key, "email": [email]}
-
+    
     req = requests.get(url,  params=params, headers=headers)
     raw_node = req.json()
 
@@ -106,14 +109,8 @@ def t_peopledatalabs(email):
     # datalabs Array
     datalabs = []
 
-    # Web Array
-    webs = []
-
-    # Bios Array
-    bios = []
-
-
     company = []
+
     if (raw_node.get("status", "") == 200):
 
         link_social = "Social"
@@ -130,138 +127,260 @@ def t_peopledatalabs(email):
                      "link": link_data}
         datalabs.append(data_item)
 
-        # Primary Job
         data = raw_node.get("data", "")
-        if (data.get("primary", "") != "" and data.get("primary", "").
-                get("job", "") != None):
-            temp = data.get("primary", "").get("job", "")
+        # Primary Job V4
+        if (api_version == "v4"):
+            if ((data.get("primary", "") != "" and 
+                    data.get("primary", "").get("job", "") != None)):
+                temp = data.get("primary", "").get("job", "")
 
-            if (temp.get("company", "") != "" and temp.get(
-                    "company", "") != "null" and temp.get(
-                        "company", "") != None):
+                if (temp.get("company", "") != "" and temp.get(
+                        "company", "") != "null" and temp.get(
+                            "company", "") != None):
 
-                data_item = {"name-node": "DataCompany",
-                             "title": "Company",
-                             "subtitle": temp.get("company", ""),
-                             "icon": "fas fa-people-carry",
+                    data_item = {"name-node": "DataCompany",
+                                 "title": "Company",
+                                 "subtitle": temp.get("company", ""),
+                                 "icon": "fas fa-people-carry",
+                                 "link": link_data}
+                    datalabs.append(data_item)
+
+                    # Profile
+                    company_item = {'name': temp.get("company", ""),
+                                    'title': temp.get("title", "").get(
+                                        "name", ""),
+                                    'start': temp.get("startDate", ""),
+                                    'end': temp.get("endDate", "")}
+                    company.append(company_item)
+
+                    # Timeline
+                    if (temp.get("start_date", "") != "" and temp.get(
+                            "start_date", "") != None):
+                        timeline.append({'action': 'Start : ' + temp
+                                         .get("company", "").get(
+                                             "name", "").title(),
+                                         'date': temp.get("start_date", "")
+                                         .replace("-", "/"),
+                                         # 'icon': 'fa-building',
+                                         'desc': str(temp.get("title", "").get(
+                                             "name", "")).title() + 
+                                             " - Source PDL"})
+                    if (temp.get("end_date", "") != "" and temp.get(
+                            "end_date", "") != None):
+                        timeline.append({'action': 'End : ' + temp
+                                         .get("company", "").get(
+                                             "name", "").title(),
+                                         'date': temp.get("end_date", "")
+                                         .replace("-", "/"),
+                                         # 'icon': 'fa-ban',
+                                         'desc': str(temp.get("title", "").get(
+                                             "name", "")).
+                                         title() + " - Source PDL"})
+
+        # Primary Job V5
+        if (api_version == "v5"):
+            if (data.get("job_company_name", "") and 
+                    data.get("job_company_name", "") != ""):
+
+               data_item = {"name-node": "DataCompany",
+                            "title": "Company",
+                            "subtitle": data.get("job_company_name", ""),
+                            "icon": "fas fa-people-carry",
+                            "link": link_data}
+               datalabs.append(data_item)
+
+               # Profile
+               company_item = {'name': data.get("job_company_name", ""),
+                               'title': data.get("job_title", ""),
+                               'start': data.get("job_start_date", "")}
+               company.append(company_item)
+
+               # Timeline
+               if (data.get("job_start_date", "") and data.get(
+                       "job_start_date", "") != ""):
+                   timeline.append({'action': 'Start : ' + data
+                                    .get("job_company_name", ""),
+                                    'date': data.get("start_date", ""),
+                                    'desc': str(data.get("job_title", "")) +
+                                        " - Source PDL"})
+
+        # Primary location
+        if (api_version == "v4"):
+            if (data.get("primary", "") != "" and data.get("primary", "").
+                    get("location", "") != None):
+
+                temp = data.get("primary", "").get("location", "")
+
+                data_item = {"name-node": "DataLocation",
+                             "title": "Location",
+                             "subtitle": temp.get("name", "").title(),
+                             "icon": "fas fa-globe-americas",
                              "link": link_data}
                 datalabs.append(data_item)
 
                 # Profile
-                company_item = {'name': temp.get("company", ""),
-                                'title': temp.get("title", "").get(
-                                    "name", ""),
-                                'start': temp.get("startDate", ""),
-                                'end': temp.get("endDate", "")}
-                company.append(company_item)
+                profile_item = {'location': temp.get("name", "").title()}
+                profile.append(profile_item)
 
-                # Timeline
-                if (temp.get("start_date", "") != "" and temp.get(
-                        "start_date", "") != None):
-                    timeline.append({'action': 'Start : ' + temp
-                                     .get("company", "").get(
-                                         "name", "").title(),
-                                     'date': temp.get("start_date", "")
-                                     .replace("-", "/"),
-                                     # 'icon': 'fa-building',
-                                     'desc': str(temp.get("title", "").get(
-                                         "name", "")).title() + " - Source PDL"})
-                if (temp.get("end_date", "") != "" and temp.get(
-                        "end_date", "") != None):
-                    timeline.append({'action': 'End : ' + temp
-                                     .get("company", "").get(
-                                         "name", "").title(),
-                                     'date': temp.get("end_date", "")
-                                     .replace("-", "/"),
-                                     # 'icon': 'fa-ban',
-                                     'desc': str(temp.get("title", "").get(
-                                         "name", "")).title() + " - Source PDL"})
+                # Geolocalization
+                geo_item = location_geo(temp.get("name", "")) 
+                if (geo_item):
+                    profile.append({'geo': geo_item})
 
-        # Primary location
-        if (data.get("primary", "") != "" and data.get("primary", "").
-                get("location", "") != None):
+        # Primary location V5
+        if (api_version == "v5"):
+            if (data.get("location_name", "") != ""):
 
-            temp = data.get("primary", "").get("location", "")
+                data_item = {"name-node": "DataLocation",
+                             "title": "Location",
+                             "subtitle": data.get("location_name", "").title(),
+                             "icon": "fas fa-globe-americas",
+                             "link": link_data}
+                datalabs.append(data_item)
 
-            data_item = {"name-node": "DataLocation",
-                         "title": "Location",
-                         "subtitle": temp.get("name", ""),
-                         "icon": "fas fa-globe-americas",
-                         "link": link_data}
-            datalabs.append(data_item)
+                # Profile
+                profile_item = {'location': data.get(
+                    "location_name", "").title()}
+                profile.append(profile_item)
 
-            # Profile
-            profile_item = {'location': temp.get("name", "")}
-            profile.append(profile_item)
+                # Geolocalization
+                geo_item = location_geo(data.get("location_name", ""), 
+                                        data.get("location_last_updated", ""))
+                if(geo_item):
+                    profile.append({'geo': geo_item})
 
         # Primary name
-        if (data.get("primary", "") != "" and data.get("primary", "").
-                get("name", "") != None):
+        if (api_version == "v4"):
+            if (data.get("primary", "") != "" and data.get("primary", "").
+                    get("name", "") != None):
 
-            temp = data.get("primary", "").get("name", "")
+                temp = data.get("primary", "").get("name", "")
 
-            try:
-                name_complete = temp.get("first_name", "") + " " + \
-                                temp.get("middle_name", "") + " " + \
-                                temp.get("last_name", "")
-            except:
-                name_complete = temp.get("first_name", "") + " " + \
-                                temp.get("last_name", "")
+                try:
+                    name_complete = temp.get("first_name", "") + " " + \
+                                    temp.get("middle_name", "") + " " + \
+                                    temp.get("last_name", "")
+                except:
+                    name_complete = temp.get("first_name", "") + " " + \
+                                    temp.get("last_name", "")
 
-            data_item = {"name-node": "DataName",
-                         "title": "Name",
-                         "subtitle": name_complete.title(),
-                         "icon": "fas fa-signature",
-                         "link": link_data}
-            datalabs.append(data_item)
+                data_item = {"name-node": "DataName",
+                             "title": "Name",
+                             "subtitle": name_complete.title(),
+                             "icon": "fas fa-signature",
+                             "link": link_data}
+                datalabs.append(data_item)
 
-            # Profile
-            profile_item = {'name': name_complete.title()}
-            profile.append(profile_item)
+                # Profile
+                profile_item = {'name': name_complete.title()}
+                profile.append(profile_item)
+
+        # Primary name V5
+        if (api_version == "v5"):
+            if (data.get("full_name", "") and data.get("full_name", "") != ""):
+
+                try:
+                    name_complete = data.get("first_name", "") + " " + \
+                                    data.get("middle_name", "") + " " + \
+                                    data.get("last_name", "")
+                except Exception:
+                    name_complete = data.get("first_name", "") + " " + \
+                                    data.get("last_name", "")
+
+                data_item = {"name-node": "DataName",
+                             "title": "Name",
+                             "subtitle": name_complete.title(),
+                             "icon": "fas fa-signature",
+                             "link": link_data}
+                datalabs.append(data_item)
+
+                # Profile
+                profile_item = {'name': name_complete.title()}
+                profile.append(profile_item)
 
         # Primary industry
-        if (data.get("primary", "").get("industry", "") != None):
+        if (api_version == "v4"):
+            if (data.get("primary", "") != "" and data.get("primary", "").
+                    get("industry", "") != None):
 
-            temp = data.get("primary", "").get("industry", "")
+                temp = data.get("primary", "").get("industry", "")
 
-            data_item = {"name-node": "DataInsdustry",
-                         "title": "Industry",
-                         "subtitle": temp,
-                         "icon": "fas fa-briefcase",
-                         "link": link_data}
-            datalabs.append(data_item)
+                data_item = {"name-node": "DataInsdustry",
+                             "title": "Industry",
+                             "subtitle": temp,
+                             "icon": "fas fa-briefcase",
+                             "link": link_data}
+                datalabs.append(data_item)
+
+        # Primary industry V5
+        if (api_version == "v5"):
+            if (data.get("industry", "")):
+                data_item = {"name-node": "DataInsdustry",
+                             "title": "Industry",
+                             "subtitle": data.get("industry"),
+                             "icon": "fas fa-briefcase",
+                             "link": link_data}
+                datalabs.append(data_item)
 
         # Primary birthdate
-        if (data.get("birth_date", "") != "" and data.get(
-                "birth_date", "") != None):
+        if (api_version == "v4"):
+            if (data.get("birth_date", "") != "" and data.get(
+                    "birth_date", "") != None):
 
-            temp = data.get("birth_date", "")
+                temp = data.get("birth_date", "")
 
-            data_item = {"name-node": "DataBirth",
-                         "title": "Birthday",
-                         "subtitle": temp,
-                         "icon": "fas fa-birthday-cake",
-                         "link": link_data}
-            datalabs.append(data_item)
+                data_item = {"name-node": "DataBirth",
+                             "title": "Birthday",
+                             "subtitle": temp,
+                             "icon": "fas fa-birthday-cake",
+                             "link": link_data}
+                datalabs.append(data_item)
 
-            timeline.append({'action': 'BirthDay : ' + temp})
+                timeline.append({'action': 'BirthDay : ' + temp})
 
-        elif (data.get("birth_date_fuzzy", "") != "" and data.get(
-                "birth_date_fuzzy", "") != None):
+            elif (data.get("birth_date_fuzzy", "") != "" and data.get(
+                    "birth_date_fuzzy", "") != None):
 
-            temp = data.get("birth_date_fuzzy", "")
+                temp = data.get("birth_date_fuzzy", "")
 
-            data_item = {"name-node": "DataBirth",
-                         "title": "Fuzzy Birthday",
-                         "subtitle": temp,
-                         "icon": "fas fa-birthday-cake",
-                         "link": link_data}
-            datalabs.append(data_item)
+                data_item = {"name-node": "DataBirth",
+                             "title": "Fuzzy Birthday",
+                             "subtitle": temp,
+                             "icon": "fas fa-birthday-cake",
+                             "link": link_data}
+                datalabs.append(data_item)
 
-            timeline.append({'action': 'Fuzzy BirthDay : ' + temp})
+                timeline.append({'action': 'Fuzzy BirthDay : ' + temp})
+
+        # Primary birthdate V5
+        if (api_version == "v5"):
+            if (data.get("birth_date", "") and data.get(
+                    "birth_date", "") != ""):
+
+                data_item = {"name-node": "DataBirth",
+                             "title": "Birthday",
+                             "subtitle": data.get("birth_date"),
+                             "icon": "fas fa-birthday-cake",
+                             "link": link_data}
+                datalabs.append(data_item)
+
+                timeline.append({'action': 'BirthDay : ' + data.get("birth_date")})
+
+            elif (data.get("birth_year", "") and data.get(
+                    "birth_year", "") != ""):
+
+                data_item = {"name-node": "DataBirth",
+                             "title": "BirthYear",
+                             "subtitle": data.get("birth_year"),
+                             "icon": "fas fa-birthday-cake",
+                             "link": link_data}
+                datalabs.append(data_item)
+
+                timeline.append({'action': 'BirthYear : ' + data.get(
+                    "birth_year")})
 
         # Gender
-        if (data.get("gender", "") != None):
+        if (data.get("gender", "") and data.get("gender", "") != ""):
 
             temp = data.get("gender", "")
 
@@ -280,38 +399,51 @@ def t_peopledatalabs(email):
             datalabs.append(data_item)
 
         # Emails profile
-        e = 1
-        for mail in data.get("primary", "").get("work_emails", ""):
-            data_item = {"name-node": "DataWEmail" + str(e),
-                         "title": "Work Email",
-                         "subtitle": mail,
-                         "icon": "fas fa-at",
-                         "link": link_data}
-            datalabs.append(data_item)
-            e=+1
-        e = 1
-        for mail in data.get("primary", "").get("personal_emails", ""):
-            data_item = {"name-node": "DataPEmail" + str(e),
-                         "title": "Personal Email",
-                         "subtitle": mail,
-                         "icon": "fas fa-at",
-                         "link": link_data}
-            datalabs.append(data_item)
-            e=+1
-        e = 1
-        for mail in data.get("primary", "").get("other_emails", ""):
-            data_item = {"name-node": "DataOEmail" + str(e),
-                         "title": "Other Email",
-                         "subtitle": mail,
-                         "icon": "fas fa-at",
-                         "link": link_data}
-            datalabs.append(data_item)
-            e=+1
+        if (api_version == "v4"):
+            e = 1
+            for mail in data.get("primary", "").get("work_emails", ""):
+                data_item = {"name-node": "DataWEmail" + str(e),
+                             "title": "Work Email",
+                             "subtitle": mail,
+                             "icon": "fas fa-at",
+                             "link": link_data}
+                datalabs.append(data_item)
+                e = + 1
+            e = 1
+            for mail in data.get("primary", "").get("personal_emails", ""):
+                data_item = {"name-node": "DataPEmail" + str(e),
+                             "title": "Personal Email",
+                             "subtitle": mail,
+                             "icon": "fas fa-at",
+                             "link": link_data}
+                datalabs.append(data_item)
+                e = + 1
+            e = 1
+            for mail in data.get("primary", "").get("other_emails", ""):
+                data_item = {"name-node": "DataOEmail" + str(e),
+                             "title": "Other Email",
+                             "subtitle": mail,
+                             "icon": "fas fa-at",
+                             "link": link_data}
+                datalabs.append(data_item)
+                e = + 1
+
+        # Emails profile V5
+        if (api_version == "v5"):
+            e = 1
+            for mail in data.get("emails", ""):
+                data_item = {"name-node": "DataWEmail" + str(e),
+                             "title": mail.get("type"),
+                             "subtitle": mail.get("address"),
+                             "icon": "fas fa-at",
+                             "link": link_data}
+                datalabs.append(data_item)
+                e = + 1
 
         # Profiles RRSS
         if (data.get("profiles", "") != ""):
             for social in data.get("profiles", ""):
-                if (social.get("username", "") != None):
+                if (social.get("username", "")):
                     subtitle = social.get("username", "")
                 else:
                     subtitle = "Not identified"
@@ -344,27 +476,58 @@ def t_peopledatalabs(email):
             profile_item = {'email': mail['address']}
             profile.append(profile_item)
         # Profiles phones
-        for phone in data.get("phone_numbers", ""):
-            profile_item = {'phone': phone['number']}
-            profile.append(profile_item)
-        # Profiles names
-        for name in data.get("names", ""):
-            profile_item = {'name': name['name'].title()}
-            profile.append(profile_item)
-        # Profiles location
-        for location in data.get("locations", ""):
-            if (location['name']):
-                profile_item = {'location': location['name'].title()}
+        if (api_version == "v4"):
+            for phone in data.get("phone_numbers", ""):
+                profile_item = {'phone': phone['number']}
                 profile.append(profile_item)
-            if (location['geo']):
-                profile_item = {'Caption': location['name'],
-                                'Accessability': "",
-                                'Latitude': location['geo'].split(",")[0],
-                                'Longitude': location['geo'].split(",")[1],
-                                'Name': location['name'],
-                                'Time': ""
-                                }
-                profile.append({'geo': profile_item})
+        else:
+            for phone in data.get("phone_numbers", ""):
+                profile_item = {'phone': phone}
+                profile.append(profile_item)
+        # Profiles names
+        if (api_version == "v4"):
+            for name in data.get("names", ""):
+                profile_item = {'name': name['name'].title()}
+                profile.append(profile_item)
+        else:
+            if (data.get("first_name")):
+                profile_item = {'name': data.get("first_name").title()}
+                profile.append(profile_item)
+            if (data.get("middle_name")):
+                profile_item = {'name': data.get("middle_name").title()}
+                profile.append(profile_item)
+            if (data.get("last_name")):
+                profile_item = {'name': data.get("last_name").title()}
+                profile.append(profile_item)
+            if (data.get("full_name")):
+                profile_item = {'name': data.get("full_name").title()}
+                profile.append(profile_item)
+
+        # Profiles location
+        if (api_version == "v4"):
+            for location in data.get("locations", ""):
+                if (location['name']):
+                    profile_item = {'location': location['name'].title()}
+                    profile.append(profile_item)
+                if (location['geo']):
+                    profile_item = {'Caption': location['name'],
+                                    'Accessability': "",
+                                    'Latitude': location['geo'].split(",")[0],
+                                    'Longitude': location['geo'].split(",")[1],
+                                    'Name': location['name'],
+                                    'Time': ""
+                                    }
+                    profile.append({'geo': profile_item})
+        if (api_version == "v5"):
+            for location in data.get("location_names", ""):
+                profile_item = {'location': location.title()}
+                profile.append(profile_item)
+
+                # Geolocalization
+                geo_item = location_geo(location, 
+                                        data.get("location_last_updated", ""))
+                if(geo_item):
+                    profile.append({'geo': geo_item})
 
     # Falta email, phone, locations loop, name loop
     total.append({'raw': raw_node})
