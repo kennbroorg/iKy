@@ -13,7 +13,7 @@
   //   text-transform: uppercase;
   // }
 
-  nb-list-item /deep/ {
+  nb-list-item ::ng-deep {
     .info-container {
       padding: 0px;
       width: 100%;

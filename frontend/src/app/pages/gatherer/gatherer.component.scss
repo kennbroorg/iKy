@@ -45,7 +45,7 @@
      padding: 0.75rem 0;
   }
 
-  /deep/ .help {
+  ::ng-deep .help {
     position: absolute;
     right: 60px;
     top: 15px;
@@ -67,7 +67,7 @@
 
   }
 
-  /deep/ .soft {
+  ::ng-deep .soft {
     position: absolute;
     right: 30px;
     top: 15px;
@@ -88,7 +88,7 @@
 
   }
 
-  /deep/ .hard {
+  ::ng-deep .hard {
     position: absolute;
     right: 30px;
     top: 15px;
@@ -109,7 +109,7 @@
 
   }
 
-  /deep/ .no {
+  ::ng-deep .no {
     position: absolute;
     right: 30px;
     top: 15px;
@@ -238,7 +238,7 @@
   ngx-d3-polar {
     display: block;
 
-    /deep/ {
+    ::ng-deep {
       .pie-label {
         fill: nb-theme(text-basic-color);
       }
@@ -266,7 +266,7 @@
   }
 
   ngx-github-calendar {
-    /deep/ {
+    ::ng-deep {
       h2 {
         font-size: 20px;
         display: none;
@@ -302,7 +302,7 @@
   }
 
   ngx-fullcontact-scramble {
-    /deep/ {
+    ::ng-deep {
       #cardScramble {
         display: flex;
         justify-content: center; 
@@ -318,7 +318,7 @@
 
   /* Tree */
 
-  /deep/ .angular-tree-component {
+  ::ng-deep .angular-tree-component {
     cursor: default;
 
     .node-wrapper {
