@@ -35,7 +35,7 @@
     &.collapsed {
       width: 0;
 
-      /deep/ .main-container {
+      ::ng-deep .main-container {
         width: 0;
 
         .scrollable {
@@ -45,7 +45,7 @@
       }
     }
 
-    /deep/ .main-container {
+    ::ng-deep .main-container {
       width: $sidebar-width;
       background: nb-theme(layout-background-color);
       transition: width 0.3s ease;
@@ -64,7 +64,7 @@
     // margin-top: nb-theme(sidebar-header-gap);
     // margin-top: 0;
 
-    /deep/ .main-container {
+    ::ng-deep .main-container {
       height:
         // calc(#{nb-theme(sidebar-height)} - #{nb-theme(header-height)} - #{nb-theme(sidebar-header-gap)}) !important;
         calc(#{nb-theme(sidebar-height)} - #{nb-theme(header-height)}) !important;
@@ -77,7 +77,7 @@
 
     }
 
-    /deep/ nb-sidebar-header {
+    ::ng-deep nb-sidebar-header {
       padding-bottom: 0.5rem;
       text-align: center;
     }
@@ -104,7 +104,7 @@
       }
     }
 
-    /deep/ nb-menu {
+    ::ng-deep nb-menu {
       .nb-e-commerce {
         font-size: 2rem;
       }
@@ -112,7 +112,7 @@
 
     &.compacted {
 
-      /deep/ nb-sidebar-header {
+      ::ng-deep nb-sidebar-header {
         padding-left: 0;
         padding-right: 0;
       }
@@ -144,7 +144,7 @@
 
       margin-top: 0;
 
-      /deep/ .main-container {
+      ::ng-deep .main-container {
         height: calc(#{nb-theme(sidebar-height)} - #{nb-theme(header-height)}) !important;
         @include nb-ltr(border-top-right-radius, 0);
         @include nb-rtl(border-top-left-radius, 0);

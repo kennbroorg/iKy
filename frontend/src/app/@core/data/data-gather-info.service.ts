@@ -542,7 +542,7 @@ export class DataGatherInfoService {
             };
         };
         
-        if (datas[''] != '') {
+        if (datas['twitch'] != '') {
             console.log("Twitch : ", datas['twitch']);
             // Spotify
             if (this.isModuleParamRunTaskExec('twitch', datas['twitch'], 'User', 100)) {

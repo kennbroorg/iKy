@@ -57,7 +57,7 @@
   ngx-twitter-resume{
     display: block;
 
-    /deep/ {
+    ::ng-deep {
       .pie-label {
         fill: nb-theme(text-basic-color);
       }

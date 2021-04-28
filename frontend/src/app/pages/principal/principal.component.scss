@@ -54,7 +54,7 @@
     font-weight: nb-theme(text-paragraph-font-weight);
   }
 
-  nb-user /deep/ {
+  nb-user ::ng-deep {
     .info-container {
       @include nb-ltr(margin-left, 0.875rem);
       @include nb-rtl(margin-right, 0.875rem);
@@ -82,7 +82,7 @@
   ngx-charts-pie-chart {
     display: block;
 
-    /deep/ {
+    ::ng-deep {
       .pie-label {
         fill: nb-theme(text-basic-color);
       }

@@ -270,20 +270,23 @@ def p_twitch(username, from_m, level):
                    "link": link_social}
     gather.append(gather_item)
 
-    if (user.created_at):
-        created_at = datetime.strptime(user.created_at,
-                                       "%Y-%m-%dT%H:%M:%S.%fZ")
-        gather_item = {"name-node": "TwitchCreate",
-                       "title": "Created",
-                       "subtitle": created_at.strftime("%Y-%m-%d"),
-                       "icon": "fas fa-calendar-check",
-                       "link": link_social}
-        gather.append(gather_item)
+    try: 
+        if (user.created_at):
+            created_at = datetime.strptime(user.created_at,
+                                           "%Y-%m-%dT%H:%M:%S.%fZ")
+            gather_item = {"name-node": "TwitchCreate",
+                           "title": "Created",
+                           "subtitle": created_at.strftime("%Y-%m-%d"),
+                           "icon": "fas fa-calendar-check",
+                           "link": link_social}
+            gather.append(gather_item)
 
-        timeline_item = {"date": created_at.strftime("%Y-%m-%d"),
-                         "action": "Twitch : Create Account",
-                         "icon": "fa-twitch"}
-        timeline.append(timeline_item)
+            timeline_item = {"date": created_at.strftime("%Y-%m-%d"),
+                             "action": "Twitch : Create Account",
+                             "icon": "fa-twitch"}
+            timeline.append(timeline_item)
+    except Exception:
+        pass
 
     social_item = {"name": "Twitch",
                    "url": "https://twitch.tv/" + username,

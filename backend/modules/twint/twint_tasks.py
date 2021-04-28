@@ -157,6 +157,7 @@ def p_twint(username, from_m):
     profile = []
     social = []
     urls = []
+    presence = []
 
     # Timeline Array
     timeline = []
@@ -277,6 +278,14 @@ def p_twint(username, from_m):
                    "link": link_social}
     gather.append(gather_item)
 
+    presence.append({"name": "twitter",
+                     "children": [
+                         {"name": "followers", 
+                          "value": int(profile_df['followers'][0])},
+                         {"name": "following", 
+                          "value": int(profile_df['following'][0])},
+                     ]})
+    profile.append({'presence': presence})
     profile.append({'username': profile_df['username'][0]})
     if profile_df['url'][0]:
         analyze = analize_rrss(profile_df['url'][0])

@@ -8,11 +8,12 @@ import { SimpleGraphsComponent } from './simple-graphs/simple-graphs.component';
 import { GraphsComponent } from './graphs/graphs.component';
 import { TextCloudComponent } from './text-cloud/text-cloud.component';
 import { TextScrambleComponent } from './text-scramble/text-scramble.component';
+import { CircleSocialComponent } from './circle-social/circle-social.component';
 
 import { SafePipe } from './pipe/safe.pipe';
 
- 
 @NgModule({
+
   imports: [
     CommonModule,
     NbCardModule,
@@ -25,6 +26,7 @@ import { SafePipe } from './pipe/safe.pipe';
     TextScrambleComponent,
     SafePipe,
     ModalDialogComponent,
+    CircleSocialComponent,
   ],
   exports: [
     CommonModule,
@@ -35,6 +37,7 @@ import { SafePipe } from './pipe/safe.pipe';
     TextScrambleComponent,
     SafePipe,
     ModalDialogComponent,
+    CircleSocialComponent,
   ],
   entryComponents: [
     ModalDialogComponent,
