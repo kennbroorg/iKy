@@ -34,36 +34,43 @@ except NameError:
 
 
 def findReposFromUsername(username):
-	response = requests.get('https://api.github.com/users/%s/repos?per_page=100&sort=pushed' % username).text
-	repos = re.findall(r'"full_name":"%s/(.*?)",.*?"fork":(.*?),' % username, response)
-	nonForkedRepos = []
-	for repo in repos:
-		if repo[1] == 'false':
-			nonForkedRepos.append(repo[0])
-	return nonForkedRepos
+    response = requests.get(
+        'https://api.github.com/users/%s/repos?per_page=100&sort=pushed' % 
+        username).text
+    repos = re.findall(r'"full_name":"%s/(.*?)",.*?"fork":(.*?),' % username, 
+                       response)
+    nonForkedRepos = []
+    for repo in repos:
+        if repo[1] == 'false':
+            nonForkedRepos.append(repo[0])
+    return nonForkedRepos
 
 
 def findEmailFromContributor(username, repo, contributor):
-	response = requests.get('https://github.com/%s/%s/commits?author=%s' % (username, repo, contributor)).text
-	latestCommit = re.search(r'href="/%s/%s/commit/(.*?)"' % (username, repo), response)
-	if latestCommit:
-		latestCommit = latestCommit.group(1)
-	else:
-		latestCommit = 'dummy'
-	commitDetails = requests.get('https://github.com/%s/%s/commit/%s.patch' % (username, repo, latestCommit)).text
-	email = re.search(r'<(.*)>', commitDetails)
-	if email:
-		email = email.group(1)
-	return email
+    response = requests.get('https://github.com/%s/%s/commits?author=%s' 
+                            % (username, repo, contributor)).text
+    latestCommit = re.search(r'href="/%s/%s/commit/(.*?)"' % (username, repo), 
+                             response)
+    if latestCommit:
+        latestCommit = latestCommit.group(1)
+    else:
+        latestCommit = 'dummy'
+    commitDetails = requests.get('https://github.com/%s/%s/commit/%s.patch' % 
+                                 (username, repo, latestCommit)).text
+    email = re.search(r'<(.*)>', commitDetails)
+    if email:
+        email = email.group(1)
+    return email
 
 
 def findEmailFromUsername(username):
-	repos = findReposFromUsername(username)
-	for repo in repos:
-		email = findEmailFromContributor(username, repo, username)
-		if email:
-			return email
-	return False
+    repos = findReposFromUsername(username)
+    for repo in repos:
+        email = findEmailFromContributor(username, repo, username)
+        if email:
+            return email
+    return False
+
 
 @celery.task
 def t_github(email, from_m="Initial"):
@@ -116,6 +123,7 @@ def t_github(email, from_m="Initial"):
         graphic = []
 
         # Profile Array
+        presence = []
         profile = []
 
         # Timeline Array
@@ -223,6 +231,15 @@ def t_github(email, from_m="Initial"):
                              'icon': 'fab fa-github'}
             timeline.append(timeline_item)
 
+        if ('followers' in raw_node and 'following' in raw_node):
+            presence.append({"name": "github",
+                             "children": [
+                                 {"name": "followers", 
+                                  "value": int(raw_node['followers'])},
+                                 {"name": "following", 
+                                  "value": int(raw_node['following'])},
+                             ]})
+            profile.append({'presence': presence})
         # Please, respect the order of items in the total array
         # Because the frontend depend of that (By now)
         total.append({'raw': raw_node})

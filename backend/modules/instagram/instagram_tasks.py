@@ -70,6 +70,7 @@ def t_instagram(username, num=10, from_m="Initial"):
         photos = []
 
         # Profile Array
+        presence = []
         profile = []
 
         # Timeline Array
@@ -291,8 +292,7 @@ def t_instagram(username, num=10, from_m="Initial"):
                 hourset.append({"name": g, "value": int(tgdata[e][1])})
                 e += 1
 
-
-        # # weekset
+        # weekset
         weekset = []
         weekdays = 'Monday Tuesday Wednesday Thursday Friday Saturday Sunday'.split()
         wdCounter = Counter(week_temp)
@@ -303,7 +303,7 @@ def t_instagram(username, num=10, from_m="Initial"):
         for z in weekdays:
             try:
                 weekset.append({"name": z, "value": int(wddata[c][1])})
-            except:
+            except Exception:
                 weekset.append({"name": z, "value": 0})
             c += 1
         wddata = y
@@ -321,13 +321,22 @@ def t_instagram(username, num=10, from_m="Initial"):
 
         mediatype = []
         mediatype.append({"name": "Images",
-                        "value": str(graphImage)})
+                          "value": str(graphImage)})
         mediatype.append({"name": "Sidecar",
-                        "value": str(graphSidecar)})
+                          "value": str(graphSidecar)})
         mediatype.append({"name": "Videos",
-                        "value": str(graphVideo)})
+                          "value": str(graphVideo)})
 
-        raw_node = {'captions' : captions}
+        presence.append({"name": "instagram",
+                         "children": [
+                             {"name": "followers", 
+                              "value": int(profili.followers)},
+                             {"name": "following", 
+                              "value": int(profili.followees)},
+                         ]})
+        profile.append({'presence': presence})
+
+        raw_node = {'captions': captions}
         total.append({'raw': raw_node})
         graphic.append({'instagram': gather})
         graphic.append({'postslist': lk_cm})
