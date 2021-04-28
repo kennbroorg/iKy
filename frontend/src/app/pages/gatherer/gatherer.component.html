@@ -182,7 +182,7 @@
           </div>
 
           <!-- Twitter Social -->
-          <div class="col-md-4" id="divTwitterSocial" #divTwitterSocial *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterSocial" #divTwitterSocial *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-social [data]="gathered['twitter']"></ngx-twitter-social>
           </div>
 
@@ -192,7 +192,7 @@
           </div>
 
           <!-- Twitter Popularity -->
-          <div class="col-md-4" id="divTwitterPopularity" #divTwitterPopularity *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterPopularity" #divTwitterPopularity *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-popularity [data]="gathered['twitter']"></ngx-twitter-popularity>
           </div>
 
@@ -357,22 +357,22 @@
           </div>
 
           <!-- Spotify Playlists -->
-          <div class="col-md-4" id="divSpotifyPlaylists" #divSpotifyPlaylists *ngIf="gathered['spotify'] && gathered['spotify'].result[4] && validationShow[gathered['spotify'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divSpotifyPlaylists" #divSpotifyPlaylists *ngIf="gathered['spotify'] && gathered['spotify'].result[4] && gathered['spotify'].result[4].graphic[1].playlist?.length > 1 && validationShow[gathered['spotify'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-spotify-playlists [data]="gathered['spotify']"></ngx-spotify-playlists>
           </div>
 
           <!-- Spotify Autors -->
-          <div class="col-md-4" id="divSpotifyAutors" #divSpotifyAutors *ngIf="gathered['spotify'] && gathered['spotify'].result[4] && validationShow[gathered['spotify'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divSpotifyAutors" #divSpotifyAutors *ngIf="gathered['spotify'] && gathered['spotify'].result[4] && gathered['spotify'].result[4].graphic[2].autors?.length > 1 && validationShow[gathered['spotify'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-spotify-autors [data]="gathered['spotify']"></ngx-spotify-autors>
           </div>
 
           <!-- Spotify Language -->
-          <div class="col-md-4" id="divSpotifyLang" #divSpotifyLang *ngIf="gathered['spotify'] && gathered['spotify'].result[4] && validationShow[gathered['spotify'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divSpotifyLang" #divSpotifyLang *ngIf="gathered['spotify'] && gathered['spotify'].result[4] && gathered['spotify'].result[4].graphic[3].words?.length > 1 && validationShow[gathered['spotify'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-spotify-lang [data]="gathered['spotify']"></ngx-spotify-lang>
           </div>
 
           <!-- Spotify Words -->
-          <div class="col-md-4" id="divSpotifyWords" #divSpotifyWords *ngIf="gathered['spotify'] && gathered['spotify'].result[4] && validationShow[gathered['spotify'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divSpotifyWords" #divSpotifyWords *ngIf="gathered['spotify'] && gathered['spotify'].result[4] && gathered['spotify'].result[4].graphic[4].lang?.length > 1 && validationShow[gathered['spotify'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-spotify-words [data]="gathered['spotify']"></ngx-spotify-words>
           </div>
 

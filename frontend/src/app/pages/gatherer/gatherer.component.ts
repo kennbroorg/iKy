@@ -10,7 +10,7 @@ import { takeWhile } from 'rxjs/operators' ;
 import { Observable } from 'rxjs/Observable';
 import { mergeMap } from 'rxjs/operators';
 
-// Toaster 
+// Toaster
 import { ToasterConfig } from 'angular2-toaster';
 import 'style-loader!angular2-toaster/toaster.css';
 import { NbGlobalLogicalPosition, NbGlobalPhysicalPosition, NbGlobalPosition, NbToastrService } from '@nebular/theme';
@@ -25,8 +25,8 @@ import { DataGatherInfoService } from '../../@core/data/data-gather-info.service
 // const jsPDF = require('jspdf');
 // import { jsPDF } from 'jspdf';
 // import * as jsPDF from 'jspdf';
-import jsPDF from 'jspdf'
-import 'jspdf-autotable'
+// import jsPDF from 'jspdf'
+// import 'jspdf-autotable'
 
 declare let canvg: any;
 declare let svgAsPngUri: any;
