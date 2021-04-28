@@ -72,6 +72,18 @@
             <ngx-profile-data [name]="name" [usern]="usern" [location]="location" [geo]="geo" [organization]="organization" [emails]="emails" [phone]="phone" [url]="url" [bio]="bio"></ngx-profile-data>
         </div>
 
+        <!--<div class="col-xxxl-12 col-xxl-12 col-md-12" *ngIf="presence?.length > 0">-->
+        <div class="col-xxxl-12 col-xxl-12 col-md-12">
+          <nb-card size="medium" class="border-default" id="centralInfo">
+            <nb-card-header>
+                <span><i class="fas fa-signature"></i> - </span> Presence in RRSS
+            </nb-card-header>
+            <nb-card-body>
+              <ngx-circle-social [data]="presence"></ngx-circle-social>
+            </nb-card-body>
+          </nb-card>
+        </div>
+
         <div class="col-xxxl-12 col-xxl-12 col-md-12" *ngIf="social?.length > 0">
           <ngx-profile-social [social]="social"></ngx-profile-social>
         </div>
