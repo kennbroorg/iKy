@@ -29,6 +29,8 @@ logger = get_task_logger(__name__)
 
 async def p_holehe(email, from_m):
 
+    holehe.core.check_if_email(email)
+
     modules = holehe.core.import_submodules("holehe.modules")
     websites = holehe.core.get_functions(modules)
 
@@ -36,7 +38,9 @@ async def p_holehe(email, from_m):
     out = []
     async with trio.open_nursery() as nursery:
         for website in websites:
-            nursery.start_soon(website, email, client, out)
+            nursery.start_soon(holehe.core.launch_module, website, email, 
+                               client, out)
+            # nursery.start_soon(website, email, client, out)
     raw_node = sorted(out, key=lambda i: i['name'])  # We sort by modules names
     await client.aclose()
 
