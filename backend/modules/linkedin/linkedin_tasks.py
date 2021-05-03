@@ -4,8 +4,10 @@
 import sys
 import json
 import requests
-import os
+import time
+import traceback
 from collections import Counter
+import browser_cookie3
 
 import re
 from bs4 import BeautifulSoup
@@ -32,13 +34,6 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
-# Compatibility code
-try:
-    # Python 2: "unicode" is built-in
-    unicode
-except NameError:
-    unicode = str
-
 
 def date_convert(date):
     date_conv = str(date.get("year", ""))
@@ -47,101 +42,116 @@ def date_convert(date):
     return date_conv
 
 
-@celery.task
-def t_linkedin(email, from_m):
+def p_linkedin(user, from_m):
 
-    cookie_file = os.path.join(os.path.dirname(
-        os.path.realpath(__file__)), "cookie-linkedin.json")
-
-    # cookie_file = "cookie-linkedin.json"
-    expiration_date = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
+    # import pdb; pdb.set_trace()
 
     s = requests.Session()
-    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.75.14 (KHTML, like Gecko) Version/7.0.3 Safari/7046A194A'}
+    headers = {'User-Agent': 
+               'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) ' + 
+               'AppleWebKit/537.75.14 (KHTML, like Gecko) Version/7.0.3 ' +
+               'Safari/7046A194A'}
 
-    if (os.path.isfile(cookie_file)
-        and (expiration_date < datetime.fromtimestamp(
-            os.path.getmtime(cookie_file)).strftime('%Y-%m-%d'))):
+    # Try to get cookie from browser
+    # TODO: Write valid cookies in apikeys
+    ref = ["chromium", "opera", "edge", "firefox", "chrome"]
+    index = 0
+    json_cookie = {}
+    found = False
+    for cookie_fn in [
+        browser_cookie3.chromium,
+        browser_cookie3.opera,
+        browser_cookie3.edge,
+        browser_cookie3.firefox,
+        browser_cookie3.chrome,
+    ]:
+        try:
+            for cookie in cookie_fn(domain_name=""):
+                if ('linkedin' in cookie.domain):
+                    if ((cookie.name == 'li_at' or 
+                         cookie.name == 'JSESSIONID') and 
+                            (not cookie.is_expired())):
+                        json_cookie['browser'] = ref[index]
+                        json_cookie[cookie.name] = cookie.value
+                        json_cookie[cookie.name + '_expires'] = cookie.expires
 
-        with open(cookie_file, 'r') as f:
-            s.cookies = requests.utils.cookiejar_from_dict(json.load(f))
+                # Check
+                if((json_cookie.get("li_at", "") != "") and
+                   (json_cookie.get("JSESSIONID", "") != "")):
+                    found = True
+                    break
+        except Exception as e:
+            print(e)
 
+        index += 1
+
+        if(found):
+            break
+
+    if(found):
+        s.cookies['li_at'] = json_cookie['li_at']
+        s.cookies['JSESSIONID'] = json_cookie['JSESSIONID']
+        s.headers = headers
+        s.headers["csrf-token"] = s.cookies["JSESSIONID"].strip('"')
     else:
-        # Get user and pass
-        linkedin_user = api_keys_search('linkedin_user')
-        linkedin_pass = api_keys_search('linkedin_pass')
+        raise RuntimeError('iKy can\'t detect cookies')
 
-        # Login process
-        r = s.get('https://www.linkedin.com/login?trk=guest_homepage-basic_nav-header-signin', headers=headers)
-        cookies = dict(r.cookies)
+    url = 'https://www.linkedin.com/voyager/api/identity/profiles/' + \
+        user + '/profileView'
 
-        soup = BeautifulSoup(r.content, "lxml")
-        hidden_tags = soup.find_all("input", type="hidden")
-        payload = {}
-        for input_hidden in hidden_tags:
-            payload[input_hidden['name']] = input_hidden['value']
-        payload['session_key'] = linkedin_user
-        payload['session_password'] = linkedin_pass
+    req = s.get(url)
 
-        req = s.post("https://www.linkedin.com/checkpoint/lg/login-submit",
-                     data=payload,
-                     headers=headers)
+    # Get ID
+    ids = []
+    match = re.search(r'\"profileId\":\"(\w*)\"', req.text)
+    if (match):
+        ids = match.groups()[0].strip()
+    else:
+        raise RuntimeError('Linkedin user don\'t exist')
 
-        with open('cookie-linkedin.json', 'w') as f:
-            json.dump(requests.utils.dict_from_cookiejar(s.cookies), f)
-
-    for cookie in s.cookies:
-        if "JSESSIONID" in str(cookie):
-            csrfToken = re.findall('JSESSIONID=([^ ]*)', str(cookie))
 
     # Total
     total = []
     total.append({'module': 'linkedin'})
-    total.append({'param': email})
+    total.append({'param': user})
 
     found = False
     # Get profile from username
-    if ("http" in email):
+    if ("http" in user):
         total.append({'validation': 'hard'})
-        url = email
+        url = user
         found = True
+        raise RuntimeError('Linkedin don\'t work with url')
     # Get profile from email
-    elif ("@" in email):
-        total.append({'validation': 'hard'})
-        url = "https://www.linkedin.com/sales/gmail/profile/" + \
-            "viewByEmail/%s" % email
-        req = s.get(url, headers=headers)
-        if "Sorry, we couldn't find a matching LinkedIn" not in req.text:
-            soup = BeautifulSoup(req.content, "lxml")
-            a = soup.find("a", {"id": "profile-link"})
-            url = a['href']
-            found = True
+    elif ("@" in user):
+        raise RuntimeError('Linkedin don\'t work with email')
     else:
         total.append({'validation': 'hard'})
-        url = "https://www.linkedin.com/in/%s/" % email
+        url = "https://www.linkedin.com/in/%s/" % user
         found = True
     # Get profile from http
 
     if found:
+        s.headers["csrf-token"] = s.cookies["JSESSIONID"].strip('"')
+        headers["csrf-token"] = s.cookies["JSESSIONID"].strip('"')
+
         req = s.get(url, headers=headers)
 
-        ids = re.findall(
-            '\/voyager\/api\/identity\/profiles\/(.*)\/',
-            req.text)
-        id = Counter(ids).most_common(1)
+        id = Counter([ids]).most_common(1)  # This is for compatibility code
 
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
             id[0][0] + "/following?q=followedEntities&count=17"
-        s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
+        
         req = s.get(url, headers=headers)
+
         # Following
         following_view = json.loads(req.text)
 
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
             id[0][0] + "/skillCategory?includeHiddenEndorsers=true"
-        s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
+        # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         req = s.get(url, headers=headers)
-        content = re.sub("\. ?\n", ",\n", unicode(req.text))
+        content = re.sub("\. ?\n", ",\n", req.text)
         content = re.sub(" = ", " : ", content)
         # Skill Category
         skill_category = json.loads(content)
@@ -157,7 +167,7 @@ def t_linkedin(email, from_m):
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
             id[0][0] + \
             "/recommendations?q=received&recommendationStatuses=List(VISIBLE)"
-        s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
+        # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         req = s.get(url, headers=headers)
         # Recomendaciones 1
         recommend_received = json.loads(req.text)
@@ -165,16 +175,16 @@ def t_linkedin(email, from_m):
         # TODO : KKK : For person relationship
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
             id[0][0] + "/recommendations?q=given"
-        s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
+        # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         req = s.get(url, headers=headers)
         # Recomendaciones 2
         recommend_given = json.loads(req.text)
 
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
             id[0][0] + "/profileView"
-        s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
+        # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         req = s.get(url, headers=headers)
-        content = re.sub("\. ?\n", ",\n", unicode(req.text))
+        content = re.sub("\. ?\n", ",\n", req.text)
         content = re.sub(" = ", " : ", content)
         # Profile
         profile_view = json.loads(content)
@@ -188,9 +198,9 @@ def t_linkedin(email, from_m):
 
         url = "https://www.linkedin.com/voyager/api/identity/profiles/" + \
             id[0][0] + "/networkinfo"
-        s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
+        # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
         req = s.get(url, headers=headers)
-        content = re.sub("\. ?\n", ",\n", unicode(req.text))
+        content = re.sub("\. ?\n", ",\n", req.text)
         content = re.sub(" = ", " : ", content)
         # NetworkInfo
         network_info = json.loads(content)
@@ -223,19 +233,12 @@ def t_linkedin(email, from_m):
         # PrivacySettings
         # x = json.loads(req.text)
 
-        raw = []
-        raw.append({'profile_view': profile_view})
-        raw.append({'network_info': network_info})
-        raw.append({'recommend_received': recommend_received})
-        raw.append({'recommend_given': recommend_given})
-        raw.append({'following_view': following_view})
-        raw.append({'skill_category': skill_category})
-
         # Graphic Array
         graphic = []
 
         # Profile Array
         profile = []
+        presence = []
 
         # Timeline Array
         timeline = []
@@ -487,6 +490,16 @@ def t_linkedin(email, from_m):
                                "value": s.get("endorsementCount", "")})
         skill_tmp = {"name": "", "value": 100, "children": skills}
 
+        # Raw with status
+        raw = []
+        raw.append({"code": 0})
+        raw.append({'profile_view': profile_view})
+        raw.append({'network_info': network_info})
+        raw.append({'recommend_received': recommend_received})
+        raw.append({'recommend_given': recommend_given})
+        raw.append({'following_view': following_view})
+        raw.append({'skill_category': skill_category})
+
         total.append({'raw': raw})
         graphic.append({'social': socialp})
         # graphic.append({'skills': skills})
@@ -502,8 +515,57 @@ def t_linkedin(email, from_m):
         # graphic.append({'educationView': educationView})
         total.append({'graphic': graphic})
 
+        presence.append({"name": "Linkedin",
+                         "children": [
+                             {"name": "followers", 
+                              "value": network_info.get("followersCount", "")},
+                             {"name": "following", 
+                              "value": following_view.get("paging", "").get(
+                                                          "total", "")}
+                         ]})
+
+        profile.append({'presence': presence})
+
         total.append({'profile': profile})
         total.append({'timeline': timeline})
+
+    return total
+
+
+@celery.task
+def t_linkedin(user, from_m):
+    # Variable principal
+    total = []
+    # Take initial time
+    tic = time.perf_counter()
+
+    # try execution principal function
+    try:
+        total = p_linkedin(user, from_m)
+    # Error handle
+    except Exception as e:
+        # Error description
+        traceback.print_exc()
+        traceback_text = traceback.format_exc()
+
+        # Set module name in JSON format
+        total.append({"module": "linkedin"})
+
+        # Set status code and reason
+        status = []
+        status.append(
+            {
+                "code": 10,  # this code is arbitrary
+                "reason": "{}".format(e),
+                "traceback": traceback_text,
+            }
+        )
+        total.append({"raw": status})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"Linkedin - Response in {toc - tic:0.4f} seconds")
 
     return total
 
