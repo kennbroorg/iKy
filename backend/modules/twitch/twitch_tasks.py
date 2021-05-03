@@ -171,6 +171,7 @@ def p_twitch(username, from_m, level):
     # Profile Array
     profile = []
     social = []
+    presence = []
 
     # # Timeline Array
     timeline = []
@@ -298,6 +299,15 @@ def p_twitch(username, from_m, level):
 
     if (user.description):
         profile.append({'bio': user.description})
+
+    presence.append({"name": "twitch",
+                     "children": [
+                         {"name": "followers", 
+                          "value": qty_followers},
+                         {"name": "following", 
+                          "value": qty_followed},
+                     ]})
+    profile.append({'presence': presence})
 
     total.append({'raw': raw_node_total})
     graphic.append({'social': gather})

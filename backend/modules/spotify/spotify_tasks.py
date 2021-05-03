@@ -143,6 +143,7 @@ def p_spotify(username, from_m, level):
     # Profile Array
     profile = []
     social = []
+    presence = []
 
     # # Timeline Array
     timeline = []
@@ -225,6 +226,14 @@ def p_spotify(username, from_m, level):
                    "username": username}
     social.append(social_item)
     profile.append({"social": social})
+
+    presence.append({"name": "spotify",
+                     "children": [
+                         {"name": "followers", 
+                          "value": user['followers']['total']},
+                     ]})
+
+    profile.append({'presence': presence})
 
     total.append({'raw': raw_node_total})
     graphic.append({'social': gather})
