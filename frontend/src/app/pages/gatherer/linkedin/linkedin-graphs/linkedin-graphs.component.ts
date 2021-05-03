@@ -5,18 +5,18 @@ import { NbDialogService } from '@nebular/theme';
 @Component({
     selector: 'ngx-linkedin-graphs',
     templateUrl: './linkedin-graphs.component.html',
-    styleUrls: ['./linkedin-graphs.component.scss']
+    styleUrls: ['./linkedin-graphs.component.scss'],
 })
 export class LinkedinGraphsComponent implements OnInit {
     @ViewChild('nbCardLinkedinGraphs', { static: false }) private nbCardContainer: ElementRef;
     @Input() private data: any;
-    private linkedinGraphs : any;
-    private validation : any;
+    private linkedinGraphs: any;
+    private validation: any;
 
     constructor(private dialogService: NbDialogService) {}
-  
+
     ngOnInit() {
-        console.log("Linkedin Graphs Component");
+        console.log('Linkedin Graphs Component');
         this.linkedinGraphs = this.data.result[4].graphic[0].social;
     }
 

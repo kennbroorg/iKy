@@ -53,7 +53,7 @@ def t_sherlock(username):
                                     verbose=False,
                                     print_all=False,
                                     color=not True)
-    raw_node = sherlock(username, data, query_notify)
+    raw_node = sherlock(username, data, query_notify, timeout=10)
 
     # Total
     total = []

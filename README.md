@@ -216,7 +216,7 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 
 - Fullcontact: Generate the APIs from [here](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs)
 - PeopleDataLabs : Generate the APIs from [aquí](https://www.peopledatalabs.com/signup)
-- Linkedin: Only the user and password of your account must be loaded
+- **Linkedin** : Linkedin changed their authentication process and with that the module in iKy stopped working, but I found a relatively easy way to baypass it All you have to do is log into linkedin in a Firefox browser. Yes, just that iKy will look for the cookie, use it and scrape the information. I hope it works for a long time
 - Instagram: Only the user and password of your account must be loaded
 - HaveIBeenPwned : Generate the APIs from [here](https://haveibeenpwned.com/API/Key) (Paid)
 - Emailrep.io : Generate the APIs from [here](https://emailrep.io/key)
@@ -231,14 +231,16 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 - [iKy Page](https://kennbroorg.gitlab.io/ikyweb/)
 - Installation
   - [Easy Install](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/EasyInstall)
-  - [Vagrant](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Vagrant)
   - [Manual install (Compacted)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Compacted))
   - [Manual install (Detailed)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Detailed))
+  - [Docker](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Docker)
+  - [Vagrant](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Vagrant)
 - Update
   - [Soft Update](https://gitlab.com/kennbroorg/iKy/-/wikis/Update/Soft)
 - Wake Up 
   - [Turn on the project](https://gitlab.com/kennbroorg/iKy/-/wikis/Wakeup/WakeUp)
 - APIs
+  - [Get APIs](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get)
   - [APIs through frontend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-through-the-browser)
   - [APIs through backend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/APIs-through-the-backend)
 - Backend
@@ -260,7 +262,7 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 ## Demo Video
 
 <div align="center">
-    <a href="https://vimeo.com/434501702"><img alt="Kali 2019" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKy-01.png"></a>
+    <a href="https://vimeo.com/496879025"><img alt="iKy SOL" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKy-01.png"></a>
     <p>Vimeo</p>
 </div>
 

@@ -27,3 +27,4 @@ stop_words
 spotipy==2.16.1
 twitch-python
 parse
+browser-cookie3
