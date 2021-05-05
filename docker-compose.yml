@@ -1,5 +1,26 @@
 version: '3'
 services:
+    nginx:
+      image: "nginx:alpine"
+      ports:
+        - "4201:4201"
+        - "5001:5001"
+      links:
+        - registry:registry
+      volumes:
+        - ./auth:/etc/nginx/conf.d
+        - ./auth/nginx.conf:/etc/nginx/nginx.conf:ro
+
+    registry:
+      image: registry:2
+      volumes:
+        - ./data:/var/lib/registry
+
+    tor:
+        image: dperson/torproxy
+        ports:
+            - "8118:8118"
+            - "9050:9050"
     frontend:
         build:
             context: .
