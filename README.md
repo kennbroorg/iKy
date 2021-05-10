@@ -214,7 +214,7 @@ Open the browser in this [url](http://127.0.0.1:4200)
 
 Once the application is loaded in the browser, you should go to the Api Keys option and load the values of the APIs that are needed.
 
-- Fullcontact: Generate the APIs from [here](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs)
+- Fullcontact: Generate the APIs from [here](https://support.fullcontact.com/portal/en/kb/articles/lost-api-key)
 - PeopleDataLabs : Generate the APIs from [aquí](https://www.peopledatalabs.com/signup)
 - **Linkedin** : Linkedin changed their authentication process and with that the module in iKy stopped working, but I found a relatively easy way to baypass it All you have to do is log into linkedin in a Firefox browser. Yes, just that iKy will look for the cookie, use it and scrape the information. I hope it works for a long time
 - Instagram: Only the user and password of your account must be loaded
