@@ -53,7 +53,6 @@ def p_linkedin(user, from_m):
                'Safari/7046A194A'}
 
     # Try to get cookie from browser
-    # TODO: Write valid cookies in apikeys
     ref = ["chromium", "opera", "edge", "firefox", "chrome"]
     index = 0
     json_cookie = {}
@@ -94,7 +93,23 @@ def p_linkedin(user, from_m):
         s.headers = headers
         s.headers["csrf-token"] = s.cookies["JSESSIONID"].strip('"')
     else:
-        raise RuntimeError('iKy can\'t detect cookies')
+        v_li_at = api_keys_search('linkedin_li_at')
+        v_JSESSIONID = api_keys_search('linkedin_JSESSIONID')
+        if (v_li_at == '' or v_JSESSIONID == ''):
+            raise RuntimeError('iKy can\'t detect cookies!!! \n' + 
+                               'You will have to load them manually, by ' +
+                               'extracting the cookies named \'li_at\' and ' + 
+                               '\'JSESSIONID\' from the browser and loading ' +
+                               'them in \'linkedin_li_at\' and ' +
+                               '\'linkedin_JSESSIONID\' accordingly.'
+                               '\nPlease refer to ' +
+                               'https://gitlab.com/kennbroorg/iKy/-/wikis/' +
+                               'APIs/ApiKeys-get#linkedin \n')
+        else:
+            s.cookies['li_at'] = v_li_at
+            s.cookies['JSESSIONID'] = v_JSESSIONID
+            s.headers = headers
+            s.headers["csrf-token"] = s.cookies["JSESSIONID"].strip('"')
 
     url = 'https://www.linkedin.com/voyager/api/identity/profiles/' + \
         user + '/profileView'
@@ -106,9 +121,12 @@ def p_linkedin(user, from_m):
     match = re.search(r'\"profileId\":\"(\w*)\"', req.text)
     if (match):
         ids = match.groups()[0].strip()
+    elif ('This profile can\'t be accessed' in req.text):
+        raise RuntimeError('Linkedin user don\'t exist')  # TODO
     else:
-        raise RuntimeError('Linkedin user don\'t exist')
-
+        raise RuntimeError('The cookies in apikeys are wrong or expired\n' +
+                           'Reload them in apikeys section or file and ' +
+                           'try again ')
 
     # Total
     total = []
@@ -547,15 +565,24 @@ def t_linkedin(user, from_m):
         # Error description
         traceback.print_exc()
         traceback_text = traceback.format_exc()
+        code = 10
+        if ('iKy can\'t detect cookies!!!' in traceback_text):
+            code = 5
+        elif ('Linkedin user don\'t exist' in traceback_text):
+            code = 6
+        else:
+            code = 7
 
         # Set module name in JSON format
         total.append({"module": "linkedin"})
+        total.append({"param": user})
+        total.append({"validation": "null"})
 
         # Set status code and reason
         status = []
         status.append(
             {
-                "code": 10,  # this code is arbitrary
+                "code": code,
                 "reason": "{}".format(e),
                 "traceback": traceback_text,
             }
