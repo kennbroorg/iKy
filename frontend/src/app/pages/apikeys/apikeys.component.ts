@@ -9,11 +9,7 @@ import { NbDialogService } from '@nebular/theme';
 @Component({
     selector: 'ngx-apikeys',
     templateUrl: './apikeys.component.html',
-    styles: [`
-        nb-card {
-            transform: translate3d(0, 0, 0);
-        }
-    `],
+    styleUrls: ['./apikeys.component.scss'],
     changeDetection: ChangeDetectionStrategy.Default,
 })
 
@@ -21,25 +17,13 @@ export class ApiKeysComponent implements OnInit {
     public  keys: any;
 
     settings = {
-      add: {
-        addButtonContent: '<i class="nb-plus"></i>',
-        createButtonContent: '<i class="nb-checkmark"></i>',
-        cancelButtonContent: '<i class="nb-close"></i>',
-      },
+      actions: { add: false, delete: false },
       edit: {
         editButtonContent: '<i class="nb-edit"></i>',
         saveButtonContent: '<i class="nb-checkmark"></i>',
         cancelButtonContent: '<i class="nb-close"></i>',
       },
-      delete: {
-        deleteButtonContent: '<i class="nb-trash"></i>',
-        confirmDelete: true,
-      },
       columns: {
-        id: {
-          title: 'ID',
-          type: 'number',
-        },
         name: {
           title: 'Key name',
           type: 'string',
@@ -48,8 +32,47 @@ export class ApiKeysComponent implements OnInit {
           title: 'Key value',
           type: 'string',
         },
+        // help: {
+        //   title: 'help',
+        //   type: 'text',
+        //   editable: false,
+        // },
       },
     };
+
+//     settings = {
+//       add: {
+//         addButtonContent: '<i class="nb-plus"></i>',
+//         createButtonContent: '<i class="nb-checkmark"></i>',
+//         cancelButtonContent: '<i class="nb-close"></i>',
+//       },
+//       edit: {
+//         editButtonContent: '<i class="nb-edit"></i>',
+//         saveButtonContent: '<i class="nb-checkmark"></i>',
+//         cancelButtonContent: '<i class="nb-close"></i>',
+//       },
+//       delete: {
+//         deleteButtonContent: '<i class="nb-trash"></i>',
+//         confirmDelete: true,
+//       },
+//       action: {
+//         delete: false,
+//       },
+//       columns: {
+//         id: {
+//           title: 'ID',
+//           type: 'number',
+//         },
+//         name: {
+//           title: 'Key name',
+//           type: 'string',
+//         },
+//         key: {
+//           title: 'Key value',
+//           type: 'string',
+//         },
+//       },
+//     };
 
     source: LocalDataSource = new LocalDataSource();
 
