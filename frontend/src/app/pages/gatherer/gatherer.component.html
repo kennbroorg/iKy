@@ -332,7 +332,7 @@
           </div>
 
           <!-- Linkedin Graphs -->
-          <div class="col-md-4" id="divLinkedinGraphs" #divLinkedinGraphs *ngIf="gathered['linkedin'] && gathered['linkedin'].result[4] && validationShow[gathered['linkedin'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divLinkedinGraphs" #divLinkedinGraphs *ngIf="gathered['linkedin'] && gathered['linkedin'].result[3] && gathered['data'].linkedin != ''" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-linkedin-graphs [data]="gathered['linkedin']"></ngx-linkedin-graphs>
           </div>
 

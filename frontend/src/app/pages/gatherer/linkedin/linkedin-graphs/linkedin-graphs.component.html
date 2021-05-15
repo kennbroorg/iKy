@@ -10,6 +10,18 @@
 
     <nb-card-body id="nbCardLinkedinGraphs" #nbCardLinkedinGraphs style="text-align: center; overflow: hidden;">
         <ngx-graphs [data]="linkedinGraphs"></ngx-graphs>
+
+        <!-- ERRORS -->
+        <div nbTooltip="Linkedin user don't exist" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 200px; z-index: 2;" *ngIf="status == 6">
+            <i class="fas fa-user-times" style="font-size: 200px;"></i>
+        </div>
+        <div nbTooltip="iKy can't detect cookies!!! You will have to load them manually, by extracting the cookies named 'li_at' and 'JSESSIONID' from the browser and loading them in 'linkedin_li_at' and 'linkedin_JSESSIONID' accordingly. Please refer to https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#linkedin" nbTooltipStatus="danger" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 200px; z-index: 2;" *ngIf="status == 5">
+            <i class="fas fa-cookie-bite" style="font-size: 200px;"></i>
+        </div>
+        <div nbTooltip="The cookies in apikeys are wrong or expiredi. Reload them in apikeys section or file and try again" nbTooltipStatus="danger" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 200px; z-index: 2;" *ngIf="status == 7">
+            <i class="fas fa-cookie-bite" style="font-size: 200px;"></i>
+        </div>
+
     </nb-card-body>
   </nb-card>
 
