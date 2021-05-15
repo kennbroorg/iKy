@@ -216,7 +216,7 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 
 - Fullcontact: Generate the APIs from [here](https://support.fullcontact.com/portal/en/kb/articles/lost-api-key)
 - PeopleDataLabs : Generate the APIs from [aquí](https://www.peopledatalabs.com/signup)
-- **Linkedin** : Linkedin changed their authentication process and with that the module in iKy stopped working, but I found a relatively easy way to baypass it All you have to do is log into linkedin in a Firefox browser. Yes, just that iKy will look for the cookie, use it and scrape the information. I hope it works for a long time
+- **Linkedin** : Linkedin changed their authentication process and with that the module in iKy stopped working, but I found a relatively easy way to baypass it.([here](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get))
 - Instagram: Only the user and password of your account must be loaded
 - HaveIBeenPwned : Generate the APIs from [here](https://haveibeenpwned.com/API/Key) (Paid)
 - Emailrep.io : Generate the APIs from [here](https://emailrep.io/key)
