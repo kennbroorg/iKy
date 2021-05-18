@@ -33,6 +33,15 @@ def extract_url(text):
     return urls
 
 
+def extract_mails(text):
+    mails = []
+    regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
+    matches = re.finditer(regex, text, re.MULTILINE)
+    for matchNum, match in enumerate(matches, start=1):
+        mails.append({"email": match.group()})
+    return mails
+
+
 def extract_url_linkedin(text):
     tasks = []
     regex = r"((http(s)?(\:\/\/))+(www\.)?(linkedin)*(\.[a-zA-Z]{2,3}\/?))[^\s\b\n|]*[^.,;:\?\!\@\^\$ -]"
@@ -118,6 +127,8 @@ def analize_rrss(text):
 
     urls = extract_url(text)
     analized['url'] = urls
+    mails = extract_mails(text)
+    analized['email'] = mails
     tasks_temp = []
     tasks_temp.append(extract_url_linkedin(text))
     tasks_temp.append(extract_url_instagram(text))

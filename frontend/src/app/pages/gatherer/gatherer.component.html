@@ -267,7 +267,9 @@
           </div>
 
           <!-- Twitter Tweets vs Retweets -->
-          <div class="col-md-4" id="divTwitterTwvsrt" #divTwitterTwvsrt *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterTwvsrt" #divTwitterTwvsrt 
+            *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && gathered['twitter'].result[4] && gathered['twitter'].result[4].graphic[9] && gathered['twitter'].result[4] && gathered['twitter'].result[4].graphic[11].twvsrt?.length > 0"
+            [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-twvsrt [data]="gathered['twitter']"></ngx-twitter-twvsrt>
           </div>
 
@@ -277,7 +279,9 @@
           </div>
 
           <!-- Twitter Source -->
-          <div class="col-md-4" id="divTwitterSource" #divTwitterSource *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterSource" #divTwitterSource 
+            *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && gathered['twitter'].result[4] && gathered['twitter'].result[4].graphic[9] && gathered['twitter'].result[4] && gathered['twitter'].result[4].graphic[9].sources?.length > 0"
+            [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-source [data]="gathered['twitter']"></ngx-twitter-source>
           </div>
 
@@ -332,7 +336,9 @@
           </div>
 
           <!-- Linkedin Graphs -->
-          <div class="col-md-4" id="divLinkedinGraphs" #divLinkedinGraphs *ngIf="gathered['linkedin'] && gathered['linkedin'].result[3] && gathered['data'].linkedin != ''" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divLinkedinGraphs" #divLinkedinGraphs 
+            *ngIf="gathered['linkedin'] && gathered['linkedin'].result[3] && ((gathered['linkedin'].result[4] && gathered['linkedin'].result[4].graphic[0].social?.length > 1) || (gathered['data'] && gathered['data'].linkedin != ''))"
+            [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-linkedin-graphs [data]="gathered['linkedin']"></ngx-linkedin-graphs>
           </div>
 
@@ -419,7 +425,9 @@
           </div>
 
           <!-- Tiktok graphs-->
-          <div class="col-md-4" id="divTiktokSocial" #divTiktokSocial *ngIf="gathered['tiktok'] && gathered['tiktok'].result[4] && gathered['tiktok'].result[4].graphic[0].tiktok?.length > 1 && validationShow[gathered['tiktok'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTiktokSocial" #divTiktokSocial 
+            *ngIf="gathered['tiktok'] && gathered['tiktok'].result[3] && ((gathered['tiktok'].result[4] && gathered['tiktok'].result[4].graphic[0].tiktok?.length > 1) || (gathered['data'] && gathered['data'].tiktok != ''))"
+            [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-tiktok-graphs [data]="gathered['tiktok']"></ngx-tiktok-graphs>
           </div>
 
