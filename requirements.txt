@@ -13,7 +13,7 @@ geopy==1.22.0
 # git+https://github.com/twintproject/twint.git@origin/master#egg=twint
 git+https://github.com/himanshudabas/twint.git@origin/fix-parser#egg=twint
 socialscan==1.4.1
-instaloader==4.6.1
+instaloader==4.8.1
 requests-futures==1.0.0
 torrequest
 holehe
