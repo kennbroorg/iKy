@@ -505,7 +505,6 @@ def t_search(username, from_m="Initial"):
 
     search_args = (username, 1)
 
-    import pdb;pdb.set_trace()
     gsearch = GoogleSearch()
     ysearch = YahooSearch()
     bsearch = BingSearch()
