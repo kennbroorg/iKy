@@ -243,16 +243,21 @@ def t_instagram(username, num=10, from_m="Initial"):
             elif (post.typename == 'GraphSidecar'):
                 graphSidecar += 1
 
-            if (post.location):
-                postloc_item = {'Caption': post.location.name,
-                                'Accessability': post.pcaption,
-                                'Latitude': post.location.lat,
-                                'Longitude': post.location.lng,
-                                'Name': post.location.name,
-                                'Time': post.date.strftime("%Y-%m-%d %H:%M:%S")
-                                }
-                postloc.append(postloc_item)
-                profile.append({'geo': postloc_item})
+            # Fix : python 3.9 >
+            try:
+                if (post.location):
+                    postloc_item = {'Caption': post.location.name,
+                                    'Accessability': post.pcaption,
+                                    'Latitude': post.location.lat,
+                                    'Longitude': post.location.lng,
+                                    'Name': post.location.name,
+                                    'Time': post.date.strftime(
+                                        "%Y-%m-%d %H:%M:%S")
+                                    }
+                    postloc.append(postloc_item)
+                    profile.append({'geo': postloc_item})
+            except Exception:
+                pass
 
             stop += 1
             if (stop == num):
