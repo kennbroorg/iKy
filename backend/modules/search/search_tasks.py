@@ -4,6 +4,8 @@
 import sys
 import json
 import requests
+import traceback
+from shutil import rmtree
 # from search_engine_parser import YahooSearch, GoogleSearch, BingSearch
 from search_engine_parser.core.engines.bing import Search as BingSearch
 from search_engine_parser.core.engines.google import Search as GoogleSearch
@@ -85,7 +87,7 @@ def simple_analysis(source, type_s, username, data, output):
                              "?[a-z0-9\.]*?(twitter+)\.[a-z]{2,5}(:[0-9]" +
                              "{1,5})?\/(\w+)", data[1])
     if (match_twitter):
-        twitter_user=""
+        twitter_user = ""
         if ('/' in match_twitter.groups()[4]):
             twitter_user = match_twitter.groups()[4].split('/')[0]
         else:
@@ -126,7 +128,7 @@ def simple_analysis(source, type_s, username, data, output):
                             "s:\/\/)?[a-z0-9\.]*?(github+)\.[a-z]{2,5}(:[0-9" +
                             "]{1,5})?\/(.*?)(%3|\/|&)(.*)", data[1])
     if (match_github):
-        github_user=""
+        github_user = ""
         if ('/' in match_github.groups()[4]):
             github_user = match_github.groups()[4].split('/')[0]
         else:
@@ -157,7 +159,7 @@ def simple_analysis(source, type_s, username, data, output):
                                "{2,5}(:[0-9]{1,5})?\/([^p].*?)(%3|\/)(.*)"
                                , data[1])
     if (match_instagram):
-        instagram_user=""
+        instagram_user = ""
         if ('/' in match_instagram.groups()[4]):
             instagram_user = match_instagram.groups()[4].split('/')[0]
         else:
@@ -187,7 +189,7 @@ def simple_analysis(source, type_s, username, data, output):
                              "https:\/\/)?[a-z0-9\.]*?(keybase+)\.[a-z]" +
                              "{2,5}(:[0-9]{1,5})?\/(.*?)(%3|\/|&)(.*)", data[1])
     if (match_keybase):
-        keybase_user=""
+        keybase_user = ""
         if ('/' in match_keybase.groups()[4]):
             keybase_user = match_keybase.groups()[4].split('/')[0]
         else:
@@ -209,7 +211,7 @@ def simple_analysis(source, type_s, username, data, output):
                               "{2,5}(:[0-9]{1,5})?\/in\/(.*?)(%3|\/|&)(.*)"
                               , data[1])
     if (match_linkedin):
-        linkedin_user=""
+        linkedin_user = ""
         if ('/' in match_linkedin.groups()[4]):
             linkedin_user = match_linkedin.groups()[4].split('/')[0]
         else:
@@ -241,7 +243,7 @@ def simple_analysis(source, type_s, username, data, output):
                               "{2,5}(:[0-9]{1,5})?\/(.*?)(%3|\/|&)(.*)"
                               , data[1])
     if (match_facebook):
-        facebook_user=""
+        facebook_user = ""
         if ('public' in match_facebook.groups()[4]):
             facebook_user = match_facebook.groups()[6]
         elif ('/' in match_facebook.groups()[4]):
@@ -275,9 +277,9 @@ def simple_analysis(source, type_s, username, data, output):
                                "{2,5}(:[0-9]{1,5})?\/(.*?)(%3|\/|&)(.*)"
                               , data[1])
     if (match_pinterest):
-        pinterest_user=""
+        pinterest_user = ""
         if ('/' in match_pinterest.groups()[4].strip("/")):
-            pinteres_user = match_pinterest.groups()[4].split('/')[0]
+            pinterest_user = match_pinterest.groups()[4].split('/')[0]
         elif ("/pin/" not in match_pinterest.groups()[4].strip('/')):
             pinterest_user = match_pinterest.groups()[4].strip('/')
 
@@ -306,9 +308,9 @@ def simple_analysis(source, type_s, username, data, output):
                             "(http:\/\/www\.|https:\/\/www\.|http:\/\/|" +
                             "https:\/\/)?[a-z0-9\.]*?(tiktok+)\.[a-z]" +
                             "{2,5}(:[0-9]{1,5})?\/%40(\w+)"
-                              , data[1])
+                            , data[1])
     if (match_tiktok):
-        tiktok_user=""
+        tiktok_user = ""
         if ('/' in match_tiktok.groups()[4].strip("/")):
             tiktok_user = match_tiktok.groups()[4].split('/')[0]
         elif ("/pin/" not in match_tiktok.groups()[4].strip('/')):
@@ -408,12 +410,12 @@ def deep_analysis(names, usernames, searcher, data, output):
         end = '      '
 
     rawresult_item = {"name-node": "References", "title": data[0] + end,
-                    "subtitle": "",
-                    "icon": icon,
-                    "simple": data[0],
-                    "url": data[1],
-                    "desc": data[2],
-                    "link": searcher}
+                      "subtitle": "",
+                      "icon": icon,
+                      "simple": data[0],
+                      "url": data[1],
+                      "desc": data[2],
+                      "link": searcher}
     rawresult.append(rawresult_item)
 
     search_included = False
@@ -482,8 +484,8 @@ def deep_analysis(names, usernames, searcher, data, output):
                                "link": searcher}
                 search.append(search_item)
 
-    output['rawresult']= rawresult
-    output['search']= search
+    output['rawresult'] = rawresult
+    output['search'] = search
     return output
 
 
@@ -491,6 +493,12 @@ def deep_analysis(names, usernames, searcher, data, output):
 def t_search(username, from_m="Initial"):
     """ Task of Celery that get info from searchers """
     output = {}
+
+    # Fix : eliminate cache directory
+    try:
+        rmtree("cache")
+    except Exception:
+        pass
 
     # Icons unicode
     font_list = fontawesome_cheat_5()
@@ -506,32 +514,32 @@ def t_search(username, from_m="Initial"):
     try:
         gsearch.clear_cache()
         gresults = gsearch.search(*search_args, cache=False)
-    except:
+    except Exception:
         gresults = []
     try:
         ysearch.clear_cache()
         yresults = ysearch.search(*search_args, cache=False)
-    except:
+    except Exception:
         yresults = []
     try:
         bsearch.clear_cache()
         bresults = bsearch.search(*search_args, cache=False)
-    except:
+    except Exception:
         bresults = []
     try:
         dsearch.clear_cache()
         dresults = dsearch.search(*search_args, cache=False)
-    except:
+    except Exception:
         dresults = []
     try:
         asearch.clear_cache()
         aresults = asearch.search(*search_args, cache=False)
-    except:
+    except Exception:
         aresults = []
     try:
         usearch.clear_cache()
         uresults = usearch.search(*search_args, cache=False)
-    except:
+    except Exception:
         uresults = []
 
     # Raw Array
@@ -558,10 +566,10 @@ def t_search(username, from_m="Initial"):
         for i in range(len(raw_node['Yahoo']['titles'])):
             try:
                 output = simple_analysis("yahoo", "username", username,
-                                        [raw_node['Yahoo']['titles'][i],
-                                        raw_node['Yahoo']['links'][i],
-                                        raw_node['Yahoo']['descriptions'][i]
-                                        ], output)
+                                         [raw_node['Yahoo']['titles'][i],
+                                         raw_node['Yahoo']['links'][i],
+                                         raw_node['Yahoo']['descriptions'][i]
+                                         ], output)
             except Exception:
                 continue
     if (raw_node['Bing'] != []):
@@ -605,6 +613,7 @@ def t_search(username, from_m="Initial"):
             except Exception:
                 continue
 
+    print("Output", output)
     # Different usernames
     try:
         users = [item['usernames'].strip() for item in output['usernames']]
