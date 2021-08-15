@@ -6,7 +6,7 @@
 
 <div align="center" style="margin-bottom: 10px;">
     <img alt="Redis" src="https://img.shields.io/badge/storage-redis-red.svg?style=for-the-badge">
-    <img alt="Python" src="https://img.shields.io/badge/python-3.7-informational.svg?style=for-the-badge">
+    <img alt="Python" src="https://img.shields.io/badge/python-3.9-informational.svg?style=for-the-badge">
     <img alt="Celery" src="https://img.shields.io/badge/multiprocessing-celery-green.svg?style=for-the-badge">
     <img alt="Flask" src="https://img.shields.io/badge/interface-flask-yellowgreen.svg?style=for-the-badge">
     <img alt="Node" src="https://img.shields.io/badge/node-12.x-brightgreen.svg?style=for-the-badge">
@@ -98,7 +98,7 @@ Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
     <h2><img alt="important" height="30" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/important.png"> Easy installation (Python only)</h2>
 </div>
 
-You must install Redis
+You must install Redis and start it
 
 ```shell
 wget http://download.redis.io/redis-stable.tar.gz
@@ -106,10 +106,11 @@ tar xvzf redis-stable.tar.gz
 cd redis-stable
 make
 sudo make install
+redis-server
 ```
 
-Go to our [website][website]. Download the ZIP file and unzip it.
-```
+Go to our [website][website]. Download the ZIP file and unzip it, install requeriments and start it in another terminal
+``` shell
 unzip iKy.zip
 cd iKy-pack
 pip install -r requirements.txt
