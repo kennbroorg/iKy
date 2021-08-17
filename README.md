@@ -58,10 +58,11 @@ Project iKy is a tool that collects information from an email and shows results 
 Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
 
 <div align="center">
-    <a href="https://vimeo.com/434501702"><img src="https://kennbroorg.gitlab.io/ikyweb/assets/img/Giba.gif"></a>
+    <a href="https://vimeo.com/434501702"><img src="frontend/src/assets/images/iKySol.gif"></a>
 </div>
-
-[Video Demo](https://vimeo.com/434501702 "Video Demo - Click to Watch!")
+<div align="center">
+    <a href="https://vimeo.com/434501702">Video Demo</a>
+</div>
 
 <h2 id="modules">Modules</h2>
 
