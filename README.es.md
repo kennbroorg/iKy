@@ -64,8 +64,6 @@ Visite el Gitlab Page del [Projecto](https://kennbroorg.gitlab.io/ikyweb/)
     <a href="https://vimeo.com/434501702">Video Demo</a>
 </div>
 
-[Video Demo](https://vimeo.com/496879025 "Video Demo - Click to Watch!")
-
 <h1 id="modules">Módulos</h1>
 
 <div align="center" style="margin-bottom: 10px;">
