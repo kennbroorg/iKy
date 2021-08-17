@@ -58,8 +58,10 @@ El proyecto iKy es una herramienta que colecta información a partir de una dire
 Visite el Gitlab Page del [Projecto](https://kennbroorg.gitlab.io/ikyweb/)
 
 <div align="center">
-    <a href="https://vimeo.com/496879025"><img src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKySol.gif"></a> <!-- For GitLab -->
-	<a href="https://vimeo.com/496879025"><img src="https://github.com/kennbroorg/iKy/blob/iKy/frontend/src/assets/images/iKySol.gif"></a> <!-- For GitHub -->
+    <a href="https://vimeo.com/434501702"><img src="frontend/src/assets/images/iKySol.gif"></a>
+</div>
+<div align="center">
+    <a href="https://vimeo.com/434501702">Video Demo</a>
 </div>
 
 [Video Demo](https://vimeo.com/496879025 "Video Demo - Click to Watch!")
