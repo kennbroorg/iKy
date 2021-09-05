@@ -93,6 +93,37 @@ Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
     <img alt="twitch" src="https://img.shields.io/badge/module-twitch-blue.svg?style=flat-square">
 </div>
 
+## Docker deploy
+
+### Clone repository
+
+```shell
+git clone https://gitlab.com/kennbroorg/iKy.git
+```
+### Create credentials
+
+```shell
+sudo sh -c "echo -n 'user1:' >> auth/nginx.htpasswd"
+sudo sh -c "openssl passwd -apr1 >> auth/nginx.htpasswd"
+```
+
+### Install tor (optional, for Darkpass)
+
+```shell
+apt install tor
+nano /etc/proxychains.conf
+add # on strict_chain
+remove # from dynamic_chain
+service tor restart
+```
+
+### Run docker
+
+```shell
+docker-compose up --build
+```
+Open browser at: http://[public-ip]:4201
+
 <h1 id="installation">Installation</h1>
 
 <div align="left" style="margin-bottom: 10px;">

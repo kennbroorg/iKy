@@ -59,7 +59,7 @@ export class DataGatherInfoService {
     /* Http Service */
     // private readonly gatherUrl: string = environment.apiUrl + 'pub/items';
     // TODO : Use environment to set gatherUrl
-    private readonly gatherUrl: string = 'http://127.0.0.1:5000/';
+    private readonly gatherUrl: string = 'http://' + window.location.host.split(":")[0] + ':4201/backend/';
     
     // Get test
     public postTest$(): Observable<any> {
