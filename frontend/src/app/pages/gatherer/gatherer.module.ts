@@ -3,17 +3,17 @@ import { NgModule } from '@angular/core';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ChartModule } from 'angular2-chartjs';
-import { 
-    NbListModule, 
-    NbUserModule, 
-    NbActionsModule, 
-    NbButtonModule, 
-    NbCardModule, 
-    NbIconModule, 
+import {
+    NbListModule,
+    NbUserModule,
+    NbActionsModule,
+    NbButtonModule,
+    NbCardModule,
+    NbIconModule,
     NbPopoverModule,
-    NbSpinnerModule, 
-    NbTabsetModule, 
-    NbDialogModule, 
+    NbSpinnerModule,
+    NbTabsetModule,
+    NbDialogModule,
     NbTooltipModule,
     NbInputModule,
     NbTreeGridModule,

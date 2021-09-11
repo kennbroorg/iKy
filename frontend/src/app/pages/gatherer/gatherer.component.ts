@@ -1,19 +1,30 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { NbThemeService } from '@nebular/theme';
+import { TemplateRef,
+         ChangeDetectionStrategy,
+         Component,
+         OnInit,
+         OnDestroy,
+         ViewChild,
+         ElementRef } from '@angular/core';
+
+// import { NbThemeService } from '@nebular/theme';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { NbDialogService } from '@nebular/theme';
 
 // Search
 import { NbSearchService } from '@nebular/theme';
 
 // RxJS
-import { takeWhile } from 'rxjs/operators' ;
-import { Observable } from 'rxjs/Observable';
-import { mergeMap } from 'rxjs/operators';
+// import { takeWhile } from 'rxjs/operators' ;
+// import { Observable } from 'rxjs/Observable';
+// import { mergeMap } from 'rxjs/operators';
 
 // Toaster
-import { ToasterConfig } from 'angular2-toaster';
-import 'style-loader!angular2-toaster/toaster.css';
-import { NbGlobalLogicalPosition, NbGlobalPhysicalPosition, NbGlobalPosition, NbToastrService } from '@nebular/theme';
+// import { ToasterConfig } from 'angular2-toaster';
+// import 'style-loader!angular2-toaster/toaster.css';
+// import { NbGlobalLogicalPosition,
+// NbGlobalPhysicalPosition,
+// NbGlobalPosition,
+// NbToastrService } from '@nebular/theme';
 // import { NbToastStatus } from '@nebular/theme/components/toastr/model';
 
 
@@ -21,18 +32,10 @@ import { NbGlobalLogicalPosition, NbGlobalPhysicalPosition, NbGlobalPosition, Nb
 import { DataGatherInfoService } from '../../@core/data/data-gather-info.service';
 
 // Report
-// declare const require: any;
-// const jsPDF = require('jspdf');
-// import { jsPDF } from 'jspdf';
-// import * as jsPDF from 'jspdf';
-// import jsPDF from 'jspdf'
-// import 'jspdf-autotable'
-
-declare let canvg: any;
-declare let svgAsPngUri: any;
-declare let saveSvgAsPng: any;
-// import * as html2canvas from "html2canvas";
-import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as htmlToImage from 'html-to-image';
+import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
 
 @Component({
     selector: 'ngx-gatherer',
@@ -46,6 +49,9 @@ export class GathererComponent implements OnInit {
     public  gathered: any = [];
     public  datas: any;
     public  processing: boolean = false;
+    public  reportEnd: boolean = false;
+    public  reportMessage: string;
+    public  report: any;
     public  searchSubs: any;
     public  svg: any;
     public  img: any;
@@ -74,8 +80,9 @@ export class GathererComponent implements OnInit {
     public  flipped = false;
 
 
-    constructor(private searchService: NbSearchService, 
+    constructor(private searchService: NbSearchService,
                 private sanitizer: DomSanitizer,
+                private dialogService: NbDialogService,
                 private dataGatherService: DataGatherInfoService) {
     }
 
@@ -84,17 +91,17 @@ export class GathererComponent implements OnInit {
           .subscribe((data: any) => {
             // Initialize global data
             this.gathered = this.dataGatherService.initialize();
-            console.log("Global data initialize", this.gathered);
+            console.log('Global data initialize', this.gathered);
 
-            console.log("Search", data);
-            this.gathered = this.dataGatherService.validateEmail(data.term); 
-        })
+            console.log('Search', data);
+            this.gathered = this.dataGatherService.validateEmail(data.term);
+        });
 
-        console.log("GathererComponent ngOnInit")
+        console.log('GathererComponent ngOnInit');
         // Check global data
         this.gathered = this.dataGatherService.pullGather();
-        console.log("GathererComponent ngOnInit", this.gathered)
-        console.log("GathererComponent ngOnInit length", this.jsonLength(this.gathered))
+        console.log('GathererComponent ngOnInit', this.gathered);
+        console.log('GathererComponent ngOnInit length', this.jsonLength(this.gathered));
     }
 
     ngOnDestroy () {
@@ -104,8 +111,8 @@ export class GathererComponent implements OnInit {
     generateDownloadJsonUri() {
         let sJson = JSON.stringify(this.gathered);
         let element = document.createElement('a');
-        element.setAttribute('href', "data:text/json;charset=UTF-8," + encodeURIComponent(sJson));
-        element.setAttribute('download', "gathered.json");
+        element.setAttribute('href', 'data:text/json;charset=UTF-8,' + encodeURIComponent(sJson));
+        element.setAttribute('download', 'gathered.json');
         element.style.display = 'none';
         document.body.appendChild(element);
         element.click(); // simulate click
@@ -130,27 +137,28 @@ export class GathererComponent implements OnInit {
         return this.validationShow[val]
     }
 
-    toggleFlipViewAndSearch(email, username, twitter, instagram, linkedin, github, tiktok, tinder, venmo, reddit, spotify, twitch) {
-        console.log("Advance Search");
-        console.log("email", email);
-        console.log("username", username);
-        console.log("twitter", twitter);
-        console.log("instagram", instagram);
-        console.log("linkedin", linkedin);
-        console.log("github", github);
-        console.log("tiktok", tiktok);
-        console.log("tinder", tinder);
-        console.log("venmo", venmo);
-        console.log("reddit", reddit);
-        console.log("spotify", spotify);
-        console.log("twitch", twitch);
+    toggleFlipViewAndSearch(email, username, twitter, instagram, linkedin,
+                            github, tiktok, tinder, venmo, reddit, spotify, twitch) {
+        console.log('Advance Search');
+        console.log('email', email);
+        console.log('username', username);
+        console.log('twitter', twitter);
+        console.log('instagram', instagram);
+        console.log('linkedin', linkedin);
+        console.log('github', github);
+        console.log('tiktok', tiktok);
+        console.log('tinder', tinder);
+        console.log('venmo', venmo);
+        console.log('reddit', reddit);
+        console.log('spotify', spotify);
+        console.log('twitch', twitch);
 
         this.flipped = !this.flipped;
 
         // JSON datas
-        this.datas = {email: email, 
-            username: username, 
-            twitter: twitter, 
+        this.datas = {email: email,
+            username: username,
+            twitter: twitter,
             instagram: instagram,
             linkedin: linkedin,
             github: github,
@@ -161,11 +169,11 @@ export class GathererComponent implements OnInit {
             spotify: spotify,
             twitch: twitch,
         };
-        
-        this.gathered = this.dataGatherService.initialize();
-        console.log("Global data initialize (Advance Gatherer)", this.gathered);
 
-        this.gathered = this.dataGatherService.gathererInfoAdvance(this.datas); 
+        this.gathered = this.dataGatherService.initialize();
+        console.log('Global data initialize (Advance Gatherer)', this.gathered);
+
+        this.gathered = this.dataGatherService.gathererInfoAdvance(this.datas);
         this.gathered = this.dataGatherService.pullGather();
 
     }
@@ -174,7 +182,3693 @@ export class GathererComponent implements OnInit {
         this.flipped = !this.flipped;
     }
 
-    //    // As All Functions in js are asynchronus, to use await i am using async here
+    // As All Functions in js are asynchronus, to use await i am using async here
+    async generateAllPdfDialog(dialog: TemplateRef<any>) {
+        this.reportEnd = false;
+        this.dialogService.open(
+          dialog,
+          {
+            context: 'this is some additional data passed to dialog',
+            closeOnEsc: false,
+            closeOnBackdropClick: false,
+          });
+        this.reportMessage = 'Initializing report...'
+
+        console.log('Report... ');
+
+        let infoText: string;
+        let moduleHeight: number;
+        this.profile = [];
+        this.timeline = [];
+        this.name = [];
+        this.location = [];
+        this.gender = [];
+        this.organization = [];
+        this.social = [];
+        this.photo = [];
+
+        // General config
+        const doc = new jsPDF('p', 'mm', 'a4');
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const img = new Image();
+        const imgBack = new Image();
+        const imgiKy = new Image();
+        let hl = 0;
+        let svg: any;
+
+        // Config Page
+        doc.internal.events.subscribe('addPage', function() {
+            const pageSize = doc.internal.pageSize;
+            // Side image
+            doc.setDrawColor('#1a1a1a');
+            doc.setFillColor('#1a1a1a');
+            doc.rect(0, 0, pageSize.width, pageSize.height, 'F');
+            doc.setDrawColor('#000000');
+            doc.setFillColor('#000000');
+            doc.rect(0, 0, 210, 15, 'F');
+            doc.rect(0, 285, 210, 15, 'F');
+            img.src = 'assets/images/back1.jpg';
+            doc.addImage(img, 'png', 0, 15, 95, 270);
+
+            // doc.addImage(myimage, 'JPG', 0, 0, pageSize.width, pageSize.height);
+        });
+
+        // Page 1
+        doc.setDrawColor('#1a1a1a');
+        doc.setFillColor('#1a1a1a');
+        doc.rect(0, 0, 210, 300, 'F');
+        imgBack.src = 'assets/images/blur-bg.jpg';
+        doc.addImage(imgBack, 'png', 0, 50, 210, 200);
+
+        img.src = 'assets/images/iKy-Logo.png';
+        doc.addImage(img, 'png', 60, 105, 90, 98);
+
+        // Top Line
+        doc.setLineWidth(15);
+        doc.setDrawColor('#000000');
+        doc.line(10, 50, 200, 50);
+        doc.line(10, 250, 200, 250);
+
+        doc.setLineWidth(3);
+        doc.setDrawColor('#05fcfc');
+        doc.rect(50, 105, 110, 98, 'S');
+
+        doc.setFont('helvetica');
+        doc.setFontSize(50);
+        doc.setTextColor('#05fcfc');
+        doc.text('REPORT', 105, 100, {align: 'center'});
+
+        /////////////////////////////////////////////////////////////////
+        // Input page
+        /////////////////////////////////////////////////////////////////
+        doc.addPage();
+        doc.setFontSize(25);
+        hl = 20;
+
+        // Header title page
+        img.src = 'assets/images/h1.jpg';
+        doc.addImage(img, 'png', 100, 15, 100, 14);
+        img.src = 'assets/images/iKy-Logo.png';
+        doc.addImage(img, 'png', 185, 17, 10, 10);
+        doc.setFontSize(12);
+        doc.setTextColor('#05fcfc');
+        doc.text('INPUT - Selectors', 105, 23);
+
+        // Header title page
+        // img.src = 'assets/images/h2.png';
+        // doc.addImage(img, 'png', 10, 10, 190, 14);
+        // img.src = 'assets/images/iKy-Logo.png';
+        // doc.addImage(img, 'png', 185, 12, 10, 10);
+        // doc.setFontSize(12);
+        // doc.setTextColor('#05fcfc');
+        // doc.text('INPUT - Selectors', 15, 18);
+
+        let email, username, twitter, instagram, linkedin, github, tiktok;
+        let tinder, venmo, reddit, spotify, twitch;
+        if (this.gathered['email'] && !this.gathered['data']) {
+            email = this.gathered['email'];
+        } else if (this.gathered['data'] && this.gathered['data']['email'] !== '') {
+            email = this.gathered['data']['email'];
+        } else {
+            email = '-----';
+        }
+        username = (this.gathered['data'] && this.gathered['data']['username']) ?
+            this.gathered['data']['username'] : '-----';
+        twitter = (this.gathered['data'] && this.gathered['data']['twitter']) ?
+            this.gathered['data']['twitter'] : '-----';
+        instagram = (this.gathered['data'] && this.gathered['data']['instagram']) ?
+            this.gathered['data']['instagram'] : '-----';
+        linkedin = (this.gathered['data'] && this.gathered['data']['linkedin']) ?
+            this.gathered['data']['linkedin'] : '-----';
+        github = (this.gathered['data'] && this.gathered['data']['github']) ?
+            this.gathered['data']['github'] : '-----';
+        tiktok = (this.gathered['data'] && this.gathered['data']['tiktok']) ?
+            this.gathered['data']['tiktok'] : '-----';
+        tinder = (this.gathered['data'] && this.gathered['data']['tinder']) ?
+            this.gathered['data']['tinder'] : '-----';
+        venmo = (this.gathered['data'] && this.gathered['data']['venmo']) ?
+            this.gathered['data']['venmo'] : '-----';
+        reddit = (this.gathered['data'] && this.gathered['data']['reddit']) ?
+            this.gathered['data']['reddit'] : '-----';
+        spotify = (this.gathered['data'] && this.gathered['data']['spotify']) ?
+            this.gathered['data']['spotify'] : '-----';
+        twitch = (this.gathered['data'] && this.gathered['data']['twitch']) ?
+            this.gathered['data']['twitch'] : '-----';
+
+        const columns = [['Selectors', 'Values']];
+        const rows = [
+            ['E-mail', email],
+            ['Username', username],
+            ['Twitter', twitter],
+            ['Instagram', instagram],
+            ['Linkedin', linkedin],
+            ['Github', github],
+            ['Tiktok', tiktok],
+            ['Tinder', tinder],
+            ['Venmo', venmo],
+            ['Reddit', reddit],
+            ['Spotify', spotify],
+            ['Twitch', twitch],
+        ];
+
+        autoTable(doc, {
+             head: columns,
+             body: rows,
+             headStyles: {fillColor: '#50fcfc',
+                          cellPadding: {top: 5, right: 5, bottom: 5, left: 5},
+                          lineWidth: 3,
+                          halign: 'center',
+                          textColor: '#000000',
+                          lineColor: '#1A1A1A'},
+             bodyStyles: {fillColor: '#1A1A1A',
+                          cellPadding: {top: 5, right: 5, bottom: 5, left: 5},
+                          lineWidth: 3,
+                          textColor: '#50fcfc',
+                          lineColor: '#1A1A1A'},
+             columnStyles: {
+                 0: {fillColor: '#393f46', cellWidth: 50},
+                 1: {fillColor: '#22262a', cellWidth: 70},
+             },
+             margin: {top: 60, left: 45},
+        });
+
+        /////////////////////////////////////////////////////////////////
+        // TaskExec
+        /////////////////////////////////////////////////////////////////
+        doc.addPage();
+        doc.setFontSize(25);
+
+        // Header title page
+        img.src = 'assets/images/h1.jpg';
+        doc.addImage(img, 'png', 100, 15, 100, 14);
+        img.src = 'assets/images/iKy-Logo.png';
+        doc.addImage(img, 'png', 185, 17, 10, 10);
+        doc.setFontSize(12);
+        doc.setTextColor('#05fcfc');
+        doc.text('PROCESSES - Executed', 105, 23);
+
+        // Get and format TaskExec
+        const bodyTable = [];
+        let elem = [];
+        const list = this.gathered['taskexec'];
+
+        for (const i in list) {
+            if (list[i]['module']) {
+                elem = [list[i]['module'],
+                        list[i]['param'],
+                        list[i]['from'],
+                        list[i]['score'],
+                        list[i]['state']];
+                bodyTable.push(elem);
+            }
+        }
+
+        autoTable(doc, {
+             head: [['Module', 'Param', 'Exec by', 'Score', 'State']],
+             body: bodyTable,
+             headStyles: {fillColor: '#50fcfc',
+                          cellPadding: {top: 3, right: 3, bottom: 3, left: 3},
+                          lineWidth: 1,
+                          halign: 'center',
+                          textColor: '#000000',
+                          lineColor: '#1A1A1A'},
+             bodyStyles: {fillColor: '#1A1A1A',
+                          cellPadding: {top: 3, right: 3, bottom: 3, left: 3},
+                          lineWidth: 1,
+                          textColor: '#50fcfc',
+                          lineColor: '#1A1A1A'},
+             columnStyles: {
+                 0: {fillColor: '#393f46'},
+                 1: {fillColor: '#22262a'},
+                 2: {fillColor: '#393f46'},
+                 3: {fillColor: '#22262a'},
+                 4: {fillColor: '#393f46'},
+             },
+             margin: {top: 40},
+        });
+
+        /////////////////////////////////////////////////////////////////
+        // EmailrepIO module report
+        /////////////////////////////////////////////////////////////////
+        if (this.gathered['emailrep'] &&
+            this.gathered['emailrep']['result'] &&
+            this.gathered['emailrep']['result'].length > 3) {
+
+            this.reportMessage = 'EmailrepIO module...'
+            // moduleHeight = 80;
+
+            // Validate pageHeight
+            // if ( hl + moduleHeight > pageHeight) {
+            //     doc.addPage();
+            //     hl = 20;
+            // }
+
+            let emailrep = false;
+
+            doc.addPage();
+            doc.setFontSize(25);
+            hl = 40;
+
+            // Header title page
+            img.src = 'assets/images/h1.jpg';
+            doc.addImage(img, 'png', 100, 15, 100, 14);
+            img.src = 'assets/images/iKy-Logo.png';
+            doc.addImage(img, 'png', 185, 17, 10, 10);
+            doc.setFontSize(12);
+            doc.setTextColor('#05fcfc');
+            doc.text('MODULE - EmailRepIO', 105, 23);
+
+            // Information table
+            if (this.gathered['emailrep'] &&
+                this.gathered['emailrep']['result'] &&
+                this.gathered['emailrep']['result'][4] &&
+                this.gathered['emailrep']['result'][4]['graphic'] &&
+                this.gathered['emailrep']['result'][4]['graphic'][0] &&
+                this.gathered['emailrep']['result'][4]['graphic'][0]['details'] &&
+                this.gathered['emailrep']['result'][4]['graphic'][0]['details'].length > 1) {
+
+                this.reportMessage = 'EmailrepIO module...(Details)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divEmailrepInfo');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                emailrep = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['emailrep']['result'][4]['graphic'][0]['details'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'EmailRep') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                }
+            }
+
+            hl = hl + 10;
+
+            // Information table
+            if (this.gathered['emailrep'] &&
+                this.gathered['emailrep']['result'] &&
+                this.gathered['emailrep']['result'][4] &&
+                this.gathered['emailrep']['result'][4]['graphic'] &&
+                this.gathered['emailrep']['result'][4]['graphic'][1] &&
+                this.gathered['emailrep']['result'][4]['graphic'][1]['social'] &&
+                this.gathered['emailrep']['result'][4]['graphic'][1]['social'].length > 1) {
+
+                this.reportMessage = 'EmailrepIO module...(Social)'
+
+                svg = this.nbCardContainer.nativeElement.querySelector('#divEmailrepSocial');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                emailrep = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['emailrep']['result'][4]['graphic'][1]['social'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'EmailRep') {
+                        elem = [list[i]['title']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Social networks']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                }
+            }
+
+            if (!emailrep) {
+                doc.setLineWidth(15);
+                doc.setDrawColor('#00000');
+                doc.line(20, 105, 190, 105);
+                doc.line(20, 155, 190, 155);
+                img.src = 'assets/images/ban.png';
+                doc.addImage(img, 'png', 10, 105, 190, 50);
+            }
+
+            hl = hl + 10;
+        }
+
+        /////////////////////////////////////////////////////////////////
+        // Fullcontact module report
+        /////////////////////////////////////////////////////////////////
+        if (this.gathered['fullcontact'] &&
+            this.gathered['fullcontact']['result'] &&
+            this.gathered['fullcontact']['result'].length > 3) {
+
+            this.reportMessage = 'Fullcontact module...'
+
+            let fullcontact = false;
+
+            doc.addPage();
+            doc.setFontSize(25);
+            hl = 40;
+
+            // Header title page
+            img.src = 'assets/images/h1.jpg';
+            doc.addImage(img, 'png', 100, 15, 100, 14);
+            img.src = 'assets/images/iKy-Logo.png';
+            doc.addImage(img, 'png', 185, 17, 10, 10);
+            doc.setFontSize(12);
+            doc.setTextColor('#05fcfc');
+            doc.text('MODULE - Fullcontact', 105, 23);
+
+            // Information table
+            if (this.gathered['fullcontact'] &&
+                this.gathered['fullcontact']['result'] &&
+                this.gathered['fullcontact']['result'][4] &&
+                this.gathered['fullcontact']['result'][4]['graphic'] &&
+                this.gathered['fullcontact']['result'][4]['graphic'][0] &&
+                this.gathered['fullcontact']['result'][4]['graphic'][0]['social'] &&
+                this.gathered['fullcontact']['result'][4]['graphic'][0]['social'].length > 1) {
+
+                this.reportMessage = 'Fullcontact module...(Social)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divFullcontactGraphs');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                fullcontact = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['fullcontact']['result'][4]['graphic'][0]['social'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Social') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 40, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                }
+            }
+
+            hl = hl + 10;
+
+            if (!fullcontact) {
+                doc.setLineWidth(15);
+                doc.setDrawColor('#00000');
+                doc.line(20, 105, 190, 105);
+                doc.line(20, 155, 190, 155);
+                img.src = 'assets/images/ban.png';
+                doc.addImage(img, 'png', 10, 105, 190, 50);
+            }
+
+            hl = hl + 10;
+        }
+
+        /////////////////////////////////////////////////////////////////
+        // PDL module report
+        /////////////////////////////////////////////////////////////////
+        if (this.gathered['peopledatalabs'] &&
+            this.gathered['peopledatalabs']['result'] &&
+            this.gathered['peopledatalabs']['result'].length > 3) {
+
+            this.reportMessage = 'PeopleDataLabs module...'
+            // moduleHeight = 80;
+
+            // Validate pageHeight
+            // if ( hl + moduleHeight > pageHeight) {
+            //     doc.addPage();
+            //     hl = 20;
+            // }
+
+            let peopledatalabs = false;
+
+            doc.addPage();
+            doc.setFontSize(25);
+            hl = 40;
+
+            // Header title page
+            img.src = 'assets/images/h1.jpg';
+            doc.addImage(img, 'png', 100, 15, 100, 14);
+            img.src = 'assets/images/iKy-Logo.png';
+            doc.addImage(img, 'png', 185, 17, 10, 10);
+            doc.setFontSize(12);
+            doc.setTextColor('#05fcfc');
+            doc.text('MODULE - PeopleDataLabs', 105, 23);
+
+            // Information table
+            if (this.gathered['peopledatalabs'] &&
+                this.gathered['peopledatalabs']['result'] &&
+                this.gathered['peopledatalabs']['result'][4] &&
+                this.gathered['peopledatalabs']['result'][4]['graphic'] &&
+                this.gathered['peopledatalabs']['result'][4]['graphic'][0] &&
+                this.gathered['peopledatalabs']['result'][4]['graphic'][0]['data'] &&
+                this.gathered['peopledatalabs']['result'][4]['graphic'][0]['data'].length > 1) {
+
+                this.reportMessage = 'PeopleDataLabs module...(Data)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divPeopledatalabsGraphs');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                peopledatalabs = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['peopledatalabs']['result'][4]['graphic'][0]['data'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'DataLab') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Information table
+            if (this.gathered['peopledatalabs'] &&
+                this.gathered['peopledatalabs']['result'] &&
+                this.gathered['peopledatalabs']['result'][4] &&
+                this.gathered['peopledatalabs']['result'][4]['graphic'] &&
+                this.gathered['peopledatalabs']['result'][4]['graphic'][1] &&
+                this.gathered['peopledatalabs']['result'][4]['graphic'][1]['social'] &&
+                this.gathered['peopledatalabs']['result'][4]['graphic'][1]['social'].length > 1) {
+
+                this.reportMessage = 'Peopledatalabs module...(Social)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divPeopledatalabsSocial');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                peopledatalabs = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['peopledatalabs']['result'][4]['graphic'][1]['social'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Social') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Social networks', 'Username']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            if (!peopledatalabs) {
+                doc.setLineWidth(15);
+                doc.setDrawColor('#00000');
+                doc.line(20, 105, 190, 105);
+                doc.line(20, 155, 190, 155);
+                img.src = 'assets/images/ban.png';
+                doc.addImage(img, 'png', 10, 105, 190, 50);
+            }
+
+            hl = hl + 10;
+        }
+
+        /////////////////////////////////////////////////////////////////
+        // Twitter and Twint module report
+        /////////////////////////////////////////////////////////////////
+        if (this.gathered['twint'] &&
+            this.gathered['twint']['result'] &&
+            this.gathered['twint']['result'].length > 3) {
+
+            this.reportMessage = 'Twitter (Twint) module...'
+            // moduleHeight = 80;
+
+            // Validate pageHeight
+            // if ( hl + moduleHeight > pageHeight) {
+            //     doc.addPage();
+            //     hl = 20;
+            // }
+
+            let twint = false;
+
+            doc.addPage();
+            doc.setFontSize(25);
+            hl = 40;
+
+            // Header title page
+            img.src = 'assets/images/h1.jpg';
+            doc.addImage(img, 'png', 100, 15, 100, 14);
+            img.src = 'assets/images/iKy-Logo.png';
+            doc.addImage(img, 'png', 185, 17, 10, 10);
+            doc.setFontSize(12);
+            doc.setTextColor('#05fcfc');
+            doc.text('MODULE - Twitter (Twint)', 105, 23);
+
+            // Information table
+            if (this.gathered['twint'] &&
+                this.gathered['twint']['result'] &&
+                this.gathered['twint']['result'][4] &&
+                this.gathered['twint']['result'][4]['graphic'] &&
+                this.gathered['twint']['result'][4]['graphic'][0] &&
+                this.gathered['twint']['result'][4]['graphic'][0]['social'] &&
+                this.gathered['twint']['result'][4]['graphic'][0]['social'].length > 1) {
+
+                this.reportMessage = 'Twitter (Twint) module...(Social)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintSocial');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                twint = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['twint']['result'][4]['graphic'][0]['social'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'DataLab') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Information table
+            if (this.gathered['twint'] &&
+                this.gathered['twint']['result'] &&
+                this.gathered['twint']['result'][4] &&
+                this.gathered['twint']['result'][4]['graphic'] &&
+                this.gathered['twint']['result'][4]['graphic'][2] &&
+                this.gathered['twint']['result'][4]['graphic'][2]['popularity'] &&
+                this.gathered['twint']['result'][4]['graphic'][2]['popularity'].length > 1) {
+
+                this.reportMessage = 'Twitter (Twint) module...(Popularity)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintPopularity');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                twint = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['twint']['result'][4]['graphic'][2]['popularity'];
+
+                for (const i in list) {
+                    if (list[i]['value'] !== 'Social') {
+                        elem = [list[i]['name'], list[i]['value']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Information table
+            if (this.gathered['twint'] &&
+                this.gathered['twint']['result'] &&
+                this.gathered['twint']['result'][4] &&
+                this.gathered['twint']['result'][4]['graphic'] &&
+                this.gathered['twint']['result'][4]['graphic'][1] &&
+                this.gathered['twint']['result'][4]['graphic'][1]['resume'] &&
+                this.gathered['twint']['result'][4]['graphic'][1]['resume']['children'].length > 1) {
+
+                this.reportMessage = 'Twitter (Twint) module...(Resume)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintResume');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                twint = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['twint']['result'][4]['graphic'][1]['resume']['children'];
+                console.log('Resume', list);
+
+                for (const i in list) {
+                    if (list[i]['value'] !== 'Social') {
+                        elem = [list[i]['name'], list[i]['value']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     // pageBreak: 'always',
+                     startY: hl,
+                     // didDrawPage: function (data) {
+                     //     data.settings.margin.top = 40; }
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 65 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+                hl = 40;
+                const finalY = 40;
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Twitter (Twint)', 105, 23);
+            }
+
+            // Information table
+            if (this.gathered['twint'] &&
+                this.gathered['twint']['result'] &&
+                this.gathered['twint']['result'][4] &&
+                this.gathered['twint']['result'][4]['graphic'] &&
+                this.gathered['twint']['result'][4]['graphic'][10] &&
+                this.gathered['twint']['result'][4]['graphic'][10]['time'] &&
+                this.gathered['twint']['result'][4]['graphic'][10]['time'].length > 1) {
+
+                this.reportMessage = 'Twitter (Twint) module...(Timeline)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintTimeline');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 25, hl, 160, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                twint = true;
+
+                hl = hl + 55
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 65 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+                hl = 40;
+                const finalY = 40;
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Twitter (Twint)', 105, 23);
+            }
+
+            // Information table
+            if (this.gathered['twint'] &&
+                this.gathered['twint']['result'] &&
+                this.gathered['twint']['result'][4] &&
+                this.gathered['twint']['result'][4]['graphic'] &&
+                this.gathered['twint']['result'][4]['graphic'][5] &&
+                this.gathered['twint']['result'][4]['graphic'][5]['users'] &&
+                this.gathered['twint']['result'][4]['graphic'][5]['users'].length > 1) {
+
+                this.reportMessage = 'Twitter (Twint) module...(Users)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintUsers');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                twint = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['twint']['result'][4]['graphic'][5]['users'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Users') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Users', 'Ocurrences']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     // pageBreak: 'always',
+                     startY: hl,
+                     didDrawPage: function (data) {
+                          data.settings.margin.top = 30; }
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            console.log(`ENTRANDO - SALTO: hl - ${hl} + 60 // pageHeight - ${pageHeight}`);
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Twitter (Twint)', 105, 23);
+
+                hl = 40;
+            }
+            console.log(`SALIENDO - SALTO: hl - ${hl} + 60 // pageHeight - ${pageHeight}`);
+
+            // Information table
+            if (this.gathered['twint'] &&
+                this.gathered['twint']['result'] &&
+                this.gathered['twint']['result'][4] &&
+                this.gathered['twint']['result'][4]['graphic'] &&
+                this.gathered['twint']['result'][4]['graphic'][6] &&
+                this.gathered['twint']['result'][4]['graphic'][6]['tweetslist'] &&
+                this.gathered['twint']['result'][4]['graphic'][6]['tweetslist'].length > 1) {
+
+                this.reportMessage = 'Twitter (Twint) module...(TweetList)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintList');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 25, hl, 160, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                twint = true;
+
+                hl = hl + 55
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Twitter (Twint)', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['twint'] &&
+                this.gathered['twint']['result'] &&
+                this.gathered['twint']['result'][4] &&
+                this.gathered['twint']['result'][4]['graphic'] &&
+                this.gathered['twint']['result'][4]['graphic'][4] &&
+                this.gathered['twint']['result'][4]['graphic'][4]['hashtag'] &&
+                this.gathered['twint']['result'][4]['graphic'][4]['hashtag'].length > 1) {
+
+                this.reportMessage = 'Twitter (Twint) module...(Hashtag)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintHashtag');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                twint = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['twint']['result'][4]['graphic'][4]['hashtag'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Users') {
+                        elem = [list[i]['label'], list[i]['value']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Hashtag', 'Ocurrences']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                     didDrawPage: function (data) {
+                          data.settings.margin.top = 30; }
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Twitter (Twint)', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['twint'] &&
+                this.gathered['twint']['result'] &&
+                this.gathered['twint']['result'][4] &&
+                this.gathered['twint']['result'][4]['graphic'] &&
+                this.gathered['twint']['result'][4]['graphic'][8] &&
+                this.gathered['twint']['result'][4]['graphic'][8]['hour'] &&
+                this.gathered['twint']['result'][4]['graphic'][8]['hour'].length > 1) {
+
+                this.reportMessage = 'Twitter (Twint) module...(Hour)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintHour');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 60, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                twint = true;
+
+                hl = hl + 55;
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Twitter (Twint)', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['twint'] &&
+                this.gathered['twint']['result'] &&
+                this.gathered['twint']['result'][4] &&
+                this.gathered['twint']['result'][4]['graphic'] &&
+                this.gathered['twint']['result'][4]['graphic'][7] &&
+                this.gathered['twint']['result'][4]['graphic'][7]['week'] &&
+                this.gathered['twint']['result'][4]['graphic'][7]['week'].length > 1) {
+
+                this.reportMessage = 'Twitter (Twint) module...(Week)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintWeek');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 60, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                twint = true;
+
+                hl = hl + 55;
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Twitter (Twint)', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['twitter'] &&
+                this.gathered['twitter']['result'] &&
+                this.gathered['twitter']['result'][4] &&
+                this.gathered['twitter']['result'][4]['graphic'] &&
+                this.gathered['twitter']['result'][4]['graphic'][9] &&
+                this.gathered['twitter']['result'][4]['graphic'][9]['sources'] &&
+                this.gathered['twitter']['result'][4]['graphic'][9]['sources'].length > 0) {
+
+                this.reportMessage = 'Twitter (Twitter) module...(Source)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterSource');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                twint = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['twitter']['result'][4]['graphic'][9]['sources'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Users') {
+                        elem = [list[i]['name'], list[i]['value']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Source', 'Qty']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Twitter (Twint)', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['twitter'] &&
+                this.gathered['twitter']['result'] &&
+                this.gathered['twitter']['result'][4] &&
+                this.gathered['twitter']['result'][4]['graphic'] &&
+                this.gathered['twitter']['result'][4]['graphic'][11] &&
+                this.gathered['twitter']['result'][4]['graphic'][11]['twvsrt'] &&
+                this.gathered['twitter']['result'][4]['graphic'][11]['twvsrt'].length > 0) {
+
+                this.reportMessage = 'Twitter (Twitter) module...(Tweets vs ReTweets)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterTwvsrt');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                twint = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['twitter']['result'][4]['graphic'][11]['twvsrt'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Users') {
+                        elem = [list[i]['name'], list[i]['value']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            if (!twint) {
+                doc.setLineWidth(15);
+                doc.setDrawColor('#00000');
+                doc.line(20, 105, 190, 105);
+                doc.line(20, 155, 190, 155);
+                img.src = 'assets/images/ban.png';
+                doc.addImage(img, 'png', 10, 105, 190, 50);
+            }
+
+            hl = hl + 10;
+        }
+
+        /////////////////////////////////////////////////////////////////
+        // Instagram module report
+        /////////////////////////////////////////////////////////////////
+        if (this.gathered['instagram'] &&
+            this.gathered['instagram']['result'] &&
+            this.gathered['instagram']['result'].length > 3) {
+
+            this.reportMessage = 'Instagram module...'
+
+            let instagram = false;
+
+            doc.addPage();
+            doc.setFontSize(25);
+            hl = 40;
+
+            // Header title page
+            img.src = 'assets/images/h1.jpg';
+            doc.addImage(img, 'png', 100, 15, 100, 14);
+            img.src = 'assets/images/iKy-Logo.png';
+            doc.addImage(img, 'png', 185, 17, 10, 10);
+            doc.setFontSize(12);
+            doc.setTextColor('#05fcfc');
+            doc.text('MODULE - Instagram', 105, 23);
+
+            // Information table
+            if (this.gathered['instagram'] &&
+                this.gathered['instagram']['result'] &&
+                this.gathered['instagram']['result'][4] &&
+                this.gathered['instagram']['result'][4]['graphic'] &&
+                this.gathered['instagram']['result'][4]['graphic'][0] &&
+                this.gathered['instagram']['result'][4]['graphic'][0]['instagram'] &&
+                this.gathered['instagram']['result'][4]['graphic'][0]['instagram'].length > 1) {
+
+                this.reportMessage = 'Instagram module...(Social)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divInstagramSocial');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                instagram = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['instagram']['result'][4]['graphic'][0]['instagram'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Instagram') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // TODO: Images ??
+
+            // Information table
+            if (this.gathered['instagram'] &&
+                this.gathered['instagram']['result'] &&
+                this.gathered['instagram']['result'][4] &&
+                this.gathered['instagram']['result'][4]['graphic'] &&
+                this.gathered['instagram']['result'][4]['graphic'][3] &&
+                this.gathered['instagram']['result'][4]['graphic'][3]['hashtags'] &&
+                this.gathered['instagram']['result'][4]['graphic'][3]['hashtags'].length > 0) {
+
+                this.reportMessage = 'Instagram module...(Hashtag)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divInstagramHashtag');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                instagram = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['instagram']['result'][4]['graphic'][3]['hashtags'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Users') {
+                        elem = [list[i]['label'], list[i]['value']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Hashtag', 'Ocurrences']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Instagram', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['instagram'] &&
+                this.gathered['instagram']['result'] &&
+                this.gathered['instagram']['result'][4] &&
+                this.gathered['instagram']['result'][4]['graphic'] &&
+                this.gathered['instagram']['result'][4]['graphic'][4] &&
+                this.gathered['instagram']['result'][4]['graphic'][4]['mentions'] &&
+                this.gathered['instagram']['result'][4]['graphic'][4]['mentions'].length > 0) {
+
+                this.reportMessage = 'Instagram module...(Mentions)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divInstagramMention');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                instagram = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['instagram']['result'][4]['graphic'][4]['mentions'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Users') {
+                        elem = [list[i]['label'], list[i]['value']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Mention', 'Ocurrences']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Instagram', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['instagram'] &&
+                this.gathered['instagram']['result'] &&
+                this.gathered['instagram']['result'][4] &&
+                this.gathered['instagram']['result'][4]['graphic'] &&
+                this.gathered['instagram']['result'][4]['graphic'][5] &&
+                this.gathered['instagram']['result'][4]['graphic'][5]['tagged'] &&
+                this.gathered['instagram']['result'][4]['graphic'][5]['tagged'].length > 0) {
+
+                this.reportMessage = 'Instagram module...(Tagged)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divInstagramTagged');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                instagram = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['instagram']['result'][4]['graphic'][5]['tagged'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Users') {
+                        elem = [list[i]['label'], list[i]['value']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Mention', 'Ocurrences']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,  
+                     didDrawPage: function (data) {
+                          data.settings.margin.top = 30; }
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Instagram', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['instagram'] &&
+                this.gathered['instagram']['result'] &&
+                this.gathered['instagram']['result'][4] &&
+                this.gathered['instagram']['result'][4]['graphic'] &&
+                this.gathered['instagram']['result'][4]['graphic'][6] &&
+                this.gathered['instagram']['result'][4]['graphic'][6]['hour'] &&
+                this.gathered['instagram']['result'][4]['graphic'][6]['hour'].length > 1) {
+
+                this.reportMessage = 'Instagram module...(Hour)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divInstagramHour');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 60, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                instagram = true;
+
+                hl = hl + 55;
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Instagram', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['instagram'] &&
+                this.gathered['instagram']['result'] &&
+                this.gathered['instagram']['result'][4] &&
+                this.gathered['instagram']['result'][4]['graphic'] &&
+                this.gathered['instagram']['result'][4]['graphic'][7] &&
+                this.gathered['instagram']['result'][4]['graphic'][7]['week'] &&
+                this.gathered['instagram']['result'][4]['graphic'][7]['week'].length > 1) {
+
+                this.reportMessage = 'Instagram module...(Week)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divInstagramWeek');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 60, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                instagram = true;
+
+                hl = hl + 55;
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Instagram', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['instagram'] &&
+                this.gathered['instagram']['result'] &&
+                this.gathered['instagram']['result'][4] &&
+                this.gathered['instagram']['result'][4]['graphic'] &&
+                this.gathered['instagram']['result'][4]['graphic'][1] &&
+                this.gathered['instagram']['result'][4]['graphic'][1]['postslist'] &&
+                this.gathered['instagram']['result'][4]['graphic'][1]['postslist'].length > 0) {
+
+                this.reportMessage = 'Instagram module...(Post list)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divInstagramPosts');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                instagram = true;
+                const bodyTable = [];
+                let elem = [];
+                const listlikes = this.gathered['instagram']['result'][4]['graphic'][1]['postslist'][0]['series'];
+                const listcomm = this.gathered['instagram']['result'][4]['graphic'][1]['postslist'][1]['series'];
+
+                for (const i in listlikes) {
+                    elem = [listlikes[i]['name'], listlikes[i]['value'], listcomm[i]['value']];
+                    bodyTable.push(elem);
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Post (Last)', 'Likes', 'Comments']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46'},
+                         1: {fillColor: '#22262a'},
+                         2: {fillColor: '#393f46'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Instagram', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['instagram'] &&
+                this.gathered['instagram']['result'] &&
+                this.gathered['instagram']['result'][4] &&
+                this.gathered['instagram']['result'][4]['graphic'] &&
+                this.gathered['instagram']['result'][4]['graphic'][8] &&
+                this.gathered['instagram']['result'][4]['graphic'][8]['mediatype'] &&
+                this.gathered['instagram']['result'][4]['graphic'][8]['mediatype'].length > 0) {
+
+                this.reportMessage = 'Instagram module...(Mediatype)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divInstagramMediatype');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                instagram = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['instagram']['result'][4]['graphic'][8]['mediatype'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Users') {
+                        elem = [list[i]['name'], list[i]['value']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46'},
+                         1: {fillColor: '#22262a'},
+                         2: {fillColor: '#393f46'},
+                         3: {fillColor: '#22262a'},
+                         4: {fillColor: '#393f46'},
+                         5: {fillColor: '#22262a'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Instagram', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['instagram'] &&
+                this.gathered['instagram']['result'] &&
+                this.gathered['instagram']['result'][4] &&
+                this.gathered['instagram']['result'][4]['graphic'] &&
+                this.gathered['instagram']['result'][4]['graphic'][2] &&
+                this.gathered['instagram']['result'][4]['graphic'][2]['postsloc'] &&
+                this.gathered['instagram']['result'][4]['graphic'][2]['postsloc'].length > 0) {
+
+                this.reportMessage = 'Instagram module...(Posts location)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divInstagramMap');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 25, hl, 160, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                instagram = true;
+                const bodyTable = [];
+                let elem = [];
+                let list = this.gathered['instagram']['result'][4]['graphic'][2]['postsloc'];
+
+                for (const i in list) {
+                    elem = [list[i]['Name'], list[i]['Caption'], list[i]['Accessability'], list[i]['Latitude'], list[i]['Longitude'], list[i]['Time']];
+                    bodyTable.push(elem);
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Caption', 'Accessability', 'Lat', 'Long', 'Time']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46'},
+                         1: {fillColor: '#22262a'},
+                         2: {fillColor: '#393f46'},
+                         3: {fillColor: '#22262a'},
+                         4: {fillColor: '#393f46'},
+                         5: {fillColor: '#22262a'},
+                     },
+                     margin: {top: 0, left: 15},
+                     startY: hl + 60,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            if (!instagram) {
+                doc.setLineWidth(15);
+                doc.setDrawColor('#00000');
+                doc.line(20, 105, 190, 105);
+                doc.line(20, 155, 190, 155);
+                img.src = 'assets/images/ban.png';
+                doc.addImage(img, 'png', 10, 105, 190, 50);
+            }
+
+            hl = hl + 10;
+        }
+
+        /////////////////////////////////////////////////////////////////
+        // Linkedin module report
+        /////////////////////////////////////////////////////////////////
+        if (this.gathered['linkedin'] &&
+            this.gathered['linkedin']['result'] &&
+            this.gathered['linkedin']['result'].length > 3) {
+
+            this.reportMessage = 'Linkedin module...'
+
+            let linkedin = false;
+
+            doc.addPage();
+            doc.setFontSize(25);
+            hl = 40;
+
+            // Header title page
+            img.src = 'assets/images/h1.jpg';
+            doc.addImage(img, 'png', 100, 15, 100, 14);
+            img.src = 'assets/images/iKy-Logo.png';
+            doc.addImage(img, 'png', 185, 17, 10, 10);
+            doc.setFontSize(12);
+            doc.setTextColor('#05fcfc');
+            doc.text('MODULE - Linkedin', 105, 23);
+
+            // Information table
+            if (this.gathered['linkedin'] &&
+                this.gathered['linkedin']['result'] &&
+                this.gathered['linkedin']['result'][4] &&
+                this.gathered['linkedin']['result'][4]['graphic'] &&
+                this.gathered['linkedin']['result'][4]['graphic'][0] &&
+                this.gathered['linkedin']['result'][4]['graphic'][0]['social'] &&
+                this.gathered['linkedin']['result'][4]['graphic'][0]['social'].length > 1) {
+
+                this.reportMessage = 'Linkedin module...(Social)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divLinkedinGraphs');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                linkedin = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['linkedin']['result'][4]['graphic'][0]['social'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Linkedin') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Information table
+            if (this.gathered['linkedin'] &&
+                this.gathered['linkedin']['result'] &&
+                this.gathered['linkedin']['result'][4] &&
+                this.gathered['linkedin']['result'][4]['graphic'] &&
+                this.gathered['linkedin']['result'][4]['graphic'][1] &&
+                this.gathered['linkedin']['result'][4]['graphic'][1]['skills'] &&
+                this.gathered['linkedin']['result'][4]['graphic'][1]['skills']['children'] &&
+                this.gathered['linkedin']['result'][4]['graphic'][1]['skills']['children'].length > 0) {
+
+                this.reportMessage = 'Linkedin module...(Skills)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divLinkedinBubble');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                linkedin = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['linkedin']['result'][4]['graphic'][1]['skills']['children'];
+
+                for (const i in list) {
+                    elem = [list[i]['name'], list[i]['count']];
+                    bodyTable.push(elem);
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Area', 'Skill']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                     didDrawPage: function (data) {
+                          data.settings.margin.top = 30; }
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Linkedin', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['linkedin'] &&
+                this.gathered['linkedin']['result'] &&
+                this.gathered['linkedin']['result'][4] &&
+                this.gathered['linkedin']['result'][4]['graphic'] &&
+                this.gathered['linkedin']['result'][4]['graphic'][2] &&
+                this.gathered['linkedin']['result'][4]['graphic'][2]['certificationView'] &&
+                this.gathered['linkedin']['result'][4]['graphic'][2]['certificationView'].length > 0) {
+
+                this.reportMessage = 'Linkedin module...(Certifications)'
+
+                // Image
+
+                linkedin = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['linkedin']['result'][4]['graphic'][2]['certificationView'];
+
+                for (const i in list) {
+                    elem = [list[i]['name'], list[i]['desc']];
+                    bodyTable.push(elem);
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Certification', 'Description']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 5, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 5, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46'},
+                         1: {fillColor: '#22262a'},
+                     },
+                     margin: {top: 0, left: 15},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                hl = finalY;
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Linkedin', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['linkedin'] &&
+                this.gathered['linkedin']['result'] &&
+                this.gathered['linkedin']['result'][4] &&
+                this.gathered['linkedin']['result'][4]['graphic'] &&
+                this.gathered['linkedin']['result'][4]['graphic'][3] &&
+                this.gathered['linkedin']['result'][4]['graphic'][3]['positionGroupView'] &&
+                this.gathered['linkedin']['result'][4]['graphic'][3]['positionGroupView'].length > 0) {
+
+                this.reportMessage = 'Linkedin module...(Positions)'
+
+                // Image
+
+                linkedin = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['linkedin']['result'][4]['graphic'][3]['positionGroupView'];
+
+                for (const i in list) {
+                    elem = [list[i]['label']];
+                    bodyTable.push(elem);
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Positions']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46'},
+                         1: {fillColor: '#22262a'},
+                     },
+                     margin: {top: 0, left: 50, right: 50},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            if (!linkedin) {
+                doc.setLineWidth(15);
+                doc.setDrawColor('#00000');
+                doc.line(20, 105, 190, 105);
+                doc.line(20, 155, 190, 155);
+                img.src = 'assets/images/ban.png';
+                doc.addImage(img, 'png', 10, 105, 190, 50);
+            }
+
+            hl = hl + 10;
+        }
+
+        /////////////////////////////////////////////////////////////////
+        // Github module report
+        /////////////////////////////////////////////////////////////////
+        if (this.gathered['github'] &&
+            this.gathered['github']['result'] &&
+            this.gathered['github']['result'].length > 3) {
+
+            this.reportMessage = 'Instagram module...'
+
+            let github = false;
+
+            doc.addPage();
+            doc.setFontSize(25);
+            hl = 40;
+
+            // Header title page
+            img.src = 'assets/images/h1.jpg';
+            doc.addImage(img, 'png', 100, 15, 100, 14);
+            img.src = 'assets/images/iKy-Logo.png';
+            doc.addImage(img, 'png', 185, 17, 10, 10);
+            doc.setFontSize(12);
+            doc.setTextColor('#05fcfc');
+            doc.text('MODULE - Github', 105, 23);
+
+            // Information table
+            if (this.gathered['github'] &&
+                this.gathered['github']['result'] &&
+                this.gathered['github']['result'][4] &&
+                this.gathered['github']['result'][4]['graphic'] &&
+                this.gathered['github']['result'][4]['graphic'][0] &&
+                this.gathered['github']['result'][4]['graphic'][0]['github'] &&
+                this.gathered['github']['result'][4]['graphic'][0]['github'].length > 1) {
+
+                this.reportMessage = 'Github module...(Social)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divGithubGraphs');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                github = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['github']['result'][4]['graphic'][0]['github'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Github') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Information table
+            if (this.gathered['github'] &&
+                this.gathered['github']['result'] &&
+                this.gathered['github']['result'][4] &&
+                this.gathered['github']['result'][4]['graphic'] &&
+                this.gathered['github']['result'][4]['graphic'][1] &&
+                this.gathered['github']['result'][4]['graphic'][1]['cal_actual'] &&
+                this.gathered['github']['result'][4]['graphic'][1]['cal_actual'].length > 0) {
+
+                this.reportMessage = 'Github module...(Calendar)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divGithubCalendar');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 25, hl, 160, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                github = true;
+            }
+
+            if (!github) {
+                doc.setLineWidth(15);
+                doc.setDrawColor('#00000');
+                doc.line(20, 105, 190, 105);
+                doc.line(20, 155, 190, 155);
+                img.src = 'assets/images/ban.png';
+                doc.addImage(img, 'png', 10, 105, 190, 50);
+            }
+
+            hl = hl + 10;
+        }
+
+        /////////////////////////////////////////////////////////////////
+        // Keybase module report
+        /////////////////////////////////////////////////////////////////
+        if (this.gathered['keybase'] &&
+            this.gathered['keybase']['result'] &&
+            this.gathered['keybase']['result'].length > 3) {
+
+            this.reportMessage = 'Keybase module...'
+
+            let keybase = false;
+
+            doc.addPage();
+            doc.setFontSize(25);
+            hl = 40;
+
+            // Header title page
+            img.src = 'assets/images/h1.jpg';
+            doc.addImage(img, 'png', 100, 15, 100, 14);
+            img.src = 'assets/images/iKy-Logo.png';
+            doc.addImage(img, 'png', 185, 17, 10, 10);
+            doc.setFontSize(12);
+            doc.setTextColor('#05fcfc');
+            doc.text('MODULE - Keybase', 105, 23);
+
+            // Information table
+            if (this.gathered['keybase'] &&
+                this.gathered['keybase']['result'] &&
+                this.gathered['keybase']['result'][4] &&
+                this.gathered['keybase']['result'][4]['graphic'] &&
+                this.gathered['keybase']['result'][4]['graphic'][0] &&
+                this.gathered['keybase']['result'][4]['graphic'][0]['keysocial'] &&
+                this.gathered['keybase']['result'][4]['graphic'][0]['keysocial'].length > 1) {
+
+                this.reportMessage = 'Keybase module...(Social)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divKeybaseSocial');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                keybase = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['keybase']['result'][4]['graphic'][0]['keysocial'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'KeybaseSocial') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Information table
+            if (this.gathered['keybase'] &&
+                this.gathered['keybase']['result'] &&
+                this.gathered['keybase']['result'][4] &&
+                this.gathered['keybase']['result'][4]['graphic'] &&
+                this.gathered['keybase']['result'][4]['graphic'][1] &&
+                this.gathered['keybase']['result'][4]['graphic'][1]['devices'] &&
+                this.gathered['keybase']['result'][4]['graphic'][1]['devices'].length > 1) {
+
+                this.reportMessage = 'Keybase module...(Devices)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divKeybaseDevices');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                keybase = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['keybase']['result'][4]['graphic'][1]['devices'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Devices') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            if (!keybase) {
+                doc.setLineWidth(15);
+                doc.setDrawColor('#00000');
+                doc.line(20, 105, 190, 105);
+                doc.line(20, 155, 190, 155);
+                img.src = 'assets/images/ban.png';
+                doc.addImage(img, 'png', 10, 105, 190, 50);
+            }
+
+            hl = hl + 10;
+        }
+
+        /////////////////////////////////////////////////////////////////
+        // Spotify module report
+        /////////////////////////////////////////////////////////////////
+        if (this.gathered['spotify'] &&
+            this.gathered['spotify']['result'] &&
+            this.gathered['spotify']['result'].length > 3) {
+
+            this.reportMessage = 'Spotify module...'
+
+            let spotify = false;
+
+            doc.addPage();
+            doc.setFontSize(25);
+            hl = 40;
+
+            // Header title page
+            img.src = 'assets/images/h1.jpg';
+            doc.addImage(img, 'png', 100, 15, 100, 14);
+            img.src = 'assets/images/iKy-Logo.png';
+            doc.addImage(img, 'png', 185, 17, 10, 10);
+            doc.setFontSize(12);
+            doc.setTextColor('#05fcfc');
+            doc.text('MODULE - Spotify', 105, 23);
+
+            // Information table
+            if (this.gathered['spotify'] &&
+                this.gathered['spotify']['result'] &&
+                this.gathered['spotify']['result'][4] &&
+                this.gathered['spotify']['result'][4]['graphic'] &&
+                this.gathered['spotify']['result'][4]['graphic'][0] &&
+                this.gathered['spotify']['result'][4]['graphic'][0]['social'] &&
+                this.gathered['spotify']['result'][4]['graphic'][0]['social'].length > 1) {
+
+                this.reportMessage = 'Spotify module...(Social)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divSpotifySocial');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                spotify = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['spotify']['result'][4]['graphic'][0]['social'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Spotify') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // TODO : Playlist
+
+            // Information table
+            if (this.gathered['spotify'] &&
+                this.gathered['spotify']['result'] &&
+                this.gathered['spotify']['result'][4] &&
+                this.gathered['spotify']['result'][4]['graphic'] &&
+                this.gathered['spotify']['result'][4]['graphic'][2] &&
+                this.gathered['spotify']['result'][4]['graphic'][2]['autors'] &&
+                this.gathered['spotify']['result'][4]['graphic'][2]['autors'].length > 1) {
+
+                this.reportMessage = 'Spotify module...(Authors)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divSpotifyAutors');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                spotify = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['spotify']['result'][4]['graphic'][2]['autors'];
+                list.sort((a, b)=> (a.value < b.value ? 1 : -1))
+
+                let a = 0;
+                for (const i in list) {
+                    if (a === 16) {
+                        break;
+                    }
+                    elem = [list[i]['label'], list[i]['value']];
+                    bodyTable.push(elem);
+                    a = a + 1;
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Author', 'Ocurrences']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     // pageBreak: 'always',
+                     startY: hl,
+                     didDrawPage: function (data) {
+                          data.settings.margin.top = 30; }
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Spotify', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['spotify'] &&
+                this.gathered['spotify']['result'] &&
+                this.gathered['spotify']['result'][4] &&
+                this.gathered['spotify']['result'][4]['graphic'] &&
+                this.gathered['spotify']['result'][4]['graphic'][3] &&
+                this.gathered['spotify']['result'][4]['graphic'][3]['words'] &&
+                this.gathered['spotify']['result'][4]['graphic'][3]['words'].length > 1) {
+
+                this.reportMessage = 'Spotify module...(Words)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divSpotifyWords');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                spotify = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['spotify']['result'][4]['graphic'][3]['words'];
+                list.sort((a, b)=> (a.value < b.value ? 1 : -1))
+
+                let a = 0;
+                for (const i in list) {
+                    if (a === 16) {
+                        break;
+                    }
+                    elem = [list[i]['label'], list[i]['value']];
+                    bodyTable.push(elem);
+                    a = a + 1;
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Word', 'Ocurrences']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     // pageBreak: 'always',
+                     startY: hl,
+                     didDrawPage: function (data) {
+                          data.settings.margin.top = 30; }
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Spotify', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['spotify'] &&
+                this.gathered['spotify']['result'] &&
+                this.gathered['spotify']['result'][4] &&
+                this.gathered['spotify']['result'][4]['graphic'] &&
+                this.gathered['spotify']['result'][4]['graphic'][4] &&
+                this.gathered['spotify']['result'][4]['graphic'][4]['lang'] &&
+                this.gathered['spotify']['result'][4]['graphic'][4]['lang'].length > 1) {
+
+                this.reportMessage = 'Spotify module...(Language)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divSpotifyLang');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                spotify = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['spotify']['result'][4]['graphic'][4]['lang'];
+                list.sort((a, b)=> (a.value < b.value ? 1 : -1))
+
+                let a = 0;
+                for (const i in list) {
+                    if (a === 7) {
+                        break;
+                    }
+                    elem = [list[i]['name'], list[i]['value']];
+                    bodyTable.push(elem);
+                    a = a + 1;
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+            if (!spotify) {
+                doc.setLineWidth(15);
+                doc.setDrawColor('#00000');
+                doc.line(20, 105, 190, 105);
+                doc.line(20, 155, 190, 155);
+                img.src = 'assets/images/ban.png';
+                doc.addImage(img, 'png', 10, 105, 190, 50);
+            }
+
+            hl = hl + 10;
+        }
+
+        /////////////////////////////////////////////////////////////////
+        // Reddit module report
+        /////////////////////////////////////////////////////////////////
+        if (this.gathered['reddit'] &&
+            this.gathered['reddit']['result'] &&
+            this.gathered['reddit']['result'].length > 3) {
+
+            this.reportMessage = 'Reddit module...'
+
+            let reddit = false;
+
+            doc.addPage();
+            doc.setFontSize(25);
+            hl = 40;
+
+            // Header title page
+            img.src = 'assets/images/h1.jpg';
+            doc.addImage(img, 'png', 100, 15, 100, 14);
+            img.src = 'assets/images/iKy-Logo.png';
+            doc.addImage(img, 'png', 185, 17, 10, 10);
+            doc.setFontSize(12);
+            doc.setTextColor('#05fcfc');
+            doc.text('MODULE - Reddit', 105, 23);
+
+            // Information table
+            if (this.gathered['reddit'] &&
+                this.gathered['reddit']['result'] &&
+                this.gathered['reddit']['result'][4] &&
+                this.gathered['reddit']['result'][4]['graphic'] &&
+                this.gathered['reddit']['result'][4]['graphic'][0] &&
+                this.gathered['reddit']['result'][4]['graphic'][0]['social'] &&
+                this.gathered['reddit']['result'][4]['graphic'][0]['social'].length > 1) {
+
+                this.reportMessage = 'Reddit module...(Social)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divRedditSocial');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                reddit = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['reddit']['result'][4]['graphic'][0]['social'];
+
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Reddit') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Name', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Information table
+            if (this.gathered['reddit'] &&
+                this.gathered['reddit']['result'] &&
+                this.gathered['reddit']['result'][4] &&
+                this.gathered['reddit']['result'][4]['graphic'] &&
+                this.gathered['reddit']['result'][4]['graphic'][1] &&
+                this.gathered['reddit']['result'][4]['graphic'][1]['hour'] &&
+                this.gathered['reddit']['result'][4]['graphic'][1]['hour'].length > 0) {
+
+                this.reportMessage = 'Reddit module...(Hour)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divRedditHour');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 60, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                reddit = true;
+
+                hl = hl + 55;
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Reddit', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['reddit'] &&
+                this.gathered['reddit']['result'] &&
+                this.gathered['reddit']['result'][4] &&
+                this.gathered['reddit']['result'][4]['graphic'] &&
+                this.gathered['reddit']['result'][4]['graphic'][2] &&
+                this.gathered['reddit']['result'][4]['graphic'][2]['week'] &&
+                this.gathered['reddit']['result'][4]['graphic'][2]['week'].length > 0) {
+
+                this.reportMessage = 'Reddit module...(Week)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divRedditWeek');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 60, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+                instagram = true;
+
+                hl = hl + 55;
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Reddit', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['reddit'] &&
+                this.gathered['reddit']['result'] &&
+                this.gathered['reddit']['result'][4] &&
+                this.gathered['reddit']['result'][4]['graphic'] &&
+                this.gathered['reddit']['result'][4]['graphic'][3] &&
+                this.gathered['reddit']['result'][4]['graphic'][3]['topics'] &&
+                this.gathered['reddit']['result'][4]['graphic'][3]['topics']['children'] &&
+                this.gathered['reddit']['result'][4]['graphic'][3]['topics']['children'].length > 0) {
+
+                this.reportMessage = 'Reddit module...(Topics)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divRedditBubble');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                reddit = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['reddit']['result'][4]['graphic'][3]['topics']['children'];
+                list.sort((a, b)=> (a.value < b.value ? 1 : -1))
+
+                let a = 0;
+                for (const i in list) {
+                    if (a === 16) {
+                        break;
+                    }
+                    elem = [list[i]['name'], list[i]['value']];
+                    bodyTable.push(elem);
+                    a = a + 1;
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Topic', 'Value']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 50},
+                         1: {fillColor: '#22262a', halign: 'center'},
+                     },
+                     margin: {top: 0, left: 100},
+                     startY: hl,
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+            if (!reddit) {
+                doc.setLineWidth(15);
+                doc.setDrawColor('#00000');
+                doc.line(20, 105, 190, 105);
+                doc.line(20, 155, 190, 155);
+                img.src = 'assets/images/ban.png';
+                doc.addImage(img, 'png', 10, 105, 190, 50);
+            }
+
+            hl = hl + 10;
+        }
+
+        /////////////////////////////////////////////////////////////////
+        // Twitch module report
+        /////////////////////////////////////////////////////////////////
+        // if (this.gathered['twitch'] &&
+        //     this.gathered['twitch']['result'] &&
+        //     this.gathered['twitch']['result'].length > 3) {
+
+        //     this.reportMessage = 'Twitch module...'
+
+        //     let twitch = false;
+
+        //     doc.addPage();
+        //     doc.setFontSize(25);
+        //     hl = 40;
+
+        //     // Header title page
+        //     img.src = 'assets/images/h1.jpg';
+        //     doc.addImage(img, 'png', 100, 15, 100, 14);
+        //     img.src = 'assets/images/iKy-Logo.png';
+        //     doc.addImage(img, 'png', 185, 17, 10, 10);
+        //     doc.setFontSize(12);
+        //     doc.setTextColor('#05fcfc');
+        //     doc.text('MODULE - Twitch', 105, 23);
+
+        //     // Information table
+        //     if (this.gathered['twitch'] &&
+        //         this.gathered['twitch']['result'] &&
+        //         this.gathered['twitch']['result'][4] &&
+        //         this.gathered['twitch']['result'][4]['graphic'] &&
+        //         this.gathered['twitch']['result'][4]['graphic'][0] &&
+        //         this.gathered['twitch']['result'][4]['graphic'][0]['social'] &&
+        //         this.gathered['twitch']['result'][4]['graphic'][0]['social'].length > 1) {
+
+        //         this.reportMessage = 'Twitch module...(Social)'
+
+        //         // Image
+        //         svg = this.nbCardContainer.nativeElement.querySelector('#divTwitchSocial');
+
+        //         await htmlToImage.toPng(svg)
+        //           .then(function (dataUrl) {
+        //             imgiKy.src = dataUrl;
+        //             doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+        //           })
+        //           .catch(function (error) {
+        //             console.error('oops, something went wrong!', error);
+        //           });
+
+        //         twitch = true;
+        //         const bodyTable = [];
+        //         let elem = [];
+        //         const list = this.gathered['twitch']['result'][4]['graphic'][0]['social'];
+
+        //         for (const i in list) {
+        //             if (list[i]['title'] !== 'Twitch') {
+        //                 elem = [list[i]['title'], list[i]['subtitle']];
+        //                 bodyTable.push(elem);
+        //             }
+        //         }
+
+        //         doc.setFontSize(10);
+        //         autoTable(doc, {
+        //              head: [['Name', 'Value']],
+        //              body: bodyTable,
+        //              headStyles: {fillColor: '#50fcfc',
+        //                           cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+        //                           lineWidth: 1,
+        //                           halign: 'center',
+        //                           textColor: '#000000',
+        //                           lineColor: '#1A1A1A'},
+        //              bodyStyles: {fillColor: '#1A1A1A',
+        //                           cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+        //                           lineWidth: 1,
+        //                           fontSize: 8,
+        //                           textColor: '#50fcfc',
+        //                           lineColor: '#1A1A1A'},
+        //              columnStyles: {
+        //                  0: {fillColor: '#393f46', cellWidth: 50},
+        //                  1: {fillColor: '#22262a', halign: 'center'},
+        //              },
+        //              margin: {top: 0, left: 100},
+        //              startY: hl,
+        //         });
+
+        //         const finalY = (doc as any).lastAutoTable.finalY;
+        //         if (hl + 55 < finalY) {
+        //             hl = finalY
+        //         } else {
+        //             hl = hl + 55
+        //         }
+        //     }
+
+        //     hl = hl + 20;
+
+        //     // Information table
+        //     if (this.gathered['twitch'] &&
+        //         this.gathered['twitch']['result'] &&
+        //         this.gathered['twitch']['result'][4] &&
+        //         this.gathered['twitch']['result'][4]['graphic'] &&
+        //         this.gathered['twitch']['result'][4]['graphic'][5] &&
+        //         this.gathered['twitch']['result'][4]['graphic'][5]['hour'] &&
+        //         this.gathered['twitch']['result'][4]['graphic'][5]['hour'].length > 0) {
+
+        //         this.reportMessage = 'Twitch module...(Hour)'
+
+        //         // Image
+        //         svg = this.nbCardContainer.nativeElement.querySelector('#divTwitchHour');
+
+        //         await htmlToImage.toPng(svg)
+        //           .then(function (dataUrl) {
+        //             imgiKy.src = dataUrl;
+        //             doc.addImage(imgiKy, 'png', 60, hl, 75, 55);
+        //           })
+        //           .catch(function (error) {
+        //             console.error('oops, something went wrong!', error);
+        //           });
+        //         twitch = true;
+
+        //         hl = hl + 55;
+        //     }
+
+        //     hl = hl + 20;
+
+        //     // Validate pageHeight
+        //     if ( hl + 60 > pageHeight) {
+        //         doc.addPage();
+        //         doc.setFontSize(25);
+
+        //         // Header title page
+        //         img.src = 'assets/images/h1.jpg';
+        //         doc.addImage(img, 'png', 100, 15, 100, 14);
+        //         img.src = 'assets/images/iKy-Logo.png';
+        //         doc.addImage(img, 'png', 185, 17, 10, 10);
+        //         doc.setFontSize(12);
+        //         doc.setTextColor('#05fcfc');
+        //         doc.text('MODULE - Twitch', 105, 23);
+
+        //         hl = 40;
+        //     }
+
+        //     // Information table
+        //     if (this.gathered['reddit'] &&
+        //         this.gathered['reddit']['result'] &&
+        //         this.gathered['reddit']['result'][4] &&
+        //         this.gathered['reddit']['result'][4]['graphic'] &&
+        //         this.gathered['reddit']['result'][4]['graphic'][2] &&
+        //         this.gathered['reddit']['result'][4]['graphic'][2]['week'] &&
+        //         this.gathered['reddit']['result'][4]['graphic'][2]['week'].length > 0) {
+
+        //         this.reportMessage = 'Reddit module...(Week)'
+
+        //         // Image
+        //         svg = this.nbCardContainer.nativeElement.querySelector('#divRedditWeek');
+
+        //         await htmlToImage.toPng(svg)
+        //           .then(function (dataUrl) {
+        //             imgiKy.src = dataUrl;
+        //             doc.addImage(imgiKy, 'png', 60, hl, 75, 55);
+        //           })
+        //           .catch(function (error) {
+        //             console.error('oops, something went wrong!', error);
+        //           });
+        //         instagram = true;
+
+        //         hl = hl + 55;
+        //     }
+
+        //     hl = hl + 20;
+
+        //     // Validate pageHeight
+        //     if ( hl + 60 > pageHeight) {
+        //         doc.addPage();
+        //         doc.setFontSize(25);
+
+        //         // Header title page
+        //         img.src = 'assets/images/h1.jpg';
+        //         doc.addImage(img, 'png', 100, 15, 100, 14);
+        //         img.src = 'assets/images/iKy-Logo.png';
+        //         doc.addImage(img, 'png', 185, 17, 10, 10);
+        //         doc.setFontSize(12);
+        //         doc.setTextColor('#05fcfc');
+        //         doc.text('MODULE - Reddit', 105, 23);
+
+        //         hl = 40;
+        //     }
+
+        //     // Information table
+        //     if (this.gathered['reddit'] &&
+        //         this.gathered['reddit']['result'] &&
+        //         this.gathered['reddit']['result'][4] &&
+        //         this.gathered['reddit']['result'][4]['graphic'] &&
+        //         this.gathered['reddit']['result'][4]['graphic'][3] &&
+        //         this.gathered['reddit']['result'][4]['graphic'][3]['topics'] &&
+        //         this.gathered['reddit']['result'][4]['graphic'][3]['topics']['children'] &&
+        //         this.gathered['reddit']['result'][4]['graphic'][3]['topics']['children'].length > 0) {
+
+        //         this.reportMessage = 'Reddit module...(Topics)'
+
+        //         // Image
+        //         svg = this.nbCardContainer.nativeElement.querySelector('#divRedditBubble');
+
+        //         await htmlToImage.toPng(svg)
+        //           .then(function (dataUrl) {
+        //             imgiKy.src = dataUrl;
+        //             doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+        //           })
+        //           .catch(function (error) {
+        //             console.error('oops, something went wrong!', error);
+        //           });
+
+        //         reddit = true;
+        //         const bodyTable = [];
+        //         let elem = [];
+        //         const list = this.gathered['reddit']['result'][4]['graphic'][3]['topics']['children'];
+        //         list.sort((a, b)=> (a.value < b.value ? 1 : -1))
+
+        //         let a = 0;
+        //         for (const i in list) {
+        //             if (a === 16) {
+        //                 break;
+        //             }
+        //             elem = [list[i]['name'], list[i]['value']];
+        //             bodyTable.push(elem);
+        //             a = a + 1;
+        //         }
+
+        //         doc.setFontSize(10);
+        //         autoTable(doc, {
+        //              head: [['Topic', 'Value']],
+        //              body: bodyTable,
+        //              headStyles: {fillColor: '#50fcfc',
+        //                           cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+        //                           lineWidth: 1,
+        //                           halign: 'center',
+        //                           textColor: '#000000',
+        //                           lineColor: '#1A1A1A'},
+        //              bodyStyles: {fillColor: '#1A1A1A',
+        //                           cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+        //                           lineWidth: 1,
+        //                           fontSize: 8,
+        //                           textColor: '#50fcfc',
+        //                           lineColor: '#1A1A1A'},
+        //              columnStyles: {
+        //                  0: {fillColor: '#393f46', cellWidth: 50},
+        //                  1: {fillColor: '#22262a', halign: 'center'},
+        //              },
+        //              margin: {top: 0, left: 100},
+        //              startY: hl,
+        //         });
+
+        //         const finalY = (doc as any).lastAutoTable.finalY;
+        //         if (hl + 55 < finalY) {
+        //             hl = finalY
+        //         } else {
+        //             hl = hl + 55
+        //         }
+        //     }
+        //     if (!reddit) {
+        //         doc.setLineWidth(15);
+        //         doc.setDrawColor('#00000');
+        //         doc.line(20, 105, 190, 105);
+        //         doc.line(20, 155, 190, 155);
+        //         img.src = 'assets/images/ban.png';
+        //         doc.addImage(img, 'png', 10, 105, 190, 50);
+        //     }
+
+        //     hl = hl + 10;
+        // }
+        /////////////////////////////////////////////////////////////////
+        // END
+        /////////////////////////////////////////////////////////////////
+        this.reportEnd = true;
+        this.reportMessage = 'Report DONE';
+
+        this.report = doc;
+        // doc.save('Report_iKy_' + Date.now() + '.pdf');
+        this.processing = false;
+    }
+
     //    async generateAllPdf() {
     //        this.processing = true;
     //        var infoText: string;
@@ -196,7 +3890,7 @@ export class GathererComponent implements OnInit {
     //        var pageHeight = doc.internal.pageSize.height;
     //        
     //        doc.setFontSize(25);
-    //        // doc.setFontStyle("bold");
+    //        // doc.setFontStyle('bold');
     //        var img = new Image()
     //        // img.src = 'assets/images/iKy-Logo.png'
     //        img.src = 'favicon-32x32.png'
@@ -247,14 +3941,14 @@ export class GathererComponent implements OnInit {
     //        //             doc.text('Module emailrep', 105, hl + 5, null, null, 'center');
     //        //             hl = hl + 10;
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divEmailrepInfo");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divEmailrepInfo');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             await html2canvas(svg2, { 
     //        //                 // scale: 1,
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#333333",
+    //        //                 backgroundColor: '#333333',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -318,14 +4012,14 @@ export class GathererComponent implements OnInit {
     //        // 
     //        //             hl = hl + 10;
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divEmailrepSocial");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divEmailrepSocial');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             await html2canvas(svg2, { 
     //        //                 // scale: 1,
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#333333",
+    //        //                 backgroundColor: '#333333',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -410,7 +4104,7 @@ export class GathererComponent implements OnInit {
     //            doc.text('Module fullcontact', 105, hl + 5, {align: 'center'});
     //            hl = hl + 10;
     //        
-    //            var svg = this.nbCardContainer.nativeElement.querySelector("#divFullcontactGraphs");
+    //            var svg = this.nbCardContainer.nativeElement.querySelector('#divFullcontactGraphs');
     //            var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //            // await html2canvas(svg.children[0], { 
     //            await html2canvas(svg2, { 
@@ -418,7 +4112,7 @@ export class GathererComponent implements OnInit {
     //                useCORS: true, 
     //                // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //                // logging: false,
-    //                backgroundColor: "#333333",
+    //                backgroundColor: '#333333',
     //                allowTaint: true,
     //                // removeContainer: false
     //                })
@@ -426,13 +4120,13 @@ export class GathererComponent implements OnInit {
     //                    doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 10, hl, 75, 55);
     //                });
     //        
-    //            // var svg = this.nbCardContainer.nativeElement.querySelector("#divFullcontactGraphs");
+    //            // var svg = this.nbCardContainer.nativeElement.querySelector('#divFullcontactGraphs');
     //            // await html2canvas(svg.children[0], { 
     //            //     scale: 1,
     //            //     useCORS: true, 
     //            //     // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //            //     logging: true,
-    //            //     backgroundColor: "#51A5D7",
+    //            //     backgroundColor: '#51A5D7',
     //            //     allowTaint: true,
     //            //     removeContainer: true
     //            //     })
@@ -508,7 +4202,7 @@ export class GathererComponent implements OnInit {
     //        //             doc.text('Module twitter', 105, hl + 5, null, null, 'center');
     //        //             hl = hl + 10;
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterList");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterList');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             // await html2canvas(svg.children[0], { 
     //        //             await html2canvas(svg2, { 
@@ -516,7 +4210,7 @@ export class GathererComponent implements OnInit {
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#888888",
+    //        //                 backgroundColor: '#888888',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -568,7 +4262,7 @@ export class GathererComponent implements OnInit {
     //        //                 hl = 20;
     //        //             }
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterResume");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterResume');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0].children[0].children[0];
     //        //             // await html2canvas(svg.children[0], { 
     //        //             await html2canvas(svg2, { 
@@ -576,7 +4270,7 @@ export class GathererComponent implements OnInit {
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#888888",
+    //        //                 backgroundColor: '#888888',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -626,7 +4320,7 @@ export class GathererComponent implements OnInit {
     //        //                 hl = 20;
     //        //             }
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterPopularity");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterPopularity');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0].children[0].children[0];
     //        //             // await html2canvas(svg.children[0], { 
     //        //             await html2canvas(svg2, { 
@@ -634,7 +4328,7 @@ export class GathererComponent implements OnInit {
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#888888",
+    //        //                 backgroundColor: '#888888',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -684,7 +4378,7 @@ export class GathererComponent implements OnInit {
     //        //                 hl = 20;
     //        //             }
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterApproval");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterApproval');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0].children[0].children[0];
     //        //             // await html2canvas(svg.children[0], { 
     //        //             await html2canvas(svg2, { 
@@ -692,7 +4386,7 @@ export class GathererComponent implements OnInit {
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#888888",
+    //        //                 backgroundColor: '#888888',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -742,7 +4436,7 @@ export class GathererComponent implements OnInit {
     //        //                 hl = 20;
     //        //             }
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterHashtag");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterHashtag');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             // await html2canvas(svg.children[0], { 
     //        //             await html2canvas(svg2, { 
@@ -750,7 +4444,7 @@ export class GathererComponent implements OnInit {
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#333333",
+    //        //                 backgroundColor: '#333333',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -762,12 +4456,12 @@ export class GathererComponent implements OnInit {
     //        //             if (this.gathered['twitter']['result'][4]['graphic'][3]['hashtag']) {
     //        //                 let headTable = [];
     //        //                 let bodyTable = [];
-    //        //                 let elem = "";
+    //        //                 let elem = '';
     //        //                 let i: any;
     //        //                 let list = this.gathered['twitter']['result'][4]['graphic'][3]['hashtag'];
     //        //                 
     //        //                 for (let i in list) {
-    //        //                     elem = elem + list[i]['label'] + " ";
+    //        //                     elem = elem + list[i]['label'] + ' ';
     //        //                 }
     //        //                 bodyTable.push([elem]);
     //        // 
@@ -802,7 +4496,7 @@ export class GathererComponent implements OnInit {
     //        //                 hl = 20;
     //        //             }
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divTwitterUsers");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterUsers');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             // await html2canvas(svg.children[0], { 
     //        //             await html2canvas(svg2, { 
@@ -810,7 +4504,7 @@ export class GathererComponent implements OnInit {
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#333333",
+    //        //                 backgroundColor: '#333333',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -822,7 +4516,7 @@ export class GathererComponent implements OnInit {
     //        //             if (this.gathered['twitter']['result'][4]['graphic'][4]['users']) {
     //        //                 let headTable = [];
     //        //                 let bodyTable = [];
-    //        //                 let elem = "";
+    //        //                 let elem = '';
     //        //                 let i: any;
     //        //                 let list = this.gathered['twitter']['result'][4]['graphic'][4]['users'];
     //        //                 
@@ -882,14 +4576,14 @@ export class GathererComponent implements OnInit {
     //        //             doc.text('Module Instagram', 105, hl + 5, null, null, 'center');
     //        //             hl = hl + 10;
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divInstagramSocial");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divInstagramSocial');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             await html2canvas(svg2, { 
     //        //                 // scale: 1,
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#333333",
+    //        //                 backgroundColor: '#333333',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -953,14 +4647,14 @@ export class GathererComponent implements OnInit {
     //        // 
     //        //             hl = hl + 10;
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divInstagramPosts");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divInstagramPosts');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             await html2canvas(svg2, { 
     //        //                 // scale: 1,
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#333333",
+    //        //                 backgroundColor: '#333333',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -1047,7 +4741,7 @@ export class GathererComponent implements OnInit {
     //        //             doc.text('Module github', 105, hl + 5, null, null, 'center');
     //        //             hl = hl + 10;
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divGithubGraphs");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divGithubGraphs');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             // await html2canvas(svg.children[0], { 
     //        //             await html2canvas(svg2, { 
@@ -1055,7 +4749,7 @@ export class GathererComponent implements OnInit {
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#333333",
+    //        //                 backgroundColor: '#333333',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -1118,7 +4812,7 @@ export class GathererComponent implements OnInit {
     //        //                 hl = 20;
     //        //             }
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divGithubCalendar");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divGithubCalendar');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             // await html2canvas(svg.children[0], { 
     //        //             await html2canvas(svg2, { 
@@ -1126,7 +4820,7 @@ export class GathererComponent implements OnInit {
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#333333",
+    //        //                 backgroundColor: '#333333',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -1134,13 +4828,13 @@ export class GathererComponent implements OnInit {
     //        //                     doc.addImage(canvas.toDataURL('image/png'), 'JPEG', 30, hl, 150, 35);
     //        //                 });
     //        // 
-    //        //             // var svg = this.nbCardContainer.nativeElement.querySelector("#divGithubCalendar");
+    //        //             // var svg = this.nbCardContainer.nativeElement.querySelector('#divGithubCalendar');
     //        //             // await html2canvas(svg.children[0], { 
     //        //             //     scale: 1,
     //        //             //     useCORS: true, 
     //        //             //     // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //             //     logging: true,
-    //        //             //     backgroundColor: "#51A5D7",
+    //        //             //     backgroundColor: '#51A5D7',
     //        //             //     allowTaint: true,
     //        //             //     removeContainer: true
     //        //             //     })
@@ -1174,7 +4868,7 @@ export class GathererComponent implements OnInit {
     //        //             doc.text('Module linkedin', 105, hl + 5, null, null, 'center');
     //        //             hl = hl + 10;
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divLinkedinGraphs");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divLinkedinGraphs');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             // await html2canvas(svg.children[0], { 
     //        //             await html2canvas(svg2, { 
@@ -1182,7 +4876,7 @@ export class GathererComponent implements OnInit {
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#333333",
+    //        //                 backgroundColor: '#333333',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -1246,7 +4940,7 @@ export class GathererComponent implements OnInit {
     //        //                 hl = 20;
     //        //             }
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divLinkedinBubble");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divLinkedinBubble');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             // await html2canvas(svg.children[0], { 
     //        //             await html2canvas(svg2, { 
@@ -1254,7 +4948,7 @@ export class GathererComponent implements OnInit {
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#333333",
+    //        //                 backgroundColor: '#333333',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -1384,7 +5078,7 @@ export class GathererComponent implements OnInit {
     //        //             doc.text('Module keybase', 105, hl + 5, null, null, 'center');
     //        //             hl = hl + 10;
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divKeybaseSocial");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divKeybaseSocial');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             // await html2canvas(svg.children[0], { 
     //        //             await html2canvas(svg2, { 
@@ -1392,7 +5086,7 @@ export class GathererComponent implements OnInit {
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#333333",
+    //        //                 backgroundColor: '#333333',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -1458,7 +5152,7 @@ export class GathererComponent implements OnInit {
     //        //                 hl = 20;
     //        //             }
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divKeybaseDevices");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divKeybaseDevices');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             // await html2canvas(svg.children[0], { 
     //        //             await html2canvas(svg2, { 
@@ -1466,7 +5160,7 @@ export class GathererComponent implements OnInit {
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#333333",
+    //        //                 backgroundColor: '#333333',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -1545,7 +5239,7 @@ export class GathererComponent implements OnInit {
     //        //             doc.text('Module leaks', 105, hl + 5, null, null, 'center');
     //        //             hl = hl + 10;
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divLeakSocial");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divLeakSocial');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             // await html2canvas(svg.children[0], { 
     //        //             await html2canvas(svg2, { 
@@ -1553,7 +5247,7 @@ export class GathererComponent implements OnInit {
     //        //                 useCORS: false, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#333333",
+    //        //                 backgroundColor: '#333333',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -1632,14 +5326,14 @@ export class GathererComponent implements OnInit {
     //        //             doc.text('Module socialscan', 105, hl + 5, null, null, 'center');
     //        //             hl = hl + 10;
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divSocialscanEmail");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divSocialscanEmail');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             await html2canvas(svg2, { 
     //        //                 // scale: 1,
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#333333",
+    //        //                 backgroundColor: '#333333',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -1707,14 +5401,14 @@ export class GathererComponent implements OnInit {
     //        // 
     //        //             hl = hl + 10;
     //        // 
-    //        //             var svg = this.nbCardContainer.nativeElement.querySelector("#divSocialscanUser");
+    //        //             var svg = this.nbCardContainer.nativeElement.querySelector('#divSocialscanUser');
     //        //             var svg2 = svg.children[0].children[0].children[1].children[0].children[0].children[0];
     //        //             await html2canvas(svg2, { 
     //        //                 // scale: 1,
     //        //                 useCORS: true, 
     //        //                 // foreignObjectRendering: true,  // Render with the background but only if the div is in the screen
     //        //                 // logging: false,
-    //        //                 backgroundColor: "#333333",
+    //        //                 backgroundColor: '#333333',
     //        //                 allowTaint: true,
     //        //                 // removeContainer: false
     //        //                 })
@@ -1783,11 +5477,11 @@ export class GathererComponent implements OnInit {
     //        //         hl = 20;
     //        //         // Profile
     //        //         for (let i in this.gathered) {
-    //        //             console.log("i", i)
+    //        //             console.log('i', i)
     //        //           for (let j in this.gathered[i]) {
     //        //             for (let k in this.gathered[i][j]) {
     //        //               for (let l in this.gathered[i][j][k]) {
-    //        //                 if (l == "profile") {
+    //        //                 if (l == 'profile') {
     //        //                   for (let p in this.gathered[i][j][k][l]) {
     //        //                     this.profile.push(this.gathered[i][j][k][l][p]);
     //        //                     for (let q in this.gathered[i][j][k][l][p]) {
@@ -1795,10 +5489,10 @@ export class GathererComponent implements OnInit {
     //        //                         case 'name':
     //        //                         case 'firstName':
     //        //                         case 'lastName':
-    //        //                           console.log("i", this.gathered[i][j][k][l][p][q]);
-    //        //                           console.log("i prima", i)
+    //        //                           console.log('i', this.gathered[i][j][k][l][p][q]);
+    //        //                           console.log('i prima', i)
     //        //                           if (this.gathered[i][j][k][l][p][q] != null) {
-    //        //                               this.name.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
+    //        //                               this.name.push({'label' : this.gathered[i][j][k][l][p][q], 'source' : i});
     //        //                           };
     //        //                           break;
     //        //                         case 'photos':
@@ -1812,20 +5506,20 @@ export class GathererComponent implements OnInit {
     //        //                           };    
     //        //                           break;
     //        //                         case 'location':
-    //        //                           this.location.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
+    //        //                           this.location.push({'label' : this.gathered[i][j][k][l][p][q], 'source' : i});
     //        //                           break;
     //        //                         case 'organization':
     //        //                           if (Array.isArray(this.gathered[i][j][k][l][p][q])) {
     //        //                               for (let r in this.gathered[i][j][k][l][p][q]) {
-    //        //                                   this.organization.push({"label" : this.gathered[i][j][k][l][p][q][r]['name'], "source" : i});
+    //        //                                   this.organization.push({'label' : this.gathered[i][j][k][l][p][q][r]['name'], 'source' : i});
     //        //                               }
     //        // 
     //        //                           } else {
-    //        //                               this.organization.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
+    //        //                               this.organization.push({'label' : this.gathered[i][j][k][l][p][q], 'source' : i});
     //        //                           }    
     //        //                           break;
     //        //                         case 'gender':
-    //        //                           this.gender.push({"label" : this.gathered[i][j][k][l][p][q], "source" : i});
+    //        //                           this.gender.push({'label' : this.gathered[i][j][k][l][p][q], 'source' : i});
     //        //                           break;
     //        //                         default:
     //        //                           // code block
@@ -1838,12 +5532,12 @@ export class GathererComponent implements OnInit {
     //        //           }
     //        //         }     
     //        // 
-    //        //         console.log("Profile name", this.name);
-    //        //         console.log("Profile location", this.location);
-    //        //         console.log("Profile gender", this.gender);
-    //        //         console.log("Profile social", this.social);
-    //        //         console.log("Profile photo", this.photo);
-    //        //         console.log("Profile orgnization", this.organization);
+    //        //         console.log('Profile name', this.name);
+    //        //         console.log('Profile location', this.location);
+    //        //         console.log('Profile gender', this.gender);
+    //        //         console.log('Profile social', this.social);
+    //        //         console.log('Profile photo', this.photo);
+    //        //         console.log('Profile orgnization', this.organization);
     //        // 
     //        //         doc.setFontSize(11);
     //        //         doc.setDrawColor(32, 61, 79);
@@ -1950,7 +5644,7 @@ export class GathererComponent implements OnInit {
     //        //           for (let j in this.gathered[i]) {
     //        //             for (let k in this.gathered[i][j]) {
     //        //               for (let l in this.gathered[i][j][k]) {
-    //        //                 if (l == "timeline") {
+    //        //                 if (l == 'timeline') {
     //        //                   for (let t in this.gathered[i][j][k][l]) {
     //        //                     this.timeline.push(this.gathered[i][j][k][l][t]);
     //        //                   }
@@ -2032,4 +5726,9 @@ export class GathererComponent implements OnInit {
     //        doc.save('Report_iKy_' + this.gathered['email'] + '_' + Date.now() + '.pdf');
     //        this.processing = false;
     //    }
+  cancelDownload(doc: any) {
+    console.log('Cerrame la 9');
+    doc.save('Report_iKy_' + Date.now() + '.pdf');
+  }
+
 }
