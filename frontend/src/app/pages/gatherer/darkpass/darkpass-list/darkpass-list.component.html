@@ -7,7 +7,7 @@
     <div style="height: 150px; margin-top: 20px; margin-bottom: 10px;">
         <i class="fas fa-skull-crossbones" style="font-size: 150px;"></i>
     </div>
-    <div class="notor" style="font-weight: 700;" *ngIf="statusFull == 'No TOR'"><strong>TOR is not enabled in 127.0.0.1:9050</strong></div> 
+    <div class="notor" style="font-weight: 700;" *ngIf="statusFull == 'No TOR'"><strong>TOR is not enabled in 127.0.0.1:9050 or pwndb is offline</strong></div> 
     <div class="nopass" style="font-weight: 700;" *ngIf="statusFull == 'No password leaked'"><strong>NO plain text password leaked</strong></div> 
     <nb-list>
       <nb-list-item *ngFor="let c of darkpassList">
@@ -28,7 +28,7 @@
         <div style="height: 150px; margin-top: 10px; margin-bottom: 10px;">
             <i class="fas fa-skull-crossbones" style="font-size: 150px;"></i>
         </div>
-        <div class="notor" style="font-weight: 700;" *ngIf="statusFull == 'No TOR'"><strong>TOR is not enabled in 127.0.0.1:9050</strong></div> 
+        <div class="notor" style="font-weight: 700;" *ngIf="statusFull == 'No TOR'"><strong>TOR is not enabled in 127.0.0.1:9050 or pwndb is offline</strong></div> 
         <div class="nopass" style="font-weight: 700;" *ngIf="statusFull == 'No password leaked'"><strong>NO plain text password leaked</strong></div> 
         <nb-list>
           <nb-list-item *ngFor="let c of darkpassList">
