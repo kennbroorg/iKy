@@ -558,7 +558,7 @@
           </div>
           
           <!-- Search Lists -->
-          <div class="col-md-12" id="divSearchSearches" #divSearchSearches *ngIf="gathered['search'] && gathered['search'].result[4] && gathered['search'].result[4].graphic[3].rawresults?.length > 0 && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-12" id="divSearchList" #divSearchList *ngIf="gathered['search'] && gathered['search'].result[4] && gathered['search'].result[4].graphic[3].rawresults?.length > 0 && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <div class="row">
               <ngx-search-list class="col-md-6" [data]="gathered['search']"></ngx-search-list>
               <ngx-search-list-raw class="col-md-6" [data]="gathered['search']"></ngx-search-list-raw>
@@ -582,7 +582,7 @@
           </div>
 
           <!-- Search Emails -->
-          <div class="col-md-4" id="divSearchEmails" #divSearchHashtag *ngIf="gathered['search'] && gathered['search'].result[4] && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divSearchEmails" #divSearchEmails *ngIf="gathered['search'] && gathered['search'].result[4] && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-search-email [data]="gathered['search']"></ngx-search-email>
           </div>
 
@@ -594,8 +594,8 @@
                   <nb-action nbTooltip="Search information" nbTooltipPlacement="top" nbTooltipStatus="primary" >
                       <i (click)="searchService.activateSearch()" class="fas fa-search" style="font-size: 14px;"></i><span (click)="searchService.activateSearch()">Search&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span><i (click)="toggleFlipView()" class="fab fa-searchengin" style="font-size: 16px;"></i><span (click)="toggleFlipView()">Advance</span>
                   </nb-action>
-                   <nb-action (click)="generateAllPdf()" nbTooltip="Generate report" nbTooltipPlacement="top" nbTooltipStatus="default"> 
-                    <i class="fas fa-file-alt" style="font-size: 14px;"></i><span>Report 2</span>
+                  <nb-action (click)="generateAllPdfDialog(dialog)" nbTooltip="Generate report" nbTooltipPlacement="top" nbTooltipStatus="primary">
+                    <i class="fas fa-file-alt" style="font-size: 14px;"></i><span>Report</span>
                   </nb-action>
                   <nb-action (click)="generateDownloadJsonUri()" nbTooltip="Download raw JSON" nbTooltipPlacement="top" nbTooltipStatus="primary">
                     <i class="fas fa-download" style="font-size: 14px;"></i><span>Json</span>
