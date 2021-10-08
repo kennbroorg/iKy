@@ -51,32 +51,37 @@ def p_twint(username, from_m):
     hourset = []
     hournames = '00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23'.split()
 
-    twCounter = Counter(tweets_df['hour'])
-    tgdata = twCounter.most_common()
-    tgdata = sorted(tgdata)
-    e = 0
-    for g in hournames:
-        if (g < tgdata[e][0]):
-            hourset.append({"name": g, "value": 0})
-        elif (g == tgdata[e][0]):
-            hourset.append({"name": g, "value": int(tgdata[e][1])})
-            e += 1
+    try:
+        twCounter = Counter(tweets_df['hour'])
+        tgdata = twCounter.most_common()
+
+        for g in hournames:
+            houritem = {"name": g, "value": 0}
+            for h in tgdata:
+                if (g == h[0]):
+                    houritem = {"name": g, "value": int(h[1])}
+            hourset.append(houritem)
+    except Exception:
+        pass
 
     # weekset
     weekset = []
     weekdays = 'Monday Tuesday Wednesday Thursday Friday Saturday Sunday'.split()
-    wdCounter = Counter(tweets_df['day'])
-    wddata = wdCounter.most_common()
-    wddata = sorted(wddata)
-    y = []
-    c = 0
-    for z in weekdays:
-        try:
-            weekset.append({"name": z, "value": int(wddata[c][1])})
-        except:
-            weekset.append({"name": z, "value": 0})
-        c += 1
-    wddata = y
+    try:
+        wdCounter = Counter(tweets_df['day'])
+        wddata = wdCounter.most_common()
+        wddata = sorted(wddata)
+        y = []
+        c = 0
+        for z in weekdays:
+            try:
+                weekset.append({"name": z, "value": int(wddata[c][1])})
+            except:
+                weekset.append({"name": z, "value": 0})
+            c += 1
+        wddata = y
+    except Exception:
+        pass
 
     lk_rt_rp = []
     mention_temp = []
