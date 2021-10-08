@@ -220,8 +220,12 @@ def p_twitter(username, from_m):
     raw_node_total.append({'raw_node_info': result_api._json})
     raw_node_total.append({'raw_node_tweets': raw_node_tweets})
 
-    create_date = created_at.strftime("%Y-%m-%d")
-    last_tweet = created_at.strftime("%Y-%m-%d")
+    try:
+        if created_at:
+            create_date = created_at.strftime("%Y-%m-%d")
+            last_tweet = created_at.strftime("%Y-%m-%d")
+    except Exception:
+        pass
 
     total.append({'module': 'twitter'})
     total.append({'param': username})
@@ -279,9 +283,12 @@ def p_twitter(username, from_m):
         profile_item = {'location': result_api.location}
         profile.append(profile_item)
 
-        geo_item = location_geo(result_api.location, time=create_date)
-        if(geo_item):
-            profile.append({'geo': geo_item})
+        try:
+            geo_item = location_geo(result_api.location, time=create_date)
+            if(geo_item):
+                profile.append({'geo': geo_item})
+        except Exception:
+            pass
 
     # verified = "False" if result_api['verified'] == 0 else "True"
     gather_item = {"name-node": "TwitterVerified",
@@ -417,11 +424,13 @@ def p_twitter(username, from_m):
         "icon": "fa-twitter"}
     timeline.append(timeline_item)
 
-    timeline_item = {"date": str(last_tweet),
-                     "action": "Twitter : Last Tweet",
-                     "icon": "fa-twitter"}
-    timeline.append(timeline_item)
-
+    try:
+        timeline_item = {"date": str(last_tweet),
+                         "action": "Twitter : Last Tweet",
+                         "icon": "fa-twitter"}
+        timeline.append(timeline_item)
+    except Exception:
+        pass
 
     total.append({'raw': raw_node_total})
     graphic.append({'social': gather})
