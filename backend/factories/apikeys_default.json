@@ -83,5 +83,15 @@
     "id": 16,
     "name": "twitch_client_secret",
     "key": ""
+  },
+  {
+    "id": 17,
+    "name": "cse_api_key",
+    "key": ""
+  },
+  {
+    "id": 18,
+    "name": "cse_cx",
+    "key": ""
   }
 ]
