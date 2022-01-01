@@ -524,6 +524,24 @@ def r_twitch(username=None):
 
 
 ################################################
+# Dorks
+################################################
+@home.route("/dorks", methods=["POST"])
+def r_dorks(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    dorks = json_result.get("dorks", "")
+    from_m = json_result.get("from", "")
+    print("Dorks - Detected Username : ", username, dorks, from_m)
+    res = celery.send_task('modules.dorks.dorks_tasks.t_dorks',
+                           args=(username, dorks))
+    print("Dorks - Task : ", res.task_id)
+    return jsonify(module="dorks", task=res.task_id,
+                   param=username, from_m=from_m)
+
+
+################################################
 # Twitter info for comparison (first account)
 ################################################
 @home.route("/twitter_info", methods=["POST"])
