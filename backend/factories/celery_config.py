@@ -29,5 +29,6 @@ app = Celery('celery_config', broker='redis://localhost:6379/0',
                       'modules.twitter_comparison.twitter_comp_tasks',
                       'modules.twint.twint_tasks',
                       'modules.spotify.spotify_tasks',
-                      'modules.twitch.twitch_tasks'
+                      'modules.twitch.twitch_tasks',
+                      'modules.dorks.dorks_tasks'
                       ])
