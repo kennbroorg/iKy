@@ -1,0 +1,88 @@
+  <nb-card size="large" class="list-card">
+    <nb-card-header>
+      <div (click)="openDialog(dialogDorksList)">
+        DORKS Analized Results
+      </div>
+      <div class="help" [nbPopover]="dorksListHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
+    </nb-card-header>
+
+    <nb-card-body id="nbCardDorksList" style="text-align: center; margin: 0px; padding: 0px;">
+      <nb-list>
+        <nb-list-item *ngFor="let c of dorksList">
+          <div class="contact">
+            <div>
+              <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="{{c.icon}} fa-stack-1x" style="color: #333;"></i> 
+              </span>
+            </div>
+            <div class="info-container">
+              <div class="user-name ng-star-inserted">{{c.title}}</div> 
+              <div class="user-title ng-star-inserted">
+                 <p align="left" style="margin: 0px; padding:0px; padding-top: 5px;"><strong style="font-weight: 500;">Full title</strong> : {{c.simple}}</p>
+                 <p align="left" style="margin: 0px; padding:0px;"><strong style="font-weight: 500;">Description</strong> : {{c.desc}}</p>
+                 <p align="left" style="margin: 0px; padding:0px;"><strong>URL</strong> : {{c.url}}</p>
+              </div>
+            </div>
+          </div>
+        </nb-list-item>
+      </nb-list>
+
+    </nb-card-body>
+  </nb-card>
+
+
+  <ng-template #dialogDorksList let-data let-ref="dialogRef">
+    <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+      <nb-card-header>DORKS Analized Results</nb-card-header>
+      <nb-card-body>
+        <nb-list>
+          <nb-list-item *ngFor="let c of dorksList">
+            <div class="contact">
+                <div>
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="{{c.icon}} fa-stack-1x" style="color: #333;"></i> 
+                  </span>
+                </div>
+              <div class="info-container">
+                <div class="user-name ng-star-inserted">{{c.title}}</div> 
+                <div class="user-title ng-star-inserted">
+                    <p><strong>Full title</strong> : {{c.simple}}</p>
+                    <p><strong>Description</strong> : {{c.desc}}</p>
+                    <p><strong>URL</strong> : {{c.url}}</p>
+                </div>
+              </div>
+            </div>
+          </nb-list-item>
+        </nb-list>
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
+
+  <ng-template #dorksListHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        DORKS Analized Results Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : Dorks</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        This table lists the results of the dorks that have been analyzed and are related to the input data
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module can be executed by entering a username in the <strong style="font-weight: 600;">username</strong> field of the advanced search, being its validation indicator high since it has been entered by the user
+        </p> 
+        <p style="text-align: justify;">
+        Finally, and with a low validation indicator, the module can be executed if a username was entered in the "username" field of the advanced search or if a mail was entered in the mail or advanced search. In this case the @domain.ext is cut out and the username is used as input
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p style="text-align: justify;">
+        Google Custom Searh API or scraping with yagooglesearch
+        </p> 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
