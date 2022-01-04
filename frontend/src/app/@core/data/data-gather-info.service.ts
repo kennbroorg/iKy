@@ -180,6 +180,17 @@ export class DataGatherInfoService {
             );
         }
 
+        // Dorks
+        if (this.isModuleParamRunTaskExec('dorks', this.username, 'iKy', 1)) {
+            this.showToast('info', 'Dorks', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('dorks', {username: this.username, dorks: '', from: 'iKy'})
+                .subscribe(this.processResponse,
+                           err => console.error('Ops: ', err.message),
+                           () => console.log('Completed Dorks'),
+            );
+        }
+
         // Search
         if (this.isModuleParamRunTaskExec('search', this.username, 'iKy', 1)) {
             this.showToast('info', 'Searchers', 'Send information gathering');
@@ -571,6 +582,16 @@ export class DataGatherInfoService {
                                () => console.log('Completed Sherlock'),
                 );
             }
+            // Dorks
+            if (this.isModuleParamRunTaskExec('dorks', datas['username'], 'User', 100)) {
+                this.showToast('info', 'Dorks', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('dorks', {username: datas['username'], dorks: '', from: 'User'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Dorks'),
+                );
+            }
             // Search
             if (this.isModuleParamRunTaskExec('search', datas['username'], 'User', 100)) {
                 this.showToast('info', 'Searchers', 'Send information gathering');
@@ -611,6 +632,17 @@ export class DataGatherInfoService {
                     .subscribe(this.processResponse,
                                err => console.error('Ops: ', err.message),
                                () => console.log('Completed Leaklookup'),
+                );
+            }
+
+            // Dorks
+            if (this.isModuleParamRunTaskExec('dorks', this.username, 'iKy', 1)) {
+                this.showToast('info', 'Dorks', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('dorks', {username: this.username, dorks: '', from: 'iKy'})
+                    .subscribe(this.processResponse,
+                               err => console.error('Ops: ', err.message),
+                               () => console.log('Completed Dorks'),
                 );
             }
 

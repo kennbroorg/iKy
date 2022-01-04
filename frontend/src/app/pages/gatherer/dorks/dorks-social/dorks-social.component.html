@@ -1,41 +1,39 @@
   <nb-card size="small" class="border-default">
     <nb-card-header>
-      <div (click)="openDialog(dialogSearchNames)">
-        SEARCH Names
+      <div (click)="openDialog(dialogDorksSocial)">
+        DORKS Social
       </div>
-      <div class="help" [nbPopover]="searchNamesHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
+      <div class="help" [nbPopover]="dorksSocialHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
       <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
     </nb-card-header>
 
-    <nb-card-body id="nbCardSearchNames" style="text-align: center; overflow: hidden; margin: 0px; padding: 0px;">
-        <div #nbCardSearchNames>
-          <ngx-text-cloud [data]="searchNames"></ngx-text-cloud>
-        </div>
+    <nb-card-body id="nbCardDorksSocial" #nbCardSearchGraphs style="text-align: center; overflow: hidden;">
+          <ngx-graphs [data]="dorksSocial"></ngx-graphs>
     </nb-card-body>
   </nb-card>
 
 
-  <ng-template #dialogSearchNames let-data let-ref="dialogRef">
+  <ng-template #dialogDorksSocial let-data let-ref="dialogRef">
     <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
-      <nb-card-header>SEARCH Names</nb-card-header>
+      <nb-card-header>DORKS Social</nb-card-header>
       <nb-card-body>
 
-        <ngx-text-cloud [data]="searchNames"></ngx-text-cloud>
+        <ngx-graphs [data]="dorksSocial" modal="true"></ngx-graphs>
 
       </nb-card-body>
     </nb-card>
   </ng-template>
 
-  <ng-template #searchNamesHelp>
+  <ng-template #dorksSocialHelp>
     <nb-card style="margin: 0px; max-width: 50rem;">
       <nb-card-header status="warning">
-        SEARCH Names Help
+        DORKS Social Help
       </nb-card-header>
       <nb-card-body>
-        <p><strong style="font-weight: 600;">Module</strong> : Search</p> 
+        <p><strong style="font-weight: 600;">Module</strong> : Dorks</p> 
         <p style="font-weight: 600;">Description</p> 
         <p style="text-align: justify;">
-        With this graph you can determine the names as result of search in searchers (Google, DuckDuckGo, Baidu, Bing, etc)
+        With this graph you can determine the social networks as result of dorks in google
         </p>
         <p style="font-weight: 600;">Execution</p> 
         <p style="text-align: justify;">
@@ -46,7 +44,7 @@
         </p> 
         <p style="font-weight: 600;">Source</p> 
         <p style="text-align: justify;">
-        Scraping
+        Google Custom Searh API or scraping with yagooglesearch
         </p> 
       </nb-card-body>
     </nb-card>

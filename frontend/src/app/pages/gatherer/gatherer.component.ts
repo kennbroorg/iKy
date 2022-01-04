@@ -4720,7 +4720,7 @@ export class GathererComponent implements OnInit {
 
                 doc.setFontSize(10);
                 autoTable(doc, {
-                     head: [['Social'], ['Username']],
+                     head: [['Social', 'Username']],
                      body: bodyTable,
                      headStyles: {fillColor: '#50fcfc',
                                   cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
@@ -5077,6 +5077,696 @@ export class GathererComponent implements OnInit {
                 const bodyTable = [];
                 let elem = [];
                 const list = this.gathered['search']['result'][4]['graphic'][4]['results'];
+
+                for (const i in list) {
+                    // console.log(list[i]['link'], list[i]['link'].toLowerCase(), list[i]['link'].substr(0,8))
+                    if (list[i]['title'].toLowerCase() !== 'searcher' && list[i]['title'].substr(0,8) !== 'Detected') {
+                        elem = [list[i]['link'], list[i]['title'], list[i]['desc'], list[i]['url']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Search', 'Title', 'Description', 'URL']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 2},
+                                  lineWidth: 1,
+                                  fontSize: 7,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46', cellWidth: 20},
+                         1: {fillColor: '#22262a', cellWidth: 40},
+                         2: {fillColor: '#393f46'},
+                         3: {fillColor: '#22262a', cellWidth: 40},
+                        //  4: {fillColor: '#393f46'},
+                     },
+                     margin: {top: 0, left: 15},
+                     startY: hl,
+                     didDrawPage: function (data) {
+                          data.settings.margin.top = 30; }
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            if (!search) {
+                doc.setLineWidth(15);
+                doc.setDrawColor('#00000');
+                doc.line(20, 105, 190, 105);
+                doc.line(20, 155, 190, 155);
+                img.src = 'assets/images/ban.png';
+                doc.addImage(img, 'png', 10, 105, 190, 50);
+            }
+
+            hl = hl + 10;
+        }
+
+        /////////////////////////////////////////////////////////////////
+        // Dorks module report
+        /////////////////////////////////////////////////////////////////
+        if (this.gathered['dorks'] &&
+            this.gathered['dorks']['result'] &&
+            this.gathered['dorks']['result'].length > 3) {
+
+            this.reportMessage = 'Dorks module...'
+
+            let search = false;
+
+            doc.addPage();
+            doc.setFontSize(25);
+            hl = 40;
+
+            // Header title page
+            img.src = 'assets/images/h1.jpg';
+            doc.addImage(img, 'png', 100, 15, 100, 14);
+            img.src = 'assets/images/iKy-Logo.png';
+            doc.addImage(img, 'png', 185, 17, 10, 10);
+            doc.setFontSize(12);
+            doc.setTextColor('#05fcfc');
+            doc.text('MODULE - Dorks', 105, 23);
+
+            // // Information table
+            // if (this.gathered['dorks'] &&
+            //     this.gathered['dorks']['result'] &&
+            //     this.gathered['dorks']['result'][4] &&
+            //     this.gathered['dorks']['result'][4]['graphic'] &&
+            //     this.gathered['dorks']['result'][4]['graphic'][5] && 
+            //     this.gathered['dorks']['result'][4]['graphic'][5]['searches'] &&
+            //     this.gathered['dorks']['result'][4]['graphic'][5]['searches'].length > 1) {
+
+            //     this.reportMessage = 'Dorks module...'
+
+            //     // Image
+            //     svg = this.nbCardContainer.nativeElement.querySelector('#divDorksSearches');
+
+            //     await htmlToImage.toPng(svg)
+            //       .then(function (dataUrl) {
+            //         imgiKy.src = dataUrl;
+            //         doc.addImage(imgiKy, 'png', 25, hl, 160, 55);
+            //       })
+            //       .catch(function (error) {
+            //         console.error('oops, something went wrong!', error);
+            //       });
+
+            //     hl = hl + 70;
+
+            //     search = true;
+            // }
+
+            // Information table
+            if (this.gathered['dorks'] &&
+                this.gathered['dorks']['result'] &&
+                this.gathered['dorks']['result'][4] &&
+                this.gathered['dorks']['result'][4]['graphic'] &&
+                this.gathered['dorks']['result'][4]['graphic'][0] &&
+                this.gathered['dorks']['result'][4]['graphic'][0]['names'] &&
+                this.gathered['dorks']['result'][4]['graphic'][0]['names'].length > 0) {
+
+                this.reportMessage = 'Dorks module...(Names)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divDorksNames');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                search = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['dorks']['result'][4]['graphic'][0]['names'];
+                // list.sort((a, b)=> (a.value < b.value ? 1 : -1))
+
+                // let a = 0;
+                for (const i in list) {
+                    // if (a === 16) {
+                    //     break;
+                    // }
+                    elem = [list[i]['label']];
+                    bodyTable.push(elem);
+                    // a = a + 1;
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Names']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46'},
+                     },
+                     margin: {top: 0, left: 100},
+                     // pageBreak: 'always',
+                     startY: hl,
+                     didDrawPage: function (data) {
+                          data.settings.margin.top = 30; }
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Dorks', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['dorks'] &&
+                this.gathered['dorks']['result'] &&
+                this.gathered['dorks']['result'][4] &&
+                this.gathered['dorks']['result'][4]['graphic'] &&
+                this.gathered['dorks']['result'][4]['graphic'][1] &&
+                this.gathered['dorks']['result'][4]['graphic'][1]['username'] &&
+                this.gathered['dorks']['result'][4]['graphic'][1]['username'].length > 0) {
+
+                this.reportMessage = 'Dorks module...(Usernames)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divDorksUsernames');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                search = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['dorks']['result'][4]['graphic'][1]['username'];
+                // list.sort((a, b)=> (a.value < b.value ? 1 : -1))
+
+                // let a = 0;
+                for (const i in list) {
+                    // if (a === 16) {
+                    //     break;
+                    // }
+                    elem = [list[i]['label']];
+                    bodyTable.push(elem);
+                    // a = a + 1;
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Usernames']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46'},
+                     },
+                     margin: {top: 0, left: 100},
+                     // pageBreak: 'always',
+                     startY: hl,
+                     didDrawPage: function (data) {
+                          data.settings.margin.top = 30; }
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Dorks', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['dorks'] &&
+                this.gathered['dorks']['result'] &&
+                this.gathered['dorks']['result'][4] &&
+                this.gathered['dorks']['result'][4]['graphic'] &&
+                this.gathered['dorks']['result'][4]['graphic'][2] &&
+                this.gathered['dorks']['result'][4]['graphic'][2]['social'] &&
+                this.gathered['dorks']['result'][4]['graphic'][2]['social'].length > 0) {
+
+                this.reportMessage = 'Dorks module...(Social)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divDorksSocial');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                search = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['dorks']['result'][4]['graphic'][2]['social'];
+                // list.sort((a, b)=> (a.value < b.value ? 1 : -1))
+
+                // let a = 0;
+                for (const i in list) {
+                    if (list[i]['title'] !== 'Social') {
+                        elem = [list[i]['title'], list[i]['subtitle']];
+                        bodyTable.push(elem);
+                    }
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Social', 'Username']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46'},
+                         1: {fillColor: '#22262a'},
+                     },
+                     margin: {top: 0, left: 100},
+                     // pageBreak: 'always',
+                     startY: hl,
+                     didDrawPage: function (data) {
+                          data.settings.margin.top = 30; }
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Dorks', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['dorks'] &&
+                this.gathered['dorks']['result'] &&
+                this.gathered['dorks']['result'][4] &&
+                this.gathered['dorks']['result'][4]['graphic'] &&
+                this.gathered['dorks']['result'][4]['graphic'][5] &&
+                this.gathered['dorks']['result'][4]['graphic'][5]['mentions'] &&
+                this.gathered['dorks']['result'][4]['graphic'][5]['mentions'].length > 0) {
+
+                this.reportMessage = 'Dorks module...(Mentions)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divDorksMentions');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                search = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['dorks']['result'][4]['graphic'][5]['mentions'];
+                // list.sort((a, b)=> (a.value < b.value ? 1 : -1))
+
+                // let a = 0;
+                for (const i in list) {
+                    // if (a === 16) {
+                    //     break;
+                    // }
+                    elem = [list[i]['label']];
+                    bodyTable.push(elem);
+                    // a = a + 1;
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Mentions']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46'},
+                     },
+                     margin: {top: 0, left: 100},
+                     // pageBreak: 'always',
+                     startY: hl,
+                     didDrawPage: function (data) {
+                          data.settings.margin.top = 30; }
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Dorks', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['dorks'] &&
+                this.gathered['dorks']['result'] &&
+                this.gathered['dorks']['result'][4] &&
+                this.gathered['dorks']['result'][4]['graphic'] &&
+                this.gathered['dorks']['result'][4]['graphic'][6] &&
+                this.gathered['dorks']['result'][4]['graphic'][6]['hashtags'] &&
+                this.gathered['dorks']['result'][4]['graphic'][6]['hashtags'].length > 0) {
+
+                this.reportMessage = 'Dorks module...(Hashtags)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divDorksHashtag');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                search = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['dorks']['result'][4]['graphic'][6]['hashtags'];
+                // list.sort((a, b)=> (a.value < b.value ? 1 : -1))
+
+                // let a = 0;
+                for (const i in list) {
+                    // if (a === 16) {
+                    //     break;
+                    // }
+                    elem = [list[i]['label']];
+                    bodyTable.push(elem);
+                    // a = a + 1;
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Hashtags']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46'},
+                     },
+                     margin: {top: 0, left: 100},
+                     // pageBreak: 'always',
+                     startY: hl,
+                     didDrawPage: function (data) {
+                          data.settings.margin.top = 30; }
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Dorks', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['dorks'] &&
+                this.gathered['dorks']['result'] &&
+                this.gathered['dorks']['result'][4] &&
+                this.gathered['dorks']['result'][4]['graphic'] &&
+                this.gathered['dorks']['result'][4]['graphic'][7] &&
+                this.gathered['dorks']['result'][4]['graphic'][7]['emails'] &&
+                this.gathered['dorks']['result'][4]['graphic'][7]['emails'].length > 0) {
+
+                this.reportMessage = 'Dorks module...(Emails)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divDorksEmails');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 10, hl, 75, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                search = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['dorks']['result'][4]['graphic'][7]['emails'];
+                // list.sort((a, b)=> (a.value < b.value ? 1 : -1))
+
+                // let a = 0;
+                for (const i in list) {
+                    // if (a === 16) {
+                    //     break;
+                    // }
+                    elem = [list[i]['label']];
+                    bodyTable.push(elem);
+                    // a = a + 1;
+                }
+
+                doc.setFontSize(10);
+                autoTable(doc, {
+                     head: [['Emails']],
+                     body: bodyTable,
+                     headStyles: {fillColor: '#50fcfc',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  halign: 'center',
+                                  textColor: '#000000',
+                                  lineColor: '#1A1A1A'},
+                     bodyStyles: {fillColor: '#1A1A1A',
+                                  cellPadding: {top: 2, right: 2, bottom: 2, left: 5},
+                                  lineWidth: 1,
+                                  fontSize: 8,
+                                  textColor: '#50fcfc',
+                                  lineColor: '#1A1A1A'},
+                     columnStyles: {
+                         0: {fillColor: '#393f46'},
+                     },
+                     margin: {top: 0, left: 100},
+                     // pageBreak: 'always',
+                     startY: hl,
+                     didDrawPage: function (data) {
+                          data.settings.margin.top = 30; }
+                });
+
+                const finalY = (doc as any).lastAutoTable.finalY;
+                if (hl + 55 < finalY) {
+                    hl = finalY
+                } else {
+                    hl = hl + 55
+                }
+            }
+
+            hl = hl + 20;
+
+            // Validate pageHeight
+            if ( hl + 60 > pageHeight) {
+                doc.addPage();
+                doc.setFontSize(25);
+
+                // Header title page
+                img.src = 'assets/images/h1.jpg';
+                doc.addImage(img, 'png', 100, 15, 100, 14);
+                img.src = 'assets/images/iKy-Logo.png';
+                doc.addImage(img, 'png', 185, 17, 10, 10);
+                doc.setFontSize(12);
+                doc.setTextColor('#05fcfc');
+                doc.text('MODULE - Dorks', 105, 23);
+
+                hl = 40;
+            }
+
+            // Information table
+            if (this.gathered['dorks'] &&
+                this.gathered['dorks']['result'] &&
+                this.gathered['dorks']['result'][4] &&
+                this.gathered['dorks']['result'][4]['graphic'] &&
+                this.gathered['dorks']['result'][4]['graphic'][4] && 
+                this.gathered['dorks']['result'][4]['graphic'][4]['results'] &&
+                this.gathered['dorks']['result'][4]['graphic'][4]['results'].length > 1) {
+
+                this.reportMessage = 'Dorks module...(Analized results)'
+
+                // Image
+                svg = this.nbCardContainer.nativeElement.querySelector('#divDorksList');
+
+                await htmlToImage.toPng(svg)
+                  .then(function (dataUrl) {
+                    imgiKy.src = dataUrl;
+                    doc.addImage(imgiKy, 'png', 25, hl, 160, 55);
+                  })
+                  .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                  });
+
+                hl = hl + 60;
+
+                search = true;
+                const bodyTable = [];
+                let elem = [];
+                const list = this.gathered['dork']['result'][4]['graphic'][4]['results'];
 
                 for (const i in list) {
                     // console.log(list[i]['link'], list[i]['link'].toLowerCase(), list[i]['link'].substr(0,8))

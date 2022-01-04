@@ -1,15 +1,15 @@
   <nb-card size="large" class="border-defaulti list-card">
     <nb-card-header>
-      <div (click)="openDialog(dialogSearchRawList)">
-        SEARCH Raw Results
+      <div (click)="openDialog(dialogDorksRawList)">
+        DORKS Raw Results
       </div>
-      <div class="help" [nbPopover]="searchRawListHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
+      <div class="help" [nbPopover]="dorksRawListHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
       <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
     </nb-card-header>
 
-    <nb-card-body id="nbCardSearchListRaw" style="text-align: center; margin: 0px; padding: 0px;">
+    <nb-card-body id="nbCardDorksRawList" style="text-align: center; margin: 0px; padding: 0px;">
       <nb-list>
-        <nb-list-item *ngFor="let c of searchRawList">
+        <nb-list-item *ngFor="let c of dorksRawList">
           <div class="contact">
             <div>
               <span class="fa-stack fa-lg">
@@ -33,12 +33,12 @@
   </nb-card>
 
 
-  <ng-template #dialogSearchRawList let-data let-ref="dialogRef">
+  <ng-template #dialogDorksRawList let-data let-ref="dialogRef">
     <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
-      <nb-card-header>SEARCH List</nb-card-header>
+      <nb-card-header>DORKS Raw List</nb-card-header>
       <nb-card-body>
         <nb-list>
-          <nb-list-item *ngFor="let c of searchRawList">
+          <nb-list-item *ngFor="let c of dorksRawList">
             <div class="contact">
               <div>
                 <span class="fa-stack fa-lg">
@@ -61,16 +61,16 @@
     </nb-card>
   </ng-template>
 
-  <ng-template #searchRawListHelp>
+  <ng-template #dorksRawListHelp>
     <nb-card style="margin: 0px; max-width: 50rem;">
       <nb-card-header status="warning">
-        SEARCH Raw Results Help
+        DORKS Raw Results Help
       </nb-card-header>
       <nb-card-body>
-        <p><strong style="font-weight: 600;">Module</strong> : Searchs</p> 
+        <p><strong style="font-weight: 600;">Module</strong> : Dorks</p> 
         <p style="font-weight: 600;">Description</p> 
         <p style="text-align: justify;">
-        This table lists the raw results of the searchs
+        This table lists the raw results of the dorks
         </p>
         <p style="font-weight: 600;">Execution</p> 
         <p style="text-align: justify;">
@@ -81,7 +81,7 @@
         </p> 
         <p style="font-weight: 600;">Source</p> 
         <p style="text-align: justify;">
-        Scraping
+        Google Custom Searh API or scraping with yagooglesearch
         </p> 
       </nb-card-body>
     </nb-card>

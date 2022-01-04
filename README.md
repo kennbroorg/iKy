@@ -91,6 +91,7 @@ Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
     <img alt="holehe" src="https://img.shields.io/badge/module-holehe-blue.svg?style=flat-square">
     <img alt="spotify" src="https://img.shields.io/badge/module-spotify-blue.svg?style=flat-square">
     <img alt="twitch" src="https://img.shields.io/badge/module-twitch-blue.svg?style=flat-square">
+    <img alt="dorks" src="https://img.shields.io/badge/module-dorks-blue.svg?style=flat-square">
 </div>
 
 <h1 id="installation">Installation</h1>
@@ -226,6 +227,7 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 - Twitter: Generate the APIs from [here](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
 - Spotify: Generate the APIs from [here](https://developer.spotify.com/dashboard/applications)
 - Twitch: Generate the APIs from [here](https://dev.twitch.tv/docs/api/)
+- Google CSE: Generate the APIs from [here](https://developers.google.com/custom-search/v1/overview)
 
 # Wiki
 

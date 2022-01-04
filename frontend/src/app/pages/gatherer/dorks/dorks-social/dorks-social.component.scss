@@ -1,0 +1,10 @@
+@import '../../../../@theme/styles/themes';
+
+@include nb-install-component() {
+  /* borders  */ 
+
+  nb-card-body {
+    padding: 0;
+  }
+
+}

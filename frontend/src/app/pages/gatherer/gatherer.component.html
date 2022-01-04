@@ -154,9 +154,9 @@
           -->
 
           <!-- Fullcontact Scramble -->
-          <div class="col-md-4" *ngIf="gathered['fullcontact'] && gathered['fullcontact'].result[4] && gathered['fullcontact'].result[4]['graphic'][1] && validationShow[gathered['fullcontact'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <!-- <div class="col-md-4" *ngIf="gathered['fullcontact'] && gathered['fullcontact'].result[4] && gathered['fullcontact'].result[4]['graphic'][1] && validationShow[gathered['fullcontact'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-fullcontact-scramble [data]="gathered['fullcontact']"></ngx-fullcontact-scramble>
-          </div>
+          </div> -->
 
           <!-- Peopledatalabs Data -->
           <div id="divPeopledatalabsGraphs" #divPeopledatalabsGraphs class="col-md-4" *ngIf="gathered['peopledatalabs'] && gathered['peopledatalabs'].result && validationShow[gathered['peopledatalabs'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
@@ -526,6 +526,60 @@
             </div>
           </div>
 
+          <!-- Dorks Module -->
+          <div class="col-md-12" *ngIf="gathered['dorks'] && gathered['dorks'].result[4]">
+            <div class="row">
+              <div class="col-md-5 sep" *ngIf="gathered['dorks'] && gathered['dorks'].result[4]"> </div>
+              <div class="col-md-2" *ngIf="gathered['dorks'] && gathered['dorks'].result[4]"> <p class="text-sep"> DORKS MODULE </p> </div>
+              <div class="col-md-5 sep" *ngIf="gathered['dorks'] && gathered['dorks'].result[4]"> </div>
+            </div>
+          </div>
+         
+          <!-- Dorks Names -->
+          <div class="col-md-4" id="divDorksNames" #divDorksNames *ngIf="gathered['dorks'] && gathered['dorks'].result[4] && gathered['dorks'].result[4].graphic[0].names?.length > 0 && validationShow[gathered['dorks'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-dorks-names [data]="gathered['dorks']"></ngx-dorks-names>
+          </div>
+
+          <!-- Search Social -->
+          <div class="col-md-4" id="divDorksSocial" #divDorksSocial *ngIf="gathered['dorks'] && gathered['dorks'].result[4] && gathered['dorks'].result[4].graphic[2].social?.length > 0 && validationShow[gathered['dorks'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-dorks-social [data]="gathered['dorks']"></ngx-dorks-social>
+          </div>
+
+          <!-- Search Usernames -->
+          <div class="col-md-4" id="divDorksUsernames" #divDorksUsernames *ngIf="gathered['dorks'] && gathered['dorks'].result[4] && gathered['dorks'].result[4].graphic[1].username?.length > 0 && validationShow[gathered['dorks'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-dorks-usernames [data]="gathered['dorks']"></ngx-dorks-usernames>
+          </div>
+
+          <!-- Search Searches -->
+          <!-- <div class="col-md-12" id="divSearchSearches" #divSearchSearches *ngIf="gathered['search'] && gathered['search'].result[4] && gathered['search'].result[4].graphic[5].searches?.length > 0 && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <div class="row">
+              <ngx-search-searches class="col-md-12" [data]="gathered['search']"></ngx-search-searches>
+            </div>
+          </div> -->
+          
+          <!-- Search Lists -->
+          <div class="col-md-12" id="divDorksList" #divDorksList *ngIf="gathered['dorks'] && gathered['dorks'].result[4] && gathered['dorks'].result[4].graphic[3].rawresults?.length > 0 && validationShow[gathered['dorks'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <div class="row">
+              <ngx-dorks-list class="col-md-6" [data]="gathered['dorks']"></ngx-dorks-list>
+              <ngx-dorks-list-raw class="col-md-6" [data]="gathered['dorks']"></ngx-dorks-list-raw>
+            </div>
+          </div>
+          
+          <!-- Search Mentions -->
+          <div class="col-md-4" id="divDorksMentions" #divDorksMentions *ngIf="gathered['dorks'] && gathered['dorks'].result[4] && gathered['dorks'].result[4].graphic[5].mentions?.length > 0 && validationShow[gathered['dorks'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-dorks-mentions [data]="gathered['dorks']"></ngx-dorks-mentions>
+          </div>
+
+          <!-- Search Hashtag -->
+          <div class="col-md-4" id="divDorksHashtag" #divDorksHashtag *ngIf="gathered['dorks'] && gathered['dorks'].result[4] && gathered['dorks'].result[4].graphic[6].hashtags?.length > 0 && validationShow[gathered['dorks'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-dorks-hashtag [data]="gathered['dorks']"></ngx-dorks-hashtag>
+          </div>
+
+          <!-- Search Emails -->
+          <div class="col-md-4" id="divDorksEmails" #divDorksEmails *ngIf="gathered['dorks'] && gathered['dorks'].result[4] && gathered['dorks'].result[4].graphic[7].emails?.length > 0 && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-search-email [data]="gathered['search']"></ngx-search-email>
+          </div>
+
           <!-- Search Module -->
           <div class="col-md-12" *ngIf="gathered['search'] && gathered['search'].result[4]">
             <div class="row">
@@ -565,24 +619,18 @@
             </div>
           </div>
           
-          <!-- Search List 
-          <div class="col-md-8" id="divSearchList" #divSearchList *ngIf="gathered['search'] && gathered['search'].result[4] && gathered['search'].result[4].graphic[3].searches?.length > 0 && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
-            <ngx-search-list [data]="gathered['search']"></ngx-search-list>
-          </div>
-          -->
-
           <!-- Search Mentions -->
-          <div class="col-md-4" id="divSearchMentions" #divSearchMentions *ngIf="gathered['search'] && gathered['search'].result[4] && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divSearchMentions" #divSearchMentions *ngIf="gathered['search'] && gathered['search'].result[4] && gathered['search'].result[4].graphic[6].mentions?.length > 0 && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-search-mentions [data]="gathered['search']"></ngx-search-mentions>
           </div>
 
           <!-- Search Hashtag -->
-          <div class="col-md-4" id="divSearchHashtag" #divSearchHashtag *ngIf="gathered['search'] && gathered['search'].result[4] && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divSearchHashtag" #divSearchHashtag *ngIf="gathered['search'] && gathered['search'].result[4] && gathered['search'].result[4].graphic[7].hashtags?.length > 0 && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-search-hashtag [data]="gathered['search']"></ngx-search-hashtag>
           </div>
 
           <!-- Search Emails -->
-          <div class="col-md-4" id="divSearchEmails" #divSearchEmails *ngIf="gathered['search'] && gathered['search'].result[4] && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divSearchEmails" #divSearchEmails *ngIf="gathered['search'] && gathered['search'].result[4] && gathered['search'].result[4].graphic[8].emails?.length > 0 && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-search-email [data]="gathered['search']"></ngx-search-email>
           </div>
 

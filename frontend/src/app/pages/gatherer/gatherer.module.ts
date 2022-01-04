@@ -91,6 +91,16 @@ import { SearchListComponent } from './search/search-list/search-list.component'
 import { SearchRawListComponent } from './search/search-list-raw/search-list-raw.component';
 import { SearchEmailComponent } from './search/search-email/search-email.component';
 
+import { DorksNamesComponent } from './dorks/dorks-names/dorks-names.component';
+import { DorksSocialComponent } from './dorks/dorks-social/dorks-social.component';
+import { DorksUsernamesComponent } from './dorks/dorks-usernames/dorks-usernames.component';
+// import { SearchSearchesComponent } from './search/search-searches/search-searches.component';
+import { DorksListComponent } from './dorks/dorks-list/dorks-list.component';
+import { DorksRawListComponent } from './dorks/dorks-list-raw/dorks-list-raw.component';
+import { DorksMentionsComponent } from './dorks/dorks-mention/dorks-mentions.component';
+import { DorksHashtagComponent } from './dorks/dorks-hashtag/dorks-hashtag.component';
+import { DorksEmailComponent } from './dorks/dorks-email/dorks-email.component';
+
 import { TiktokGraphsComponent } from './tiktok/tiktok-graphs/tiktok-graphs.component';
 
 import { SherlockGraphComponent } from './sherlock/sherlock-graphs/sherlock-graphs.component';
@@ -215,6 +225,14 @@ import { ErrorGraphsComponent } from './error/error-graphs.component';
     SearchListComponent,
     SearchRawListComponent,
     SearchEmailComponent,
+    DorksNamesComponent,
+    DorksSocialComponent,
+    DorksUsernamesComponent,
+    DorksListComponent,
+    DorksRawListComponent,
+    DorksMentionsComponent,
+    DorksHashtagComponent,
+    DorksEmailComponent,
     TiktokGraphsComponent,
     SkypeComponent,
     TaskexecComponent,

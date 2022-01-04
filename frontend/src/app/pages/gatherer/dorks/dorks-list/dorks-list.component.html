@@ -1,15 +1,15 @@
-  <nb-card size="large" class="border-defaulti list-card">
+  <nb-card size="large" class="list-card">
     <nb-card-header>
-      <div (click)="openDialog(dialogSearchRawList)">
-        SEARCH Raw Results
+      <div (click)="openDialog(dialogDorksList)">
+        DORKS Analized Results
       </div>
-      <div class="help" [nbPopover]="searchRawListHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
+      <div class="help" [nbPopover]="dorksListHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
       <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
     </nb-card-header>
 
-    <nb-card-body id="nbCardSearchListRaw" style="text-align: center; margin: 0px; padding: 0px;">
+    <nb-card-body id="nbCardDorksList" style="text-align: center; margin: 0px; padding: 0px;">
       <nb-list>
-        <nb-list-item *ngFor="let c of searchRawList">
+        <nb-list-item *ngFor="let c of dorksList">
           <div class="contact">
             <div>
               <span class="fa-stack fa-lg">
@@ -33,19 +33,19 @@
   </nb-card>
 
 
-  <ng-template #dialogSearchRawList let-data let-ref="dialogRef">
+  <ng-template #dialogDorksList let-data let-ref="dialogRef">
     <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
-      <nb-card-header>SEARCH List</nb-card-header>
+      <nb-card-header>DORKS Analized Results</nb-card-header>
       <nb-card-body>
         <nb-list>
-          <nb-list-item *ngFor="let c of searchRawList">
+          <nb-list-item *ngFor="let c of dorksList">
             <div class="contact">
-              <div>
-                <span class="fa-stack fa-lg">
-                  <i class="fas fa-circle fa-stack-2x"></i>
-                  <i class="{{c.icon}} fa-stack-1x" style="color: #333;"></i> 
-                </span>
-              </div>
+                <div>
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="{{c.icon}} fa-stack-1x" style="color: #333;"></i> 
+                  </span>
+                </div>
               <div class="info-container">
                 <div class="user-name ng-star-inserted">{{c.title}}</div> 
                 <div class="user-title ng-star-inserted">
@@ -61,16 +61,16 @@
     </nb-card>
   </ng-template>
 
-  <ng-template #searchRawListHelp>
+  <ng-template #dorksListHelp>
     <nb-card style="margin: 0px; max-width: 50rem;">
       <nb-card-header status="warning">
-        SEARCH Raw Results Help
+        DORKS Analized Results Help
       </nb-card-header>
       <nb-card-body>
-        <p><strong style="font-weight: 600;">Module</strong> : Searchs</p> 
+        <p><strong style="font-weight: 600;">Module</strong> : Dorks</p> 
         <p style="font-weight: 600;">Description</p> 
         <p style="text-align: justify;">
-        This table lists the raw results of the searchs
+        This table lists the results of the dorks that have been analyzed and are related to the input data
         </p>
         <p style="font-weight: 600;">Execution</p> 
         <p style="text-align: justify;">
@@ -81,7 +81,7 @@
         </p> 
         <p style="font-weight: 600;">Source</p> 
         <p style="text-align: justify;">
-        Scraping
+        Google Custom Searh API or scraping with yagooglesearch
         </p> 
       </nb-card-body>
     </nb-card>
