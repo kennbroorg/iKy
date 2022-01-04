@@ -154,9 +154,9 @@
           -->
 
           <!-- Fullcontact Scramble -->
-          <div class="col-md-4" *ngIf="gathered['fullcontact'] && gathered['fullcontact'].result[4] && gathered['fullcontact'].result[4]['graphic'][1] && validationShow[gathered['fullcontact'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <!-- <div class="col-md-4" *ngIf="gathered['fullcontact'] && gathered['fullcontact'].result[4] && gathered['fullcontact'].result[4]['graphic'][1] && validationShow[gathered['fullcontact'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-fullcontact-scramble [data]="gathered['fullcontact']"></ngx-fullcontact-scramble>
-          </div>
+          </div> -->
 
           <!-- Peopledatalabs Data -->
           <div id="divPeopledatalabsGraphs" #divPeopledatalabsGraphs class="col-md-4" *ngIf="gathered['peopledatalabs'] && gathered['peopledatalabs'].result && validationShow[gathered['peopledatalabs'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
