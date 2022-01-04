@@ -12,6 +12,7 @@ tweepy==3.10.0
 geopy==1.22.0
 # git+https://github.com/twintproject/twint.git@origin/master#egg=twint
 git+https://github.com/himanshudabas/twint.git@origin/fix-parser#egg=twint
+git+https://github.com/KennBro/yagooglesearch.git@origin/add-output-param#egg=yagooglesearch
 socialscan==1.4.2
 instaloader==4.8.1
 requests-futures==1.0.0
@@ -29,3 +30,4 @@ spotipy==2.16.1
 twitch-python
 parse
 browser-cookie3
+google-api-python-client==2.33.0
