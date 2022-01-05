@@ -1,7 +1,10 @@
   <nb-card size="small" class="border-default">
-    <nb-card-header  (click)="openDialog(dialogTweetimentLines)">
-      TWITTER Sentiment (POC)
-      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+    <nb-card-header>
+      <div (click)="openDialog(dialogTweetimentLines)">
+          TWITTER Sentiment (POC)
+      </div>
+      <div class="help" [nbPopover]="tweetimentHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
     </nb-card-header>
     <nb-card-body style="margin: 0px; padding: 0px; text-align: center; overflow: hidden; margin-top: 10px;">
 
@@ -81,6 +84,33 @@
               -->
         </div>
 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
+
+  <ng-template #tweetimentHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        TWITTER Tweetiment Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : Tweetiment</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+          Tweet sentiment analysis
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module is executed after receiving the results from <strong style="font-weight: 600;">twitter</strong>
+        </p> 
+        <p style="text-align: justify;">
+        The process consists of translating the text of the tweets into English and then analyzing and extracting the negative, positive and neutral component from each tweet
+        </p> 
+        <p style="text-align: justify;">
+        It is a POC module
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p>VederSentiment</p> 
       </nb-card-body>
     </nb-card>
   </ng-template>
