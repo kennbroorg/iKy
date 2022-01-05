@@ -431,16 +431,16 @@ export class DataGatherInfoService {
                                () => console.log('completed twitter'),
                 );
             }
-            // twint
-            if (this.isModuleParamRunTaskExec('twint', datas['twitter'], 'user', 100)) {
-                this.showToast('info', 'twint', 'send information gathering');
-                this.globalGather['taskresume'][0].pp++;
-                this.executeRequest$('twint', {username: datas['twitter'], from: 'user'})
-                    .subscribe(this.processResponse,
-                               err => console.error('ops: ', err.message),
-                               () => console.log('completed twint'),
-                );
-            }
+            // // twint
+            // if (this.isModuleParamRunTaskExec('twint', datas['twitter'], 'user', 100)) {
+            //     this.showToast('info', 'twint', 'send information gathering');
+            //     this.globalGather['taskresume'][0].pp++;
+            //     this.executeRequest$('twint', {username: datas['twitter'], from: 'user'})
+            //         .subscribe(this.processResponse,
+            //                    err => console.error('ops: ', err.message),
+            //                    () => console.log('completed twint'),
+            //     );
+            // }
         }
 
         if (datas['linkedin'] !== '') {
@@ -991,20 +991,20 @@ export class DataGatherInfoService {
                                                () => console.log('Completed' + tasks[indexTask].module),
                             );
                             // Launch Twint if execute Twitter
-                            if (tasks[indexTask].module === 'twitter') {
-                                if (this.isModuleParamRunTaskExec('twint',
-                                                                  tasks[indexTask].param,
-                                                                  module_name, 10)) {
-                                    console.log('Implemented : ', tasks[indexTask].module, 'Twint', module_name);
-                                    this.showToast('info', 'Twint', 'Send information gathering');
-                                    this.globalGather['taskresume'][0].PP++;
-                                    this.executeRequest$('twint', {username: tasks[indexTask].param, from: module_name})
-                                            .subscribe(this.processResponse,
-                                                       err => console.error('Ops: ', err.message),
-                                                       () => console.log('Completed Twint'),
-                                    );
-                                }
-                            }
+                            // if (tasks[indexTask].module === 'twitter') {
+                            //     if (this.isModuleParamRunTaskExec('twint',
+                            //                                       tasks[indexTask].param,
+                            //                                       module_name, 10)) {
+                            //         console.log('Implemented : ', tasks[indexTask].module, 'Twint', module_name);
+                            //         this.showToast('info', 'Twint', 'Send information gathering');
+                            //         this.globalGather['taskresume'][0].PP++;
+                            //         this.executeRequest$('twint', {username: tasks[indexTask].param, from: module_name})
+                            //                 .subscribe(this.processResponse,
+                            //                            err => console.error('Ops: ', err.message),
+                            //                            () => console.log('Completed Twint'),
+                            //         );
+                            //     }
+                            // }
                         }
                     }
                 }
@@ -1012,10 +1012,12 @@ export class DataGatherInfoService {
         }
 
         // Chained process
-        if (module_name === 'twint') {
+        // if (module_name === 'twint') {
+        if (module_name === 'twitter') {
             let task_id
             for (let indexTaskexec in this.globalGather['taskexec']) {
-                if (this.globalGather['taskexec'][indexTaskexec].module === 'twint') {
+                // if (this.globalGather['taskexec'][indexTaskexec].module === 'twint') {
+                if (this.globalGather['taskexec'][indexTaskexec].module === 'twitter') {
                     task_id = this.globalGather['taskexec'][indexTaskexec].task_id;
                 }
             }
