@@ -17,7 +17,7 @@ socialscan==1.4.2
 instaloader==4.8.1
 requests-futures==1.0.0
 torrequest
-holehe
+holehe==1.60.2
 search-engine-parser==0.6.2
 fuzzywuzzy==0.18.0
 redis==3.5.3
