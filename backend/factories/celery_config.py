@@ -27,7 +27,7 @@ app = Celery('celery_config', broker='redis://localhost:6379/0',
                       'modules.leaklookup.leaklookup_tasks',
                       'modules.twitter_comparison.twitter_info_tasks',
                       'modules.twitter_comparison.twitter_comp_tasks',
-                      'modules.twint.twint_tasks',
+#                       'modules.twint.twint_tasks',
                       'modules.spotify.spotify_tasks',
                       'modules.twitch.twitch_tasks',
                       'modules.dorks.dorks_tasks'

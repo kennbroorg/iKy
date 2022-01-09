@@ -16,7 +16,7 @@ def get_config():
                           'modules.gitlab.gitlab_tasks',
                           'modules.leaks.leaks_tasks',
                           'modules.twitter.twitter_tasks',
-                          'modules.twint.twint_tasks',
+                          # 'modules.twint.twint_tasks',
                           'modules.linkedin.linkedin_tasks',
                           'modules.ghostproject.ghostproject_tasks',
                           'modules.github.github_tasks',

@@ -100,7 +100,7 @@ def p_dorks_yagoogle(keywords, dorks=''):
         http_429_cool_off_factor=1.5,
         # proxy="socks5h://127.0.0.1:9050",
         verbosity=5,
-        output="complete",
+        verbose_output=True,
         verify_ssl=False
     )
 
@@ -110,7 +110,7 @@ def p_dorks_yagoogle(keywords, dorks=''):
     for u in search:
         node.append({'dork': 'username', 'titles': u["title"],
                     'links': u["url"],
-                     'descriptions': u["desc"]})
+                     'descriptions': u["description"]})
 
     for dork in dorks:
         timeDelay = random.randrange(0, 15)
@@ -126,7 +126,7 @@ def p_dorks_yagoogle(keywords, dorks=''):
             http_429_cool_off_factor=1.5,
             # proxy="socks5h://127.0.0.1:9050",
             verbosity=0,
-            output="complete",
+            verbose_output=True,
         )
         client.assign_random_user_agent()
         search = client.search()
@@ -134,7 +134,7 @@ def p_dorks_yagoogle(keywords, dorks=''):
         for u in search:
             node.append({'dork': dork, 'titles': u["title"],
                         'links': u["url"],
-                         'descriptions': u["desc"]})
+                         'descriptions': u["description"]})
 
     return node
 
@@ -401,7 +401,7 @@ if __name__ == "__main__":
     # dorks = {'twitter': 'site:twitter.com',
     #          'github': 'site:github.com'}
     # dorks = {'twitter': 'site:twitter.com'}
-    # dorks = {'linkedin': 'site:linkedin.com'}
-    dorks = ''
+    dorks = {'linkedin': 'site:linkedin.com'}
+    # dorks = ''
     result = t_dorks(username, dorks=dorks)
     output(result)
