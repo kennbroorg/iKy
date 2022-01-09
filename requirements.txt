@@ -1,11 +1,11 @@
 chardet==3.0.4
-aiohttp==3.6.2
-beautifulsoup4==4.9.1
+aiohttp==3.7.4
+beautifulsoup4==4.9.3
 httpx==0.13.3
 Flask==1.1.2
 celery==4.4.5
 Flask-Cors==3.0.9
-requests==2.25.1
+requests==2.26.0
 bs4==0.0.1
 cfscrape==2.1.1
 tweepy==3.10.0
@@ -18,7 +18,9 @@ instaloader==4.8.1
 requests-futures==1.0.0
 torrequest
 holehe==1.60.2
-search-engine-parser==0.6.2
+# search-engine-parser==0.6.2
+git+https://github.com/KennBro/yagooglesearch.git@origin/add-output-param#egg=yagooglesearch
+git+https://github.com/KennBro/search-engine-parser.git@origin/master#egg=search-engine-parser
 fuzzywuzzy==0.18.0
 redis==3.5.3
 langdetect==1.0.8
