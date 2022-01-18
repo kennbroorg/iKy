@@ -868,11 +868,11 @@ export class GathererComponent implements OnInit {
         /////////////////////////////////////////////////////////////////
         // Twitter and Twint module report
         /////////////////////////////////////////////////////////////////
-        if (this.gathered['twint'] &&
-            this.gathered['twint']['result'] &&
-            this.gathered['twint']['result'].length > 3) {
+        if (this.gathered['twitter'] &&
+            this.gathered['twitter']['result'] &&
+            this.gathered['twitter']['result'].length > 3) {
 
-            this.reportMessage = 'Twitter (Twint) module...'
+            this.reportMessage = 'Twitter module...'
             // moduleHeight = 80;
 
             // Validate pageHeight
@@ -881,7 +881,7 @@ export class GathererComponent implements OnInit {
             //     hl = 20;
             // }
 
-            let twint = false;
+            let twitter = false;
 
             doc.addPage();
             doc.setFontSize(25);
@@ -894,21 +894,21 @@ export class GathererComponent implements OnInit {
             doc.addImage(img, 'png', 185, 17, 10, 10);
             doc.setFontSize(12);
             doc.setTextColor('#05fcfc');
-            doc.text('MODULE - Twitter (Twint)', 105, 23);
+            doc.text('MODULE - Twitter', 105, 23);
 
             // Information table
-            if (this.gathered['twint'] &&
-                this.gathered['twint']['result'] &&
-                this.gathered['twint']['result'][4] &&
-                this.gathered['twint']['result'][4]['graphic'] &&
-                this.gathered['twint']['result'][4]['graphic'][0] &&
-                this.gathered['twint']['result'][4]['graphic'][0]['social'] &&
-                this.gathered['twint']['result'][4]['graphic'][0]['social'].length > 1) {
+            if (this.gathered['twitter'] &&
+                this.gathered['twitter']['result'] &&
+                this.gathered['twitter']['result'][4] &&
+                this.gathered['twitter']['result'][4]['graphic'] &&
+                this.gathered['twitter']['result'][4]['graphic'][0] &&
+                this.gathered['twitter']['result'][4]['graphic'][0]['social'] &&
+                this.gathered['twitter']['result'][4]['graphic'][0]['social'].length > 1) {
 
-                this.reportMessage = 'Twitter (Twint) module...(Social)'
+                this.reportMessage = 'Twitter module...(Social)'
 
                 // Image
-                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintSocial');
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterSocial');
 
                 await htmlToImage.toPng(svg)
                   .then(function (dataUrl) {
@@ -919,10 +919,10 @@ export class GathererComponent implements OnInit {
                     console.error('oops, something went wrong!', error);
                   });
 
-                twint = true;
+                twitter = true;
                 const bodyTable = [];
                 let elem = [];
-                const list = this.gathered['twint']['result'][4]['graphic'][0]['social'];
+                const list = this.gathered['twitter']['result'][4]['graphic'][0]['social'];
 
                 for (const i in list) {
                     if (list[i]['title'] !== 'DataLab') {
@@ -968,18 +968,18 @@ export class GathererComponent implements OnInit {
             hl = hl + 20;
 
             // Information table
-            if (this.gathered['twint'] &&
-                this.gathered['twint']['result'] &&
-                this.gathered['twint']['result'][4] &&
-                this.gathered['twint']['result'][4]['graphic'] &&
-                this.gathered['twint']['result'][4]['graphic'][2] &&
-                this.gathered['twint']['result'][4]['graphic'][2]['popularity'] &&
-                this.gathered['twint']['result'][4]['graphic'][2]['popularity'].length > 1) {
+            if (this.gathered['twitter'] &&
+                this.gathered['twitter']['result'] &&
+                this.gathered['twitter']['result'][4] &&
+                this.gathered['twitter']['result'][4]['graphic'] &&
+                this.gathered['twitter']['result'][4]['graphic'][2] &&
+                this.gathered['twitter']['result'][4]['graphic'][2]['popularity'] &&
+                this.gathered['twitter']['result'][4]['graphic'][2]['popularity'].length > 1) {
 
-                this.reportMessage = 'Twitter (Twint) module...(Popularity)'
+                this.reportMessage = 'Twitter module...(Popularity)'
 
                 // Image
-                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintPopularity');
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterPopularity');
 
                 await htmlToImage.toPng(svg)
                   .then(function (dataUrl) {
@@ -989,10 +989,10 @@ export class GathererComponent implements OnInit {
                   .catch(function (error) {
                     console.error('oops, something went wrong!', error);
                   });
-                twint = true;
+                twitter = true;
                 const bodyTable = [];
                 let elem = [];
-                const list = this.gathered['twint']['result'][4]['graphic'][2]['popularity'];
+                const list = this.gathered['twitter']['result'][4]['graphic'][2]['popularity'];
 
                 for (const i in list) {
                     if (list[i]['value'] !== 'Social') {
@@ -1038,18 +1038,18 @@ export class GathererComponent implements OnInit {
             hl = hl + 20;
 
             // Information table
-            if (this.gathered['twint'] &&
-                this.gathered['twint']['result'] &&
-                this.gathered['twint']['result'][4] &&
-                this.gathered['twint']['result'][4]['graphic'] &&
-                this.gathered['twint']['result'][4]['graphic'][1] &&
-                this.gathered['twint']['result'][4]['graphic'][1]['resume'] &&
-                this.gathered['twint']['result'][4]['graphic'][1]['resume']['children'].length > 1) {
+            if (this.gathered['twitter'] &&
+                this.gathered['twitter']['result'] &&
+                this.gathered['twitter']['result'][4] &&
+                this.gathered['twitter']['result'][4]['graphic'] &&
+                this.gathered['twitter']['result'][4]['graphic'][1] &&
+                this.gathered['twitter']['result'][4]['graphic'][1]['resume'] &&
+                this.gathered['twitter']['result'][4]['graphic'][1]['resume']['children'].length > 1) {
 
-                this.reportMessage = 'Twitter (Twint) module...(Resume)'
+                this.reportMessage = 'Twitter module...(Resume)'
 
                 // Image
-                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintResume');
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterResume');
 
                 await htmlToImage.toPng(svg)
                   .then(function (dataUrl) {
@@ -1059,10 +1059,10 @@ export class GathererComponent implements OnInit {
                   .catch(function (error) {
                     console.error('oops, something went wrong!', error);
                   });
-                twint = true;
+                twitter = true;
                 const bodyTable = [];
                 let elem = [];
-                const list = this.gathered['twint']['result'][4]['graphic'][1]['resume']['children'];
+                const list = this.gathered['twitter']['result'][4]['graphic'][1]['resume']['children'];
                 console.log('Resume', list);
 
                 for (const i in list) {
@@ -1125,22 +1125,22 @@ export class GathererComponent implements OnInit {
                 doc.addImage(img, 'png', 185, 17, 10, 10);
                 doc.setFontSize(12);
                 doc.setTextColor('#05fcfc');
-                doc.text('MODULE - Twitter (Twint)', 105, 23);
+                doc.text('MODULE - Twitter', 105, 23);
             }
 
             // Information table
-            if (this.gathered['twint'] &&
-                this.gathered['twint']['result'] &&
-                this.gathered['twint']['result'][4] &&
-                this.gathered['twint']['result'][4]['graphic'] &&
-                this.gathered['twint']['result'][4]['graphic'][10] &&
-                this.gathered['twint']['result'][4]['graphic'][10]['time'] &&
-                this.gathered['twint']['result'][4]['graphic'][10]['time'].length > 1) {
+            if (this.gathered['twitter'] &&
+                this.gathered['twitter']['result'] &&
+                this.gathered['twitter']['result'][4] &&
+                this.gathered['twitter']['result'][4]['graphic'] &&
+                this.gathered['twitter']['result'][4]['graphic'][10] &&
+                this.gathered['twitter']['result'][4]['graphic'][10]['time'] &&
+                this.gathered['twitter']['result'][4]['graphic'][10]['time'].length > 1) {
 
-                this.reportMessage = 'Twitter (Twint) module...(Timeline)'
+                this.reportMessage = 'Twitter module...(Timeline)'
 
                 // Image
-                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintTimeline');
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterTimeline');
 
                 await htmlToImage.toPng(svg)
                   .then(function (dataUrl) {
@@ -1150,7 +1150,7 @@ export class GathererComponent implements OnInit {
                   .catch(function (error) {
                     console.error('oops, something went wrong!', error);
                   });
-                twint = true;
+                twitter = true;
 
                 hl = hl + 55
             }
@@ -1171,22 +1171,22 @@ export class GathererComponent implements OnInit {
                 doc.addImage(img, 'png', 185, 17, 10, 10);
                 doc.setFontSize(12);
                 doc.setTextColor('#05fcfc');
-                doc.text('MODULE - Twitter (Twint)', 105, 23);
+                doc.text('MODULE - Twitter', 105, 23);
             }
 
             // Information table
-            if (this.gathered['twint'] &&
-                this.gathered['twint']['result'] &&
-                this.gathered['twint']['result'][4] &&
-                this.gathered['twint']['result'][4]['graphic'] &&
-                this.gathered['twint']['result'][4]['graphic'][5] &&
-                this.gathered['twint']['result'][4]['graphic'][5]['users'] &&
-                this.gathered['twint']['result'][4]['graphic'][5]['users'].length > 1) {
+            if (this.gathered['twitter'] &&
+                this.gathered['twitter']['result'] &&
+                this.gathered['twitter']['result'][4] &&
+                this.gathered['twitter']['result'][4]['graphic'] &&
+                this.gathered['twitter']['result'][4]['graphic'][5] &&
+                this.gathered['twitter']['result'][4]['graphic'][5]['users'] &&
+                this.gathered['twitter']['result'][4]['graphic'][5]['users'].length > 1) {
 
-                this.reportMessage = 'Twitter (Twint) module...(Users)'
+                this.reportMessage = 'Twitter module...(Users)'
 
                 // Image
-                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintUsers');
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterUsers');
 
                 await htmlToImage.toPng(svg)
                   .then(function (dataUrl) {
@@ -1197,10 +1197,10 @@ export class GathererComponent implements OnInit {
                     console.error('oops, something went wrong!', error);
                   });
 
-                twint = true;
+                twitter = true;
                 const bodyTable = [];
                 let elem = [];
-                const list = this.gathered['twint']['result'][4]['graphic'][5]['users'];
+                const list = this.gathered['twitter']['result'][4]['graphic'][5]['users'];
                 list.sort((a, b)=> (a.subtitle < b.subtitle ? 1 : -1))
 
                 for (const i in list) {
@@ -1260,25 +1260,25 @@ export class GathererComponent implements OnInit {
                 doc.addImage(img, 'png', 185, 17, 10, 10);
                 doc.setFontSize(12);
                 doc.setTextColor('#05fcfc');
-                doc.text('MODULE - Twitter (Twint)', 105, 23);
+                doc.text('MODULE - Twitter', 105, 23);
 
                 hl = 40;
             }
             console.log(`SALIENDO - SALTO: hl - ${hl} + 60 // pageHeight - ${pageHeight}`);
 
             // Information table
-            if (this.gathered['twint'] &&
-                this.gathered['twint']['result'] &&
-                this.gathered['twint']['result'][4] &&
-                this.gathered['twint']['result'][4]['graphic'] &&
-                this.gathered['twint']['result'][4]['graphic'][6] &&
-                this.gathered['twint']['result'][4]['graphic'][6]['tweetslist'] &&
-                this.gathered['twint']['result'][4]['graphic'][6]['tweetslist'].length > 1) {
+            if (this.gathered['twitter'] &&
+                this.gathered['twitter']['result'] &&
+                this.gathered['twitter']['result'][4] &&
+                this.gathered['twitter']['result'][4]['graphic'] &&
+                this.gathered['twitter']['result'][4]['graphic'][6] &&
+                this.gathered['twitter']['result'][4]['graphic'][6]['tweetslist'] &&
+                this.gathered['twitter']['result'][4]['graphic'][6]['tweetslist'].length > 1) {
 
-                this.reportMessage = 'Twitter (Twint) module...(TweetList)'
+                this.reportMessage = 'Twitter module...(TweetList)'
 
                 // Image
-                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintList');
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterList');
 
                 await htmlToImage.toPng(svg)
                   .then(function (dataUrl) {
@@ -1288,7 +1288,7 @@ export class GathererComponent implements OnInit {
                   .catch(function (error) {
                     console.error('oops, something went wrong!', error);
                   });
-                twint = true;
+                twitter = true;
 
                 hl = hl + 55
             }
@@ -1307,24 +1307,24 @@ export class GathererComponent implements OnInit {
                 doc.addImage(img, 'png', 185, 17, 10, 10);
                 doc.setFontSize(12);
                 doc.setTextColor('#05fcfc');
-                doc.text('MODULE - Twitter (Twint)', 105, 23);
+                doc.text('MODULE - Twitter', 105, 23);
 
                 hl = 40;
             }
 
             // Information table
-            if (this.gathered['twint'] &&
-                this.gathered['twint']['result'] &&
-                this.gathered['twint']['result'][4] &&
-                this.gathered['twint']['result'][4]['graphic'] &&
-                this.gathered['twint']['result'][4]['graphic'][4] &&
-                this.gathered['twint']['result'][4]['graphic'][4]['hashtag'] &&
-                this.gathered['twint']['result'][4]['graphic'][4]['hashtag'].length > 1) {
+            if (this.gathered['twitter'] &&
+                this.gathered['twitter']['result'] &&
+                this.gathered['twitter']['result'][4] &&
+                this.gathered['twitter']['result'][4]['graphic'] &&
+                this.gathered['twitter']['result'][4]['graphic'][4] &&
+                this.gathered['twitter']['result'][4]['graphic'][4]['hashtag'] &&
+                this.gathered['twitter']['result'][4]['graphic'][4]['hashtag'].length > 1) {
 
-                this.reportMessage = 'Twitter (Twint) module...(Hashtag)'
+                this.reportMessage = 'Twitter module...(Hashtag)'
 
                 // Image
-                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintHashtag');
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterHashtag');
 
                 await htmlToImage.toPng(svg)
                   .then(function (dataUrl) {
@@ -1334,10 +1334,10 @@ export class GathererComponent implements OnInit {
                   .catch(function (error) {
                     console.error('oops, something went wrong!', error);
                   });
-                twint = true;
+                twitter = true;
                 const bodyTable = [];
                 let elem = [];
-                const list = this.gathered['twint']['result'][4]['graphic'][4]['hashtag'];
+                const list = this.gathered['twitter']['result'][4]['graphic'][4]['hashtag'];
 
                 for (const i in list) {
                     if (list[i]['title'] !== 'Users') {
@@ -1394,24 +1394,24 @@ export class GathererComponent implements OnInit {
                 doc.addImage(img, 'png', 185, 17, 10, 10);
                 doc.setFontSize(12);
                 doc.setTextColor('#05fcfc');
-                doc.text('MODULE - Twitter (Twint)', 105, 23);
+                doc.text('MODULE - Twitter', 105, 23);
 
                 hl = 40;
             }
 
             // Information table
-            if (this.gathered['twint'] &&
-                this.gathered['twint']['result'] &&
-                this.gathered['twint']['result'][4] &&
-                this.gathered['twint']['result'][4]['graphic'] &&
-                this.gathered['twint']['result'][4]['graphic'][8] &&
-                this.gathered['twint']['result'][4]['graphic'][8]['hour'] &&
-                this.gathered['twint']['result'][4]['graphic'][8]['hour'].length > 1) {
+            if (this.gathered['twitter'] &&
+                this.gathered['twitter']['result'] &&
+                this.gathered['twitter']['result'][4] &&
+                this.gathered['twitter']['result'][4]['graphic'] &&
+                this.gathered['twitter']['result'][4]['graphic'][8] &&
+                this.gathered['twitter']['result'][4]['graphic'][8]['hour'] &&
+                this.gathered['twitter']['result'][4]['graphic'][8]['hour'].length > 1) {
 
-                this.reportMessage = 'Twitter (Twint) module...(Hour)'
+                this.reportMessage = 'Twitter module...(Hour)'
 
                 // Image
-                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintHour');
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterHour');
 
                 await htmlToImage.toPng(svg)
                   .then(function (dataUrl) {
@@ -1421,7 +1421,7 @@ export class GathererComponent implements OnInit {
                   .catch(function (error) {
                     console.error('oops, something went wrong!', error);
                   });
-                twint = true;
+                twitter = true;
 
                 hl = hl + 55;
             }
@@ -1440,24 +1440,24 @@ export class GathererComponent implements OnInit {
                 doc.addImage(img, 'png', 185, 17, 10, 10);
                 doc.setFontSize(12);
                 doc.setTextColor('#05fcfc');
-                doc.text('MODULE - Twitter (Twint)', 105, 23);
+                doc.text('MODULE - Twitter', 105, 23);
 
                 hl = 40;
             }
 
             // Information table
-            if (this.gathered['twint'] &&
-                this.gathered['twint']['result'] &&
-                this.gathered['twint']['result'][4] &&
-                this.gathered['twint']['result'][4]['graphic'] &&
-                this.gathered['twint']['result'][4]['graphic'][7] &&
-                this.gathered['twint']['result'][4]['graphic'][7]['week'] &&
-                this.gathered['twint']['result'][4]['graphic'][7]['week'].length > 1) {
+            if (this.gathered['twitter'] &&
+                this.gathered['twitter']['result'] &&
+                this.gathered['twitter']['result'][4] &&
+                this.gathered['twitter']['result'][4]['graphic'] &&
+                this.gathered['twitter']['result'][4]['graphic'][7] &&
+                this.gathered['twitter']['result'][4]['graphic'][7]['week'] &&
+                this.gathered['twitter']['result'][4]['graphic'][7]['week'].length > 1) {
 
-                this.reportMessage = 'Twitter (Twint) module...(Week)'
+                this.reportMessage = 'Twitter module...(Week)'
 
                 // Image
-                svg = this.nbCardContainer.nativeElement.querySelector('#divTwintWeek');
+                svg = this.nbCardContainer.nativeElement.querySelector('#divTwitterWeek');
 
                 await htmlToImage.toPng(svg)
                   .then(function (dataUrl) {
@@ -1467,7 +1467,7 @@ export class GathererComponent implements OnInit {
                   .catch(function (error) {
                     console.error('oops, something went wrong!', error);
                   });
-                twint = true;
+                twitter = true;
 
                 hl = hl + 55;
             }
@@ -1486,7 +1486,7 @@ export class GathererComponent implements OnInit {
                 doc.addImage(img, 'png', 185, 17, 10, 10);
                 doc.setFontSize(12);
                 doc.setTextColor('#05fcfc');
-                doc.text('MODULE - Twitter (Twint)', 105, 23);
+                doc.text('MODULE - Twitter', 105, 23);
 
                 hl = 40;
             }
@@ -1513,7 +1513,7 @@ export class GathererComponent implements OnInit {
                   .catch(function (error) {
                     console.error('oops, something went wrong!', error);
                   });
-                twint = true;
+                twitter = true;
                 const bodyTable = [];
                 let elem = [];
                 const list = this.gathered['twitter']['result'][4]['graphic'][9]['sources'];
@@ -1573,7 +1573,7 @@ export class GathererComponent implements OnInit {
                 doc.addImage(img, 'png', 185, 17, 10, 10);
                 doc.setFontSize(12);
                 doc.setTextColor('#05fcfc');
-                doc.text('MODULE - Twitter (Twint)', 105, 23);
+                doc.text('MODULE - Twitter', 105, 23);
 
                 hl = 40;
             }
@@ -1600,7 +1600,7 @@ export class GathererComponent implements OnInit {
                   .catch(function (error) {
                     console.error('oops, something went wrong!', error);
                   });
-                twint = true;
+                twitter = true;
                 const bodyTable = [];
                 let elem = [];
                 const list = this.gathered['twitter']['result'][4]['graphic'][11]['twvsrt'];
@@ -1646,7 +1646,7 @@ export class GathererComponent implements OnInit {
                 }
             }
 
-            if (!twint) {
+            if (!twitter) {
                 doc.setLineWidth(15);
                 doc.setDrawColor('#00000');
                 doc.line(20, 105, 190, 105);
