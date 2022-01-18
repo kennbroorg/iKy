@@ -7,10 +7,6 @@
       <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
     </nb-card-header>
 
-    <nb-card-header (click)="openDialog(dialogSearchHashtag)">
-      SEARCH Hashtags
-      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
-    </nb-card-header>
     <nb-card-body id="nbCardSearchHashtag" style="text-align: center; overflow: hidden; margin: 0px; padding: 0px;">
         <div #nbCardSearchHashtag>
           <ngx-text-cloud [data]="searchHashtag"></ngx-text-cloud>
