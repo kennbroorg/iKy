@@ -103,7 +103,36 @@ export class DataGatherInfoService {
 
             }
         }
+
+        console.log("=============================================================");
+        console.log("DENTRO DE getRequestesult ", url, task);
+        console.log("=============================================================");
+        // // Iterate state
+        // let state: any = ''
+        // do {
+        //     console.log("State =================================");
+        //     console.log("url : " + this.gatherUrl + 'state/' + task.task + '/' + task.module);
+        //     // http://127.0.0.1:5000/state/<task_id>/<task_app>
+        //     this.http.get<any>(this.gatherUrl + 'state/' + task.task + '/' + task.module)
+        //       .subscribe(data => state = data.state,
+        //       // .subscribe(data => console.log('Data: ', data),
+        //                  err => console.error('Ops: ', err.message),
+        //                  () => console.log('Completed State'),
+        //     );
+        //     console.log(state);
+        //     console.log("State =================================");
+        // } while (state != "SUCCESS");
+
+        // return this.http.get<any>(this.gatherUrl + url).pipe(timeout(3000));
         return this.http.get<any>(this.gatherUrl + url);
+
+
+
+                // this.executeRequest$('linkedin', {username: datas['linkedin'], from: 'User'})
+                //     .subscribe(this.processResponse,
+                //                err => console.error('Ops: ', err.message),
+                //                () => console.log('Completed Linkedin'),
+                // );
     }
 
     // Is the email valid format
@@ -164,7 +193,8 @@ export class DataGatherInfoService {
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('emailrep', {username: this.email, from: 'User'})
                 .subscribe(this.processResponse,
-                           err => console.error('Ops: ', err.message),
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'User', 'emailrep', this.email),
                            () => console.log('Completed EmailRep'),
             );
         }
@@ -175,7 +205,8 @@ export class DataGatherInfoService {
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('leaklookup', {username: this.email, from: 'User'})
                 .subscribe(this.processResponse,
-                           err => console.error('Ops: ', err.message),
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'User', 'leaklookup', this.email),
                            () => console.log('Completed Leaklookup'),
             );
         }
@@ -186,7 +217,8 @@ export class DataGatherInfoService {
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('dorks', {username: this.username, dorks: '', from: 'iKy'})
                 .subscribe(this.processResponse,
-                           err => console.error('Ops: ', err.message),
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'iKy', 'dorks', this.username),
                            () => console.log('Completed Dorks'),
             );
         }
@@ -197,7 +229,8 @@ export class DataGatherInfoService {
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('search', {username: this.username, from: 'iKy'})
                 .subscribe(this.processResponse,
-                           err => console.error('Ops: ', err.message),
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'iKy', 'search', this.username),
                            () => console.log('Completed Searchers'),
             );
         }
@@ -207,9 +240,10 @@ export class DataGatherInfoService {
             this.showToast('info', 'Sherlock', 'Send information gathering');
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('sherlock', {username: this.username, from: 'iKy'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed Sherlock'),
+                .subscribe(this.processResponse,
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'iKy', 'sherlock', this.username),
+                           () => console.log('Completed Sherlock'),
             );
         }
 
@@ -218,9 +252,10 @@ export class DataGatherInfoService {
             this.showToast('info', 'Holehe', 'Send information gathering');
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('holehe', {username: this.email, from: 'User'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed Holehe'),
+                .subscribe(this.processResponse,
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'User', 'holehe', this.email),
+                           () => console.log('Completed Holehe'),
             );
         }
 
@@ -230,7 +265,8 @@ export class DataGatherInfoService {
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('fullcontact', {username: this.email, from: 'User'})
                 .subscribe(this.processResponse,
-                           err => console.error('Ops: ', err.message),
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'User', 'fullcontact', this.email),
                            () => console.log('Completed Fullcontact'),
             );
         }
@@ -241,7 +277,8 @@ export class DataGatherInfoService {
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('peopledatalabs', {username: this.email, from: 'User'})
                 .subscribe(this.processResponse,
-                           err => console.error('Ops: ', err.message),
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'User', 'peopledatalabs', this.email),
                            () => console.log('Completed Peopledatalabs'),
             );
         }
@@ -251,9 +288,10 @@ export class DataGatherInfoService {
             this.showToast('info', 'GitHub', 'Send information gathering');
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('github', {username: this.username, from: 'iKy'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed GitHub'),
+                .subscribe(this.processResponse,
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'iKy', 'github', this.username),
+                           () => console.log('Completed GitHub'),
             );
         }
 
@@ -281,9 +319,10 @@ export class DataGatherInfoService {
             this.showToast('info', 'Keybase', 'Send information gathering');
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('keybase', {username: this.username, from: 'iKy'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed Keybase'),
+                .subscribe(this.processResponse,
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'iKy', 'keybase', this.username),
+                           () => console.log('Completed Keybase'),
             );
         }
 
@@ -292,9 +331,10 @@ export class DataGatherInfoService {
             this.showToast('info', 'Leaks (HIBP)', 'Send information gathering');
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('leaks', {username: this.email, from: 'User'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed Leaks (HIBP)'),
+                .subscribe(this.processResponse,
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'User', 'leaks', this.email),
+                           () => console.log('Completed Leaks (HIBP)'),
             );
         }
 
@@ -303,9 +343,10 @@ export class DataGatherInfoService {
             this.showToast('info', 'Darkpass (Darknet)', 'Send information gathering');
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('darkpass', {username: this.email, from: 'User'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed Darkpass (Darknet)'),
+                .subscribe(this.processResponse,
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'User', 'darkpass', this.email),
+                           () => console.log('Completed Darkpass (Darknet)'),
             );
         }
 
@@ -314,9 +355,10 @@ export class DataGatherInfoService {
             this.showToast('info', 'SocialScan', 'Send information gathering');
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('socialscan', {username: this.email, from: 'User'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed SocialScan'),
+                .subscribe(this.processResponse,
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'User', 'socialscan', this.email),
+                           () => console.log('Completed SocialScan'),
             );
         }
 
@@ -325,9 +367,10 @@ export class DataGatherInfoService {
             this.showToast('info', 'Tiktok', 'Send information gathering');
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('tiktok', {username: this.username, from: 'iKy'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed Tiktok'),
+                .subscribe(this.processResponse,
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'iKy', 'tiktok', this.username),
+                           () => console.log('Completed Tiktok'),
             );
         }
 
@@ -347,9 +390,10 @@ export class DataGatherInfoService {
             this.showToast('info', 'Venmo', 'Send information gathering');
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('venmo', {username: this.username, from: 'iKy'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed Venmo'),
+                .subscribe(this.processResponse,
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'iKy', 'venmo', this.username),
+                           () => console.log('Completed Venmo'),
             );
         }
 
@@ -358,9 +402,10 @@ export class DataGatherInfoService {
             this.showToast('info', 'Tinder', 'Send information gathering');
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('tinder', {username: this.username, from: 'iKy'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed Tinder'),
+                .subscribe(this.processResponse,
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'iKy', 'tinder', this.username),
+                           () => console.log('Completed Tinder'),
             );
         }
 
@@ -369,9 +414,10 @@ export class DataGatherInfoService {
             this.showToast('info', 'Reddit', 'Send information gathering');
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('reddit', {username: this.username, from: 'iKy'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed Reddit'),
+                .subscribe(this.processResponse,
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'iKy', 'reddit', this.username),
+                           () => console.log('Completed Reddit'),
             );
         }
 
@@ -380,9 +426,10 @@ export class DataGatherInfoService {
             this.showToast('info', 'Spotify', 'Send information gathering');
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('spotify', {username: this.username, from: 'iKy'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed Spotify'),
+                .subscribe(this.processResponse,
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'iKy', 'spotify', this.username),
+                           () => console.log('Completed Spotify'),
             );
         }
 
@@ -391,9 +438,10 @@ export class DataGatherInfoService {
             this.showToast('info', 'Twitch', 'Send information gathering');
             this.globalGather['taskresume'][0].PP++;
             this.executeRequest$('twitch', {username: this.username, from: 'iKy'})
-                    .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
-                               () => console.log('Completed Twitch'),
+                .subscribe(this.processResponse,
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'iKy', 'twitch', this.username),
+                           () => console.log('Completed Twitch'),
             );
         }
 
@@ -422,12 +470,13 @@ export class DataGatherInfoService {
         if (datas['twitter'] !== '') {
             console.log('Twitter : ', datas['twitter']);
             // twitter
-            if (this.isModuleParamRunTaskExec('twitter', datas['twitter'], 'user', 100)) {
+            if (this.isModuleParamRunTaskExec('twitter', datas['twitter'], 'User', 100)) {
                 this.showToast('info', 'twitter', 'send information gathering');
                 this.globalGather['taskresume'][0].pp++;
                 this.executeRequest$('twitter', {username: datas['twitter'], from: 'user'})
                     .subscribe(this.processResponse,
-                               err => console.error('ops: ', err.message),
+                               // err => console.error('ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'twitter', datas['twitter']),
                                () => console.log('completed twitter'),
                 );
             }
@@ -438,6 +487,7 @@ export class DataGatherInfoService {
             //     this.executeRequest$('twint', {username: datas['twitter'], from: 'user'})
             //         .subscribe(this.processResponse,
             //                    err => console.error('ops: ', err.message),
+            //                    err => this.processRetry(err, 'User', 'twint', datas['twitter']),
             //                    () => console.log('completed twint'),
             //     );
             // }
@@ -451,7 +501,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('linkedin', {username: datas['linkedin'], from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'linkedin', datas['linkedin']),
                                () => console.log('Completed Linkedin'),
                 );
             }
@@ -463,9 +514,15 @@ export class DataGatherInfoService {
             if (this.isModuleParamRunTaskExec('github', datas['github'], 'User', 100)) {
                 this.showToast('info', 'Github', 'Send information gathering');
                 this.globalGather['taskresume'][0].PP++;
+                // this.executeRequest$('github', {username: datas['github'], from: 'User'})
+                //     .subscribe(this.processResponse,
+                //                err => console.error('Ops: ', err.message),
+                //                () => console.log('Completed Github'),
+                // );
                 this.executeRequest$('github', {username: datas['github'], from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => this.processRetry(err, 'User', 'github', datas['github']),
+                               err => this.processRetry(err, 'User', 'github', datas['github']),
                                () => console.log('Completed Github'),
                 );
             }
@@ -479,7 +536,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('instagram', {username: datas['instagram'], from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'instagram', datas['instagram']),
                                () => console.log('Completed Instagram'),
                 );
             }
@@ -493,7 +551,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('tiktok', {username: datas['tiktok'], from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'tiktok', datas['tiktok']),
                                () => console.log('Completed Tiktok'),
                 );
             }
@@ -507,7 +566,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('tinder', {username: datas['tinder'], from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'tinder', datas['tinder']),
                                () => console.log('Completed Tinder'),
                 );
             }
@@ -521,7 +581,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('venmo', {username: datas['venmo'], from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'venmo', datas['venmo']),
                                () => console.log('Completed Venmo'),
                 );
             }
@@ -535,7 +596,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('reddit', {username: datas['reddit'], from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'reddit', datas['reddit']),
                                () => console.log('Completed Reddit'),
                 );
             }
@@ -549,7 +611,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('spotify', {username: datas['spotify'], from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'spotify', datas['spotify']),
                                () => console.log('Completed Spotify'),
                 );
             }
@@ -563,7 +626,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('twitch', {username: datas['twitch'], from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'twitch', datas['twitch']),
                                () => console.log('Completed Twitch'),
                 );
             }
@@ -578,7 +642,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('sherlock', {username: datas['username'], from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'sherlock', datas['username']),
                                () => console.log('Completed Sherlock'),
                 );
             }
@@ -588,7 +653,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('dorks', {username: datas['username'], dorks: '', from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'dorks', datas['username']),
                                () => console.log('Completed Dorks'),
                 );
             }
@@ -598,7 +664,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('search', {username: datas['username'], from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'search', datas['username']),
                                () => console.log('Completed Searchers'),
                 );
             }
@@ -619,7 +686,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('emailrep', {username: this.email, from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'emailrep', this.email),
                                () => console.log('Completed EmailRep'),
                 );
             }
@@ -630,7 +698,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('leaklookup', {username: this.email, from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'leaklookup', this.email),
                                () => console.log('Completed Leaklookup'),
                 );
             }
@@ -641,7 +710,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('dorks', {username: this.username, dorks: '', from: 'iKy'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'iKy', 'dorks', this.username),
                                () => console.log('Completed Dorks'),
                 );
             }
@@ -652,7 +722,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('search', {username: this.username, from: 'iKy'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'iKy', 'search', this.username),
                                () => console.log('Completed Searchers'),
                 );
             }
@@ -663,7 +734,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('fullcontact', {username: this.email, from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'fullcontact', this.email),
                                () => console.log('Completed Fullcontact'),
                 );
             }
@@ -674,7 +746,8 @@ export class DataGatherInfoService {
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('peopledatalabs', {username: this.email, from: 'User'})
                     .subscribe(this.processResponse,
-                               err => console.error('Ops: ', err.message),
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'peopledatalabs', this.email),
                                () => console.log('Completed Peopledatalabs'),
                 );
             }
@@ -697,9 +770,10 @@ export class DataGatherInfoService {
                 this.showToast('info', 'Leaks (HIBP)', 'Send information gathering');
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('leaks', {username: this.email, from: 'User'})
-                        .subscribe(this.processResponse,
-                                   err => console.error('Ops: ', err.message),
-                                   () => console.log('Completed Leaks (HIBP)'),
+                    .subscribe(this.processResponse,
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'leaks', this.email),
+                               () => console.log('Completed Leaks (HIBP)'),
                 );
             }
 
@@ -708,9 +782,10 @@ export class DataGatherInfoService {
                 this.showToast('info', 'Darkpass (Darknet)', 'Send information gathering');
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('darkpass', {username: this.email, from: 'User'})
-                        .subscribe(this.processResponse,
-                                   err => console.error('Ops: ', err.message),
-                                   () => console.log('Completed Darkpass (Darknet)'),
+                    .subscribe(this.processResponse,
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'darkpass', this.email),
+                               () => console.log('Completed Darkpass (Darknet)'),
                 );
             }
 
@@ -719,9 +794,10 @@ export class DataGatherInfoService {
                 this.showToast('info', 'SocialScan', 'Send information gathering');
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('socialscan', {username: this.email, from: 'User'})
-                        .subscribe(this.processResponse,
-                                   err => console.error('Ops: ', err.message),
-                                   () => console.log('Completed SocialScan'),
+                    .subscribe(this.processResponse,
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'socialscan', this.email),
+                               () => console.log('Completed SocialScan'),
                 );
             }
 
@@ -730,9 +806,10 @@ export class DataGatherInfoService {
                 this.showToast('info', 'Sherlock', 'Send information gathering');
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('sherlock', {username: this.username, from: 'iKy'})
-                        .subscribe(this.processResponse,
-                                   err => console.error('Ops: ', err.message),
-                                   () => console.log('Completed Sherlock'),
+                    .subscribe(this.processResponse,
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'iKy', 'sherlock', this.username),
+                               () => console.log('Completed Sherlock'),
                 );
             }
 
@@ -741,9 +818,10 @@ export class DataGatherInfoService {
                 this.showToast('info', 'Holehe', 'Send information gathering');
                 this.globalGather['taskresume'][0].PP++;
                 this.executeRequest$('holehe', {username: this.email, from: 'User'})
-                        .subscribe(this.processResponse,
-                                   err => console.error('Ops: ', err.message),
-                                   () => console.log('Completed Holehe'),
+                    .subscribe(this.processResponse,
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'holehe', this.email),
+                               () => console.log('Completed Holehe'),
                 );
             }
 
@@ -753,9 +831,10 @@ export class DataGatherInfoService {
                     this.showToast('info', 'Github', 'Send information gathering');
                     this.globalGather['taskresume'][0].PP++;
                     this.executeRequest$('github', {username: this.username, from: 'iKy'})
-                            .subscribe(this.processResponse,
-                                       err => console.error('Ops: ', err.message),
-                                       () => console.log('Completed Github'),
+                        .subscribe(this.processResponse,
+                                   // err => console.error('Ops: ', err.message),
+                                   err => this.processRetry(err, 'iKy', 'github', this.username),
+                                   () => console.log('Completed Github'),
                     );
                 }
             }
@@ -766,9 +845,10 @@ export class DataGatherInfoService {
                     this.showToast('info', 'Keybase', 'Send information gathering');
                     this.globalGather['taskresume'][0].PP++;
                     this.executeRequest$('keybase', {username: this.username, from: 'iKy'})
-                            .subscribe(this.processResponse,
-                                       err => console.error('Ops: ', err.message),
-                                       () => console.log('Completed Keybase'),
+                        .subscribe(this.processResponse,
+                                   // err => console.error('Ops: ', err.message),
+                                   err => this.processRetry(err, 'iKy', 'keybase', this.username),
+                                   () => console.log('Completed Keybase'),
                     );
                 }
             }
@@ -779,9 +859,10 @@ export class DataGatherInfoService {
                     this.showToast('info', 'Reddit', 'Send information gathering');
                     this.globalGather['taskresume'][0].PP++;
                     this.executeRequest$('reddit', {username: this.username, from: 'iKy'})
-                            .subscribe(this.processResponse,
-                                       err => console.error('Ops: ', err.message),
-                                       () => console.log('Completed Reddit'),
+                        .subscribe(this.processResponse,
+                                   // err => console.error('Ops: ', err.message),
+                                   err => this.processRetry(err, 'iKy', 'reddit', this.username),
+                                   () => console.log('Completed Reddit'),
                     );
                 }
             }
@@ -792,9 +873,10 @@ export class DataGatherInfoService {
                     this.showToast('info', 'Spotify', 'Send information gathering');
                     this.globalGather['taskresume'][0].PP++;
                     this.executeRequest$('spotify', {username: this.username, from: 'iKy'})
-                            .subscribe(this.processResponse,
-                                       err => console.error('Ops: ', err.message),
-                                       () => console.log('Completed Spotify'),
+                        .subscribe(this.processResponse,
+                                   // err => console.error('Ops: ', err.message),
+                                   err => this.processRetry(err, 'iKy', 'spotify', this.username),
+                                   () => console.log('Completed Spotify'),
                     );
                 }
             }
@@ -805,9 +887,10 @@ export class DataGatherInfoService {
                     this.showToast('info', 'Twitch', 'Send information gathering');
                     this.globalGather['taskresume'][0].PP++;
                     this.executeRequest$('twitch', {username: this.username, from: 'iKy'})
-                            .subscribe(this.processResponse,
-                                       err => console.error('Ops: ', err.message),
-                                       () => console.log('Completed Twitch'),
+                        .subscribe(this.processResponse,
+                                   // err => console.error('Ops: ', err.message),
+                                   err => this.processRetry(err, 'iKy', 'twitch', this.username),
+                                   () => console.log('Completed Twitch'),
                     );
                 }
             }
@@ -987,7 +1070,8 @@ export class DataGatherInfoService {
                             this.executeRequest$(tasks[indexTask].module, {username: tasks[indexTask].param,
                                                  from: module_name})
                                     .subscribe(this.processResponse,
-                                               err => console.error('Ops: ', err.message),
+                                               // err => console.error('Ops: ', err.message),
+                                               err => this.processRetry(err, module_name, tasks[indexTask].module, tasks[indexTask].param),
                                                () => console.log('Completed' + tasks[indexTask].module),
                             );
                             // Launch Twint if execute Twitter
@@ -1057,6 +1141,26 @@ export class DataGatherInfoService {
         }
 
         console.log('Gathered :', this.globalGather);
+    }
+
+    // Error Callback : Retry
+    private processRetry = (data: any, from_m: any, module_m: any, param: any): any => {
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        console.log("Data: ", data.url);
+        console.log("Error: ", data);
+        console.log("Slice: ", data.url.slice(-37));
+        console.log("Slice: ", data.url.split("/")[4]);
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        let tasks = {"from_m": from_m, "module": module_m, "param": param, "task": data.url.split("/")[4]}
+        console.log("JSON: ", tasks);
+        let url: string = "result/" + data.url.split("/")[4]
+        console.log("URL: ", url);
+        this.getRequestResult$(url, tasks)
+            .subscribe(this.processResponse,
+                       err => this.processRetry(err, from_m, module_m, param),
+                       () => console.log('Completed RETRY - ' + module),
+        );
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     }
 
     // Toaster
