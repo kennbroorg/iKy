@@ -100,39 +100,10 @@ export class DataGatherInfoService {
                 this.globalGather['taskexec'][indexTaskexec].task_id = task.task;
                 this.globalGather['taskexec'][indexTaskexec].state = 'PROCESS';
                 // console.log("State change..................");
-
             }
         }
 
-        console.log("=============================================================");
-        console.log("DENTRO DE getRequestesult ", url, task);
-        console.log("=============================================================");
-        // // Iterate state
-        // let state: any = ''
-        // do {
-        //     console.log("State =================================");
-        //     console.log("url : " + this.gatherUrl + 'state/' + task.task + '/' + task.module);
-        //     // http://127.0.0.1:5000/state/<task_id>/<task_app>
-        //     this.http.get<any>(this.gatherUrl + 'state/' + task.task + '/' + task.module)
-        //       .subscribe(data => state = data.state,
-        //       // .subscribe(data => console.log('Data: ', data),
-        //                  err => console.error('Ops: ', err.message),
-        //                  () => console.log('Completed State'),
-        //     );
-        //     console.log(state);
-        //     console.log("State =================================");
-        // } while (state != "SUCCESS");
-
-        // return this.http.get<any>(this.gatherUrl + url).pipe(timeout(3000));
         return this.http.get<any>(this.gatherUrl + url);
-
-
-
-                // this.executeRequest$('linkedin', {username: datas['linkedin'], from: 'User'})
-                //     .subscribe(this.processResponse,
-                //                err => console.error('Ops: ', err.message),
-                //                () => console.log('Completed Linkedin'),
-                // );
     }
 
     // Is the email valid format
@@ -1126,7 +1097,7 @@ export class DataGatherInfoService {
 
                 this.globalGather['taskexec'][indexTaskexec].state = 'SUCCESS';
                 console.log('State change..................SUCCESS');
-                console.log(this.globalGather[module_name].result[2].validation);
+                // console.log(this.globalGather[module_name].result[2].validation);
 
                 // Reprocess validation
                 if (this.globalGather['taskexec'][indexTaskexec].score > 99) {
@@ -1146,21 +1117,56 @@ export class DataGatherInfoService {
     // Error Callback : Retry
     private processRetry = (data: any, from_m: any, module_m: any, param: any): any => {
         console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        console.log("Module: ", module_m);
         console.log("Data: ", data.url);
         console.log("Error: ", data);
-        console.log("Slice: ", data.url.slice(-37));
+        // console.log("Slice: ", data.url.slice(-37));
         console.log("Slice: ", data.url.split("/")[4]);
         console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        let tasks = {"from_m": from_m, "module": module_m, "param": param, "task": data.url.split("/")[4]}
-        console.log("JSON: ", tasks);
-        let url: string = "result/" + data.url.split("/")[4]
-        console.log("URL: ", url);
-        this.getRequestResult$(url, tasks)
-            .subscribe(this.processResponse,
-                       err => this.processRetry(err, from_m, module_m, param),
+
+        // let tasks = {"from_m": from_m, "module": module_m, "param": param, "task": data.url.split("/")[4]}
+        let url: string = "state/" + data.url.split("/")[4] + "/" + module_m
+        // console.log("URL: ", url);
+        // this.getRequestResult$(url, tasks)
+        //     .subscribe(this.processResponse,
+        //                err => this.processRetry(err, from_m, module_m, param),
+        //                () => console.log('Completed RETRY - ' + module),
+        // );
+        // public getRequest$(url: string): Observable<any> {
+        this.getRequest$(url)
+            .subscribe(valid => this.processStateVal(valid, from_m, module_m, param),
+                       err => console.log('Error RETRY - ' + module),
                        () => console.log('Completed RETRY - ' + module),
         );
-        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    }
+
+    private processStateVal = (data: any, from_m: any, module_m: any, param: any): any => {
+        console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        console.log("Module: ", module_m);
+        console.log("data: ", data);
+
+        if (data.state == "FAILURE") {
+            for (let indexTaskexec in this.globalGather['taskexec']) {
+                if (this.globalGather['taskexec'][indexTaskexec].module == module_m && 
+                    this.globalGather['taskexec'][indexTaskexec].param == param) {
+
+                    this.globalGather['taskexec'][indexTaskexec].task_id = data.task_id;
+                    this.globalGather['taskexec'][indexTaskexec].state = 'FAILURE';
+                }
+            }
+        } else {
+            let tasks = {"from_m": from_m, "module": module_m, "param": param, "task": data.task_id}
+            let url: string = "result/" + data.task_id
+            console.log("URL: ", url);
+            console.log("ID:  ", data.task_id);
+            this.getRequestResult$(url, tasks)
+                .subscribe(this.processResponse,
+                           err => this.processRetry(err, from_m, module_m, param),
+                           () => console.log('Completed RETRY - ' + module),
+            );
+        }
+        console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        
     }
 
     // Toaster
