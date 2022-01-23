@@ -49,18 +49,15 @@ export class TaskexecComponent {
     this.dataSource = this.dataSourceBuilder.create(this.data);
   }
 
-  ngOnInit() {
-      this.updateTasks();
-  }
+  // ngOnInit() {
+  //     this.updateTasks();
+  // }
 
   ngOnChanges(){
     this.updateTasks();
   }
 
   updateTasks() {
-      // console.log("taskexec data", this.data);
-      // console.log("taskexec dataTask", this.dataTask);
-
     this.data = [
       {
         data: { module: 'Tasklist', param: 'Param', from: 'From', score: 'Score', stateIcon: 'State' },
@@ -84,7 +81,6 @@ export class TaskexecComponent {
         );
         
     }
-      console.log("taskexec JSON", this.data)
   }
 
   updateSort(sortRequest: NbSortRequest): void {

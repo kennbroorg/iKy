@@ -55,7 +55,8 @@
                   <div [ngClass]="{
                           'alert-pending':row.data[stateColumn] === 'PENDING',
                           'alert-success':row.data[stateColumn] === 'SUCCESS',
-                          'alert-process':row.data[stateColumn] === 'PROCESS'
+                          'alert-process':row.data[stateColumn] === 'PROCESS',
+                          'alert-failure':row.data[stateColumn] === 'FAILURE'
                           }">{{row.data[stateColumn]}}</div>
               </td>
             </ng-container>

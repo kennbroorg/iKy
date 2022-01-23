@@ -9,6 +9,7 @@ from collections import Counter
 import time
 import random
 import os
+import traceback
 
 try:
     from factories._celery import create_celery
@@ -23,14 +24,13 @@ except ImportError:
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# from requests.packages.urllib3.exceptions import InsecureRequestWarning
+# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
 
-@celery.task
-def t_reddit(username, from_m='Initial'):
+def p_reddit(username, from_m='Initial'):
 
     user_agents = [
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
@@ -111,97 +111,99 @@ def t_reddit(username, from_m='Initial'):
 
         raw_node.append({"posts": linkdata})
 
-        # Last activity
-        lastcomment = commentdata[0]['created_utc']
-        lastpost = postdata[0]['created_utc']
+        if (commentdata):
+            # Last activity
+            lastcomment = commentdata[0]['created_utc']
+            lastpost = postdata[0]['created_utc']
 
-        if lastcomment > lastpost:
-            lastaction = lastcomment
-        else: lastaction = lastpost
+            if lastcomment > lastpost:
+                lastaction = lastcomment
+            else: lastaction = lastpost
 
 
-        # Add all subreddits to a list
-        # Add all timed activities to a list
-        subList = []
-        for x in commentdata:
-            subList.append(x['subreddit'].lower())
-            timelist.append(x['created_utc'])
+            # Add all subreddits to a list
+            # Add all timed activities to a list
+            subList = []
+            for x in commentdata:
+                subList.append(x['subreddit'].lower())
+                timelist.append(x['created_utc'])
 
-        for x in postdata:
-            subList.append(x['subreddit'].lower())
-            timelist.append(x['created_utc'])
+        if (postdata):
+            for x in postdata:
+                subList.append(x['subreddit'].lower())
+                timelist.append(x['created_utc'])
 
-        # Adjust time for offset
-        timelist = [x + offset for x in timelist]
+            # Adjust time for offset
+            timelist = [x + offset for x in timelist]
 
-        # And create a set for comparison purposes
-        sublistset = set(subList)
+            # And create a set for comparison purposes
+            sublistset = set(subList)
 
-        location_file = os.path.join(os.path.dirname(
-            os.path.realpath(__file__)), "all-locations.txt")
+            location_file = os.path.join(os.path.dirname(
+                os.path.realpath(__file__)), "all-locations.txt")
 
-        # Load subreddits from file and check them against comments
-        locList = [line.rstrip('\n').lower() for line in open(location_file)]
-        loclistset = set(locList)
+            # Load subreddits from file and check them against comments
+            locList = [line.rstrip('\n').lower() for line in open(location_file)]
+            loclistset = set(locList)
 
-        counter = Counter(subList)
-        gdata = counter.most_common()
+            counter = Counter(subList)
+            gdata = counter.most_common()
 
-        topics = []
-        for i in gdata:
-            topics.append({"name": i[0], "count": i[1], "value": i[1]})
-        topics_bubble = {"name": "", "value": 100,
-                            "children": topics}
+            topics = []
+            for i in gdata:
+                topics.append({"name": i[0], "count": i[1], "value": i[1]})
+            topics_bubble = {"name": "", "value": 100,
+                                "children": topics}
 
-        newtl = []  # hour list
-        wdlist = [] # weekday list
+            newtl = []  # hour list
+            wdlist = [] # weekday list
 
-        # fill newtl with HOURs
-        for x in timelist:
-            newtl.append(datetime.fromtimestamp(int(x)).hour)
+            # fill newtl with HOURs
+            for x in timelist:
+                newtl.append(datetime.fromtimestamp(int(x)).hour)
 
-        # create hour name list
-        hournames = '00:00 01:00 02:00 03:00 04:00 05:00 06:00 07:00 08:00 09:00 10:00 11:00 12:00 13:00 14:00 15:00 16:00 17:00 18:00 19:00 20:00 21:00 22:00 23:00'.split()
+            # create hour name list
+            hournames = '00:00 01:00 02:00 03:00 04:00 05:00 06:00 07:00 08:00 09:00 10:00 11:00 12:00 13:00 14:00 15:00 16:00 17:00 18:00 19:00 20:00 21:00 22:00 23:00'.split()
 
-        # deal with HOUR counting
-        tgCounter = Counter(newtl)
-        tgdata = tgCounter.most_common()
-        # sort by HOUR not popularity
-        tgdata = sorted(tgdata)
+            # deal with HOUR counting
+            tgCounter = Counter(newtl)
+            tgdata = tgCounter.most_common()
+            # sort by HOUR not popularity
+            tgdata = sorted(tgdata)
 
-        d = []
-        e = 0
-        for g in hournames:
-            try:
-                hourset.append({"name": g, "value": int(tgdata[e][1])})
-                d.append(tuple([g, tgdata[e][1]]))
-            except:
-                hourset.append({"name": g, "value": 0})
-                d.append(tuple([g, 0]))
-            e+=1
-        tgdata = d
+            d = []
+            e = 0
+            for g in hournames:
+                try:
+                    hourset.append({"name": g, "value": int(tgdata[e][1])})
+                    d.append(tuple([g, tgdata[e][1]]))
+                except:
+                    hourset.append({"name": g, "value": 0})
+                    d.append(tuple([g, 0]))
+                e+=1
+            tgdata = d
 
-        # estabish weekday list (0 is Monday in Python-land)
-        weekdays = 'Monday Tuesday Wednesday Thursday Friday Saturday Sunday'.split()
-        for x in timelist:
-            wdlist.append(datetime.fromtimestamp(int(x)).weekday())
+            # estabish weekday list (0 is Monday in Python-land)
+            weekdays = 'Monday Tuesday Wednesday Thursday Friday Saturday Sunday'.split()
+            for x in timelist:
+                wdlist.append(datetime.fromtimestamp(int(x)).weekday())
 
-        wdCounter = Counter(wdlist)
-        wddata = wdCounter.most_common()
-        wddata = sorted(wddata)
+            wdCounter = Counter(wdlist)
+            wddata = wdCounter.most_common()
+            wddata = sorted(wddata)
 
-        # change tuple weekday numbers to weekday names
-        y = []
-        c = 0
-        for z in weekdays:
-            try:
-                weekset.append({"name": z, "value": int(wddata[c][1])})
-                y.append(tuple([z, wddata[c][1]]))
-            except:
-                weekset.append({"name": z, "value": 0})
-                y.append(tuple([z, 0]))
-            c+=1
-        wddata = y
+            # change tuple weekday numbers to weekday names
+            y = []
+            c = 0
+            for z in weekdays:
+                try:
+                    weekset.append({"name": z, "value": int(wddata[c][1])})
+                    y.append(tuple([z, wddata[c][1]]))
+                except:
+                    weekset.append({"name": z, "value": 0})
+                    y.append(tuple([z, 0]))
+                c+=1
+            wddata = y
 
     else:
         raw_node = { 'status': 'Not found'}
@@ -353,6 +355,49 @@ def t_reddit(username, from_m='Initial'):
     total.append({'graphic': graphic})
     total.append({'profile': profile})
     total.append({'timeline': timeline})
+
+    return total
+
+
+@celery.task
+def t_reddit(user, from_m='Initial'):
+    # Variable principal
+    total = []
+    # Take initial time
+    tic = time.perf_counter()
+
+    # try execution principal function
+    try:
+        total = p_reddit(user, from_m)
+    # Error handle
+    except Exception as e:
+        # Error description
+        traceback.print_exc()
+        traceback_text = traceback.format_exc()
+        code = 10
+        # if ('Reddit user don\'t exist' in traceback_text):
+        #     code = 5
+
+        # Set module name in JSON format
+        total.append({"module": "reddit"})
+        total.append({"param": user})
+        total.append({"validation": "null"})
+
+        # Set status code and reason
+        status = []
+        status.append(
+            {
+                "code": code,
+                "reason": "{}".format(e),
+                "traceback": traceback_text,
+            }
+        )
+        total.append({"raw": status})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"Reddit - Response in {toc - tic:0.4f} seconds")
 
     return total
 
