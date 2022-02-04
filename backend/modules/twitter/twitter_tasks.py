@@ -111,12 +111,18 @@ def api_twitter_elevated(username):
         except Exception:
             pos_sen = "undefined"
 
+        # Sources
+        m_source = re.match("<a.*>(.*)</a>", tweet._json['source'])
+        if (m_source):
+            source = m_source.groups()[0].replace('Twitter', '').strip()
+            source = source.replace('for', '').strip()
+
         tweet_item = {"likes": tweet._json['favorite_count'],
                       "retweets": tweet._json['retweet_count'],
                       "user_mentions": mention_temp,
                       "hashtags": hashtag_temp,
                       "created_at": tweet._json['created_at'],
-                      "source": tweet._json['source'],
+                      "source": source,
                       "possibly_sensitive": pos_sen,
                       "lang": tweet._json['lang'],
                       "text": tweet._json['full_text']}
@@ -217,13 +223,17 @@ def api_twitter_essential(username):
         except Exception:
             pos_sen = "undefined"
 
+        # Sources
+        source = tweet.source.replace('Twitter', '').strip()
+        source = source.replace('for', '').strip()
+
         tweet_item = {"likes": tweet.public_metrics['like_count'],
                       "retweets": tweet.public_metrics['retweet_count'],
                       "number": number,
                       "user_mentions": mention_temp,
                       "hashtags": hashtag_temp,
                       "created_at": tweet.created_at.strftime("%a %b %d %X %z %Y"),
-                      "source": tweet.source,
+                      "source": source,
                       "possibly_sensitive": pos_sen,
                       "lang": tweet.lang,
                       "text": tweet.text}
@@ -306,12 +316,7 @@ def p_twitter(username, from_m):
                 time_value = 1
                 prev_day = tweet_day
 
-            # Sources
-            m_source = re.match("<a.*>(.*)</a>", tweet['source'])
-            if (m_source):
-                source = m_source.groups()[0].replace('Twitter', '').strip()
-                source = source.replace('for', '').strip()
-                sources_temp.append(source)
+            sources_temp.append(tweet['source'])
 
             # Hours and days
             hours.append(created_at.strftime("%H"))
