@@ -66,31 +66,36 @@
   },
   {
     "id": 13,
-    "name": "spotify_client_id",
+    "name": "twitter_v2_bearer_token",
     "key": ""
   },
   {
     "id": 14,
-    "name": "spotify_client_secret",
+    "name": "spotify_client_id",
     "key": ""
   },
   {
     "id": 15,
-    "name": "twitch_client_id",
+    "name": "spotify_client_secret",
     "key": ""
   },
   {
     "id": 16,
-    "name": "twitch_client_secret",
+    "name": "twitch_client_id",
     "key": ""
   },
   {
     "id": 17,
-    "name": "cse_api_key",
+    "name": "twitch_client_secret",
     "key": ""
   },
   {
     "id": 18,
+    "name": "cse_api_key",
+    "key": ""
+  },
+  {
+    "id": 19,
     "name": "cse_cx",
     "key": ""
   }
