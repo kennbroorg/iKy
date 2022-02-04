@@ -122,15 +122,16 @@ def p_tweetiment_twitter(tweets, task_id, username):
 
     c = 0
     for tweet in tweets:
-        if (tweet['full_text'][:3] != 'RT '):
+        if (tweet['text'][:3] != 'RT '):
             c = c + 1
             # Get date
             create_date = tweet['created_at']
-            date_format = datetime.strptime(create_date,
-                                            "%a %b %d %H:%M:%S +0000 %Y")
-            create_date = date_format.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+            # date_format = datetime.strptime(create_date,
+            #                                 "%a %b %d %H:%M:%S +0000 %Y")
+            # create_date = date_format.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+
             # Remove mentions
-            text = re.sub(r'@\w+\s+', "", tweet['full_text'])
+            text = re.sub(r'@\w+\s+', "", tweet['text'])
             # Remove URLs
             text = re.sub(r'https?:\/\/.*[\r\n]*', '', text,
                           flags=re.MULTILINE)

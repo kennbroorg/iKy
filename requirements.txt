@@ -5,10 +5,10 @@ httpx==0.13.3
 Flask==1.1.2
 celery==4.4.5
 Flask-Cors==3.0.9
-requests==2.26.0
+requests==2.27.0
 bs4==0.0.1
 cfscrape==2.1.1
-tweepy==3.10.0
+tweepy==4.5.0
 geopy==1.22.0
 # git+https://github.com/twintproject/twint.git@origin/master#egg=twint
 # git+https://github.com/himanshudabas/twint.git@origin/fix-parser#egg=twint
