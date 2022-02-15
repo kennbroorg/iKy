@@ -152,16 +152,22 @@ def api_twitter_essential(username):
         return executed, traceback_text, [], []
 
     url_list = []
-    if (result_api.data.entities.get("url", "") != "" and
-        result_api.data.entities['url'].get("urls", "") != ""):
-        for urls in result_api.data.entities['url']['urls']:
-            if urls['expanded_url']:
-                url_list.append(urls['expanded_url'])
-    if (result_api.data.entities.get("description", "") != "" and
-        result_api.data.entities['description'].get("urls", "") != ""):
-        for urls in result_api.data.entities['description']['urls']:
-            if urls['expanded_url']:
-                url_list.append(urls['expanded_url'])
+    print("=========================================================")
+    print(result_api.data.location)
+    print(result_api.data.protected)
+    print(result_api.data.entities)
+    print("=========================================================")
+    if (result_api.data.entities):
+        if (result_api.data.entities.get("url", "") != "" and
+            result_api.data.entities['url'].get("urls", "") != ""):
+            for urls in result_api.data.entities['url']['urls']:
+                if urls['expanded_url']:
+                    url_list.append(urls['expanded_url'])
+        if (result_api.data.entities.get("description", "") != "" and
+            result_api.data.entities['description'].get("urls", "") != ""):
+            for urls in result_api.data.entities['description']['urls']:
+                if urls['expanded_url']:
+                    url_list.append(urls['expanded_url'])
 
     user_info = {"username": username, 
                  "name": result_api.data.name,
