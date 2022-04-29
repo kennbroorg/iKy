@@ -23,7 +23,7 @@ def fontawesome_cheat_5():
 
         m = re.findall('window.__inline_data__ = (.*)', req.text)
         json_m = json.loads(m[0])
-        json_data = json_m[1]['data']
+        json_data = json_m[0]['data']
 
         with open(fonta_file, 'w') as f:
             # json_data = json.load(f)
