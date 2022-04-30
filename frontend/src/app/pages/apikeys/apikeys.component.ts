@@ -84,7 +84,7 @@ export class ApiKeysComponent implements OnInit {
         console.log('ApiKeysComponent ngOnInit');
 
         // Get Api Keys
-        this.executeHttp.getApiKeys$('')
+        this.executeHttp.getApiKeys$({})
             .subscribe(data => this.source.load(data.keys),
                        err => console.error('Ops: ', err.message),
             );
