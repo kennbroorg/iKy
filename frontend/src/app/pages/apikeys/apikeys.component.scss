@@ -24,4 +24,33 @@
   }
   @include media-breakpoint-down(is) {
   }
+
+  ::ng-deep .appearance-outline:focus {
+    box-shadow: none !important;
+  }
+
+  ::ng-deep {
+    tbody tr {
+      background: rgba(0, 0, 0, 0) !important;
+    }
+    tbody tr:hover {
+      background: rgba(0, 0, 0, 0.2) !important;
+    }
+    tbody tr:nth-child(2n) {
+      background: rgba(0, 0, 0, 0.3) !important;
+    }
+    tbody tr:nth-child(2n):hover {
+      background: rgba(0, 0, 0, 0.5) !important;
+    }
+  }
+
+  ::ng-deep .form-control {
+    background-color: rgba(0, 0, 0, 8) !important;
+    border: none;
+  }
+
+  ::ng-deep .form-control:focus {
+    background-color: rgba(0, 0, 0, 8) !important;
+    border: none;
+  }
 }
