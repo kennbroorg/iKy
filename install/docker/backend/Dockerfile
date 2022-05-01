@@ -1,9 +1,10 @@
-FROM python:3.7.4-buster
+FROM python:3.9.2-buster
 
 WORKDIR /app
 
 COPY requirements.txt .
 
+RUN pip install -U pip
 RUN pip install -r requirements.txt
 
 COPY ./backend .
@@ -15,8 +16,9 @@ RUN sed -i "s/redis:\/\/localhost/redis:\/\/redis/g" /app/factories/celery_confi
 
 # supervisor installation &&
 # create directory for child images to store configuration in
-RUN apt-get update && \
-    apt-get -y upgrade
+RUN apt-get update
+# RUN apt-get update && \
+#     apt-get -y upgrade
 RUN apt-get -y install supervisor && \
   mkdir -p /var/log/supervisor && \
   mkdir -p /etc/supervisor/conf.d

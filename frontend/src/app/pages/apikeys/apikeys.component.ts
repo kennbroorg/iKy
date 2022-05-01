@@ -32,49 +32,14 @@ export class ApiKeysComponent implements OnInit {
           title: 'Key value',
           type: 'string',
         },
-        // help: {
-        //   title: 'help',
-        //   type: 'text',
-        //   editable: false,
-        // },
       },
     };
 
-//     settings = {
-//       add: {
-//         addButtonContent: '<i class="nb-plus"></i>',
-//         createButtonContent: '<i class="nb-checkmark"></i>',
-//         cancelButtonContent: '<i class="nb-close"></i>',
-//       },
-//       edit: {
-//         editButtonContent: '<i class="nb-edit"></i>',
-//         saveButtonContent: '<i class="nb-checkmark"></i>',
-//         cancelButtonContent: '<i class="nb-close"></i>',
-//       },
-//       delete: {
-//         deleteButtonContent: '<i class="nb-trash"></i>',
-//         confirmDelete: true,
-//       },
-//       action: {
-//         delete: false,
-//       },
-//       columns: {
-//         id: {
-//           title: 'ID',
-//           type: 'number',
-//         },
-//         name: {
-//           title: 'Key name',
-//           type: 'string',
-//         },
-//         key: {
-//           title: 'Key value',
-//           type: 'string',
-//         },
-//       },
-//     };
-
     source: LocalDataSource = new LocalDataSource();
+
+    fileName = '';
+    fileString = '';
+    fileJSON: any;
 
     constructor(private dialogService: NbDialogService,
                 private executeHttp: DataGatherInfoService) {
@@ -84,8 +49,9 @@ export class ApiKeysComponent implements OnInit {
         console.log('ApiKeysComponent ngOnInit');
 
         // Get Api Keys
-        this.executeHttp.getApiKeys$('')
-            .subscribe(data => this.source.load(data.keys),
+        this.executeHttp.getApiKeys$({})
+            .subscribe(data => {this.source.load(data.keys);
+                                console.log(data.keys);},
                        err => console.error('Ops: ', err.message),
             );
         console.log('Source: ', this.source);
@@ -129,4 +95,19 @@ export class ApiKeysComponent implements OnInit {
         document.body.removeChild(element);
     }
 
+    onFileSelected(event) {
+      const file:File = event.target.files[0];
+      if (file) {
+          this.fileName = file.name;
+      }
+      let input = event.target;  
+      var reader: FileReader = new FileReader();
+      reader.readAsText(input.files[0]);  
+      reader.onloadend = (e) => {
+        this.fileJSON = JSON.parse(reader.result as string)
+
+        this.source.load(this.fileJSON);
+      };
+  
+    }
 }

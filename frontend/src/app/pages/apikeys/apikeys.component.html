@@ -5,7 +5,8 @@
         APIKEYS
       </div>
       <div>
-        <button nbButton class="help" status="info" onClick="parent.open('https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get')">
+        <button nbButton outline class="help" status="info" onClick="parent.open('https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get')"
+          style="border: none;box-shadow: none;">
           HOW TO FILL FIELDS
         </button>
       </div>
@@ -23,7 +24,7 @@
 
   </nb-card-body>
   <nb-card-footer>
-      <!-- <button class="btn btn-info btn-block" (click)="generateDownloadJsonUri()" nbTooltip="Import Keys from JSON file" nbTooltipStatus="primary" (click)="ref.close()">IMPORT KEYS</button> -->
+      <button class="btn btn-info btn-block" nbTooltip="Import Keys from JSON file" nbTooltipStatus="primary" (click)="openDialog(dialogImport)">IMPORT KEYS</button>
       <button class="btn btn-info btn-block" (click)="generateDownloadJsonUri()" nbTooltip="Export Keys to JSON file" nbTooltipStatus="primary">EXPORT KEYS</button>
   </nb-card-footer>
 
@@ -34,8 +35,32 @@
     <nb-card-header>Update Keys</nb-card-header>
     <nb-card-body>Are you sure?</nb-card-body>
     <nb-card-footer>
-      <button nbButton status="info" (click)="ref.close()">Cancel</button>
-      <button nbButton status="danger" (click)="updateConfirm(); ref.close()">Update</button>
+      <button nbButton outline status="info" (click)="ref.close()" style="margin: 10px; border: none; box-shadow: none; font-weight: 400;">Cancel</button>
+      <button nbButton outline status="danger" (click)="updateConfirm(); ref.close()" style="margin: 10px; border: none; box-shadow: none; font-weight: 400;">Update</button>
+    </nb-card-footer>
+  </nb-card>
+</ng-template>
+
+<ng-template #dialogImport let-data let-ref="dialogRef">
+  <nb-card>
+    <nb-card-header>Import Keys</nb-card-header>
+    <nb-card-body>
+      <input type="file" class="file-input" requiredFileType="image/png" (change)="onFileSelected($event)" #fileUpload style="display: none;">
+      <div class="file-upload">
+        {{fileName || "No file uploaded yet."}}
+          <button color="primary" class="upload-btn"
+            (click)="fileUpload.click();" style="background: rgba(0, 0, 0, 0); margin: 0px; padding: 0px; border: none;"> 
+            <div>
+              <span class="fa-stack fa-lg" styel="border: none;">
+                <i class="fas fa-circle fa-stack-2x" style="background: rgba(0, 0, 0, 0); border: none;"></i>
+                <i class="fab fa-upload fa-stack-1x" style="color: #05fcfc; border: none;"></i> 
+              </span>
+            </div>
+          </button>
+      </div>
+    </nb-card-body>
+    <nb-card-footer>
+      <button nbButton outline status="success" (click)="ref.close()" style="border: none; font-weight: 400; width: 100%">Done</button>
     </nb-card-footer>
   </nb-card>
 </ng-template>
