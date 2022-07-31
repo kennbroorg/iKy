@@ -19,7 +19,7 @@ def celeryServer():
     os.system("./celery.sh")
 
 
-def flaskServer(ip='127.0.0.1', port=5000):
+def flaskServer(ip='127.0.0.1', port=5000, env='prod'):
     # For apiKey initialization
     cur_dir = os.getcwd()
     api_keys_file = cur_dir + '/factories/apikeys.json'
@@ -30,7 +30,11 @@ def flaskServer(ip='127.0.0.1', port=5000):
         shutil.copy(api_keys_default, api_keys_file)
 
     app = create_application()
-    app.run(host=ip, port=port, debug=True)
+
+    if (env == 'prod'):
+        app.run(port=port, debug=True, host=ip, use_reloader=False)
+    else:
+        app.run(host=ip, port=port, debug=True)
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -97,4 +101,4 @@ if __name__ == '__main__':
         celery_proc.join()
         httpd_proc.join()
     else:
-        flaskServer(ip)
+        flaskServer(ip, env='desa')
