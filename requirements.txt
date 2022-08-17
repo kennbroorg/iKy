@@ -1,7 +1,7 @@
 chardet==3.0.4
 aiohttp==3.8.1
 beautifulsoup4==4.9.3
-httpx==0.13.3
+httpx==0.23.0
 Flask==2.1.2
 celery==5.2.7
 Flask-Cors==3.0.9
