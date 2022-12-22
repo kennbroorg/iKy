@@ -16,15 +16,18 @@
     <div class="cameras single-view" *ngIf="isSingleView">
         <!-- <div class="camera" [style.background-image]="'url(' + selectedPhoto.picture + ')'"> -->
       <div class="camera" style="text-align: center;">
-          <img id="singleImage" height="100%" src="{{selectedPhoto.picture}}"/>
+          <img id="singleImage" height="100%" src="{{selectedPhoto.picture}}" crossorigin=""/>
           <div id="descImage">{{ selectedPhoto.title }}</div>
           <!-- <span>{{ selectedPhoto.title }}</span> -->
       </div>
     </div>
     <div class="cameras" *ngIf="!isSingleView">
       <div class="camera col-sm-4" *ngFor="let p of data" [style.background-image]="'url(' + p.picture + ')'"
-           (click)="selectPhoto(p)">
-        <span>{{ p.title }}</span>
+           (click)="selectPhoto(p)" crossorigin="anonymous">
+        <!-- <img width="100%" [src]="p.picture" crossorigin="anonymous"/> -->
+        <img height="100%" width="100%" [src]="p.picture" crossorigin=""/>
+        <span style="position: absolute; left: 0px;">{{ p.title }}</span>
+        <!-- <div id="descImage">{{ p.title }}</div> -->
       </div>
     </div>
   </nb-card-body>
