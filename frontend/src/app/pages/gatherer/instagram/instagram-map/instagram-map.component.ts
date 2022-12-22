@@ -1,4 +1,5 @@
-import { Component, OnInit, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, OnDestroy, Output, TemplateRef } from '@angular/core';
+import { NbDialogService } from '@nebular/theme';
 
 import * as L from 'leaflet';
 
@@ -41,7 +42,8 @@ export class InstagramMapComponent implements OnDestroy {
     };
 
     constructor(private ecMapService: InstagramMapService,
-                private theme: NbThemeService) {
+                private theme: NbThemeService, 
+                private dialogService: NbDialogService) {
         combineLatest([
             this.ecMapService.getCords(),
             this.theme.getJsTheme(),
@@ -181,4 +183,7 @@ export class InstagramMapComponent implements OnDestroy {
       this.alive = false;
     }
 
+    openDialog(dialog: TemplateRef<any>) {
+        this.dialogService.open(dialog);
+    }
 }

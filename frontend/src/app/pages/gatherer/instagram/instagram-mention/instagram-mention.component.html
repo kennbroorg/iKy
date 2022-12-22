@@ -1,7 +1,10 @@
   <nb-card size="small" class="border-default">
-    <nb-card-header (click)="openDialog(dialogInstagramMention)">
-      INSTAGRAM Mention (last posts)
-      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+    <nb-card-header>
+      <div (click)="openDialog(dialogInstagramMention)">
+          INSTAGRAM Mention (last posts)
+      </div>
+      <div class="help" [nbPopover]="instagramMentionHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
     </nb-card-header>
     <nb-card-body id="nbCardInstagramMention" style="text-align: center; overflow: hidden; margin: 0px; padding: 0px;">
         <div #nbCardInstagramMention>
@@ -10,7 +13,6 @@
     </nb-card-body>
   </nb-card>
 
-
   <ng-template #dialogInstagramMention let-data let-ref="dialogRef">
     <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
       <nb-card-header>INSTAGRAM Mention (last posts)</nb-card-header>
@@ -18,6 +20,33 @@
 
         <ngx-text-cloud [data]="instagramMention"></ngx-text-cloud>
 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
+
+  <ng-template #instagramMentionHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        INSTAGRAM Mention Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : Instagram</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        This window shows the users mentioned in the last posts.
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module can be executed by entering a username in the <strong style="font-weight: 600;">instagram</strong> field of the advanced search, being its validation indicator high since it has been entered by the user
+        </p> 
+        <p style="text-align: justify;">
+        It can also be executed if another module has found a instagram username (Fullcontact, Keybase, Searchs, PeopleDataLabs, etc). Its validation indicator will be medium since its discovery is indirect
+        </p> 
+        <p style="text-align: justify;">
+        Finally, and with a low validation indicator, the module can be executed if a username was entered in the "username" field of the advanced search or if a mail was entered in the mail or advanced search. In this case the @domain.ext is cut out and the username is used as input
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p>Public Requests</p> 
       </nb-card-body>
     </nb-card>
   </ng-template>
