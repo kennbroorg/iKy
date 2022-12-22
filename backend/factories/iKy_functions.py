@@ -29,7 +29,8 @@ def extract_hashtags(text):
     regex = r"#[a-zA-Z0-9_]+"
     matches = re.finditer(regex, text, re.MULTILINE)
     for matchNum, match in enumerate(matches, start=1):
-        hashtags.append({"hashtags": match.group()})
+        if (match.group() != ''):
+            hashtags.append(match.group().strip().replace("#", ""))
     return hashtags
 
 
@@ -38,7 +39,8 @@ def extract_mentions(text):
     regex = r"^|[^\w]@([\w\_\.]+)"
     matches = re.finditer(regex, text, re.MULTILINE)
     for matchNum, match in enumerate(matches, start=1):
-        mentions.append({"mentions": match.group()})
+        if (match.group() != ''):
+            mentions.append(match.group().strip().replace("@", ""))
     return mentions
 
 
