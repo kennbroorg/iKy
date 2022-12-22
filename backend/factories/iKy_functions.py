@@ -24,6 +24,26 @@ def location_geo(location, time=''):
         return False
 
 
+def extract_hashtags(text):
+    hashtags = []
+    regex = r"#[a-zA-Z0-9_]+"
+    matches = re.finditer(regex, text, re.MULTILINE)
+    for matchNum, match in enumerate(matches, start=1):
+        if (match.group() != ''):
+            hashtags.append(match.group().strip().replace("#", ""))
+    return hashtags
+
+
+def extract_mentions(text):
+    mentions = []
+    regex = r"^|[^\w]@([\w\_\.]+)"
+    matches = re.finditer(regex, text, re.MULTILINE)
+    for matchNum, match in enumerate(matches, start=1):
+        if (match.group() != ''):
+            mentions.append(match.group().strip().replace("@", ""))
+    return mentions
+
+
 def extract_url(text):
     urls = []
     regex = r"((http(s)?(\:\/\/))+(www\.)?([\w\-\.\/])*(\.[a-zA-Z]{2,3}\/?))[^\s\b\n|]*[^.,;:\?\!\@\^\$ -]"
@@ -125,6 +145,10 @@ def extract_linkedin(text):
 def analize_rrss(text):
     analized = {}
 
+    hashtags = extract_hashtags(text)
+    analized['hashtags'] = hashtags
+    mentions = extract_mentions(text)
+    analized['mentions'] = mentions
     urls = extract_url(text)
     analized['url'] = urls
     mails = extract_mails(text)

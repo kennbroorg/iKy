@@ -321,9 +321,19 @@
             <ngx-instagram-tagged [data]="gathered['instagram']"></ngx-instagram-tagged>
           </div>
 
+          <!-- Instagram Map -->
+          <div class="col-md-8" id="divInstagramMap" #divInstagramMap *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-instagram-map [data]="gathered['instagram']"></ngx-instagram-map>
+          </div>
+
           <!-- Instagram hour -->
           <div class="col-md-4" id="divInstagramHour" #divInstagramHour *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && gathered['instagram'].result[4].graphic[6].hour?.length > 0 && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-instagram-hour [data]="gathered['instagram']"></ngx-instagram-hour>
+          </div>
+
+          <!-- Instagram list -->
+          <div class="col-md-8" id="divInstagramList" #divInstagramList *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && gathered['instagram'].result[4].graphic[10].postdet?.length > 0 && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-instagram-list [data]="gathered['instagram']"></ngx-instagram-list>
           </div>
 
           <!-- Instagram mediatype -->
@@ -339,11 +349,6 @@
           <!-- Instagram Posts -->
           <div class="col-md-4" id="divInstagramPosts" #divInstagramPosts *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-instagram-posts [data]="gathered['instagram']"></ngx-instagram-posts>
-          </div>
-
-          <!-- Instagram Map -->
-          <div class="col-md-8" id="divInstagramMap" #divInstagramMap *ngIf="gathered['instagram'] && gathered['instagram'].result[4] && validationShow[gathered['instagram'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
-            <ngx-instagram-map [data]="gathered['instagram']"></ngx-instagram-map>
           </div>
 
           <!-- Linkedin Graphs -->

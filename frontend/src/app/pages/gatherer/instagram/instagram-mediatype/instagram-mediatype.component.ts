@@ -42,6 +42,7 @@ export class InstagramMediatypeComponent implements OnInit, AfterViewInit {
         console.log("Instagram Mediatype Component");
 
         this.instagramMediatype = this.data.result[4].graphic[8].mediatype;
+        console.warn("Instagram Mediatype Component", this.instagramMediatype);
     }
 
     openDialog(dialog: TemplateRef<any>) {

@@ -35,11 +35,11 @@ export class GraphsComponent implements OnInit, AfterViewInit {
         this.width = this.cardContainer.nativeElement.parentNode.parentNode.clientWidth;
         this.height = this.cardContainer.nativeElement.parentNode.parentNode.clientHeight;
       }
-      console.log("CARD-------------------------------", this.card);
-      console.log("WIDTH-------------------------------", this.width);
-      console.log("HEIGHT-------------------------------", this.height);
-      console.log("MODAL-------------------------------", this.modal);
-      console.log("SEARCHER-------------------------------", this.searcher);
+    //   console.log("CARD-------------------------------", this.card);
+    //   console.log("WIDTH-------------------------------", this.width);
+    //   console.log("HEIGHT-------------------------------", this.height);
+    //   console.log("MODAL-------------------------------", this.modal);
+    //   console.log("SEARCHER-------------------------------", this.searcher);
       this.drawChart(this.card, this.data, this.height, this.width);
   }
 
@@ -170,6 +170,7 @@ export class GraphsComponent implements OnInit, AfterViewInit {
                     .attr('y', -30)
                     .attr('width', 60)
                     .attr('height', 60)
+                    .attr('crossorigin', '')
                     .attr('clip-path', 'circle(50% at 50% 50%)');
           });
 
@@ -233,6 +234,7 @@ export class GraphsComponent implements OnInit, AfterViewInit {
               d3Select(this)
                   .append('image')
                     .attr('xlink:href', d.picture)
+                    .attr('crossorigin', '')
                     .attr('x', -15)
                     .attr('y', -15)
                     .attr('width', 30)
