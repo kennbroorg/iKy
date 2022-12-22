@@ -80,6 +80,7 @@ import { InstagramHourComponent } from './instagram/instagram-hour/instagram-hou
 import { InstagramWeekComponent } from './instagram/instagram-week/instagram-week.component';
 import { InstagramMediatypeComponent } from './instagram/instagram-mediatype/instagram-mediatype.component';
 import { InstagramPhotosComponent } from './instagram/instagram-photos/instagram-photos.component';
+import { InstagramListComponent } from './instagram/instagram-list/instagram-list.component';
 
 import { SearchHashtagComponent } from './search/search-hashtag/search-hashtag.component';
 import { SearchMentionsComponent } from './search/search-mention/search-mentions.component';
@@ -216,6 +217,7 @@ import { ErrorGraphsComponent } from './error/error-graphs.component';
     InstagramWeekComponent,
     InstagramMediatypeComponent,
     InstagramPhotosComponent,
+    InstagramListComponent,
     SearchHashtagComponent,
     SearchMentionsComponent,
     SearchNamesComponent,
