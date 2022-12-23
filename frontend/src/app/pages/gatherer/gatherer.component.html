@@ -458,12 +458,12 @@
           </div>
 
           <!-- Venmo Friends -->
-          <div class="col-md-4" id="divVenmoUser" #divVenmoUser *ngIf="gathered['venmo'] && gathered['venmo'].result[4] && gathered['venmo'].result[4].graphic[1].friends?.length > 0 && validationShow[gathered['venmo'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divVenmoUser" #divVenmoUser *ngIf="gathered['venmo'] && gathered['venmo'].result[4] && gathered['venmo'].result[4].graphic[1] && gathered['venmo'].result[4].graphic[1].friends?.length > 0 && validationShow[gathered['venmo'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-venmo-friends [data]="gathered['venmo']"></ngx-venmo-friends>
           </div>
 
           <!-- Venmo Transactions -->
-          <div class="col-md-4" id="divVenmoTrans" #divVenmoTrans *ngIf="gathered['venmo'] && gathered['venmo'].result[4] && gathered['venmo'].result[4].graphic[2].trans?.length > 0 && validationShow[gathered['venmo'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divVenmoTrans" #divVenmoTrans *ngIf="gathered['venmo'] && gathered['venmo'].result[4] && gathered['venmo'].result[4].graphic[2] && gathered['venmo'].result[4].graphic[2].trans?.length > 0 && validationShow[gathered['venmo'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-venmo-trans [data]="gathered['venmo']"></ngx-venmo-trans>
           </div>
 
