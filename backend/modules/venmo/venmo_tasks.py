@@ -7,6 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import date
 import random
+import traceback
 
 
 try:
@@ -82,7 +83,7 @@ user_agents = [
 
 
 @celery.task
-def t_venmo(username, from_m="Initial"):
+def p_venmo(username, from_m="Initial"):
     """Task of Celery that get info from venmo"""
 
     raw_node = []
@@ -92,60 +93,60 @@ def t_venmo(username, from_m="Initial"):
     url_user = 'https://api.venmo.com/v1/users/{}'.format(username)
     response = requests.get(url_user, headers={'User-Agent': random.choice(user_agents)}, verify=False)
     data_user = response.json()
-    print(" USER : ")
-    print(data_user)
+    # print(" USER : ")
+    # print(data_user)
 
     if (data_user.get("error", "") != ""):
         raw_node = { 'status': 'Not found'}
     else:
         raw_node.append({'user': data_user["data"]})
-        transaction = {"friends": [], "details": []}
-        resp = requests.get(url, headers={'User-Agent': random.choice(user_agents)}, verify=False)
-        html_doc = BeautifulSoup(resp.text, "html.parser")
-        sm = html_doc.find_all('div', class_='paymentpage-payment-container')
-        for html_doc in sm:
+        # transaction = {"friends": [], "details": []}
+        # resp = requests.get(url, headers={'User-Agent': random.choice(user_agents)}, verify=False)
+        # html_doc = BeautifulSoup(resp.text, "html.parser")
+        # sm = html_doc.find_all('div', class_='paymentpage-payment-container')
+        # for html_doc in sm:
 
-            data = {"friend": [], "details": {}}
-            names = html_doc.find('div', 'paymentpage-subline').find_all('a', href=True)
+        #     data = {"friend": [], "details": {}}
+        #     names = html_doc.find('div', 'paymentpage-subline').find_all('a', href=True)
 
-            data["details"]["donor_username"] = names[0]["href"]
-            data["details"]["donor_name"] = names[0].text
-            data["details"]["recipient_username"] = names[1]["href"]
-            data["details"]["recipient_name"] = names[1].text
+        #     data["details"]["donor_username"] = names[0]["href"]
+        #     data["details"]["donor_name"] = names[0].text
+        #     data["details"]["recipient_username"] = names[1]["href"]
+        #     data["details"]["recipient_name"] = names[1].text
 
-            if username not in data["details"]["donor_username"]:
-                data["friend"].append({"username": data["details"]["donor_username"],
-                                       "name": data["details"]["donor_name"]})
-            else:
-                data["friend"].append({"username": data["details"]["recipient_username"],
-                                       "name": data["details"]["recipient_name"]})
+        #     if username not in data["details"]["donor_username"]:
+        #         data["friend"].append({"username": data["details"]["donor_username"],
+        #                                "name": data["details"]["donor_name"]})
+        #     else:
+        #         data["friend"].append({"username": data["details"]["recipient_username"],
+        #                                "name": data["details"]["recipient_name"]})
 
-            data["details"]["text"] = html_doc.find('div', 'paymentpage-text').text
-            date = html_doc.find('div', 'paymentpage-datetime').find('div', 'date').text.split()
+        #     data["details"]["text"] = html_doc.find('div', 'paymentpage-text').text
+        #     date = html_doc.find('div', 'paymentpage-datetime').find('div', 'date').text.split()
 
-            if date[1] not in dayName:
-                data["details"]["date"] = date[3] + "-" + month[date[1]] + "-{:02d}".format(int(date[2].replace(",", "")))
-            else:
-                recordedWeekday = dayName[date[1]]
-                now = datetime.datetime.today()
-                nowWeekday = now.weekday()
-                if recordedWeekday > nowWeekday:
-                    diff = nowWeekday + (7-recordedWeekday)
-                else:
-                    diff = nowWeekday - recordedWeekday
-                occurance = now - datetime.timedelta(days=diff)
+        #     if date[1] not in dayName:
+        #         data["details"]["date"] = date[3] + "-" + month[date[1]] + "-{:02d}".format(int(date[2].replace(",", "")))
+        #     else:
+        #         recordedWeekday = dayName[date[1]]
+        #         now = datetime.datetime.today()
+        #         nowWeekday = now.weekday()
+        #         if recordedWeekday > nowWeekday:
+        #             diff = nowWeekday + (7-recordedWeekday)
+        #         else:
+        #             diff = nowWeekday - recordedWeekday
+        #         occurance = now - datetime.timedelta(days=diff)
 
-                data["details"]["date"] = str(occurance.year) + "-{:02d}".format(occurance.month) + "-{:02d}".format(occurance.day)
+        #         data["details"]["date"] = str(occurance.year) + "-{:02d}".format(occurance.month) + "-{:02d}".format(occurance.day)
 
-            for f in data["friend"]:
-                if f not in transaction["friends"]:
-                    transaction["friends"].append(f)
-            transaction["details"].append(data["details"])
+        #     for f in data["friend"]:
+        #         if f not in transaction["friends"]:
+        #             transaction["friends"].append(f)
+        #     transaction["details"].append(data["details"])
 
-        print(" TRANSACTIONS : ")
-        print(transaction)
+        # print(" TRANSACTIONS : ")
+        # print(transaction)
 
-        raw_node.append({'transaction': transaction})
+        # raw_node.append({'transaction': transaction})
 
     # Total
     total = []
@@ -174,7 +175,8 @@ def t_venmo(username, from_m="Initial"):
 
     link = "Venmo"
     gather_item = {"name-node": "Venmo", "title": "Venmo",
-                   "subtitle": "", "icon": "fab fa-vimeo-v",
+                   "subtitle": "",
+                   "icon": "fas fa-money-bill-wave",
                    "link": link}
     gather.append(gather_item)
 
@@ -197,30 +199,30 @@ def t_venmo(username, from_m="Initial"):
         profile_item = {'name': raw_node[0]["user"]["display_name"]}
         profile.append(profile_item)
 
-        gather_item = {"name-node": "Venmoactive", "title": "Active",
-                       "subtitle": raw_node[0]["user"]["is_active"],
-                       "icon": "fab fa-creative-commons-sampling",
-                       "link": link}
-        gather.append(gather_item)
+        # gather_item = {"name-node": "Venmoactive", "title": "Active",
+        #                "subtitle": raw_node[0]["user"]["is_active"],
+        #                "icon": "fab fa-creative-commons-sampling",
+        #                "link": link}
+        # gather.append(gather_item)
 
-        if (raw_node[0]["user"]["is_blocked"]):
-            gather_item = {"name-node": "VenmoBlocked", "title": "Blocked?",
-                        "subtitle": "The user is blocked",
-                        "icon": "fab fa-lock",
-                        "link": link}
-        else:
-            gather_item = {"name-node": "VenmoBlocked", "title": "Blocked?",
-                        "subtitle": "The user is NOT blocked",
-                        "icon": "fas fa-lock-open",
-                        "link": link}
-        gather.append(gather_item)
+        # if (raw_node[0]["user"]["is_blocked"]):
+        #     gather_item = {"name-node": "VenmoBlocked", "title": "Blocked?",
+        #                 "subtitle": "The user is blocked",
+        #                 "icon": "fab fa-lock",
+        #                 "link": link}
+        # else:
+        #     gather_item = {"name-node": "VenmoBlocked", "title": "Blocked?",
+        #                 "subtitle": "The user is NOT blocked",
+        #                 "icon": "fas fa-lock-open",
+        #                 "link": link}
+        # gather.append(gather_item)
 
         gather_item = {"name-node": "VenmoJoin", "title": "Join Date",
-                       "subtitle": raw_node[0]["user"]["date_joined"][:10],
+                       "subtitle": raw_node[0]["user"]["date_joined"],
                        "icon": "fas fa-calendar-check", "link": link}
         gather.append(gather_item)
         timeline.append({'action': 'Start : Venmo',
-                         'date': raw_node[0]["user"]["date_joined"][:10],
+                         'date': raw_node[0]["user"]["date_joined"],
                          'desc': "Join date for Venmo"})
 
         gather_item = {"name-node": "VenmoPic", "title": "Avatar",
@@ -232,9 +234,15 @@ def t_venmo(username, from_m="Initial"):
                                     "title": "Venmo"}]}
         profile.append(profile_item)
 
-        gather_item = {"name-node": "VenmoBio", "title": "Bio",
-                       "subtitle": raw_node[0]["user"]["about"],
-                       "icon": "fas fa-heartbeat",
+        # gather_item = {"name-node": "VenmoBio", "title": "Bio",
+        #                "subtitle": raw_node[0]["user"]["about"],
+        #                "icon": "fas fa-heartbeat",
+        #                "link": link}
+        # gather.append(gather_item)
+
+        gather_item = {"name-node": "VenmoID", "title": "UserID",
+                       "subtitle": raw_node[0]["user"]["id"],
+                       "icon": "fas fa-user-circle",
                        "link": link}
         gather.append(gather_item)
 
@@ -250,54 +258,54 @@ def t_venmo(username, from_m="Initial"):
                        "link": link}
         gather.append(gather_item)
 
-        gather_item = {"name-node": "VenmoPhone", "title": "Phone",
-                       "subtitle": raw_node[0]["user"]["phone"],
-                       "icon": "fas fa-mobile-alt",
-                       "link": link}
-        gather.append(gather_item)
+        # gather_item = {"name-node": "VenmoPhone", "title": "Phone",
+        #                "subtitle": raw_node[0]["user"]["phone"],
+        #                "icon": "fas fa-mobile-alt",
+        #                "link": link}
+        # gather.append(gather_item)
 
-        gather_item = {"name-node": "VenmoEmail", "title": "Email",
-                       "subtitle": raw_node[0]["user"]["email"],
-                       "icon": "fas fa-at",
-                       "link": link}
-        gather.append(gather_item)
+        # gather_item = {"name-node": "VenmoEmail", "title": "Email",
+        #                "subtitle": raw_node[0]["user"]["email"],
+        #                "icon": "fas fa-at",
+        #                "link": link}
+        # gather.append(gather_item)
 
-        gather_item = {"name-node": "VenmoFriends", "title": "Friends",
-                       "subtitle": raw_node[0]["user"]["friends_count"],
-                       "icon": "fas fa-user-friends",
-                       "link": link}
-        gather.append(gather_item)
+        # gather_item = {"name-node": "VenmoFriends", "title": "Friends",
+        #                "subtitle": raw_node[0]["user"]["friends_count"],
+        #                "icon": "fas fa-user-friends",
+        #                "link": link}
+        # gather.append(gather_item)
 
-        try:
-            transactions = raw_node[1]["transaction"]["details"]
-        except:
-            transactions = []
+        # try:
+        #     transactions = raw_node[1]["transaction"]["details"]
+        # except:
+        #     transactions = []
 
-        for t in transactions:
-            t["donor_username"] = t["donor_username"][1:]
-            t["recipient_username"] = t["recipient_username"][1:]
-            timeline.append({'action': 'Transaction : Venmo',
-                             'date': t["date"],
-                             'desc': "From: " + t["donor_name"] + " To: " +
-                             t["recipient_name"] + " Text: " + t["text"]})
+        # for t in transactions:
+        #     t["donor_username"] = t["donor_username"][1:]
+        #     t["recipient_username"] = t["recipient_username"][1:]
+        #     timeline.append({'action': 'Transaction : Venmo',
+        #                      'date': t["date"],
+        #                      'desc': "From: " + t["donor_name"] + " To: " +
+        #                      t["recipient_name"] + " Text: " + t["text"]})
 
-        try:
-            friends_raw = raw_node[1]["transaction"]["friends"]
-        except:
-            friends_raw = []
+        # try:
+        #     friends_raw = raw_node[1]["transaction"]["friends"]
+        # except:
+        #     friends_raw = []
 
-        for f in friends_raw:
-            friends_item = {"name-node": f["username"][1:],
-                            "title": f["username"][1:],
-                            "subtitle": f["name"],
-                            "icon": "fas fa-user",
-                            "link": link_friends}
-            friends.append(friends_item)
+        # for f in friends_raw:
+        #     friends_item = {"name-node": f["username"][1:],
+        #                     "title": f["username"][1:],
+        #                     "subtitle": f["name"],
+        #                     "icon": "fas fa-user",
+        #                     "link": link_friends}
+        #     friends.append(friends_item)
 
         social_item = {"name": "Venmo",
                        "url": url,
                        "source": "Venmo",
-                       "icon": "fab fa-vimeo-v",
+                       "icon": "fas fa-money-bill-wave",
                        "username": username}
         social.append(social_item)
         profile.append({"social": social})
@@ -306,13 +314,34 @@ def t_venmo(username, from_m="Initial"):
 
     print (raw_node)
     graphic.append({'user': gather})
-    graphic.append({'friends': friends})
-    graphic.append({'trans': transactions})
+    # graphic.append({'friends': friends})
+    # graphic.append({'trans': transactions})
     total.append({'raw': raw_node})
     total.append({'graphic': graphic})
     total.append({'profile': profile})
     total.append({'timeline': timeline})
 
+    return total
+
+
+@celery.task
+def t_venmo(username, from_m="Initial"):
+    total = []
+    try:
+        total = p_venmo(username, from_m)
+    except Exception as e:
+        traceback.print_exc()
+        traceback_text = traceback.format_exc()
+        total.append({'module': 'venmo'})
+        total.append({'param': username})
+        total.append({'validation': 'not_used'})
+
+        raw_node = []
+        raw_node.append({"status": "Fail",
+                         "reason": "{}".format(e),
+                         # "traceback": 1})
+                         "traceback": traceback_text})
+        total.append({"raw": raw_node})
     return total
 
 
