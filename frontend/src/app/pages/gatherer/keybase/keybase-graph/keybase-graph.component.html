@@ -1,35 +1,35 @@
 <nb-card size="small">
   <nb-card-header>
-    <div (click)="openDialog(dialogKeybaseSocial)">
-        KEYBASE Social
+    <div (click)="openDialog(dialogKeybaseGraph)">
+        KEYBASE Graphs
     </div>
-    <div class="help" [nbPopover]="keybaseSocialHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
+    <div class="help" [nbPopover]="keybaseGraphsHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
     <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
   </nb-card-header>
   <nb-card-body id="nbCardGraphs" #nbCardGraphs style="text-align: center; overflow: hidden;">
-      <ngx-graphs [data]="keybaseSocial"></ngx-graphs>
+      <ngx-graphs [data]="keybaseGraph"></ngx-graphs>
   </nb-card-body>
 </nb-card>
 
-<ng-template #dialogKeybaseSocial let-data let-ref="dialogRef">
+<ng-template #dialogKeybaseGraph let-data let-ref="dialogRef">
     <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
-      <nb-card-header>KEYBASE Social</nb-card-header>
+      <nb-card-header>KEYBASE Graph</nb-card-header>
       <nb-card-body style="overflow: hidden; padding: 0px;">
-        <ngx-graphs [data]="keybaseSocial" modal="true"></ngx-graphs>
+        <ngx-graphs [data]="keybaseGraph" modal="true"></ngx-graphs>
       </nb-card-body>
     </nb-card>
 </ng-template>
 
-<ng-template #keybaseSocialHelp>
+<ng-template #keybaseGraphsHelp>
   <nb-card style="margin: 0px; max-width: 50rem;">
     <nb-card-header status="warning">
-      KEYBASE Social Help
+      KEYBASE Graphs Help
     </nb-card-header>
     <nb-card-body>
       <p><strong style="font-weight: 600;">Module</strong> : Keybase</p> 
       <p style="font-weight: 600;">Description</p> 
       <p style="text-align: justify;">
-      This window displays the discovered social networks.
+      This graph shows in network nodes the basic information extracted, such as name, followers, ID, etc.
       </p>
       <p style="font-weight: 600;">Execution</p> 
       <p style="text-align: justify;">
