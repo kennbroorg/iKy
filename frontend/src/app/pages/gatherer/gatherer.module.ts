@@ -57,6 +57,7 @@ import { LinkedinBubbleComponent } from './linkedin/linkedin-bubble/linkedin-bub
 import { LinkedinCertsComponent } from './linkedin/linkedin-certs/linkedin-certs.component';
 import { LinkedinPosComponent } from './linkedin/linkedin-pos/linkedin-pos.component';
 
+import { KeybaseGraphComponent } from './keybase/keybase-graph/keybase-graph.component';
 import { KeybaseSocialComponent } from './keybase/keybase-social/keybase-social.component';
 import { KeybaseDevicesComponent } from './keybase/keybase-devices/keybase-devices.component';
 
@@ -200,6 +201,7 @@ import { ErrorGraphsComponent } from './error/error-graphs.component';
     LinkedinBubbleComponent,
     LinkedinCertsComponent,
     LinkedinPosComponent,
+    KeybaseGraphComponent,
     KeybaseSocialComponent,
     KeybaseDevicesComponent,
     LeakGraphsComponent,
