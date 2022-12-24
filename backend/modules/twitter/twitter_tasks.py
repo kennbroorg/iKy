@@ -152,11 +152,11 @@ def api_twitter_essential(username):
         return executed, traceback_text, [], []
 
     url_list = []
-    print("=========================================================")
-    print(result_api.data.location)
-    print(result_api.data.protected)
-    print(result_api.data.entities)
-    print("=========================================================")
+    # print("=========================================================")
+    # print(result_api.data.location)
+    # print(result_api.data.protected)
+    # print(result_api.data.entities)
+    # print("=========================================================")
     if (result_api.data.entities):
         if (result_api.data.entities.get("url", "") != "" and
             result_api.data.entities['url'].get("urls", "") != ""):
@@ -229,9 +229,9 @@ def api_twitter_essential(username):
         except Exception:
             pos_sen = "undefined"
 
-        # Sources
-        source = tweet.source.replace('Twitter', '').strip()
-        source = source.replace('for', '').strip()
+        # # Sources (Elon remove source)
+        # source = tweet.source.replace('Twitter', '').strip()
+        # source = source.replace('for', '').strip()
 
         tweet_item = {"likes": tweet.public_metrics['like_count'],
                       "retweets": tweet.public_metrics['retweet_count'],
@@ -239,7 +239,7 @@ def api_twitter_essential(username):
                       "user_mentions": mention_temp,
                       "hashtags": hashtag_temp,
                       "created_at": tweet.created_at.strftime("%a %b %d %X %z %Y"),
-                      "source": source,
+                    #   "source": source,
                       "possibly_sensitive": pos_sen,
                       "lang": tweet.lang,
                       "text": tweet.text}
@@ -322,7 +322,8 @@ def p_twitter(username, from_m):
                 time_value = 1
                 prev_day = tweet_day
 
-            sources_temp.append(tweet['source'])
+            # Elon remove source
+            # sources_temp.append(tweet['source'])
 
             # Hours and days
             hours.append(created_at.strftime("%H"))
