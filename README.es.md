@@ -221,7 +221,6 @@ Una vez que la aplicación esté cargada en el browser, deberá ir a la opción 
 - Fullcontact : Generar las APIs desde [aquí](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs)
 - PeopleDataLabs : Generar las APIs desde [aquí](https://www.peopledatalabs.com/signup)
 - Linkedin : Solo se debe cargar el usuario y contraseña de su cuenta 
-- Instagram : Solo se debe cargar el usuario y contraseña de su cuenta 
 - HaveIBeenPwned : Generar las APIs desde [aquí](https://haveibeenpwned.com/API/Key) (Paga)
 - Emailrep.io : Generar las APIs desde [aqui](https://emailrep.io/key)
 - Leaklookup : Generar las APIs desde [aqui](https://leak-lookup.com/api)
