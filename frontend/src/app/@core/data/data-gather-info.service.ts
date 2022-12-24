@@ -591,7 +591,7 @@ export class DataGatherInfoService {
 
         if (datas['twitch'] !== '') {
             console.log('Twitch : ', datas['twitch']);
-            // Spotify
+            // Twitch
             if (this.isModuleParamRunTaskExec('twitch', datas['twitch'], 'User', 100)) {
                 this.showToast('info', 'Twitch', 'Send information gathering');
                 this.globalGather['taskresume'][0].PP++;
@@ -600,6 +600,21 @@ export class DataGatherInfoService {
                                // err => console.error('Ops: ', err.message),
                                err => this.processRetry(err, 'User', 'twitch', datas['twitch']),
                                () => console.log('Completed Twitch'),
+                );
+            }
+        }
+
+        if (datas['keybase'] !== '') {
+            console.log('Keybase : ', datas['keybase']);
+            // Keybase
+            if (this.isModuleParamRunTaskExec('keybase', datas['keybase'], 'User', 100)) {
+                this.showToast('info', 'Keybase', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('keybase', {username: datas['keybase'], from: 'User'})
+                    .subscribe(this.processResponse,
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'keybase', datas['keybase']),
+                               () => console.log('Completed Keybase'),
                 );
             }
         }
