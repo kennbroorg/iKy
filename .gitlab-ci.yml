@@ -18,39 +18,41 @@ install:
   cache:
     paths:
       - frontend/node_modules/
-  only: [merge_requests]
+  only:
+    - merge_requests
 
 
 build:
   stage: build
   dependencies:
-      - install
+    - install
   before_script:
-      - apt-get update -qy
-      - apt-get -y install zip unzip
+    - apt-get update -qy
+    - apt-get -y install zip unzip
   script:
-      - cd frontend
-      - npm install @angular/cli
-      - npm install @angular-devkit/build-angular
-      - npm run build
-      - cd ..
-      - mkdir -p /tmp/iKy-pack/frontend
-      - cp -r backend /tmp/iKy-pack
-      - cp requirements.txt /tmp/iKy-pack
-      - cp -r frontend/dist /tmp/iKy-pack/frontend
-      - mv /tmp/iKy-pack/backend/.README.md /tmp/iKy-pack/README.md
-      - cd /tmp
-      - zip -r iKy.zip ./iKy-pack
-      - mv /tmp/iKy.zip "$CI_PROJECT_DIR"
-      - cd $CI_PROJECT_DIR
+    - cd frontend
+    - npm install @angular/cli
+    - npm install @angular-devkit/build-angular
+    - npm run build
+    - cd ..
+    - mkdir -p /tmp/iKy-pack/frontend
+    - cp -r backend /tmp/iKy-pack
+    - cp requirements.txt /tmp/iKy-pack
+    - cp -r frontend/dist /tmp/iKy-pack/frontend
+    - mv /tmp/iKy-pack/backend/.README.md /tmp/iKy-pack/README.md
+    - cd /tmp
+    - zip -r iKy.zip ./iKy-pack
+    - mv /tmp/iKy.zip "$CI_PROJECT_DIR"
+    - cd $CI_PROJECT_DIR
   artifacts:
     expire_in: 2 weeks
     paths:
       - iKy.zip
-  only: [merge_requests]
 
 deploy:
   stage: deploy
+  dependencies:
+    - build
   before_script:
     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
@@ -68,4 +70,3 @@ deploy:
     - git commit -m "iKy ZIP file from $CI_COMMIT_SHORT_SHA" || echo "No changes, nothing to commit!"
     - git remote rm origin && git remote add origin git@gitlab.com:kennbroorg/ikyweb.git
     - git push origin master
-  only: [merge_requests]
