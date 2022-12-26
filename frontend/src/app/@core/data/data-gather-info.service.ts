@@ -206,17 +206,17 @@ export class DataGatherInfoService {
             );
         }
 
-        // Sherlock
-        if (this.isModuleParamRunTaskExec('sherlock', this.username, 'iKy', 1)) {
-            this.showToast('info', 'Sherlock', 'Send information gathering');
-            this.globalGather['taskresume'][0].PP++;
-            this.executeRequest$('sherlock', {username: this.username, from: 'iKy'})
-                .subscribe(this.processResponse,
-                           // err => console.error('Ops: ', err.message),
-                           err => this.processRetry(err, 'iKy', 'sherlock', this.username),
-                           () => console.log('Completed Sherlock'),
-            );
-        }
+        // // Sherlock (Temporary disable)
+        // if (this.isModuleParamRunTaskExec('sherlock', this.username, 'iKy', 1)) {
+        //     this.showToast('info', 'Sherlock', 'Send information gathering');
+        //     this.globalGather['taskresume'][0].PP++;
+        //     this.executeRequest$('sherlock', {username: this.username, from: 'iKy'})
+        //         .subscribe(this.processResponse,
+        //                    // err => console.error('Ops: ', err.message),
+        //                    err => this.processRetry(err, 'iKy', 'sherlock', this.username),
+        //                    () => console.log('Completed Sherlock'),
+        //     );
+        // }
 
         // Holehe
         if (this.isModuleParamRunTaskExec('holehe', this.email, 'User', 100)) {
@@ -622,17 +622,18 @@ export class DataGatherInfoService {
         // Evaluation of datas
         if (datas['username'] !== '') {
             console.log('Username : ', datas['username']);
-            // Sherlock
-            if (this.isModuleParamRunTaskExec('sherlock', datas['username'], 'User', 100)) {
-                this.showToast('info', 'Sherlock', 'Send information gathering');
-                this.globalGather['taskresume'][0].PP++;
-                this.executeRequest$('sherlock', {username: datas['username'], from: 'User'})
-                    .subscribe(this.processResponse,
-                               // err => console.error('Ops: ', err.message),
-                               err => this.processRetry(err, 'User', 'sherlock', datas['username']),
-                               () => console.log('Completed Sherlock'),
-                );
-            }
+            // // Sherlock (Temporary disable)
+            // if (this.isModuleParamRunTaskExec('sherlock', datas['username'], 'User', 100)) {
+            //     this.showToast('info', 'Sherlock', 'Send information gathering');
+            //     this.globalGather['taskresume'][0].PP++;
+            //     this.executeRequest$('sherlock', {username: datas['username'], from: 'User'})
+            //         .subscribe(this.processResponse,
+            //                    // err => console.error('Ops: ', err.message),
+            //                    err => this.processRetry(err, 'User', 'sherlock', datas['username']),
+            //                    () => console.log('Completed Sherlock'),
+            //     );
+            // }
+
             // Dorks
             if (this.isModuleParamRunTaskExec('dorks', datas['username'], 'User', 100)) {
                 this.showToast('info', 'Dorks', 'Send information gathering');
@@ -787,17 +788,17 @@ export class DataGatherInfoService {
                 );
             }
 
-            // Sherlock
-            if (this.isModuleParamRunTaskExec('sherlock', this.username, 'iKy', 1)) {
-                this.showToast('info', 'Sherlock', 'Send information gathering');
-                this.globalGather['taskresume'][0].PP++;
-                this.executeRequest$('sherlock', {username: this.username, from: 'iKy'})
-                    .subscribe(this.processResponse,
-                               // err => console.error('Ops: ', err.message),
-                               err => this.processRetry(err, 'iKy', 'sherlock', this.username),
-                               () => console.log('Completed Sherlock'),
-                );
-            }
+            // // Sherlock (Temporary disable)
+            // if (this.isModuleParamRunTaskExec('sherlock', this.username, 'iKy', 1)) {
+            //     this.showToast('info', 'Sherlock', 'Send information gathering');
+            //     this.globalGather['taskresume'][0].PP++;
+            //     this.executeRequest$('sherlock', {username: this.username, from: 'iKy'})
+            //         .subscribe(this.processResponse,
+            //                    // err => console.error('Ops: ', err.message),
+            //                    err => this.processRetry(err, 'iKy', 'sherlock', this.username),
+            //                    () => console.log('Completed Sherlock'),
+            //     );
+            // }
 
             // Holehe
             if (this.isModuleParamRunTaskExec('holehe', this.email, 'User', 100)) {
@@ -1102,16 +1103,34 @@ export class DataGatherInfoService {
             );
         }
 
-        this.showToast('success', module_name, 'Gather ended');
+        let stateTask = "SUCCESS";
+        let stateTooltip = "Success";
+        if (data.result[3].raw[0] != undefined && 
+            data.result[3].raw[0].status != undefined && 
+            data.result[3].raw[0].status.toLowerCase() == "fail") {
+            stateTask = "FAILURE";
+            stateTooltip = data.result[3].raw[0].traceback;
+            // console.warn("ToolTip", stateTooltip);
+        }
+
         this.globalGather['taskresume'][0].PS++;
-        this.globalGather[module_name] = data;
+
+        if (stateTask == "SUCCESS") {
+            this.showToast('success', module_name, 'Gather ended');
+            this.globalGather[module_name] = data;
+        } else {
+            this.showToast('danger', module_name, 'Gather ended');
+            // TODO : Remove this?
+            this.globalGather[module_name] = data; 
+        }
 
         for (let indexTaskexec in this.globalGather['taskexec']) {
             if (this.globalGather['taskexec'][indexTaskexec].module === module_name &&
                 this.globalGather['taskexec'][indexTaskexec].param === param) {
 
-                this.globalGather['taskexec'][indexTaskexec].state = 'SUCCESS';
-                console.log('State change..................SUCCESS');
+                this.globalGather['taskexec'][indexTaskexec].state = stateTask;
+                this.globalGather['taskexec'][indexTaskexec].reason = stateTooltip;
+                // console.log('State change..................',stateTask);
                 // console.log(this.globalGather[module_name].result[2].validation);
 
                 // Reprocess validation
@@ -1192,11 +1211,11 @@ export class DataGatherInfoService {
             status: type,
             destroyByClick: true,
             duration: 4000,
-            hasIcon: true,
             position: NbGlobalPhysicalPosition.TOP_RIGHT,
             preventDuplicates: true,
         };
         // const titleContent = title ? `${title}` : '';
+            // hasIcon: true,
 
         this.toastrService.show(
             body,
