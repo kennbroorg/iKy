@@ -73,9 +73,9 @@
 
                   <nb-action>
                     <div>Validation : </div>
-                    <div class="validation-menu" (click)="validationShow['hard'] = !validationShow['hard']"><span  nbTooltip="Hard validation" nbTooltipPlacement="bottom" nbTooltipStatus="success" class="icon validation-hard" (click)="onH = !onH" [style.color]="!onH ? '#004d1a' : 'green'"></span></div>
-                    <div class="validation-menu" (click)="validationShow['soft'] = !validationShow['soft']"><span nbTooltip="Soft validation" nbTooltipPlacement="top" nbTooltipStatus="warning" class="icon validation-soft" (click)="onS = !onS" [style.color]="!onS ? '#4d3d00' : '#ffcc00'"></span></div>
-                    <div class="validation-menu" (click)="validationShow['no'] = !validationShow['no']"><span nbTooltip="No validation" nbTooltipPlacement="bottom" nbTooltipStatus="danger" class="icon validation-no" (click)="onN = !onN" [style.color]="!onN ? '#4d0000' : '#cc0000'"></span></div>
+                    <div class="validation-menu" (click)="validationShow['hard'] = !validationShow['hard']"><span  nbTooltip="Hard validation" nbTooltipPlacement="bottom" nbTooltipStatus="success" class="icon validation-hard" (click)="onH = !onH" [style.color]="!onH ? 'rgba(0, 214, 143, 0.3)' : 'rgba(0, 214, 143, 1)'"></span></div>
+                    <div class="validation-menu" (click)="validationShow['soft'] = !validationShow['soft']"><span nbTooltip="Soft validation" nbTooltipPlacement="top" nbTooltipStatus="warning" class="icon validation-soft" (click)="onS = !onS" [style.color]="!onS ? 'rgba(255, 201, 77, 0.3)' : 'rgba(255, 201, 77, 1)'"></span></div>
+                    <div class="validation-menu" (click)="validationShow['no'] = !validationShow['no']"><span nbTooltip="No validation" nbTooltipPlacement="bottom" nbTooltipStatus="danger" class="icon validation-no" (click)="onN = !onN" [style.color]="!onN ? 'rgba(255, 61, 113, 0.3)' : 'rgba(255, 61, 113, 1)'"></span></div>
                   </nb-action>
 
                 </nb-actions>
@@ -181,7 +181,7 @@
 
           <!-- Twitter Social -->
           <!-- <div class="col-md-4" id="divTwitterSocial" #divTwitterSocial *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage=""> -->
-          <div class="col-md-4" id="divTwitterSocial" #divTwitterSocial *ngIf="gathered['twitter'] && gathered['twitter'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterSocial" #divTwitterSocial *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-social [data]="gathered['twitter']"></ngx-twitter-social>
           </div>
 
@@ -192,7 +192,7 @@
 
           <!-- Twitter Popularity -->
           <!-- <div class="col-md-4" id="divTwitterPopularity" #divTwitterPopularity *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && !gathered['twint'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage=""> -->
-          <div class="col-md-4" id="divTwitterPopularity" #divTwitterPopularity *ngIf="gathered['twitter'] && gathered['twitter'].result[4]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div class="col-md-4" id="divTwitterPopularity" #divTwitterPopularity *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && validationShow[gathered['twitter'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-popularity [data]="gathered['twitter']"></ngx-twitter-popularity>
           </div>
 
@@ -274,7 +274,7 @@
 
           <!-- Twitter Tweets vs Retweets -->
           <div class="col-md-4" id="divTwitterTwvsrt" #divTwitterTwvsrt 
-            *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && gathered['twitter'].result[4] && gathered['twitter'].result[4].graphic[9] && gathered['twitter'].result[4] && gathered['twitter'].result[4].graphic[11].twvsrt?.length > 0"
+            *ngIf="gathered['twitter'] && gathered['twitter'].result[4] && gathered['twitter'].result[4] && gathered['twitter'].result[4].graphic[9] && gathered['twitter'].result[4] && gathered['twitter'].result[4].graphic[11].twvsrt?.length > 0 && validationShow[gathered['twitter'].result[2]['validation']]"
             [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-twitter-twvsrt [data]="gathered['twitter']"></ngx-twitter-twvsrt>
           </div>
@@ -675,9 +675,9 @@
 
                   <nb-action>
                     <div>Validation : </div>
-                    <div class="validation-menu" (click)="validationShow['hard'] = !validationShow['hard']"><span  nbTooltip="Hard validation" nbTooltipPlacement="bottom" nbTooltipStatus="success" class="icon validation-hard" (click)="onH = !onH" [style.color]="!onH ? '#004d1a' : 'green'"></span></div>
-                    <div class="validation-menu" (click)="validationShow['soft'] = !validationShow['soft']"><span nbTooltip="Soft validation" nbTooltipPlacement="top" nbTooltipStatus="warning" class="icon validation-soft" (click)="onS = !onS" [style.color]="!onS ? '#4d3d00' : '#ffcc00'"></span></div>
-                    <div class="validation-menu" (click)="validationShow['no'] = !validationShow['no']"><span nbTooltip="No validation" nbTooltipPlacement="bottom" nbTooltipStatus="danger" class="icon validation-no" (click)="onN = !onN" [style.color]="!onN ? '#4d0000' : '#cc0000'"></span></div>
+                    <div class="validation-menu" (click)="validationShow['hard'] = !validationShow['hard']"><span  nbTooltip="Hard validation" nbTooltipPlacement="bottom" nbTooltipStatus="success" class="icon validation-hard" (click)="onH = !onH" [style.color]="!onH ? 'rgba(0, 214, 143, 0.3)' : 'rgba(0, 214, 143, 1)'"></span></div>
+                    <div class="validation-menu" (click)="validationShow['soft'] = !validationShow['soft']"><span nbTooltip="Soft validation" nbTooltipPlacement="top" nbTooltipStatus="warning" class="icon validation-soft" (click)="onS = !onS" [style.color]="!onS ? 'rgba(255, 201, 77, 0.3)' : 'rgba(255, 201, 77, 1)'"></span></div>
+                    <div class="validation-menu" (click)="validationShow['no'] = !validationShow['no']"><span nbTooltip="No validation" nbTooltipPlacement="bottom" nbTooltipStatus="danger" class="icon validation-no" (click)="onN = !onN" [style.color]="!onN ? 'rgba(255, 61, 113, 0.3)' : 'rgba(255, 61, 113, 1)'"></span></div>
                   </nb-action>
 
                 </nb-actions>

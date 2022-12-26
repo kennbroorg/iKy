@@ -121,7 +121,21 @@
             [canAutoResize]="false"
           >
             <ng-template let-row="row" let-value="value" style="text-align: center;" ngx-datatable-cell-template>
-              <div style="text-align: center;">{{value}}</div>
+              <!-- <div style="text-align: center;">{{value}}</div> -->
+              <!-- <div *ngIf="row.data[scoreColumn] == 'Score'">{{row.data[scoreColumn]}}</div> -->
+              <div *ngIf="value < 10" style="text-align: center;">
+                <i class="far fa-check-circle" style="color: rgba(255, 61, 113, 1)"></i>
+                <span> - {{ value }}</span>
+              </div>
+              <div *ngIf="value >= 10 && value < 99" style="text-align: center;">
+                <i class="far fa-check-circle" style="color: rgba(255, 201, 77, 1);"></i>
+                <span> - {{ value }}</span>
+              </div>
+              <div *ngIf="value >= 100" style="text-align: center;">
+                <i class="far fa-check-circle" style="color: rgba(0, 214, 143, 1);"></i>
+                <span> - {{ value }}</span>
+              </div>
+
             </ng-template>
           </ngx-datatable-column>
 
