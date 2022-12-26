@@ -422,6 +422,9 @@ def p_twitter(username, from_m):
     # Tasks Array
     tasks = []
 
+    # Presence Array
+    presence = []
+
     raw_node_total = []
     raw_node_total.append({'raw_node_info': user_info})
     raw_node_total.append({'raw_node_tweets': tweets_info})
@@ -485,12 +488,14 @@ def p_twitter(username, from_m):
                    "icon": "fas fa-map-marker-alt",
                    "link": link_social}
     gather.append(gather_item)
+    print(f"LOC: {user_info['location']}")
     if user_info['location']:
         profile_item = {'location': user_info['location']}
         profile.append(profile_item)
 
         try:
             geo_item = location_geo(user_info['location'], time=create_date)
+            print(f"GEO: {geo_item}")
             if(geo_item):
                 profile.append({'geo': geo_item})
         except Exception:
@@ -622,6 +627,15 @@ def p_twitter(username, from_m):
         timeline.append(timeline_item)
     except Exception:
         pass
+
+    presence.append({"name": "twitter",
+                        "children": [
+                            {"name": "followers", 
+                            "value": user_info['followers']},
+                            {"name": "following", 
+                            "value": user_info['following']},
+                        ]})
+    profile.append({'presence': presence})
 
     total.append({'raw': raw_node_total})
     graphic.append({'social': gather})

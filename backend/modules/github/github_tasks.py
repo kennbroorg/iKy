@@ -6,11 +6,14 @@ import json
 import requests
 import re
 from datetime import date, datetime
+import traceback
 
 try:
     from factories._celery import create_celery
     from factories.application import create_application
     from celery.utils.log import get_task_logger
+    from factories.iKy_functions import analize_rrss
+    from factories.iKy_functions import location_geo
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
@@ -18,6 +21,8 @@ except ImportError:
     from factories._celery import create_celery
     from factories.application import create_application
     from celery.utils.log import get_task_logger
+    from factories.iKy_functions import analize_rrss
+    from factories.iKy_functions import location_geo
     celery = create_celery(create_application())
 
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
@@ -25,19 +30,11 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
-# Compatibility code
-try:
-    # Python 2: "unicode" is built-in
-    unicode
-except NameError:
-    unicode = str
-
-
 def findReposFromUsername(username):
     response = requests.get(
         'https://api.github.com/users/%s/repos?per_page=100&sort=pushed' % 
         username).text
-    repos = re.findall(r'"full_name":"%s/(.*?)",.*?"fork":(.*?),' % username, 
+    repos = re.findall(r'"full_name":"%s\/(.*?)",.*?"fork":(.*?),' % username, 
                        response)
     nonForkedRepos = []
     for repo in repos:
@@ -72,8 +69,7 @@ def findEmailFromUsername(username):
     return False
 
 
-@celery.task
-def t_github(email, from_m="Initial"):
+def p_github(email, from_m="Initial"):
     """ Task of Celery that get info from github """
 
     if ("@" in email):
@@ -81,32 +77,51 @@ def t_github(email, from_m="Initial"):
     else:
         username = email
 
-    email_github = findEmailFromUsername(username)
-
     req = requests.get("https://api.github.com/users/%s" % username)
 
     today = date.today()
     actual_year_from = date(today.year, today.month, 1)
     actual_year_to = date(today.year, today.month, today.day)
-    previous_year_from = date(today.year - 1, today.month, 1)
-    previous_year_to = date(today.year - 1, today.month, today.day)
+    # previous_year_from = date(today.year - 1, today.month, 1)
+    # previous_year_to = date(today.year - 1, today.month, today.day)
 
     svg_req = "https://github.com/users/%s/contributions?from=%s&to=%s"
     svg_actual_r = requests.get(svg_req % (username, str(actual_year_from),
                                            str(actual_year_to)))
-    svg_previous_r = requests.get(svg_req % (username, str(previous_year_from),
-                                             str(previous_year_to)))
+    # svg_previous_r = requests.get(svg_req % (username, str(previous_year_from),
+    #                                          str(previous_year_to)))
+
     # Change color of calendar
     # svg_actual = svg_actual_r.text.replace('ebedf0', '4d4d4d')
     # svg_previous = svg_previous_r.text.replace('ebedf0', '4d4d4d')
-    svg_actual = svg_actual_r.text.replace('ebedf0', '295757')
-    svg_previous = svg_previous_r.text.replace('ebedf0', '295757')
-
-    # TODO : Many things
-    # Use other API URLs
+    svg_actual = svg_actual_r.text
+    svg_actual = svg_actual.replace('data-level="0"', 'style="fill:rgb(0,0,0);"')
+    svg_actual = svg_actual.replace('data-level="1"', 'style="fill:rgb(44, 230, 155, 0.2);"')
+    svg_actual = svg_actual.replace('data-level="2"', 'style="fill:rgb(44, 230, 155, 0.4);"')
+    svg_actual = svg_actual.replace('data-level="3"', 'style="fill:rgb(44, 230, 155, 0.6);"')
+    svg_actual = svg_actual.replace('data-level="4"', 'style="fill:rgb(44, 230, 155, 0.8);"')
+    # svg_previous = svg_previous_r.text.replace('ebedf0', '295757')
 
     # Raw Array
-    raw_node = json.loads(unicode(req.text))
+    raw_node = json.loads(req.text)
+
+    # Get login
+    try:
+        login = raw_node['login']
+    except Exception:
+        raise Exception("User not found")
+
+    # Get email
+    if ('email' in raw_node) and (raw_node['email'] is not None):
+        email_github = raw_node['email']
+    else:
+        email_github = findEmailFromUsername(login)
+
+    # Get twitter account
+    if ('twitter_username' in raw_node) and (raw_node['twitter_username'] is not None):
+        twitter_username = raw_node['twitter_username']
+    else:
+        twitter_username = False
 
     # Total
     total = []
@@ -132,6 +147,9 @@ def t_github(email, from_m="Initial"):
         # Gather Array
         gather = []
 
+        # Tasks Array
+        tasks = []
+
         link = "Github"
         gather_item = {"name-node": "Github", "title": "Github",
                        "subtitle": "", "icon": "fab fa-github", "link": link}
@@ -151,14 +169,22 @@ def t_github(email, from_m="Initial"):
             profile_item = {'name': raw_node['name']}
             profile.append(profile_item)
             gather.append(gather_item)
-        if ('email' in raw_node) and (raw_node['email'] is not None):
+        if (email_github):
             gather_item = {"name-node": "GitEmail", "title": "Email",
-                           "subtitle": raw_node['email'],
+                           "subtitle": email_github,
                            "icon": "fas fa-envelope",
                            "link": link}
             gather.append(gather_item)
             profile_item = {'email': raw_node['email']}
             profile.append(profile_item)
+        if (twitter_username):
+            gather_item = {"name-node": "GitTwitter", "title": "Twitter",
+                           "subtitle": twitter_username,
+                           "icon": "fab fa-twitter",
+                           "link": link}
+            gather.append(gather_item)
+            tasks.append({"module": "twitter",
+                            "param": twitter_username})
         if ('company' in raw_node) and (raw_node['company'] is not None):
             gather_item = {"name-node": "GitCompany", "title": "Company",
                            "subtitle": raw_node['company'],
@@ -180,6 +206,15 @@ def t_github(email, from_m="Initial"):
                            "icon": "fas fa-heart",
                            "link": link}
             gather.append(gather_item)
+            analyze = analize_rrss(raw_node['bio'])
+            for item in analyze:
+                if(item == 'url'):
+                    for i in analyze['url']:
+                        profile.append(i)
+                if(item == 'tasks'):
+                    for i in analyze['tasks']:
+                        tasks.append(i)
+
         if ('public_repos' in raw_node):
             gather_item = {"name-node": "GitRepos", "title": "Repos",
                            "subtitle": raw_node['public_repos'],
@@ -216,6 +251,17 @@ def t_github(email, from_m="Initial"):
         if ('location' in raw_node) and (raw_node['location'] is not None):
             profile_item = {'location': raw_node['location']}
             profile.append(profile_item)
+            loc = location_geo(raw_node['location'])
+            print(f"LOC: {raw_node['location']} - {loc}")
+            if (loc):
+                loc_item = {'Caption': 'Github',
+                                'Accessability': '',
+                                'Latitude': loc['Latitude'],
+                                'Longitude': loc['Longitude'],
+                                'Name': loc['Caption'],
+                                'Time': ''
+                                }
+                profile.append({'geo': loc_item})
         if ('created_at' in raw_node) and (raw_node['created_at'] is not None):
             ctime = datetime.strptime(raw_node['created_at'],
                                       "%Y-%m-%dT%H:%M:%SZ")
@@ -240,16 +286,48 @@ def t_github(email, from_m="Initial"):
                                   "value": int(raw_node['following'])},
                              ]})
             profile.append({'presence': presence})
+        
+        social = []
+        social_item = {"name": "Github",
+                    "url": "https://www.github.com/" + username,
+                    "icon": "fab fa-github",
+                    "source": "Github",
+                    "username": username}
+        social.append(social_item)
+        profile.append({"social": social})
+
         # Please, respect the order of items in the total array
         # Because the frontend depend of that (By now)
         total.append({'raw': raw_node})
         graphic.append({'github': gather})
         graphic.append({'cal_actual': svg_actual})
-        graphic.append({'cal_previous': svg_previous})
+        graphic.append({'cal_previous': ''})
         total.append({'graphic': graphic})
         total.append({'profile': profile})
         total.append({'timeline': timeline})
+        total.append({'tasks': tasks})
 
+    return total
+
+
+@celery.task
+def t_github(email, from_m="Initial"):
+    total = []
+    try:
+        total = p_github(email, from_m)
+    except Exception as e:
+        traceback.print_exc()
+        traceback_text = traceback.format_exc()
+        total.append({'module': 'github'})
+        total.append({'param': email})
+        total.append({'validation': 'not_used'})
+
+        raw_node = []
+        raw_node.append({"status": "Fail",
+                         "reason": "{}".format(e),
+                         # "traceback": 1})
+                         "traceback": traceback_text})
+        total.append({"raw": raw_node})
     return total
 
 
