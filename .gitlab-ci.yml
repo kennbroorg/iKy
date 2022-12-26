@@ -19,7 +19,8 @@ install:
     paths:
       - frontend/node_modules/
   only:
-    - merge_requests
+    - iKy
+
 
 
 build:
@@ -49,7 +50,9 @@ build:
     paths:
       - iKy.zip
   only:
-    - merge_requests
+    - iKy
+
+
 
 deploy:
   stage: deploy
@@ -73,4 +76,4 @@ deploy:
     - git remote rm origin && git remote add origin git@gitlab.com:kennbroorg/ikyweb.git
     - git push origin master
   only:
-    - merge_requests
+    - iKy
