@@ -21,6 +21,7 @@ import {
     NbWindowModule } from '@nebular/theme';
 
 import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import { NbBadgeModule } from '@nebular/theme';
 import { TreeModule } from 'angular-tree-component';
@@ -144,7 +145,8 @@ import { TwitchHourComponent } from './twitch/twitch-hour/twitch-hour.component'
 import { TwitchWeekComponent } from './twitch/twitch-week/twitch-week.component';
 import { TwitchDurationComponent } from './twitch/twitch-duration/twitch-duration.component';
 
-import { FsIconComponent, TaskexecComponent } from './taskexec/taskexec.component';
+// import { FsIconComponent, TaskexecComponent } from './taskexec/taskexec.component';
+import { TaskexecComponent } from './taskexec/taskexec.component';
 
 import { SharedModule } from '../shared/shared.module';
 import { ErrorGraphsComponent } from './error/error-graphs.component';
@@ -170,6 +172,7 @@ import { ErrorGraphsComponent } from './error/error-graphs.component';
     NbInputModule,
     NbTreeGridModule,
     Ng2SmartTableModule,
+    NgxDatatableModule,
     NbAccordionModule,
     SharedModule,
     LeafletModule,
@@ -240,7 +243,7 @@ import { ErrorGraphsComponent } from './error/error-graphs.component';
     TiktokGraphsComponent,
     SkypeComponent,
     TaskexecComponent,
-    FsIconComponent,
+    // FsIconComponent,
     SherlockGraphComponent,
     SherlockListComponent,
     HoleheGraphComponent,
