@@ -1,74 +1,178 @@
-    <nb-card>
-      <nb-card-body style="padding-top:0px; padding-bottom: 0px;">
+<nb-accordion style="margin-bottom: 30px;">
+  <nb-accordion-item #item>
+    <nb-accordion-item-header style="height: 56px;">
+      <div style="width: 100%; text-align: center;">TASKEXEC</div>
+    </nb-accordion-item-header>
 
-          <!-- <table [nbTreeGrid]="dataSource" [nbSort]="dataSource" (sort)="updateSort($event)"> -->
-          <!-- <table [nbTreeGrid]="dataSource" [nbSort]="dataSource"> -->
-          <table [nbTreeGrid]="data" [nbSort]="dataSource">
-      
-              <!-- <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr> -->
-            <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
-      
-            <!-- Modules -->
-            <ng-container [nbTreeGridColumnDef]="customColumn">
-              <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection(customColumn)" *nbTreeGridHeaderCellDef>
-                  {{customColumn}}
-              </th>
-              <td nbTreeGridCell *nbTreeGridCellDef="let row">
-                  <!-- <ngx-fs-icon [kind]="row.data.module" [expanded]="row.expanded"></ngx-fs-icon> -->
-                <ngx-fs-icon [kind]="row.data.module" [expanded]="true"></ngx-fs-icon>
-                <!-- <div [ngClass]="{
-                    'icon-task-list':row.data[customColumn] != 'TaskList'
-                    }">{{row.data[customColumn]}}</div> -->
-                {{row.data[customColumn]}}
-              </td>
-            </ng-container>
-      
-            <!-- Common Columns -->
-            <ng-container *ngFor="let column of defaultColumns; let index = index"
-                          [nbTreeGridColumnDef]="column"
-                          [showOn]="getShowOn(index)">
-              <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection(column)" *nbTreeGridHeaderCellDef>
-                  {{column}}
-              </th>
-              <td nbTreeGridCell *nbTreeGridCellDef="let row">{{row.data[column] || '-'}}</td>
-            </ng-container>
-      
-            <!-- Process Score -->
-            <ng-container [nbTreeGridColumnDef]="scoreColumn">
-              <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection(scoreColumn)" *nbTreeGridHeaderCellDef>
-                  {{scoreColumn}}
-              </th>
-              <td nbTreeGridCell *nbTreeGridCellDef="let row">
-                  <div *ngIf="row.data[scoreColumn] == 'Score'">{{row.data[scoreColumn]}}</div>
-                  <div *ngIf="row.data[scoreColumn] < 10"><i class="far fa-check-circle" style="color: red;"></i><span> - {{row.data[scoreColumn]}}</span></div>
-                  <div *ngIf="row.data[scoreColumn] >= 10 && row.data[scoreColumn] < 99"><i class="far fa-check-circle" style="color: yellow;"></i><span> - {{row.data[scoreColumn]}}</span></div>
-                  <div *ngIf="row.data[scoreColumn] >= 100"><i class="far fa-check-circle" style="color: green;"></i><span> - {{row.data[scoreColumn]}}</span></div>
-              </td>
-            </ng-container>
-      
-            <!-- Process Status -->
-            <ng-container [nbTreeGridColumnDef]="stateColumn">
-              <th nbTreeGridHeaderCell [nbSortHeader]="getSortDirection(stateColumn)" *nbTreeGridHeaderCellDef>
-                  {{stateColumn}}
-              </th>
-              <td nbTreeGridCell *nbTreeGridCellDef="let row">
-                  <div [ngClass]="{
-                          'alert-pending':row.data[stateColumn] === 'PENDING',
-                          'alert-success':row.data[stateColumn] === 'SUCCESS',
-                          'alert-process':row.data[stateColumn] === 'PROCESS',
-                          'alert-failure':row.data[stateColumn] === 'FAILURE'
-                          }">{{row.data[stateColumn]}}</div>
-              </td>
-            </ng-container>
-      
-          </table>
-    
-          <!--
-          <div style="margin-top: 10px;">
-            <label class="search-label" for="search">FILTER</label>
-            <input nbInput [nbFilterInput]="dataSource" id="search" class="search-input">
-          </div>
-          -->
-      
-      </nb-card-body>
-    </nb-card>
+    <nb-accordion-item-body style="left: 0px; right: 0px; margin: auto;">
+      <!-- <div style="text-align:center;"> -->
+      <div>
+        <ngx-datatable
+          #myTable
+          columnMode="flex"
+          [rows]="rows"
+          rowHeight="40"
+          headerHeight="40"
+        >
+
+          <!--[limit]="10"-->
+          <!--[columns]="columns"-->
+          <!--[footerHeight]="100"-->
+          <!--[headerHeight]="50"-->
+          <!--[footerHeight]="50"-->
+          <!--[summaryRow]="true"-->
+          <!--[summaryPosition]="'bottom'"-->
+
+          <!-- Inline Editing -->
+          <!-- Filtering -->
+          <!-- Live data -->
+          <!-- Context Menu -->
+          <!-- CSS Classes -->
+          <!-- Footer Template -->
+          <!-- Fixed Row height (colores de row)-->
+          <!-- Row Detail !!!! -->
+          <!-- Paging (Creo que sería Virtual Server Side)-->
+          <!-- Default Sort -->
+          <!-- Multiple click row -->
+          <!-- Templates -->
+          <!-- Column Togling -->
+          <!-- Column Pining -->
+          <!-- Column Pining -->
+          <!-- Sumary Row -->
+
+          <!-- Icon -->
+          <!-- <ngx-datatable-column
+            name="T"
+            title="TaskExec"
+            prop="long_short"
+            [width]="30"
+            [resizeable]="false"
+            [sortable]="false"
+            [draggable]="false"
+            [canAutoResize]="false"
+            [summaryFunc]="emptySum"
+          >
+            <ng-template let-column="column" ngx-datatable-header-template> 
+              <div nbTooltip="Trade type" nbTooltipStatus="primary">T</div>
+            </ng-template>
+            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+              <span nbTooltip="LONG" nbTooltipStatus="success" *ngIf="value==0">
+                <nb-icon icon="caret-square-up" style="color: rgba(0, 214, 143, 0.5); text-align: center;"></nb-icon>
+              </span>
+              <span nbTooltip="SHORT" nbTooltipStatus="danger" *ngIf="value==1">
+                <nb-icon icon="caret-square-down" style="color: rgba(255, 61, 113, 0.5); text-align: center;"></nb-icon>
+              </span>
+            </ng-template>
+          </ngx-datatable-column> -->
+
+          <!-- Module -->
+          <ngx-datatable-column
+            name="Module"
+            prop="module"
+            width="200"
+            [resizeable]="false"
+            [sortable]="true"
+            [draggable]="false"
+            [canAutoResize]="false"
+          >
+            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+              {{ value }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- Param -->
+          <ngx-datatable-column
+            name="Parameter"
+            prop="param"
+            width="300"
+            [resizeable]="false"
+            [sortable]="true"
+            [draggable]="false"
+            [canAutoResize]="false"
+          >
+            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+              {{ value }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- From -->
+          <ngx-datatable-column
+            name="From"
+            prop="from"
+            width="150"
+            [resizeable]="false"
+            [sortable]="true"
+            [draggable]="false"
+            [canAutoResize]="false"
+          >
+            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+              <div style="text-align: center;">{{value}}</div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- Score -->
+          <ngx-datatable-column
+            name="Score"
+            prop="score"
+            width="150"
+            [resizeable]="false"
+            [sortable]="true"
+            [draggable]="false"
+            [canAutoResize]="false"
+          >
+            <ng-template let-row="row" let-value="value" style="text-align: center;" ngx-datatable-cell-template>
+              <!-- <div style="text-align: center;">{{value}}</div> -->
+              <!-- <div *ngIf="row.data[scoreColumn] == 'Score'">{{row.data[scoreColumn]}}</div> -->
+              <div *ngIf="value < 10" style="text-align: center;">
+                <i class="far fa-check-circle" style="color: rgba(255, 61, 113, 1)"></i>
+                <span> - {{ value }}</span>
+              </div>
+              <div *ngIf="value >= 10 && value < 99" style="text-align: center;">
+                <i class="far fa-check-circle" style="color: rgba(255, 201, 77, 1);"></i>
+                <span> - {{ value }}</span>
+              </div>
+              <div *ngIf="value >= 100" style="text-align: center;">
+                <i class="far fa-check-circle" style="color: rgba(0, 214, 143, 1);"></i>
+                <span> - {{ value }}</span>
+              </div>
+
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- State -->
+          <!-- <ngx-datatable-column name="State" prop="state" [cellClass]="getStateColor">
+            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template cellClass="tag-tag">
+                {{ value }}
+            </ng-template>
+          </ngx-datatable-column> -->
+
+          <!-- State -->
+          <ngx-datatable-column
+            name="State"
+            prop="state"
+            width="300"
+            [resizeable]="false"
+            [sortable]="true"
+            [draggable]="false"
+            [canAutoResize]="false" [cellClass]="getStateColor"
+          >
+            <ng-template let-column="column" ngx-datatable-header-template> 
+              <!-- <div nbTooltip="State of process executed" nbTooltipStatus="primary">State</div> -->
+              State
+            </ng-template>
+            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template cellClass="tag-tag">
+              <div class="tag-tag" *ngIf="row['state'] != 'FAILURE'">
+                {{ value }}
+              </div>
+              <div class="tag-tag" [nbTooltip]="row['reason']" nbTooltipStatus="danger" *ngIf="row['state'] == 'FAILURE'">
+                {{ value }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+        </ngx-datatable>    
+      </div>
+
+    </nb-accordion-item-body>
+  </nb-accordion-item>
+</nb-accordion>
