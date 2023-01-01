@@ -64,11 +64,12 @@ def extract_mails(text):
 
 def extract_url_linkedin(text):
     tasks = []
-    regex = r"((http(s)?(\:\/\/))+(www\.)?(linkedin)*(\.[a-zA-Z]{2,3}\/?))[^\s\b\n|]*[^.,;:\?\!\@\^\$ -]"
+    # regex = r"((http(s)?(\:\/\/))+(www\.)?(linkedin)*(\.[a-zA-Z]{2,3}\/?))[^\s\b\n|]*[^.,;:\?\!\@\^\$ -]"
+    regex = r"http[s]?\:\/\/+www\.?linkedin*\.[a-zA-Z]{2,3}\/?\/in\/([^\s\b\n|]*[^.,;:\?\!\@\^\$ -])\/"
     matches = re.finditer(regex, text, re.MULTILINE)
     for matchNum, match in enumerate(matches, start=1):
         tasks.append({"module": "linkedin",
-                      "param": match.group()})
+                      "param": match.group(1)})
     return tasks
 
 
@@ -99,6 +100,36 @@ def extract_url_tiktok(text):
     for matchNum, match in enumerate(matches, start=1):
         tasks.append({"module": "tiktok",
                       "param": match.group(9)})
+    return tasks
+
+
+def extract_url_github(text):
+    tasks = []
+    regex = r"((http(s)?(\:\/\/))+(www\.)?(github)*(\.[a-zA-Z]{2,3}\/?))(@)?(\w+)(/)?"
+    matches = re.finditer(regex, text, re.MULTILINE)
+    for matchNum, match in enumerate(matches, start=1):
+        tasks.append({"module": "github",
+                      "param": match.group(9)})
+    return tasks
+
+
+def extract_url_githubio(text):
+    tasks = []
+    regex = r"http[s]?\:\/\/+(\w+)\.github.io"
+    matches = re.finditer(regex, text, re.MULTILINE)
+    for matchNum, match in enumerate(matches, start=1):
+        tasks.append({"module": "github",
+                      "param": match.group(1)})
+    return tasks
+
+
+def extract_github(text):
+    tasks = []
+    regex = r"(?i)(|.*)github(:)?( *)?(@)?(\w+)"
+    matches = re.finditer(regex, text, re.MULTILINE)
+    for matchNum, match in enumerate(matches, start=1):
+        tasks.append({"module": "github",
+                      "param": match.group(5)})
     return tasks
 
 
@@ -158,6 +189,9 @@ def analize_rrss(text):
     tasks_temp.append(extract_url_instagram(text))
     tasks_temp.append(extract_url_twitter(text))
     tasks_temp.append(extract_url_tiktok(text))
+    tasks_temp.append(extract_url_github(text))
+    tasks_temp.append(extract_url_githubio(text))
+    tasks_temp.append(extract_github(text))
     tasks_temp.append(extract_twitter(text))
     tasks_temp.append(extract_tiktok(text))
     tasks_temp.append(extract_instagram(text))
