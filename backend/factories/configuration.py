@@ -39,6 +39,7 @@ def get_config():
                           'modules.leaklookup.leaklookup_tasks',
                           'modules.spotify.spotify_tasks',
                           'modules.twitch.twitch_tasks',
+                          'modules.mastodon.mastodon_tasks',
                           'modules.dorks.dorks_tasks',
                           'modules.twitter_comparison.twitter_info_tasks',
                           'modules.twitter_comparison.twitter_comp_tasks')
