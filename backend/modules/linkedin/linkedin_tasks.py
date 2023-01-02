@@ -108,6 +108,8 @@ def p_linkedin(user, from_m):
         else:
             s.cookies['li_at'] = v_li_at
             s.cookies['JSESSIONID'] = v_JSESSIONID
+            print(f"li_at - {v_li_at}")
+            print(f"JSESSIONID - {v_JSESSIONID}")
             s.headers = headers
             s.headers["csrf-token"] = s.cookies["JSESSIONID"].strip('"')
 
@@ -118,7 +120,7 @@ def p_linkedin(user, from_m):
 
     # Get ID
     ids = []
-    match = re.search(r'\"profileId\":\"(\w*)\"', req.text)
+    match = re.search(r'\"profileId\":\"([a-zA-Z0-9_\-\.]+)\"', req.text)
     if (match):
         ids = match.groups()[0].strip()
     elif ('This profile can\'t be accessed' in req.text):

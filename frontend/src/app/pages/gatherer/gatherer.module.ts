@@ -145,6 +145,10 @@ import { TwitchHourComponent } from './twitch/twitch-hour/twitch-hour.component'
 import { TwitchWeekComponent } from './twitch/twitch-week/twitch-week.component';
 import { TwitchDurationComponent } from './twitch/twitch-duration/twitch-duration.component';
 
+import { MastodonGraphComponent } from './mastodon/mastodon-graph/mastodon-graph.component';
+import { MastodonSocialComponent } from './mastodon/mastodon-social/mastodon-social.component';
+import { MastodonListComponent } from './mastodon/mastodon-list/mastodon-list.component';
+
 // import { FsIconComponent, TaskexecComponent } from './taskexec/taskexec.component';
 import { TaskexecComponent } from './taskexec/taskexec.component';
 
@@ -272,6 +276,9 @@ import { ErrorGraphsComponent } from './error/error-graphs.component';
     TwitchHourComponent,
     TwitchWeekComponent,
     TwitchDurationComponent,
+    MastodonGraphComponent,
+    MastodonSocialComponent,
+    MastodonListComponent,
   ],
   providers: [
     InstagramMapService,

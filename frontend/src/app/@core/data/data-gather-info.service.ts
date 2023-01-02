@@ -416,6 +416,18 @@ export class DataGatherInfoService {
             );
         }
 
+        // Mastodon
+        if (this.isModuleParamRunTaskExec('mastodon', this.username, 'iKy', 1)) {
+            this.showToast('info', 'Mastodon', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('mastodon', {username: this.username, from: 'iKy'})
+                .subscribe(this.processResponse,
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'iKy', 'mastodon', this.username),
+                           () => console.log('Completed Mastodon'),
+            );
+        }
+
     }
 
     /* Gather Info Advance */
@@ -600,6 +612,21 @@ export class DataGatherInfoService {
                                // err => console.error('Ops: ', err.message),
                                err => this.processRetry(err, 'User', 'twitch', datas['twitch']),
                                () => console.log('Completed Twitch'),
+                );
+            }
+        }
+
+        if (datas['mastodon'] !== '') {
+            console.log('Mastodon : ', datas['mastodon']);
+            // Mastodon
+            if (this.isModuleParamRunTaskExec('mastodon', datas['mastodon'], 'User', 100)) {
+                this.showToast('info', 'Mastodon', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('mastodon', {username: datas['mastodon'], from: 'User'})
+                    .subscribe(this.processResponse,
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'mastodon', datas['mastodon']),
+                               () => console.log('Completed Mastodon'),
                 );
             }
         }
@@ -878,6 +905,20 @@ export class DataGatherInfoService {
                                    // err => console.error('Ops: ', err.message),
                                    err => this.processRetry(err, 'iKy', 'twitch', this.username),
                                    () => console.log('Completed Twitch'),
+                    );
+                }
+            }
+
+            if (datas['mastodon'] === '') {
+                // Mastodon
+                if (this.isModuleParamRunTaskExec('mastodon', this.username, 'iKy', 1)) {
+                    this.showToast('info', 'Mastodon', 'Send information gathering');
+                    this.globalGather['taskresume'][0].PP++;
+                    this.executeRequest$('mastodon', {username: this.username, from: 'iKy'})
+                        .subscribe(this.processResponse,
+                                   // err => console.error('Ops: ', err.message),
+                                   err => this.processRetry(err, 'iKy', 'mastodon', this.username),
+                                   () => console.log('Completed Mastodon'),
                     );
                 }
             }

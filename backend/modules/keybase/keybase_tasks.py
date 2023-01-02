@@ -320,7 +320,8 @@ def p_keybase(username, from_m):
 
         raw_node = []
         raw_node.append({"status": "Fail",
-                         "reason": "User not found"})
+                         "reason": "User not found",
+                         "traceback": "User not found"})
         total.append({"raw": raw_node})
 
     return total

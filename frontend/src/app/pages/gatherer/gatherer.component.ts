@@ -137,7 +137,7 @@ export class GathererComponent implements OnInit {
                             tiktok: string, tinder: string, 
                             venmo: string, reddit: string, 
                             spotify: string, twitch: string, 
-                            keybase: string) {
+                            keybase: string, mastodon: string) {
         console.log('Advance Search');
         console.log('email', email);
         console.log('username', username);
@@ -152,6 +152,7 @@ export class GathererComponent implements OnInit {
         console.log('spotify', spotify);
         console.log('twitch', twitch);
         console.log('keybase', keybase);
+        console.log('mastodon', mastodon);
 
         this.flipped = !this.flipped;
 
@@ -169,6 +170,7 @@ export class GathererComponent implements OnInit {
             spotify: spotify,
             twitch: twitch,
             keybase: keybase,
+            mastodon: mastodon,
         };
 
         this.gathered = this.dataGatherService.initialize();

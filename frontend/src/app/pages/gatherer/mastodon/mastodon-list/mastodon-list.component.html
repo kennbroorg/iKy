@@ -1,0 +1,103 @@
+  <nb-card size="small">
+    <nb-card-header>
+      <div (click)="openDialog(dialogMastodonList)">
+        MASTODON List User
+      </div>
+      <div class="help" [nbPopover]="mastodonListHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
+    </nb-card-header>
+
+    <nb-card-body id="nbCardMastodonList" style="text-align: center; margin: 0px; padding: 0px;">
+      <nb-list>
+        <nb-list-item *ngFor="let c of mastodonList">
+          <div class="contact">
+            <div style="width: 20%;">
+              <!-- <nb-user [picture]="c.avatar" [name]="c.account" [title]="c.server" size="large"></nb-user> -->
+              <!-- <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="{{c.icon}} fa-stack-1x" style="color: #333;"></i> 
+              </span> -->
+               <img [src]="c.avatar" class="avatar-circle">
+            </div>
+            <!-- <div class="info-container"> -->
+              <!-- <div class="user-name ng-star-inserted">{{c.account}}</div>  -->
+              <!-- <div class="user-title ng-star-inserted"> -->
+              <!-- <div style="left: 0px;"> -->
+              <div style="width: 80%;">
+                <p style="text-align: left; margin: 0px; padding:0px;">
+                  <strong style="font-weight: 500;">{{c.account}}</strong>
+                </p>
+                <p style="text-align: left; margin: 0px; padding:0px;">
+                  <strong style="color: #9afefe;">Toots</strong> : {{c.toots}} - <strong style="color: #9afefe;">Followers</strong> : {{c.followers}} - <strong style="color: #9afefe;">Followings</strong> : {{c.following}}
+                </p>
+                <p style="text-align: left; margin: 0px; padding:0px;" *ngIf="c.bios != ''">
+                  <strong style="color: #9afefe;">Bio</strong> : {{c.bios}}
+                </p>
+              </div>
+            <!-- </div> -->
+          </div>
+        </nb-list-item>
+      </nb-list>
+
+    </nb-card-body>
+  </nb-card>
+
+  <ng-template #dialogMastodonList let-data let-ref="dialogRef">
+    <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+      <nb-card-header>MASTODON List</nb-card-header>
+      <nb-card-body>
+        <nb-list>
+          <nb-list-item *ngFor="let c of mastodonList">
+            <div class="contact">
+              <div>
+                <nb-user [picture]="c.avatar" [name]="c.username" [title]="c.server" size="large"></nb-user>
+                <!-- <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="{{c.icon}} fa-stack-1x" style="color: #333;"></i> 
+                </span> -->
+              </div>
+              <div class="info-container">
+                <div class="user-name ng-star-inserted">{{c.account}}</div> 
+                <div class="user-title ng-star-inserted">
+                  <!-- <p align="left" style="margin: 0px; padding:0px; padding-top: 5px;"><strong style="font-weight: 500;">Full title</strong> : {{c.subtitle}}</p> -->
+                  <p align="left" style="margin: 0px; padding:0px;">
+                    <strong>Toots</strong> : {{c.toots}} - <strong>Followers</strong> : {{c.followers}} - <strong>Followings</strong> : {{c.following}}
+                  </p>
+                  <p align="left" style="margin: 0px; padding:0px;" *ngIf="c.bios != ''">
+                    <strong>Bio</strong> : {{c.bios}}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </nb-list-item>
+        </nb-list>
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
+
+  <ng-template #mastodonListHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        MASTODON Graphs Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : Mastodon</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        This window lists the latest posts, their likes, comments and text.
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module can be executed by entering a username in the <strong style="font-weight: 600;">mastodon</strong> field of the advanced search, being its validation indicator high since it has been entered by the user
+        </p> 
+        <p style="text-align: justify;">
+        It can also be executed if another module has found a mastodon username (Fullcontact, Keybase, Searchs, PeopleDataLabs, etc). Its validation indicator will be medium since its discovery is indirect
+        </p> 
+        <p style="text-align: justify;">
+        Finally, and with a low validation indicator, the module can be executed if a username was entered in the "username" field of the advanced search or if a mail was entered in the mail or advanced search. In this case the @domain.ext is cut out and the username is used as input
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p>MASTO project (https://github.com/C3n7ral051nt4g3ncy/Masto)</p> 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>

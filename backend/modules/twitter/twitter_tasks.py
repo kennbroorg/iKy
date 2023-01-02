@@ -49,6 +49,8 @@ def api_twitter_elevated(username):
     traceback_text = "OK"
     try:
         result_api = api.get_user(screen_name=username)
+    except tweepy.errors.NotFound as e:
+        raise(e)
     except Exception:
         traceback.print_exc()
         traceback_text = traceback.format_exc()

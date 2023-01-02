@@ -70,7 +70,13 @@ export class TimelineComponent implements OnInit {
         });
     }
 
-    toggleFlipViewAndSearch(email, username, twitter, instagram, linkedin, github, tiktok, tinder, venmo, reddit, spotify, twitch) {
+    toggleFlipViewAndSearch(email: string, username: string, 
+                            twitter: string, instagram: string, 
+                            linkedin: string, github: string, 
+                            tiktok: string, tinder: string, 
+                            venmo: string, reddit: string, 
+                            spotify: string, twitch: string, 
+                            keybase: string, mastodon: string) {
         console.log('Advance Search');
         console.log('email', email);
         console.log('username', username);
@@ -84,6 +90,8 @@ export class TimelineComponent implements OnInit {
         console.log('reddit', reddit);
         console.log('spotify', spotify);
         console.log('twitch', twitch);
+        console.log('keybase', keybase);
+        console.log('mastodon', mastodon);
 
         this.flipped = !this.flipped;
 
@@ -100,6 +108,8 @@ export class TimelineComponent implements OnInit {
             reddit: reddit,
             spotify: spotify,
             twitch: twitch,
+            keybase: keybase,
+            mastodon: mastodon,
         };
 
         this.gathered = this.dataGatherService.initialize();
@@ -107,8 +117,6 @@ export class TimelineComponent implements OnInit {
 
         this.gathered = this.dataGatherService.gathererInfoAdvance(this.datas);
         this.gathered = this.dataGatherService.pullGather();
-
-        this.router.navigate(['/pages/gatherer']);
 
     }
 
