@@ -1,0 +1,48 @@
+<nb-card size="small">
+  <nb-card-header>
+    <div (click)="openDialog(dialogMastodonGraph)">
+        MASTODON Graphs
+    </div>
+    <div class="help" [nbPopover]="mastodonGraphsHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
+    <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
+  </nb-card-header>
+  <nb-card-body id="nbCardGraphs" #nbCardGraphs style="text-align: center; overflow: hidden;">
+      <ngx-graphs [data]="mastodonGraph"></ngx-graphs>
+  </nb-card-body>
+</nb-card>
+
+<ng-template #dialogMastodonGraph let-data let-ref="dialogRef">
+    <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+      <nb-card-header>MASTODON Graph</nb-card-header>
+      <nb-card-body style="overflow: hidden; padding: 0px;">
+        <ngx-graphs [data]="mastodonGraph" modal="true"></ngx-graphs>
+      </nb-card-body>
+    </nb-card>
+</ng-template>
+
+<ng-template #mastodonGraphsHelp>
+  <nb-card style="margin: 0px; max-width: 50rem;">
+    <nb-card-header status="warning">
+      MASTODON Graphs Help
+    </nb-card-header>
+    <nb-card-body>
+      <p><strong style="font-weight: 600;">Module</strong> : Mastodon</p> 
+      <p style="font-weight: 600;">Description</p> 
+      <p style="text-align: justify;">
+      This graph shows in network nodes the basic information extracted, such as name, followers, ID, etc.
+      </p>
+      <p style="font-weight: 600;">Execution</p> 
+      <p style="text-align: justify;">
+      This module can be executed by entering a username in the <strong style="font-weight: 600;">mastodon</strong> field of the advanced search, being its validation indicator high since it has been entered by the user
+      </p> 
+      <p style="text-align: justify;">
+      It can also be executed if another module has found a mastodon username (Fullcontact, Keybase, Searchs, PeopleDataLabs, etc). Its validation indicator will be medium since its discovery is indirect
+      </p> 
+      <p style="text-align: justify;">
+      Finally, and with a low validation indicator, the module can be executed if a username was entered in the "username" field of the advanced search or if a mail was entered in the mail or advanced search. In this case the @domain.ext is cut out and the username is used as input
+      </p> 
+      <p style="font-weight: 600;">Source</p> 
+      <p>MASTO project (https://github.com/C3n7ral051nt4g3ncy/Masto)</p> 
+    </nb-card-body>
+  </nb-card>
+</ng-template>
