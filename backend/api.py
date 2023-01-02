@@ -524,6 +524,23 @@ def r_twitch(username=None):
 
 
 ################################################
+# Mastodon
+################################################
+@home.route("/mastodon", methods=["POST"])
+def r_mastodon(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("Mastodon - Detected Username : ", username, from_m)
+    res = celery.send_task('modules.mastodon.mastodon_tasks.t_mastodon',
+                           args=(username, ))
+    print("Mastodon - Task : ", res.task_id)
+    return jsonify(module="mastodon", task=res.task_id,
+                   param=username, from_m=from_m)
+
+
+################################################
 # Dorks
 ################################################
 @home.route("/dorks", methods=["POST"])

@@ -139,6 +139,9 @@ def several_user(username, user_data, server):
             }
         )
 
+    total.append({'module': 'mastodon'})
+    total.append({'param': username})
+    total.append({'validation': 'no'})
     total.append({'raw': user_data})
     graphic.append({'user': []})
     graphic.append({'social': []})
@@ -221,7 +224,7 @@ def one_user(username, user_data, server=''):
     graph_item = {"name-node": "GraphPosts",
                     "title": "Toots",
                     "subtitle": info['statuses_count'],
-                    "icon": "fas fa-elephant",
+                    "icon": "fas fa-tooth",
                     "link": link_graph}
     graph.append(graph_item)
 
@@ -250,18 +253,18 @@ def one_user(username, user_data, server=''):
     if (info['group']):
         gather_item = {"name-node": "MastoLocked", "title": "User Type",
                     "subtitle": "Robot",
-                    "icon": "fas fa-people-group",
+                    "icon": "fas fa-robot",
                     "link": link_graph}
     else:
         if (not info["bot"]):
             gather_item = {"name-node": "MastoBot", "title": "User Type",
                         "subtitle": "Human",
-                        "icon": "fas fa-person",
+                        "icon": "fas fa-user",
                         "link": link_graph}
         else:
             gather_item = {"name-node": "MastoGroup", "title": "User Type",
                         "subtitle": "Group",
-                        "icon": "fas fa-robot",
+                        "icon": "fas fa-users",
                         "link": link_graph}
     graph.append(gather_item)
 
