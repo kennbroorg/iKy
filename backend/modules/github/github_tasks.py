@@ -85,9 +85,11 @@ def p_github(email, from_m="Initial"):
     # previous_year_from = date(today.year - 1, today.month, 1)
     # previous_year_to = date(today.year - 1, today.month, today.day)
 
-    svg_req = "https://github.com/users/%s/contributions?from=%s&to=%s"
-    svg_actual_r = requests.get(svg_req % (username, str(actual_year_from),
-                                           str(actual_year_to)))
+    # svg_req = "https://github.com/users/%s/contributions?from=%s&to=%s"
+    svg_req = "https://github.com/users/%s/contributions"
+    svg_actual_r = requests.get(svg_req % (username))
+    # svg_actual_r = requests.get(svg_req % (username, str(actual_year_from),
+    #                                        str(actual_year_to)))
     # svg_previous_r = requests.get(svg_req % (username, str(previous_year_from),
     #                                          str(previous_year_to)))
 
