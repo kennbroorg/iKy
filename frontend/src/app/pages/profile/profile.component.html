@@ -163,11 +163,15 @@
           <div class="col-sm-3">
             <input type="text" class="form-control" #keybase id="keybase" placeholder="Keybase" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
           </div>
+          <label for="inputMastodon" class="col-sm-1 col-form-label" nbTooltip="Posible Mastodon Account (Used in mastodon module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fab fa-mastodon fa-2x"></i></label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control" #mastodon id="mastodon" placeholder="Mastodon" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
+          </div>
         </div>
 
       </nb-card-body>
       <nb-card-footer>
-          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, username.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value, tinder.value, venmo.value, reddit.value, spotify.value, twitch.value, keybase.value)" style="border: none; margin-left:30px; font-weight: 400;">
+          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, username.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value, tinder.value, venmo.value, reddit.value, spotify.value, twitch.value, keybase.value, mastodon.value)" style="border: none; margin-left:30px; font-weight: 400;">
               <i class="fas fa-search" style="padding-right: 5px"></i> SEARCH 
           </button>
 
