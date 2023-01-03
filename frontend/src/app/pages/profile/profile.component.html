@@ -131,11 +131,11 @@
           </div>
           <label for="inputTiktok" class="col-sm-1 col-form-label" nbTooltip="Posible TikTok Account (Used in tiktok module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fas fa-play-circle fa-2x"></i></label>
           <div class="col-sm-3">
-            <input type="text" class="form-control" #tiktok id="tiktok" placeholder="Tiktok" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
+            <input type="text" class="form-control" #tiktok id="tiktok" placeholder="Tiktok - disabled" disabled autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
           </div>
           <label for="inputTinder" class="col-sm-1 col-form-label" nbTooltip="Posible Tinder Account (Used in tinder module)" nbTooltipStatus="primary" style="text-align: center;"><i class="fas fa-fire fa-2x"></i></label>
           <div class="col-sm-3">
-            <input type="text" class="form-control" #tinder id="tinder" placeholder="Tinder" autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
+            <input type="text" class="form-control" #tinder id="tinder" placeholder="Tinder - disabled" disabled autocomplete="off" style="background-color: rgba(0, 0, 0, 0.5); border: none;">
           </div>
         </div>
 
@@ -171,11 +171,11 @@
 
       </nb-card-body>
       <nb-card-footer>
-          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, username.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value, tinder.value, venmo.value, reddit.value, spotify.value, twitch.value, keybase.value, mastodon.value)" style="border: none; margin-left:30px; font-weight: 400;">
+          <button nbButton outline status="success" (click)="toggleFlipViewAndSearch(email.value, username.value, twitter.value, instagram.value, linkedin.value, github.value, tiktok.value, tinder.value, venmo.value, reddit.value, spotify.value, twitch.value, keybase.value, mastodon.value)" style="box-shadow: none; border: none; margin-left:30px; font-weight: 400;">
               <i class="fas fa-search" style="padding-right: 5px"></i> SEARCH 
           </button>
 
-          <button nbButton outline status="danger" (click)="toggleFlipView()" style="border: none; margin-left:20px; font-weight: 400;">
+          <button nbButton outline status="danger" (click)="toggleFlipView()" style="box-shadow: none; border: none; margin-left:20px; font-weight: 400;">
               <i class="fas fa-times" style="padding-right: 5px"></i> CANCEL 
           </button>
       </nb-card-footer>

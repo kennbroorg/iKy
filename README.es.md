@@ -92,13 +92,10 @@ Visite el Gitlab Page del [Projecto](https://kennbroorg.gitlab.io/ikyweb/)
     <img alt="spotify" src="https://img.shields.io/badge/module-spotify-blue.svg?style=flat-square">
     <img alt="twitch" src="https://img.shields.io/badge/module-twitch-blue.svg?style=flat-square">
     <img alt="dorks" src="https://img.shields.io/badge/module-dorks-blue.svg?style=flat-square">
+    <img alt="mastodon" src="https://img.shields.io/badge/module-mastodon-blue.svg?style=flat-square">
 </div>
 
 <h1 id="installation">Instalación</h1>
-
-<div align="left" style="margin-bottom: 10px;">
-    <h2><img alt="important" height="30" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/important.png"> Easy installation (Python only)</h2>
-</div>
 
 Se debe instalar Redis y encenderlo en una terminal
 
@@ -108,7 +105,6 @@ tar xvzf redis-stable.tar.gz
 cd redis-stable
 make
 sudo make install
-redis-server
 ```
 
 Vaya a nuestro [website][website]. Descargar el ZIP y descomprimirlo, instalar las dependencias y encenderlo en otra terminal
@@ -122,99 +118,11 @@ python app.py -e prod
 
 Y finalmente, [browsearlo](#browse).
 
-## Instalación completa (DEV)
-
-### Clonar el repositorio
-
-```shell
-git clone https://gitlab.com/kennbroorg/iKy.git
-```
-
-### Instalar Backend
-
-#### Redis
-
-Se debe instalar Redis
-
-```shell
-wget http://download.redis.io/redis-stable.tar.gz
-tar xvzf redis-stable.tar.gz
-cd redis-stable
-make
-sudo make install
-```
-
-#### Python y Celery
-
-Se debe instalar las librerías en requirements.txt
-
-```shell
-python3 -m pip install -r requirements.txt
-```
-
-### Instalar Frontend
-
-#### Node
-
-Primero que nada, instalar [nodejs](https://nodejs.org/es/).
-
-#### Dependencias
-
-Dentro del directorio **frontend** instalar las dependencias
-
-```shell
-cd frontend
-npm install
-```
-
-## Encender iKy Tool
-
-### Encender el Backend
-
-#### Redis
-
-Y ejecutar el server en una terminal
-
-```shell
-redis-server
-```
-
-#### Python y Celery
-
-Ejecutar celery en otra terminal, dentro del directorio **backend**
-
-```shell
-cd backend
-./celery.sh
-```
-
-Otra vez, en otra terminal ejecutar app.py dentro del directorio **backend** 
-
-```shell
-python3 app.py
-```
-
-### Encender el Frontend
-
-Finalmente, ejecutar dentro del directorio **frontend** el siguiente comando :
-
-```shell
-npm start
-```
-
-<!--
-### Pantalla luego de encender iKy
-
-<div align="center">
-    <img src="frontend/src/assets/images/Screens1000.png">
-</div>
--->
-
 <h3 id="browser">Browse</h3>
 
 Abrir el browser en esta [url](http://127.0.0.1:4200)
 
-### Config API Keys
+# API Keys
 
 Una vez que la aplicación esté cargada en el browser, deberá ir a la opción Api Keys y llenar los valores de las APIs que se necesitan.
 
@@ -229,39 +137,34 @@ Una vez que la aplicación esté cargada en el browser, deberá ir a la opción 
 - Twitch: Generar las APIs desde [here](https://dev.twitch.tv/docs/api/)
 - Google CSE: Generar las APIs desde [here](https://developers.google.com/custom-search/v1/overview)
 
+<h1 id="update">Actualizar iKy</h1>
+
+Debido a que el frontend de iKy está desarrollado en Angular, el cual se transpila, y un proceso de CI/CD lo empaqueta, lo mejor para la actualización es descargar iKy-pack del [website][website] y volver a ejecutar estos pasos
+
+``` shell
+unzip iKy.zip
+cd iKy-pack
+pip install -r requirements.txt
+cd backend
+python app.py -e prod
+```
+
+> No es necesario una reinstalación de redis
+
+Una vez completado lo anterior pueden copiar el archivo apikeys.json situado en backend/factories dentro del directorio de iKy desde la vieja instalación hacia la nueva instalación
+
+O pueden utilizar la interface gráfica en el menu de apikeys las opciones de Exportar/Importar (Exportar desde la vieja instalación e importar en la nueva instalación)
+
+<div align="center">
+    <img alt="apis" height="400" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKy-08.png">
+</div>
+
+O pueden utilizar una combinación de ambas (Lo mejor) utilizando la opción de importar desde la nueva instalación y buscando el archivo apikeys.json en backend/factories en el directorio de iKy de la vieja instalación
 
 # Wiki
 - [iKy Wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/home)
-- [iKy Page](https://kennbroorg.gitlab.io/ikyweb/)
-- Installation
-  - [Easy Install](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/EasyInstall)
-  - [Vagrant](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Vagrant)
-  - [Manual install (Compacted)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Compacted))
-  - [Manual install (Detailed)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Detailed))
-- Update
-  - [Soft Update](https://gitlab.com/kennbroorg/iKy/-/wikis/Update/Soft)
-- Wake Up 
-  - [Turn on the project](https://gitlab.com/kennbroorg/iKy/-/wikis/Wakeup/WakeUp)
-- APIs
-  - [APIs through frontend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-through-the-browser)
-  - [APIs through backend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/APIs-through-the-backend)
-- Backend
-  - [Backend through URL](https://gitlab.com/kennbroorg/iKy/-/wikis/Backend/Backend-through-url)
-- Videos
-  - [Installation videos](https://gitlab.com/kennbroorg/iKy/-/wikis/Videos/Installations)
-    - [Installation in Kali 2019](https://vimeo.com/350877994) 
-    - [Installation in ubuntu 18.04](https://vimeo.com/347435255) 
-    - [Installation in ubuntu 16.04](https://vimeo.com/332359273) 
-  - [Demo videos](https://gitlab.com/kennbroorg/iKy/-/wikis/Videos/Demos)
-    - [iKy eko15](https://vimeo.com/397862772)
-    - [iKy version 2](https://vimeo.com/347085110)
-    - [Testing iKy with Emiliano](https://vimeo.com/349011105)
-    - [Testing iKy with Giba](https://vimeo.com/342843348)
-    - [iKy version 1](https://vimeo.com/326114716)
-    - [iKy version 0](https://vimeo.com/272495754)
-- [Disclaimer](https://gitlab.com/kennbroorg/iKy/-/wikis/Disclaimer)
 
-## Video Demo
+# Video Demo
 
 <div align="center">
     <a href="https://vimeo.com/434501702"><img alt="Kali 2019" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKy-01.png"></a>
@@ -275,7 +178,7 @@ Ya sea que use este proyecto, haya aprendido algo de él o simplemente le guste,
 <a href="https://www.buymeacoffee.com/kennbro" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="80" ></a>
 </div>
 
-## Aviso Legal
+# Aviso Legal
 
 Todo aquel que contribuya o haya contribuído con el proyecto, incluyendome, no somos responsables por el uso de la herramienta (Ni el uso legal ni el uso ilegal, ni el "otro" uso). 
 
