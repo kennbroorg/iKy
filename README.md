@@ -92,13 +92,10 @@ Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
     <img alt="spotify" src="https://img.shields.io/badge/module-spotify-blue.svg?style=flat-square">
     <img alt="twitch" src="https://img.shields.io/badge/module-twitch-blue.svg?style=flat-square">
     <img alt="dorks" src="https://img.shields.io/badge/module-dorks-blue.svg?style=flat-square">
+    <img alt="mastodon" src="https://img.shields.io/badge/module-mastodon-blue.svg?style=flat-square">
 </div>
 
 <h1 id="installation">Installation</h1>
-
-<div align="left" style="margin-bottom: 10px;">
-    <h2><img alt="important" height="30" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/important.png"> Easy installation (Python only)</h2>
-</div>
 
 You must install Redis and start it
 
@@ -108,7 +105,7 @@ tar xvzf redis-stable.tar.gz
 cd redis-stable
 make
 sudo make install
-redis-server
+cd ..
 ```
 
 Go to our [website][website]. Download the ZIP file and unzip it, install requeriments and start it in another terminal
@@ -122,98 +119,11 @@ python app.py -e prod
 
 And, finally, [browse](#browse) it.
 
-## Full installation (DEV)
-
-### Clone repository
-
-```shell
-git clone https://gitlab.com/kennbroorg/iKy.git
-```
-
-### Install Backend
-
-#### Redis
-
-You must install Redis
-
-```shell
-wget http://download.redis.io/redis-stable.tar.gz
-tar xvzf redis-stable.tar.gz
-cd redis-stable
-make
-sudo make install
-```
-
-#### Python stuff and Celery
-
-You must install the libraries inside requirements.txt
-
-```shell
-python3 -m pip install -r requirements.txt
-```
-
-### Install Frontend
-
-#### Node
-
-First of all, install [nodejs](https://nodejs.org/en/).
-
-#### Dependencies
-
-Inside the directory **frontend** install the dependencies
-
-```shell
-cd frontend
-npm install
-```
-
-## Wake up iKy Tool
-
-### Turn on Backend
-
-#### Redis
-
-Turn on the server in a terminal
-
-```shell
-redis-server
-```
-
-#### Python stuff and Celery
-
-Turn on Celery in another terminal, within the directory **backend**
-
-```shell
-./celery.sh
-```
-
-Again, in another terminal turn on backend app from directory **backend** 
-
-```shell
-python3 app.py
-```
-
-### Turn on Frontend
-
-Finally, to run frontend server, execute the following command from directory **frontend**
-
-```shell
-npm start
-```
-
-<!--
-### Screen after turn on iKy
-
-<div align="center">
-    <img src="frontend/src/assets/images/Screens1000.png">
-</div>
--->
-
 <h3 id="browser">Browse</h3>
 
 Open the browser in this [url](http://127.0.0.1:4200) 
 
-### Config API Keys
+# API Keys
 
 Once the application is loaded in the browser, you should go to the Api Keys option and load the values of the APIs that are needed.
 
@@ -228,39 +138,33 @@ Once the application is loaded in the browser, you should go to the Api Keys opt
 - Twitch: Generate the APIs from [here](https://dev.twitch.tv/docs/api/)
 - Google CSE: Generate the APIs from [here](https://developers.google.com/custom-search/v1/overview)
 
+<h1 id="update">Update iKy</h1>
+
+Because the iKy frontend is developed in Angular, which is transpiled, and a CI/CD process packages it, the best way to upgrade is to download iKy-pack from [website][website] and re-run these steps
+
+``` shell
+unzip iKy.zip
+cd iKy-pack
+pip install -r requirements.txt
+cd backend
+python app.py -e prod
+```
+
+> No reinstallation of redis is necessary.
+
+Once you have completed the above you can copy the apikeys.json file located in backend/factories inside the iKy directory from the old installation to the new installation.
+
+Or you can use the graphical interface in the apikeys menu to use the Export/Import options (Export from the old installation and import into the new installation).
+
+<div align="center">
+    <img alt="apis" height="400" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKy-08.png">
+</div>
+
+Or you can use a combination of both (Best) using the import option from the new installation and looking for the apikeys.json file in backend/factories in the iKy directory of the old installation.
+
 # Wiki
 
-- [iKy Wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/home)
-- [iKy Page](https://kennbroorg.gitlab.io/ikyweb/)
-- Installation
-  - [Easy Install](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/EasyInstall)
-  - [Manual install (Compacted)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Compacted))
-  - [Manual install (Detailed)](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Manual-install-(Detailed))
-  - [Docker](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Docker)
-  - [Vagrant](https://gitlab.com/kennbroorg/iKy/-/wikis/Installation/Vagrant)
-- Update
-  - [Soft Update](https://gitlab.com/kennbroorg/iKy/-/wikis/Update/Soft)
-- Wake Up 
-  - [Turn on the project](https://gitlab.com/kennbroorg/iKy/-/wikis/Wakeup/WakeUp)
-- APIs
-  - [Get APIs](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get)
-  - [APIs through frontend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-through-the-browser)
-  - [APIs through backend](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/APIs-through-the-backend)
-- Backend
-  - [Backend through URL](https://gitlab.com/kennbroorg/iKy/-/wikis/Backend/Backend-through-url)
-- Videos
-  - [Installation videos](https://gitlab.com/kennbroorg/iKy/-/wikis/Videos/Installations)
-    - [Installation in Kali 2019](https://vimeo.com/350877994) 
-    - [Installation in ubuntu 18.04](https://vimeo.com/347435255) 
-    - [Installation in ubuntu 16.04](https://vimeo.com/332359273) 
-  - [Demo videos](https://gitlab.com/kennbroorg/iKy/-/wikis/Videos/Demos)
-    - [iKy eko15](https://vimeo.com/397862772)
-    - [iKy version 2](https://vimeo.com/347085110)
-    - [Testing iKy with Emiliano](https://vimeo.com/349011105)
-    - [Testing iKy with Giba](https://vimeo.com/342843348)
-    - [iKy version 1](https://vimeo.com/326114716)
-    - [iKy version 0](https://vimeo.com/272495754)
-- [Disclaimer](https://gitlab.com/kennbroorg/iKy/-/wikis/Disclaimer)
+[iKy Wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/home)
 
 ## Demo Video
 
