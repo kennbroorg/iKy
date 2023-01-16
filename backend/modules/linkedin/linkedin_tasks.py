@@ -11,8 +11,6 @@ import browser_cookie3
 
 import re
 from bs4 import BeautifulSoup
-import os.path
-from datetime import datetime, timedelta
 
 try:
     from factories._celery import create_celery
@@ -29,8 +27,8 @@ except ImportError:
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# from requests.packages.urllib3.exceptions import InsecureRequestWarning
+# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
@@ -42,9 +40,7 @@ def date_convert(date):
     return date_conv
 
 
-def p_linkedin(user, from_m):
-
-    # import pdb; pdb.set_trace()
+def p_linkedin(user):
 
     s = requests.Session()
     headers = {'User-Agent': 
@@ -152,8 +148,8 @@ def p_linkedin(user, from_m):
     # Get profile from http
 
     if found:
-        s.headers["csrf-token"] = s.cookies["JSESSIONID"].strip('"')
-        headers["csrf-token"] = s.cookies["JSESSIONID"].strip('"')
+        # s.headers["csrf-token"] = s.cookies["JSESSIONID"].strip('"')
+        # headers["csrf-token"] = s.cookies["JSESSIONID"].strip('"')
 
         req = s.get(url, headers=headers)
 
@@ -559,37 +555,21 @@ def t_linkedin(user, from_m):
     # Take initial time
     tic = time.perf_counter()
 
-    # try execution principal function
     try:
-        total = p_linkedin(user, from_m)
-    # Error handle
+        total = p_linkedin(user)
     except Exception as e:
-        # Error description
         traceback.print_exc()
         traceback_text = traceback.format_exc()
-        code = 10
-        if ('iKy can\'t detect cookies!!!' in traceback_text):
-            code = 5
-        elif ('Linkedin user don\'t exist' in traceback_text):
-            code = 6
-        else:
-            code = 7
+        total.append({'module': 'linkedin'})
+        total.append({'param': user})
+        total.append({'validation': from_m})
 
-        # Set module name in JSON format
-        total.append({"module": "linkedin"})
-        total.append({"param": user})
-        total.append({"validation": "null"})
-
-        # Set status code and reason
-        status = []
-        status.append(
-            {
-                "code": code,
-                "reason": "{}".format(e),
-                "traceback": traceback_text,
-            }
-        )
-        total.append({"raw": status})
+        raw_node = []
+        raw_node.append({"status": "Fail",
+                         "reason": "{}".format(e),
+                         # "traceback": 1})
+                         "traceback": traceback_text})
+        total.append({"raw": raw_node})
 
     # Take final time
     toc = time.perf_counter()
