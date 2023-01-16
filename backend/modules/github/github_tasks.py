@@ -5,7 +5,8 @@ import sys
 import json
 import requests
 import re
-from datetime import date, datetime
+from bs4 import BeautifulSoup
+from datetime import datetime
 import traceback
 
 try:
@@ -25,8 +26,8 @@ except ImportError:
     from factories.iKy_functions import location_geo
     celery = create_celery(create_application())
 
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# from requests.packages.urllib3.exceptions import InsecureRequestWarning
+# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
@@ -79,15 +80,22 @@ def p_github(email, from_m="Initial"):
 
     req = requests.get("https://api.github.com/users/%s" % username)
 
-    today = date.today()
-    actual_year_from = date(today.year, today.month, 1)
-    actual_year_to = date(today.year, today.month, today.day)
+    # today = date.today()
+    # actual_year_from = date(today.year, today.month, 1)
+    # actual_year_to = date(today.year, today.month, today.day)
     # previous_year_from = date(today.year - 1, today.month, 1)
     # previous_year_to = date(today.year - 1, today.month, today.day)
 
     # svg_req = "https://github.com/users/%s/contributions?from=%s&to=%s"
     svg_req = "https://github.com/users/%s/contributions"
     svg_actual_r = requests.get(svg_req % (username))
+
+    html_doc = BeautifulSoup(svg_actual_r.content, "html.parser")
+    svg_actual_r = html_doc.find('div', class_='graph-before-activity-overview')
+    # print(f"Type : {type(svg_actual_r)}")
+    # print(f"data : {svg_actual_r}")
+    # print("\n\n\n\n\n")
+
     # svg_actual_r = requests.get(svg_req % (username, str(actual_year_from),
     #                                        str(actual_year_to)))
     # svg_previous_r = requests.get(svg_req % (username, str(previous_year_from),
@@ -96,7 +104,8 @@ def p_github(email, from_m="Initial"):
     # Change color of calendar
     # svg_actual = svg_actual_r.text.replace('ebedf0', '4d4d4d')
     # svg_previous = svg_previous_r.text.replace('ebedf0', '4d4d4d')
-    svg_actual = svg_actual_r.text
+    # svg_actual = svg_actual_r.text
+    svg_actual = svg_actual_r.decode()
     svg_actual = svg_actual.replace('data-level="0"', 'style="fill:rgb(0,0,0);"')
     svg_actual = svg_actual.replace('data-level="1"', 'style="fill:rgb(44, 230, 155, 0.2);"')
     svg_actual = svg_actual.replace('data-level="2"', 'style="fill:rgb(44, 230, 155, 0.4);"')
