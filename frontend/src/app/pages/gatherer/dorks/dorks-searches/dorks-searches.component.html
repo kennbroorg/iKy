@@ -1,0 +1,9 @@
+  <nb-card size="large" class="border-default">
+    <nb-card-header>
+      DORKS Searches
+      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+    </nb-card-header>
+    <nb-card-body id="nbCardDorksSearches" #nbCardDorksGraphs style="text-align: center; overflow: hidden;">
+          <ngx-graphs [data]="dorksSearches"></ngx-graphs>
+    </nb-card-body>
+  </nb-card>
