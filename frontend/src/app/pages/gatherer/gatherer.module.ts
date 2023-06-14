@@ -97,7 +97,7 @@ import { SearchEmailComponent } from './search/search-email/search-email.compone
 import { DorksNamesComponent } from './dorks/dorks-names/dorks-names.component';
 import { DorksSocialComponent } from './dorks/dorks-social/dorks-social.component';
 import { DorksUsernamesComponent } from './dorks/dorks-usernames/dorks-usernames.component';
-// import { SearchSearchesComponent } from './search/search-searches/search-searches.component';
+import { DorksSearchesComponent } from './dorks/dorks-searches/dorks-searches.component';
 import { DorksListComponent } from './dorks/dorks-list/dorks-list.component';
 import { DorksRawListComponent } from './dorks/dorks-list-raw/dorks-list-raw.component';
 import { DorksMentionsComponent } from './dorks/dorks-mention/dorks-mentions.component';
@@ -159,13 +159,13 @@ import { ErrorGraphsComponent } from './error/error-graphs.component';
   imports: [
     ThemeModule,
     NgxEchartsModule,
-    NgxChartsModule, 
+    NgxChartsModule,
     ChartModule,
     NbTabsetModule,
     NbSpinnerModule,
     NbIconModule,
     NbButtonModule,
-    NbActionsModule,  
+    NbActionsModule,
     NbListModule,
     NbUserModule,
     NbBadgeModule,
@@ -244,6 +244,7 @@ import { ErrorGraphsComponent } from './error/error-graphs.component';
     DorksMentionsComponent,
     DorksHashtagComponent,
     DorksEmailComponent,
+    DorksSearchesComponent,
     TiktokGraphsComponent,
     SkypeComponent,
     TaskexecComponent,
