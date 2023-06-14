@@ -1,4 +1,4 @@
-image: node:12.22.12
+image: node:14.21.3
 
 stages:
   - install
