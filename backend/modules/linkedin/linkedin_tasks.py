@@ -49,7 +49,7 @@ def p_linkedin(user):
                'Safari/7046A194A'}
 
     # Try to get cookie from browser
-    ref = ["chromium", "opera", "edge", "firefox", "chrome"]
+    ref = ["chromium", "opera", "edge", "firefox", "chrome", "brave"]
     index = 0
     json_cookie = {}
     found = False
@@ -59,6 +59,7 @@ def p_linkedin(user):
         browser_cookie3.edge,
         browser_cookie3.firefox,
         browser_cookie3.chrome,
+        browser_cookie3.brave,
     ]:
         try:
             for cookie in cookie_fn(domain_name=""):
@@ -104,8 +105,6 @@ def p_linkedin(user):
         else:
             s.cookies['li_at'] = v_li_at
             s.cookies['JSESSIONID'] = v_JSESSIONID
-            print(f"li_at - {v_li_at}")
-            print(f"JSESSIONID - {v_JSESSIONID}")
             s.headers = headers
             s.headers["csrf-token"] = s.cookies["JSESSIONID"].strip('"')
 
