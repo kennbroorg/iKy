@@ -64,7 +64,8 @@
                   <nb-action nbTooltip="Search information" nbTooltipPlacement="top" nbTooltipStatus="primary" >
                       <i (click)="searchService.activateSearch()" class="fas fa-search" style="font-size: 14px;"></i><span (click)="searchService.activateSearch()">Search&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span><i (click)="toggleFlipView()" class="fab fa-searchengin" style="font-size: 16px;"></i><span (click)="toggleFlipView()">Advance</span>
                   </nb-action>
-                  <nb-action (click)="generateAllPdfDialog(dialog)" nbTooltip="Generate report" nbTooltipPlacement="top" nbTooltipStatus="primary">
+                  <!-- <nb-action (click)="generateAllPdfDialog(dialog)" nbTooltip="Generate report" nbTooltipPlacement="top" nbTooltipStatus="primary"> -->
+                  <nb-action nbTooltip="Report is temporary disabled" nbTooltipPlacement="top" nbTooltipStatus="primary" disabled="True">
                     <i class="fas fa-file-alt" style="font-size: 14px;"></i><span>Report</span>
                   </nb-action>
                   <nb-action (click)="generateDownloadJsonUri()" nbTooltip="Download raw JSON" nbTooltipPlacement="top" nbTooltipStatus="primary">
@@ -684,7 +685,8 @@
                   <nb-action nbTooltip="Search information" nbTooltipPlacement="top" nbTooltipStatus="primary" >
                       <i (click)="searchService.activateSearch()" class="fas fa-search" style="font-size: 14px;"></i><span (click)="searchService.activateSearch()">Search&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span><i (click)="toggleFlipView()" class="fab fa-searchengin" style="font-size: 16px;"></i><span (click)="toggleFlipView()">Advance</span>
                   </nb-action>
-                  <nb-action (click)="generateAllPdfDialog(dialog)" nbTooltip="Generate report" nbTooltipPlacement="top" nbTooltipStatus="primary">
+                  <!-- <nb-action (click)="generateAllPdfDialog(dialog)" nbTooltip="Generate report" nbTooltipPlacement="top" nbTooltipStatus="primary"> -->
+                  <nb-action nbTooltip="Report is temporary disabled" nbTooltipPlacement="top" nbTooltipStatus="primary" disabled="True">
                     <i class="fas fa-file-alt" style="font-size: 14px;"></i><span>Report</span>
                   </nb-action>
                   <nb-action (click)="generateDownloadJsonUri()" nbTooltip="Download raw JSON" nbTooltipPlacement="top" nbTooltipStatus="primary">
