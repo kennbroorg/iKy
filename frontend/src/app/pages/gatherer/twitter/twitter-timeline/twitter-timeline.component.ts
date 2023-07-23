@@ -1,4 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation, ChangeDetectionStrategy, ViewChild, ElementRef, AfterViewInit, TemplateRef, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation,
+  ChangeDetectionStrategy, ViewChild, ElementRef, AfterViewInit, TemplateRef,
+  NgZone, ChangeDetectorRef } from '@angular/core';
 import {Location} from '@angular/common';
 import { scaleLinear, scaleTime, scaleBand } from 'd3-scale';
 import { brushX } from 'd3-brush';
@@ -8,8 +10,8 @@ import {
   ColorHelper,
   ViewDimensions,
   calculateViewDimensions,
-  id, 
-  SingleSeries
+  id,
+  SingleSeries,
 } from '@swimlane/ngx-charts';
 import { NbDialogService } from '@nebular/theme';
 
@@ -19,7 +21,7 @@ import { NbDialogService } from '@nebular/theme';
   templateUrl: './twitter-timeline.component.html',
   styleUrls: ['./twitter-timeline.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TwitterTimelineComponent extends BaseChartComponent implements OnInit, AfterViewInit {
   @ViewChild('nbCardTwitterTimeline', { static: true }) private cardContainer: ElementRef;
@@ -41,10 +43,10 @@ export class TwitterTimelineComponent extends BaseChartComponent implements OnIn
 
   @Input() data: any;
 
-  twitterTimeline : any;
-  series : any;
-  results : any;
-  res_date : any;
+  twitterTimeline: any;
+  series: any;
+  results: any;
+  res_date: any;
   card: any;
   width: number;
   height: number;
@@ -70,49 +72,50 @@ export class TwitterTimelineComponent extends BaseChartComponent implements OnIn
   brush: any;
   large: boolean = false;
 
-  constructor(chartElement: ElementRef, zone: NgZone, cd: ChangeDetectorRef, location: Location, public dialogService: NbDialogService) {
+  constructor(chartElement: ElementRef, zone: NgZone, cd: ChangeDetectorRef,
+    location: Location, public dialogService: NbDialogService) {
     super(chartElement, zone, cd);
   }
 
-    //constructor(chartElement: ElementRef, zone: NgZone, cd: ChangeDetectorRef, location: Location, dialogService: NbDialogService) {
-    // super(chartElement, zone, cd, location);
-    //}
+    // constructor(chartElement: ElementRef, zone: NgZone, cd: ChangeDetectorRef, location: Location, dialogService: NbDialogService) {
+    //  super(chartElement, zone, cd, location);
+    // }
 
   ngOnInit() {
       this.card = this.cardContainer.nativeElement;
-      console.log("Twitter Timeline Component");
+      console.log('Twitter Timeline Component');
   }
 
   ngAfterViewInit() {
       this.width = this.cardContainer.nativeElement.parentNode.clientWidth;
       this.height = this.cardContainer.nativeElement.parentNode.clientHeight;
-      console.log("Twitter Timeline Component");
+      console.log('Twitter Timeline Component');
 
       this.res_date = this.twitterTimelineConvert();
-      this.twitterTimeline = this.res_date
+      this.twitterTimeline = this.res_date;
 
-      console.log("!!! RESULT DATE en init", this.res_date)
-      console.log("!!! Width", this.width)
-      console.log("!!! Height", this.height)
-      console.log("!!! yAxis", this.yAxis)
-      console.log("!!! yScale", this.yScale)
-      console.log("!!! dims", this.dims)
-      console.log("!!! showGridLines", this.showGridLines)
-      console.log("!!! showYAxisLabel", this.showYAxisLabel)
-      console.log("!!! yAxisLabel", this.yAxisLabel)
-      console.log("!!! xScale", this.xScale)
-      console.log("!!! yScale", this.yScale)
-      console.log("!!! colors", this.colors)
-      console.log("!!! gradient", this.gradient)
-      console.log("!!! animations", this.animations)
-      console.log("!!! noBarWhenZero", this.noBarWhenZero)
+      console.log('!!! RESULT DATE en init', this.res_date);
+      // console.log('!!! Width', this.width);
+      // console.log('!!! Height', this.height);
+      // console.log('!!! yAxis', this.yAxis);
+      // console.log('!!! yScale', this.yScale);
+      // console.log('!!! dims', this.dims);
+      // console.log('!!! showGridLines', this.showGridLines);
+      // console.log('!!! showYAxisLabel', this.showYAxisLabel);
+      // console.log('!!! yAxisLabel', this.yAxisLabel);
+      // console.log('!!! xScale', this.xScale);
+      // console.log('!!! yScale', this.yScale);
+      // console.log('!!! colors', this.colors);
+      // console.log('!!! gradient', this.gradient);
+      // console.log('!!! animations', this.animations);
+      // console.log('!!! noBarWhenZero', this.noBarWhenZero);
       this.update();
   }
 
   openDialog(dialog: TemplateRef<any>) {
     this.dialogService.open(dialog)
       .onClose.subscribe(result => {
-        console.log("Event Close");
+        console.log('Event Close');
         this.large = false;
         this.update();
       });
@@ -127,7 +130,7 @@ export class TwitterTimelineComponent extends BaseChartComponent implements OnIn
       showXLabel: this.showXAxisLabel,
       showYLabel: this.showYAxisLabel,
       showLegend: false,
-      legendType: this.schemeType
+      legendType: this.schemeType,
     });
     this.large = true;
     this.update();
@@ -136,10 +139,12 @@ export class TwitterTimelineComponent extends BaseChartComponent implements OnIn
   twitterTimelineConvert(): SingleSeries {
     const res_conv: SingleSeries = [];
 
+    console.log('!!! DATA', this.data.result[4].graphic[10].time);
+
     for (const d of this.data.result[4].graphic[10].time) {
       res_conv.push({
         name: new Date(d.name),
-        value: d.value
+        value: d.value,
       });
     }
     return res_conv;
@@ -164,18 +169,18 @@ export class TwitterTimelineComponent extends BaseChartComponent implements OnIn
       showXLabel: this.showXAxisLabel,
       showYLabel: this.showYAxisLabel,
       showLegend: false,
-      legendType: this.schemeType
+      legendType: this.schemeType,
     });
 
-    console.log("!!!!! DIMS Prev", this.dims);
+    console.log('!!!!! DIMS Prev', this.dims);
     if (this.large) {
         this.dims['height'] = this.height * 1.6;
         this.dims['width'] = this.width * 1.6;
-    } else { 
+    } else {
         this.dims['height'] = this.height - 130;
         this.dims['width'] = this.width - 100;
     }
-    console.log("!!!!! DIMS Post", this.dims);
+    console.log('!!!!! DIMS Post', this.dims);
 
     this.xDomain = this.getXDomain();
 
@@ -198,39 +203,45 @@ export class TwitterTimelineComponent extends BaseChartComponent implements OnIn
       this.addBrush();
       this.initialized = true;
     }
-    console.log("!!!!! xDomain", this.xDomain)
-    console.log("!!!!! yDomain", this.yDomain)
-    console.log("!!!!! timeScale", this.timeScale)
-    console.log("!!!!! xScale", this.xScale)
-    console.log("!!!!! yScale", this.yScale)
+    console.log('!!!!! xDomain', this.xDomain);
+    console.log('!!!!! yDomain', this.yDomain);
+    console.log('!!!!! timeScale', this.timeScale);
+    console.log('!!!!! xScale', this.xScale);
+    console.log('!!!!! yScale', this.yScale);
   }
 
   getXDomain(): any[] {
     const values = [];
 
-    console.log("!!! Result - getXDomain", this.results);
+    console.log('!!! getXDomain - Input', this.results);
     for (const d of this.results) {
       if (!values.includes(d.name)) {
         values.push(d.name);
       }
     }
+    console.log('!!! getXDomain - values', values);
 
     this.scaleType = this.getScaleType(values);
+    console.log('!!! getXDomain - scaleType', this.scaleType);
     let domain = [];
 
     const min = new Date(Math.min(...values));
+    console.log('!!! getXDomain - Min value', min);
     min.setHours(0);
     min.setMinutes(0);
     min.setSeconds(0);
 
     const max = new Date(Math.max(...values));
+    console.log('!!! getXDomain - Max value', max);
     max.setHours(23);
     max.setMinutes(59);
     max.setSeconds(59);
 
     domain = [min.getTime(), max.getTime()];
+    console.log('!!! getXDomain - domain', domain);
 
     this.xSet = values;
+    console.log('!!! getXDomain - xSet', this.xSet);
     return domain;
   }
 
@@ -241,7 +252,7 @@ export class TwitterTimelineComponent extends BaseChartComponent implements OnIn
 
     const domain = [];
 
-    console.log("!!! Result - getYDomain", this.results);
+    console.log('!!! getYDomain - input', this.results);
     for (const d of this.results) {
       if (domain.indexOf(d.value) < 0) {
         domain.push(d.value);
@@ -257,6 +268,8 @@ export class TwitterTimelineComponent extends BaseChartComponent implements OnIn
         }
       }
     }
+    console.log('!!! getYDomain - domain', domain);
+
 
     let min = Math.min(...domain);
     const max = Math.max(...domain);
@@ -264,33 +277,36 @@ export class TwitterTimelineComponent extends BaseChartComponent implements OnIn
       min = Math.min(0, min);
     }
 
+    // KKK
+    min = 0;
+
     return [min, max];
   }
 
-  getXScale(domain, width): any {
+  getXScale(domain: any, width: any): any {
     return scaleBand().range([0, width]).paddingInner(0.1).domain(domain);
   }
 
-  getTimeScale(domain, width): any {
+  getTimeScale(domain: any, width: any): any {
     return scaleTime().range([0, width]).domain(domain);
   }
 
-  getYScale(domain, height): any {
+  getYScale(domain: any, height: any): any {
     const scale = scaleLinear().range([height, 0]).domain(domain);
 
     return scale;
   }
 
-  getScaleType(values): string {
+  getScaleType(values: any): string {
     return 'time';
   }
 
-  trackBy(index, item): string {
+  trackBy(index: any, item: any): string {
     return item.name;
   }
 
   setColors(): void {
-    let domain;
+    let domain: any;
     if (this.schemeType === 'ordinal') {
       domain = this.xSet;
     } else {
@@ -320,7 +336,7 @@ export class TwitterTimelineComponent extends BaseChartComponent implements OnIn
     this.brush = brushX()
       .extent([
         [0, 0],
-        [width, height]
+        [width, height],
       ])
       .on('brush end', () => {
         const selection = d3event.selection || this.xScale.range();
@@ -341,7 +357,7 @@ export class TwitterTimelineComponent extends BaseChartComponent implements OnIn
 
     this.brush.extent([
       [0, 0],
-      [width, height]
+      [width, height],
     ]);
     select(this.chartElement.nativeElement).select('.brush').call(this.brush);
 
