@@ -34,7 +34,7 @@ build:
     - cd frontend
     - npm install @angular/cli
     - npm install @angular-devkit/build-angular
-    - npm run build
+    - npm run build --prod
     - cd ..
     - mkdir -p /tmp/iKy-pack/frontend
     - cp -r backend /tmp/iKy-pack
