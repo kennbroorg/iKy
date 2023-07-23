@@ -114,7 +114,7 @@ unzip iKy.zip
 cd iKy-pack
 pip install -r requirements.txt
 cd backend
-python app.py -e prod
+python3 app.py -e prod
 ```
 
 And, finally, [browse](#browse) it.
@@ -126,17 +126,7 @@ Open the browser in this [url](http://127.0.0.1:4200)
 # API Keys
 
 Once the application is loaded in the browser, you should go to the Api Keys option and load the values of the APIs that are needed.
-
-- Fullcontact: Generate the APIs from [here](https://support.fullcontact.com/portal/en/kb/articles/lost-api-key)
-- PeopleDataLabs : Generate the APIs from [here](https://www.peopledatalabs.com/signup)
-- **Linkedin** : Linkedin changed their authentication process and with that the module in iKy stopped working, but I found a relatively easy way to baypass it ([here](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get))
-- HaveIBeenPwned : Generate the APIs from [here](https://haveibeenpwned.com/API/Key) (Paid)
-- Emailrep.io : Generate the APIs from [here](https://emailrep.io/key)
-- Leaklookup : Generate the APIs from [here](https://leak-lookup.com/api)
-- Twitter: Generate the APIs from [here](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
-- Spotify: Generate the APIs from [here](https://developer.spotify.com/dashboard/applications)
-- Twitch: Generate the APIs from [here](https://dev.twitch.tv/docs/api/)
-- Google CSE: Generate the APIs from [here](https://developers.google.com/custom-search/v1/overview)
+Got to [ApiKeys - Get APIs](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get)
 
 <h1 id="update">Update iKy</h1>
 

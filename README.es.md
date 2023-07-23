@@ -105,6 +105,7 @@ tar xvzf redis-stable.tar.gz
 cd redis-stable
 make
 sudo make install
+cd ..
 ```
 
 Vaya a nuestro [website][website]. Descargar el ZIP y descomprimirlo, instalar las dependencias y encenderlo en otra terminal
@@ -113,7 +114,7 @@ unzip iKy.zip
 cd iKy-pack
 pip install -r requirements.txt
 cd backend
-python app.py -e prod
+python3 app.py -e prod
 ```
 
 Y finalmente, [browsearlo](#browse).
@@ -125,17 +126,7 @@ Abrir el browser en esta [url](http://127.0.0.1:4200)
 # API Keys
 
 Una vez que la aplicación esté cargada en el browser, deberá ir a la opción Api Keys y llenar los valores de las APIs que se necesitan.
-
-- Fullcontact : Generar las APIs desde [aquí](https://support.fullcontact.com/hc/en-us/articles/115003415888-Getting-Started-FullContact-v2-APIs)
-- PeopleDataLabs : Generar las APIs desde [aquí](https://www.peopledatalabs.com/signup)
-- Linkedin : Solo se debe cargar el usuario y contraseña de su cuenta 
-- HaveIBeenPwned : Generar las APIs desde [aquí](https://haveibeenpwned.com/API/Key) (Paga)
-- Emailrep.io : Generar las APIs desde [aqui](https://emailrep.io/key)
-- Leaklookup : Generar las APIs desde [aqui](https://leak-lookup.com/api)
-- Twitter: Generar las APIs desde [aqui](https://developer.twitter.com/en/docs/basics/authentication/guides/access-tokens.html)
-- Spotify: Generar las APIs desde [aqui](https://developer.spotify.com/dashboard/applications)
-- Twitch: Generar las APIs desde [here](https://dev.twitch.tv/docs/api/)
-- Google CSE: Generar las APIs desde [here](https://developers.google.com/custom-search/v1/overview)
+Ir a [ApiKeys - Get APIs](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get)
 
 <h1 id="update">Actualizar iKy</h1>
 
