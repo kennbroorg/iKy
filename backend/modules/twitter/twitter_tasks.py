@@ -87,19 +87,16 @@ def get_twitter_user_info(username):
     if json_cookies["found"]:
         twitter_cookies = ""
 
-        # cookies_value = """guest_id=guest_id_value; guest_id_marketing=guest_id_marketing; guest_id_ads=guest_id_ads; kdt=kdt_value; auth_token=auth_token_value; ct0=ct0_value; twid=twid_value; personalization_id="personalization_id_value" """
         for cookie in cookie_keys:
             twitter_cookies = twitter_cookies + cookie + "=" + json_cookies["cookies"][cookie] + "; "
 
-        # print("==============================================================")
-        # print(twitter_cookies)
-        # print("==============================================================")
+        app.load_cookies(twitter_cookies[:-2])
 
     # Get user and pass
-
-
-    # app.sign_in("cncmnt", "kea01kat02kir03kia04")
-    app.load_cookies(twitter_cookies[:-2])
+    else:
+        twitter_user = api_keys_search('twitter_user')
+        twitter_pass = api_keys_search('twitter_pass')
+        app.sign_in(twitter_user, twitter_pass)
 
     user = app.get_user_info(username)
 
