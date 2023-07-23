@@ -7,9 +7,9 @@ import json
 import re
 from collections import Counter
 from datetime import datetime
+import browser_cookie3
+from tweety import Twitter
 
-import tweepy
-# import oauth2
 
 try:
     from factories._celery import create_celery
@@ -33,238 +33,376 @@ except ImportError:
 logger = get_task_logger(__name__)
 
 
-def api_twitter_elevated(username):
-    executed = True
-    twitter_consumer_key = api_keys_search('twitter_consumer_key')
-    twitter_consumer_secret = api_keys_search('twitter_consumer_secret')
-    twitter_access_token = api_keys_search('twitter_access_token')
-    twitter_access_token_secret = api_keys_search(
-        'twitter_access_token_secret')
-
-    auth = tweepy.OAuthHandler(twitter_consumer_key, twitter_consumer_secret)
-    auth.set_access_token(twitter_access_token, twitter_access_token_secret)
-
-    api = tweepy.API(auth)
-
-    traceback_text = "OK"
-    try:
-        result_api = api.get_user(screen_name=username)
-    except tweepy.errors.NotFound as e:
-        raise(e)
-    except Exception:
-        traceback.print_exc()
-        traceback_text = traceback.format_exc()
-        executed = False
-
-    if (not executed):
-        return executed, traceback_text, {}, []
-
-    url_list = []
-    if (result_api.entities.get("url", "") != "" and
-        result_api.entities['url'].get("urls", "") != ""):
-        for urls in result_api.entities['url']['urls']:
-            if urls['expanded_url']:
-                url_list.append(urls['expanded_url'])
-    if (result_api.entities.get("description", "") != "" and
-        result_api.entities['description'].get("urls", "") != ""):
-        for urls in result_api.entities['description']['urls']:
-            if urls['expanded_url']:
-                url_list.append(urls['expanded_url'])
-
-    user_info = {"username": username, 
-                 "name": result_api.name,
-                 "photo": result_api.profile_image_url_https,
-                 "location": result_api.location,
-                 "verified": result_api.verified,
-                 "id": result_api.id_str,
-                 "protected": result_api.protected,
-                 "tweets": result_api.statuses_count,
-                 "followers": result_api.followers_count,
-                 "following": result_api.friends_count,
-                 "listed": result_api.listed_count,
-                 "likes": result_api.favourites_count,
-                 "url": url_list,
-                 "description": result_api.description,
-                 "created_at": result_api.created_at}
-
-    tweets = tweepy.Cursor(api.user_timeline, id=username,
-                           tweet_mode='extended', exclude_replies=False,
-                           contributor_details=True, include_entities=True
-                           ).items(100)
-    tweets_info = []
-
-    for tweet in tweets:
-        # Mentions
-        mention_temp = []
-        for user in tweet._json['entities']['user_mentions']:
-            mention_temp.append(user['screen_name'])
-
-        # Hashtags
-        hashtag_temp = []
-        for h in tweet._json['entities']['hashtags']:
-            hashtag_temp.append(h['text'])
-
-        # Possibly Sensitive
+def get_twitter_cookies(cookie_keys):
+    # Try to get cookie from browser
+    ref = ["chromium", "opera", "edge", "firefox", "chrome", "brave"]
+    index = 0
+    json_cookie = {}
+    found = False
+    for cookie_fn in [
+        browser_cookie3.chromium,
+        browser_cookie3.opera,
+        browser_cookie3.edge,
+        browser_cookie3.firefox,
+        browser_cookie3.chrome,
+        browser_cookie3.brave,
+    ]:
+        # print(f"View {ref[index]} browser")
         try:
-            if (tweet._json['possibly_sensitive']):
-                pos_sen = "True"
-            else:
-                pos_sen = "False"
-        except Exception:
-            pos_sen = "undefined"
+            for cookie in cookie_fn(domain_name=""):
 
-        # Sources
-        m_source = re.match("<a.*>(.*)</a>", tweet._json['source'])
-        if (m_source):
-            source = m_source.groups()[0].replace('Twitter', '').strip()
-            source = source.replace('for', '').strip()
+                if ('twitter' in cookie.domain):
+                    # print(f"Cookie {cookie.domain}:{cookie.name}:{cookie.value}")
 
-        tweet_item = {"likes": tweet._json['favorite_count'],
-                      "retweets": tweet._json['retweet_count'],
-                      "user_mentions": mention_temp,
-                      "hashtags": hashtag_temp,
-                      "created_at": tweet._json['created_at'],
-                      "source": source,
-                      "possibly_sensitive": pos_sen,
-                      "lang": tweet._json['lang'],
-                      "text": tweet._json['full_text']}
+                    if (cookie.name in cookie_keys and not cookie.is_expired()):
+                        json_cookie['browser'] = ref[index]
+                        json_cookie[cookie.name] = cookie.value
+                        json_cookie[cookie.name + '_expires'] = cookie.expires
 
-        tweets_info.append(tweet_item)
+                # Check
+                found = True
+                for key in cookie_keys:
+                    if (json_cookie.get(key, "") == ""):
+                        found = False
+                        break
 
-    return executed, traceback_text, user_info, tweets_info
+        except Exception as e:
+            print(e)
+
+        index += 1
+
+        if (found):
+            break
+
+    return {"found": found, "cookies": json_cookie}
 
 
-def api_twitter_essential(username):
-    executed = True
-    twitter_v2_bearer_token = api_keys_search('twitter_v2_bearer_token')
-    client = tweepy.Client(twitter_v2_bearer_token)
+def get_twitter_user_info(username):
+    # Valid session
+    app = Twitter("twitter")
 
-    traceback_text = "OK"
-    try:
-        fields=["created_at", "description", "entities", "id", "location", 
-                "name", "pinned_tweet_id", "profile_image_url", "protected", 
-                "url", "username", "verified", "withheld", "public_metrics"]
-        result_api = client.get_user(username=username, user_fields=fields)
-    except Exception:
-        traceback.print_exc()
-        traceback_text = traceback.format_exc()
-        executed = False
+    cookie_keys = ["guest_id", "guest_id_marketing", "guest_id_ads", "kdt", "auth_token", "ct0", "twid", "personalization_id"]
+    json_cookies = get_twitter_cookies(cookie_keys)
 
-    if (not executed):
-        return executed, traceback_text, [], []
+    if json_cookies["found"]:
+        twitter_cookies = ""
 
+        # cookies_value = """guest_id=guest_id_value; guest_id_marketing=guest_id_marketing; guest_id_ads=guest_id_ads; kdt=kdt_value; auth_token=auth_token_value; ct0=ct0_value; twid=twid_value; personalization_id="personalization_id_value" """
+        for cookie in cookie_keys:
+            twitter_cookies = twitter_cookies + cookie + "=" + json_cookies["cookies"][cookie] + "; "
+
+        # print("==============================================================")
+        # print(twitter_cookies)
+        # print("==============================================================")
+
+    # Get user and pass
+
+
+    # app.sign_in("cncmnt", "kea01kat02kir03kia04")
+    app.load_cookies(twitter_cookies[:-2])
+
+    user = app.get_user_info(username)
+
+    # Get urls
     url_list = []
-    # print("=========================================================")
-    # print(result_api.data.location)
-    # print(result_api.data.protected)
-    # print(result_api.data.entities)
-    # print("=========================================================")
-    if (result_api.data.entities):
-        if (result_api.data.entities.get("url", "") != "" and
-            result_api.data.entities['url'].get("urls", "") != ""):
-            for urls in result_api.data.entities['url']['urls']:
+    if (user.entities):
+        if (user.entities.get("url", "") != "" and
+            user.entities['url'].get("urls", "") != ""):
+            for urls in user.entities['url']['urls']:
                 if urls['expanded_url']:
                     url_list.append(urls['expanded_url'])
-        if (result_api.data.entities.get("description", "") != "" and
-            result_api.data.entities['description'].get("urls", "") != ""):
-            for urls in result_api.data.entities['description']['urls']:
+        if (user.entities.get("description", "") != "" and
+            user.entities['description'].get("urls", "") != ""):
+            for urls in user.entities['description']['urls']:
                 if urls['expanded_url']:
                     url_list.append(urls['expanded_url'])
 
     user_info = {"username": username, 
-                 "name": result_api.data.name,
-                 "photo": result_api.data.profile_image_url,
-                 "location": result_api.data.location,
-                 "verified": result_api.data.verified,
-                 "id": str(result_api.data.id),
-                 "protected": result_api.data.protected,
-                 "tweets": result_api.data.public_metrics['tweet_count'],
-                 "followers": result_api.data.public_metrics['followers_count'],
-                 "following": result_api.data.public_metrics['following_count'],
-                 "listed": result_api.data.public_metrics['listed_count'],
-                 # "likes": result_api.favourites_count,
-                 "likes": "undefined",
+                 "name": user.name,
+                 "photo": user.profile_image_url_https,
+                 "location": user.location,
+                 "verified": user.verified,
+                 "id": str(user.id),
+                 "protected": user.protected,
+                 # "tweets": user.data.public_metrics['tweet_count'],
+                 "tweets": user.statuses_count,
+                 "sensitive": user.possibly_sensitive,
+                 "followers": user.followers_count,
+                 "following": user.friends_count,
+                 "listed": user.listed_count,
+                 "statuses": user.statuses_count,
+                 "likes": user.favourites_count,
+                 "media": user.media_count,
                  "url": url_list,
-                 "description": result_api.data.description,
-                 "created_at": result_api.data.created_at}
+                 "description": user.description,
+                 "created_at": user.created_at}
 
-    try:
-        ftweet = ["attachments", "author_id", "context_annotations", 
-                  "conversation_id", "created_at", "entities", "geo", 
-                  "id", "in_reply_to_user_id", "lang",
-                  "public_metrics", 
-                  "possibly_sensitive", "referenced_tweets", "reply_settings", 
-                  "source", "text", "withheld"]
-        result_json = client.get_users_tweets(id=result_api.data.id, 
-                                              max_results=100,
-                                              tweet_fields=ftweet)
-    except Exception as e:
-        traceback.print_exc()
+    # Get Tweets
+    tweets = app.get_tweets(user, pages=3)
 
     number = 0
+    retweets = 0
     tweets_info = []
+    views = 0
 
-    for tweet in result_json.data:
-        number = number + 1
-        # Mentions
-        mention_temp = []
+    for tweet in tweets:
         try:
-            for user in tweet.entities['mentions']:
-                mention_temp.append(user['username'])
-        except Exception:
-            pass
-
-        # Hashtags
-        hashtag_temp = []
-        try:
-            for h in tweet.entities['hashtags']:
-                hashtag_temp.append(h['tag'])
-        except Exception:
-            pass
-
-        # Possibly Sensitive
-        try:
-            if (tweet.possibly_sensitive):
-                pos_sen = "True"
+            if (tweet.is_retweet):
+                retweets = retweets + 1
+                print(f"Number: {number} is Retweet")
             else:
-                pos_sen = "False"
+                number = number + 1
+
+                print(f"Number: {number} is Tweet")
+
+                # Quoted
+                try:
+                    if (tweet.is_quoted):
+                        quoted = "True"
+                    else:
+                        quoted = "False"
+                except Exception:
+                    quoted = "undefined"
+
+                # Quoted
+                try:
+                    if (tweet.is_reply):
+                        reply = "True"
+                    else:
+                        reply = "False"
+                except Exception:
+                    reply = "undefined"
+
+                # # Mentions
+                # mention_temp = []
+                # try:
+                #     for user in tweet.entities['mentions']:
+                #         mention_temp.append(user['username'])
+                # except Exception:
+                #     pass
+
+                # # Hashtags
+                # hashtag_temp = []
+                # try:
+                #     for h in tweet.entities['hashtags']:
+                #         hashtag_temp.append(h['tag'])
+                # except Exception:
+                #     pass
+
+                # Possibly Sensitive
+                try:
+                    if (tweet.possibly_sensitive):
+                        pos_sen = "True"
+                    else:
+                        pos_sen = "False"
+                except Exception:
+                    pos_sen = "undefined"
+
+                for user_m in tweet.user_mentions:
+                    print(user_m)
+                    # print(user_m.ShortUser.username)
+                    print(user_m.username)
+
+                if (tweet.views == "Unavailable"):
+                    views = 0
+                else:
+                    views = tweet.views
+
+                # TODO: replied_to
+                # TODO: places
+                # TODO: media
+
+                source = tweet.source.replace('Twitter', '').strip()
+                source = source.replace('for', '').strip()
+
+                tweet_item = {"likes": tweet.likes,
+                              "retweets": tweet.retweet_counts,
+                              "bookmark": tweet.bookmark_count,
+                              "quotes": tweet.quote_counts,
+                              "replies": tweet.reply_counts,
+                              "views": views,
+                              "number": number,
+                              "quoted": quoted,
+                              "reply": reply,
+                              # "user_mentions": tweet.user_mentions,
+                              "user_mentions": [mentions.username for mentions in tweet.user_mentions if mentions.username],
+                              # "hashtags": tweet.hashtags,
+                              "hashtags": [hashtags["text"] for hashtags in tweet.hashtags if "text" in hashtags],
+                              "symbols": tweet.symbols,
+                              "created_at": tweet.created_on.strftime("%a %b %d %X %z %Y"),
+                              "source": source,
+                              "possibly_sensitive": pos_sen,
+                              "lang": tweet.language,
+                              "text": tweet.text}
+
+                tweets_info.append(tweet_item)
         except Exception:
-            pos_sen = "undefined"
+            continue
 
-        # # Sources (Elon remove source)
-        # source = tweet.source.replace('Twitter', '').strip()
-        # source = source.replace('for', '').strip()
+    # return executed, traceback_text, user_info, tweets_info
+    return user_info, number, retweets, tweets_info
 
-        tweet_item = {"likes": tweet.public_metrics['like_count'],
-                      "retweets": tweet.public_metrics['retweet_count'],
-                      "number": number,
-                      "user_mentions": mention_temp,
-                      "hashtags": hashtag_temp,
-                      "created_at": tweet.created_at.strftime("%a %b %d %X %z %Y"),
-                    #   "source": source,
-                      "possibly_sensitive": pos_sen,
-                      "lang": tweet.lang,
-                      "text": tweet.text}
 
-        tweets_info.append(tweet_item)
+# def api_twitter_essential(username):
+#     executed = True
+#     twitter_v2_bearer_token = api_keys_search('twitter_v2_bearer_token')
 
-    return executed, traceback_text, user_info, tweets_info
+#     # TODO: Verify if token is empty
+#     auth = tweepy.OAuth2BearerHandler(twitter_v2_bearer_token)
+#     api = tweepy.API(auth)
+
+#     tweet_count = 10
+#     # search = "@" + username + " since:2023-06-01"
+#     # search = username
+#     search = "@" + username
+#     tweets = tweepy.Cursor(api.search_tweets, search, tweet_mode="extended").items(tweet_count)
+
+#     print(tweets)
+#     print("============================================================")
+#     for tweet in tweets:
+#         print(tweet)
+#         print("============================================================")
+
+#     traceback_text = "OK"
+#     try:
+#         fields=["created_at", "description", "entities", "id", "location", 
+#                 "name", "pinned_tweet_id", "profile_image_url", "protected", 
+#                 "url", "username", "verified", "withheld", "public_metrics"]
+#         result_api = client.get_user(username=username, user_fields=fields)
+#     except Exception:
+#         traceback.print_exc()
+#         traceback_text = traceback.format_exc()
+#         executed = False
+
+#     if (not executed):
+#         return executed, traceback_text, [], []
+
+#     url_list = []
+#     # print("=========================================================")
+#     # print(result_api.data.location)
+#     # print(result_api.data.protected)
+#     # print(result_api.data.entities)
+#     # print("=========================================================")
+#     if (result_api.data.entities):
+#         if (result_api.data.entities.get("url", "") != "" and
+#             result_api.data.entities['url'].get("urls", "") != ""):
+#             for urls in result_api.data.entities['url']['urls']:
+#                 if urls['expanded_url']:
+#                     url_list.append(urls['expanded_url'])
+#         if (result_api.data.entities.get("description", "") != "" and
+#             result_api.data.entities['description'].get("urls", "") != ""):
+#             for urls in result_api.data.entities['description']['urls']:
+#                 if urls['expanded_url']:
+#                     url_list.append(urls['expanded_url'])
+
+#     user_info = {"username": username, 
+#                  "name": result_api.data.name,
+#                  "photo": result_api.data.profile_image_url,
+#                  "location": result_api.data.location,
+#                  "verified": result_api.data.verified,
+#                  "id": str(result_api.data.id),
+#                  "protected": result_api.data.protected,
+#                  "tweets": result_api.data.public_metrics['tweet_count'],
+#                  "followers": result_api.data.public_metrics['followers_count'],
+#                  "following": result_api.data.public_metrics['following_count'],
+#                  "listed": result_api.data.public_metrics['listed_count'],
+#                  # "likes": result_api.favourites_count,
+#                  "likes": "undefined",
+#                  "url": url_list,
+#                  "description": result_api.data.description,
+#                  "created_at": result_api.data.created_at}
+
+#     try:
+#         ftweet = ["attachments", "author_id", "context_annotations", 
+#                   "conversation_id", "created_at", "entities", "geo", 
+#                   "id", "in_reply_to_user_id", "lang",
+#                   "public_metrics", 
+#                   "possibly_sensitive", "referenced_tweets", "reply_settings", 
+#                   "source", "text", "withheld"]
+#         result_json = client.get_users_tweets(id=result_api.data.id, 
+#                                               max_results=100,
+#                                               tweet_fields=ftweet)
+#     except Exception as e:
+#         traceback.print_exc()
+
+#     number = 0
+#     tweets_info = []
+
+#     for tweet in result_json.data:
+#         number = number + 1
+#         # Mentions
+#         mention_temp = []
+#         try:
+#             for user in tweet.entities['mentions']:
+#                 mention_temp.append(user['username'])
+#         except Exception:
+#             pass
+
+#         # Hashtags
+#         hashtag_temp = []
+#         try:
+#             for h in tweet.entities['hashtags']:
+#                 hashtag_temp.append(h['tag'])
+#         except Exception:
+#             pass
+
+#         # Possibly Sensitive
+#         try:
+#             if (tweet.possibly_sensitive):
+#                 pos_sen = "True"
+#             else:
+#                 pos_sen = "False"
+#         except Exception:
+#             pos_sen = "undefined"
+
+#         # # Sources (Elon remove source)
+#         # source = tweet.source.replace('Twitter', '').strip()
+#         # source = source.replace('for', '').strip()
+
+#         tweet_item = {"likes": tweet.public_metrics['like_count'],
+#                       "retweets": tweet.public_metrics['retweet_count'],
+#                       "number": number,
+#                       "user_mentions": mention_temp,
+#                       "hashtags": hashtag_temp,
+#                       "created_at": tweet.created_at.strftime("%a %b %d %X %z %Y"),
+#                     #   "source": source,
+#                       "possibly_sensitive": pos_sen,
+#                       "lang": tweet.lang,
+#                       "text": tweet.text}
+
+#         tweets_info.append(tweet_item)
+
+#     return executed, traceback_text, user_info, tweets_info
 
 def p_twitter(username, from_m):
     total = []
+    user_info, tweets, retweets, tweets_info = get_twitter_user_info(username)
+    # print("= USER ==========================================================")
+    # print(user_info)
+    # print("= TWEETS INFO ===================================================")
+    print(f"Tweets: {tweets} - Retweets: {retweets}")
+    # print("= TWEETS ========================================================")
+    # print(tweets_info)
 
     # Try with Twitter API v1 (Elevated Access)
-    executed, status, user_info, tweets_info = api_twitter_elevated(username)
+    # executed, status, user_info, tweets_info = api_twitter_elevated(username)
 
     # Try with Twitter API v1 (Elevated Access)
-    if (not executed):
-        executed, status, user_info, tweets_info = api_twitter_essential(username)
+    # if (not executed):
+    # executed, status, user_info, tweets_info = api_twitter_essential(username)
 
-    if (not executed):
-        total.append({'raw_node': status})
-        return total
+    # print("= EXECUTED ======================================================")
+    # print(executed)
+    # print("= STATUS ========================================================")
+    # print(status)
+    # print("= USER ==========================================================")
+    # print(user_info)
+    # print("= TWEETS ========================================================")
+    # print(tweets_info)
 
-    # TODO: Without API
+    # if (not executed):
+    #     total.append({'raw_node': status})
+    #     return total
 
     raw_node = []
     raw_node_tweets = []
@@ -277,11 +415,14 @@ def p_twitter(username, from_m):
     hashtags = []
     users = []
     sources = []
-    tweets = 0
-    retweets = 0
-    s_lk = []
-    s_rt = []
-    # s_rp = []
+    # tweets = 0
+    # retweets = 0
+    s_lk = []   # Likes
+    s_rt = []   # Retweets
+    s_rp = []   # Replies
+    s_bk = []   # Bookmarks
+    s_qt = []   # Quotes
+    s_vw = []   # Views
     hours = []
     days = []
     t_timeline = []
@@ -292,48 +433,52 @@ def p_twitter(username, from_m):
 
     for tweet in tweets_info:
 
-        if (tweet['text'][:3] != 'RT '):
-            tweets += 1
-            s_lk.append({"name": str(index),
-                        "value": str(tweet['likes'])})
-            s_rt.append({"name": str(index),
-                        "value": str(tweet['retweets'])})
-            # s_rp.append({"name": str(index), "value": str(row['nreplies'])})
+        # tweets += 1
+        s_lk.append({"name": str(index),
+                    "value": str(tweet['likes'])})
+        s_rt.append({"name": str(index),
+                    "value": str(tweet['retweets'])})
+        s_rp.append({"name": str(index),
+                    "value": str(tweet['replies'])})
+        s_bk.append({"name": str(index),
+                    "value": str(tweet['bookmark'])})
+        s_qt.append({"name": str(index),
+                    "value": str(tweet['quotes'])})
+        s_vw.append({"name": str(index),
+                    "value": str(tweet['views'])})
 
-            # Mentions
-            for user in tweet['user_mentions']:
-                mention_temp.append(user)
+        # Mentions
+        for user in tweet['user_mentions']:
+            mention_temp.append(user)
 
-            # Hashtags
-            for h in tweet['hashtags']:
-                hashtag_temp.append(h)
+        # Hashtags
+        for h in tweet['hashtags']:
+            hashtag_temp.append(h)
 
-            # print(f"Created_at: {type(tweet['created_at'])} - {tweet['created_at']}")
-            created_at = datetime.strptime(tweet['created_at'],
-                                        "%a %b %d %X %z %Y")
-            tweet_date = created_at.strftime("%Y-%m-%dT%H:%M:%S.009Z")
-            tweet_day = created_at.strftime("%Y-%m-%d")
-            tweet['created_at'] = tweet_date
+        # print(f"Created_at: {type(tweet['created_at'])} - {tweet['created_at']}")
+        created_at = datetime.strptime(tweet['created_at'],
+                                    "%a %b %d %X %z %Y")
+        tweet_date = created_at.strftime("%Y-%m-%dT%H:%M:%S.009Z")
+        tweet_day = created_at.strftime("%Y-%m-%d")
+        tweet['created_at'] = tweet_date
 
-            # Timeline
-            # t_timeline.append({"name": tweet_date, "value": 1})
-            if (prev_day == tweet_day):
-                time_value = time_value + 1
-            else:
-                t_timeline.append({"name": tweet_date, "value": time_value})
-                time_value = 1
-                prev_day = tweet_day
-
-            # Elon remove source
-            # sources_temp.append(tweet['source'])
-
-            # Hours and days
-            hours.append(created_at.strftime("%H"))
-            days.append(created_at.strftime("%A"))
-
-            index += 1
+        # Timeline
+        # t_timeline.append({"name": tweet_date, "value": 1})
+        if (prev_day == tweet_day):
+            time_value = time_value + 1
         else:
-            retweets += 1
+            t_timeline.append({"name": tweet_date, "value": time_value})
+            time_value = 1
+            prev_day = tweet_day
+
+        # Source
+        sources_temp.append(tweet['source'])
+
+        # Hours and days
+        hours.append(created_at.strftime("%H"))
+        days.append(created_at.strftime("%A"))
+
+        index += 1
 
     # Tweet vs Retweets
     tw_vs_rt = []
@@ -343,7 +488,10 @@ def p_twitter(username, from_m):
     # Likes, retweets, replies (continue)
     lk_rt_rp.append({"name": "Likes", "series": s_lk})
     lk_rt_rp.append({"name": "Retweets", "series": s_rt})
-    # lk_rt_rp.append({"name": "Replies", "series": s_rp})
+    lk_rt_rp.append({"name": "Replies", "series": s_rp})
+    lk_rt_rp.append({"name": "Bookmarks", "series": s_bk})
+    lk_rt_rp.append({"name": "Quotes", "series": s_qt})
+    lk_rt_rp.append({"name": "Views", "series": s_vw})
 
     # Mentions (continue)
     mention_counter = Counter(mention_temp)
@@ -490,7 +638,7 @@ def p_twitter(username, from_m):
                    "icon": "fas fa-map-marker-alt",
                    "link": link_social}
     gather.append(gather_item)
-    print(f"LOC: {user_info['location']}")
+
     if user_info['location']:
         profile_item = {'location': user_info['location']}
         profile.append(profile_item)
@@ -518,11 +666,17 @@ def p_twitter(username, from_m):
                    "link": link_social}
     gather.append(gather_item)
 
-    # private = "False" if profile_df['private'][0] == 0 else "True"
     gather_item = {"name-node": "TwitterPrivate",
                    "title": "Protected",
                    "subtitle": str(user_info['protected']),
                    "icon": "fas fa-user-shield",
+                   "link": link_social}
+    gather.append(gather_item)
+
+    gather_item = {"name-node": "TwitterSensitive",
+                   "title": "Sensitive",
+                   "subtitle": str(user_info['sensitive']),
+                   "icon": "fas fa-radiation",
                    "link": link_social}
     gather.append(gather_item)
 
@@ -533,12 +687,12 @@ def p_twitter(username, from_m):
                    "link": link_social}
     gather.append(gather_item)
 
-    # gather_item = {"name-node": "TwitterMedia",
-    #                "title": "Media",
-    #                "subtitle": str(profile_df['media'][0]),
-    #                "icon": "fas fa-photo-video",
-    #                "link": link_social}
-    # gather.append(gather_item)
+    gather_item = {"name-node": "TwitterMedia",
+                   "title": "Media",
+                   "subtitle": str(user_info['media']),
+                   "icon": "fas fa-photo-video",
+                   "link": link_social}
+    gather.append(gather_item)
 
     gather_item = {"name-node": "TwitterFollowers",
                    "title": "Followers",
@@ -602,7 +756,7 @@ def p_twitter(username, from_m):
     children.append({"name": "Tweets", "total": user_info['tweets']})
     children.append({"name": "Followers", "total": user_info['followers']})
     children.append({"name": "Following", "total": user_info['following']})
-    # children.append({"name": "Listed", "total": result_api.listed_count})
+    children.append({"name": "Listed", "total": user_info['listed']})
     resume = {"name": "twitter", "children": children}
 
     popularity.append({"title": "Followers",
