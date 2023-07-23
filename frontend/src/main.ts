@@ -11,7 +11,11 @@ import { environment } from './environments/environment';
 
 if (environment.production) {
   enableProdMode();
+  // HACK: Override console.log in production
+  console.log = function() {};
+  window.console.log = () => {};
 }
+
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));
