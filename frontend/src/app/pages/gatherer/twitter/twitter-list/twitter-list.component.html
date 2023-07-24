@@ -1,7 +1,7 @@
   <nb-card size="small" class="border-default">
     <nb-card-header>
       <div (click)="openDialog(dialogTwitterList)">
-          TWITTER Tweets Retweets (100 last tweets)
+          TWITTER Tweets
       </div>
       <div class="help" [nbPopover]="twitterListHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
       <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
@@ -31,7 +31,7 @@
 
   <ng-template #dialogTwitterList let-data let-ref="dialogRef">
     <nb-card [style.width]="width * 2" [style.height]="height * 2" style="background-color: rgba(0, 0, 0, 0.8);">
-      <nb-card-header>TWITTER Tweets Retweets (100 last tweets)</nb-card-header>
+      <nb-card-header>TWITTER Tweets</nb-card-header>
       <nb-card-body style="overflow: hidden;">
 
         <div style="fill: #05fcfc !important; font-size: 35px !important;">
@@ -58,13 +58,13 @@
   <ng-template #twitterListHelp>
     <nb-card style="margin: 0px; max-width: 50rem;">
       <nb-card-header status="warning">
-          TWITTER Tweets Retweets (100 last tweets)
+          TWITTER Tweets 
       </nb-card-header>
       <nb-card-body>
         <p><strong style="font-weight: 600;">Module</strong> : Twitter</p> 
         <p style="font-weight: 600;">Description</p> 
         <p style="text-align: justify;">
-        This line chart shows for each of the last 100 tweets its retweets, likes and replies
+        This line chart shows for each of the last tweets its retweets, likes and replies
         </p>
         <p style="text-align: justify;">
         Through this graph you can see if the characteristics (retweets, likes and replies) are sustained and similar or some tweet stands out from the rest

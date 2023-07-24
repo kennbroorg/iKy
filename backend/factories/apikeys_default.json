@@ -5,87 +5,82 @@
     "key": ""
   },
   {
-    "id": 2,
+    "id":2,
     "name": "linkedin_li_at",
     "key": ""
   },
   {
-    "id": 3,
+    "id":3,
     "name": "linkedin_JSESSIONID",
-    "key": ""
+    "key": "",
   },
   {
     "id": 4,
-    "name": "haveibeenpwned_key",
+    "name": "instagram_user",
     "key": ""
   },
   {
     "id": 5,
-    "name": "emailrep_key",
+    "name": "instagram_pass",
     "key": ""
   },
   {
     "id": 6,
-    "name": "peopledatalabs_key",
+    "name": "twitter_user",
     "key": ""
   },
   {
     "id": 7,
-    "name": "leaklookup_key",
+    "name": "twitter_pass",
     "key": ""
   },
   {
     "id": 8,
-    "name": "twitter_consumer_key",
+    "name": "haveibeenpwned_key",
     "key": ""
   },
   {
     "id": 9,
-    "name": "twitter_consumer_secret",
+    "name": "emailrep_key",
     "key": ""
   },
   {
     "id": 10,
-    "name": "twitter_access_token",
+    "name": "peopledatalabs_key",
     "key": ""
   },
   {
     "id": 11,
-    "name": "twitter_access_token_secret",
+    "name": "leaklookup_key",
     "key": ""
   },
   {
     "id": 12,
-    "name": "twitter_v2_bearer_token",
-    "key": ""
-  },
-  {
-    "id": 13,
     "name": "spotify_client_id",
     "key": ""
   },
   {
-    "id": 14,
+    "id": 13,
     "name": "spotify_client_secret",
     "key": ""
   },
   {
-    "id": 15,
+    "id": 14,
     "name": "twitch_client_id",
     "key": ""
   },
   {
-    "id": 16,
+    "id": 15,
     "name": "twitch_client_secret",
     "key": ""
   },
   {
-    "id": 17,
+    "id": 16,
     "name": "cse_api_key",
     "key": ""
   },
   {
-    "id": 18,
+    "id": 17,
     "name": "cse_cx",
     "key": ""
   }

@@ -9,6 +9,7 @@ requests==2.27.0
 bs4==0.0.1
 cfscrape==2.1.1
 tweepy==4.5.0
+tweety-ns @ https://github.com/mahrtayyab/tweety/archive/main.zip
 geopy==1.22.0
 git+https://github.com/KennBro/yagooglesearch.git@origin/add-output-param#egg=yagooglesearch
 socialscan==2.0.0
