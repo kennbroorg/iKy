@@ -1,7 +1,7 @@
   <nb-card size="small">
     <nb-card-header>
       <div (click)="openDialog(dialogTwitterTimeline)">
-          TWITTER Timeline (100 last tweets)
+          TWITTER Timeline (last tweets)
       </div>
       <div class="help" [nbPopover]="twitterTimelineHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
       <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
