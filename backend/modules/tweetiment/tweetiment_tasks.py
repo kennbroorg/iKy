@@ -9,7 +9,8 @@ import traceback
 
 import redis
 from langdetect import detect
-from googletrans import Translator
+# from googletrans import Translator
+import TranslatorX
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from datetime import datetime
 
@@ -41,7 +42,8 @@ def p_tweetiment_twint(tweets, task_id, username):
     compound = []
 
     analyzer = SentimentIntensityAnalyzer()
-    translator = Translator()
+    # translator = Translator()
+    translator = TranslatorX.Translator()
 
     c = 0
     for tweet in tweets:
@@ -62,7 +64,8 @@ def p_tweetiment_twint(tweets, task_id, username):
                 lang_detect = 'en'
             if (lang_detect != 'en'):
                 try:
-                    trans = translator.translate(text, dest='en')
+                    # trans = translator.translate(text, dest='en')
+                    trans = translator.Translate(text, to_lang='en')
                     translated = trans.text
                 except Exception:
                     translated = text
@@ -118,7 +121,8 @@ def p_tweetiment_twitter(tweets, task_id, username):
     compound = []
 
     analyzer = SentimentIntensityAnalyzer()
-    translator = Translator()
+    # translator = Translator()
+    translator = TranslatorX.Translator()
 
     c = 0
     for tweet in tweets:
@@ -147,7 +151,8 @@ def p_tweetiment_twitter(tweets, task_id, username):
                     lang_detect = 'en'
                 if (lang_detect != 'en'):
                     try:
-                        trans = translator.translate(text, dest='en')
+                        # trans = translator.translate(text, dest='en')
+                        trans = translator.Translate(text, to_lang='en')
                         translated = trans.text
                     except Exception:
                         # translator = TLT(from_lang=lang_detect, to_lang="en")

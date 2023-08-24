@@ -1,7 +1,7 @@
 chardet==3.0.4
 aiohttp==3.8.4
 beautifulsoup4==4.9.3
-httpx==0.13.3
+httpx==0.24.1
 Flask==2.1.2
 celery==5.2.7
 Flask-Cors==3.0.9
@@ -22,7 +22,8 @@ search-engine-parser==0.6.8
 fuzzywuzzy==0.18.0
 redis==3.5.3
 langdetect==1.0.8
-googletrans==3.0.0
+# googletrans==3.0.0
+TranslatorX==1.2
 vaderSentiment==3.3.2
 emailrep==0.0.4
 stop_words
