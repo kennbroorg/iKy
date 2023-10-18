@@ -1,8 +1,11 @@
-##Main Branch
+## Main Branch
+<br>
 The idea is that the main branch is iKy. All branches converge in iKy branch.
 The previous version (Frontend in AngularJS) is in iKy-v1 branch and we left master branch there too. 
 
-##Branch names
+## Branch names
+<br>
+
 - *WIP/featurename*   - For Work In Progress, stuff that will not end soon 
 - *FEAT/featurename*  - For feature that will be added or expanded
 - *BUG/bugname*       - For Bug 
@@ -12,7 +15,9 @@ The previous version (Frontend in AngularJS) is in iKy-v1 branch and we left mas
 - *IMP/improvename*   - For improvements
 - *MISC/miscname*     - For anything else (don't abuse)
 
-##Commits names
+## Commits names
+<br>
+
 - *[ADD] message* - For add 
 - *[MOD] message* - For modify
 - *[REM] message* - For remove 
