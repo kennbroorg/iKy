@@ -1,6 +1,6 @@
 ## Main Branch
 <br>
-The idea is that the main branch is iKy. All branches converge in iKy branch.
+The idea is that the main branch is iKy. All branches converge in iKy branch. <br>
 The previous version (Frontend in AngularJS) is in iKy-v1 branch and we left master branch there too. 
 
 ## Branch names
