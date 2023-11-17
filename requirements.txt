@@ -2,9 +2,9 @@ chardet==3.0.4
 aiohttp==3.8.4
 beautifulsoup4==4.9.3
 httpx==0.24.1
-Flask==2.1.2
+Flask==3.0.0
 celery==5.2.7
-Flask-Cors==3.0.9
+Flask-Cors==4.0.0
 requests==2.27.0
 bs4==0.0.1
 cfscrape==2.1.1
