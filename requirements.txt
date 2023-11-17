@@ -34,3 +34,4 @@ browser-cookie3
 google-api-python-client==2.33.0
 python-Levenshtein
 requests_html
+fontawesome==5.10.1.post1
