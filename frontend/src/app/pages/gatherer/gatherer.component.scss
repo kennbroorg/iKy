@@ -298,6 +298,75 @@
         margin-top: 10px important;
         margin-bottom: 10px important;
       }
+
+      .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          word-wrap: normal;
+          border: 0;
+      }
+      .position-absolute {
+          position: absolute !important;
+      }
+      .ContributionCalendar-grid {
+          width: max-content;
+          border-collapse: separate;
+      }
+      .d-flex {
+          display: flex !important;
+      }
+      .Link--muted {
+          display: none;
+      }
+      .ContributionCalendar-grid {
+          width: max-content;
+          border-collapse: separate;
+      }
+      .ContributionCalendar-label {
+          padding: 0.125em 0.5em 0.125em 0;
+          font-size: 15px;
+          font-weight: var(--base-text-weight-normal, 400);
+          /* color: #161b22; */
+          color: #05fcfc;
+          text-align: left;
+          fill: rgba(27,31,35,0.06);
+      }
+      .ContributionCalendar-day, .ContributionCalendar-day[data-level="0"] {
+          fill: var(--color-calendar-graph-day-bg);
+          shape-rendering: geometricPrecision;
+          background-color: #161b22;
+          border-radius: 2px;
+          outline: 1px solid rgba(27,31,35,0.06);
+          outline-offset: -1px;
+      }
+      .ContributionCalendar-day[data-level="1"] {
+          fill: #0e4429;
+          background-color: #0e4429;
+          outline: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .ContributionCalendar-day[data-level="2"] {
+          fill: #006d32;
+          background-color: #006d32;
+          outline: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .ContributionCalendar-day[data-level="3"] {
+          fill: #26a641;
+          background-color: #26a641;
+          outline: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .ContributionCalendar-day[data-level="4"] {
+          fill: #39d353;
+          background-color: #39d353;
+          outline: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .ContributionCalendar.days-selected .ContributionCalendar-day {
+          opacity: .5;
+      }
+
     }
   }
 
