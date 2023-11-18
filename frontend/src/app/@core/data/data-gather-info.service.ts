@@ -99,7 +99,7 @@ export class DataGatherInfoService {
 
                 this.globalGather['taskexec'][indexTaskexec].task_id = task.task;
                 this.globalGather['taskexec'][indexTaskexec].state = 'PROCESS';
-                // console.log("State change..................");
+                // console.log('State change..................');
             }
         }
 
@@ -1035,10 +1035,10 @@ export class DataGatherInfoService {
 
         for (let indexTaskexec in taskexec) {
 
-            // Evaluate module == / param <> / from <> "User"
+            // Evaluate module == / param <> / from <> 'User'
             if (taskexec[indexTaskexec].module == module && 
                 taskexec[indexTaskexec].param != param && 
-                from != "User") {
+                from != 'User') {
                 mustRun = false; // Not run
             } 
             // Evaluate module == / param <> / score > score
@@ -1144,25 +1144,24 @@ export class DataGatherInfoService {
             );
         }
 
-        let stateTask = "SUCCESS";
-        let stateTooltip = "Success";
-        if (data.result[3].raw[0] != undefined && 
-            data.result[3].raw[0].status != undefined && 
-            data.result[3].raw[0].status.toLowerCase() == "fail") {
-            stateTask = "FAILURE";
-            stateTooltip = data.result[3].raw[0].traceback;
-            // console.warn("ToolTip", stateTooltip);
+        let stateTask = 'SUCCESS';
+        let stateTooltip = 'Success';
+        if (data.result[3].raw[0] !== undefined &&
+            data.result[3].raw[0].status !== undefined &&
+            data.result[3].raw[0].status.toLowerCase() === 'fail') {
+            stateTask = 'FAILURE';
+            stateTooltip = '** ' + data.result[3].raw[0].reason + ' **          ' + data.result[3].raw[0].traceback;
         }
 
         this.globalGather['taskresume'][0].PS++;
 
-        if (stateTask == "SUCCESS") {
+        if (stateTask == 'SUCCESS') {
             this.showToast('success', module_name, 'Gather ended');
             this.globalGather[module_name] = data;
         } else {
             this.showToast('danger', module_name, 'Gather ended');
             // TODO : Remove this?
-            this.globalGather[module_name] = data; 
+            this.globalGather[module_name] = data;
         }
 
         for (let indexTaskexec in this.globalGather['taskexec']) {
@@ -1191,17 +1190,17 @@ export class DataGatherInfoService {
 
     // Error Callback : Retry
     private processRetry = (data: any, from_m: any, module_m: any, param: any): any => {
-        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        console.log("Module: ", module_m);
-        console.log("Data: ", data.url);
-        console.log("Error: ", data);
-        // console.log("Slice: ", data.url.slice(-37));
-        console.log("Slice: ", data.url.split("/")[4]);
-        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+        console.log('Module: ', module_m);
+        console.log('Data: ', data.url);
+        console.log('Error: ', data);
+        // console.log('Slice: ', data.url.slice(-37));
+        console.log('Slice: ', data.url.split('/')[4]);
+        console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
 
-        // let tasks = {"from_m": from_m, "module": module_m, "param": param, "task": data.url.split("/")[4]}
-        let url: string = "state/" + data.url.split("/")[4] + "/" + module_m
-        // console.log("URL: ", url);
+        // let tasks = {'from_m': from_m, 'module': module_m, 'param': param, 'task': data.url.split('/')[4]}
+        let url: string = 'state/' + data.url.split('/')[4] + '/' + module_m
+        // console.log('URL: ', url);
         // this.getRequestResult$(url, tasks)
         //     .subscribe(this.processResponse,
         //                err => this.processRetry(err, from_m, module_m, param),
@@ -1216,11 +1215,11 @@ export class DataGatherInfoService {
     }
 
     private processStateVal = (data: any, from_m: any, module_m: any, param: any): any => {
-        console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        console.log("Module: ", module_m);
-        console.log("data: ", data);
+        // console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        // console.log('Module: ', module_m);
+        // console.log('data: ', data);
 
-        if (data.state == "FAILURE") {
+        if (data.state == 'FAILURE') {
             for (let indexTaskexec in this.globalGather['taskexec']) {
                 if (this.globalGather['taskexec'][indexTaskexec].module == module_m && 
                     this.globalGather['taskexec'][indexTaskexec].param == param) {
@@ -1230,17 +1229,17 @@ export class DataGatherInfoService {
                 }
             }
         } else {
-            let tasks = {"from_m": from_m, "module": module_m, "param": param, "task": data.task_id}
-            let url: string = "result/" + data.task_id
-            console.log("URL: ", url);
-            console.log("ID:  ", data.task_id);
+            let tasks = {'from_m': from_m, 'module': module_m, 'param': param, 'task': data.task_id}
+            let url: string = 'result/' + data.task_id
+            console.log('URL: ', url);
+            console.log('ID:  ', data.task_id);
             this.getRequestResult$(url, tasks)
                 .subscribe(this.processResponse,
                            err => this.processRetry(err, from_m, module_m, param),
                            () => console.log('Completed RETRY - ' + module),
             );
         }
-        console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
         
     }
 
