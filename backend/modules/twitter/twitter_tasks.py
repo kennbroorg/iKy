@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import traceback
 import json
@@ -77,7 +78,7 @@ def get_twitter_cookies(cookie_keys):
 
 def get_twitter_user_info(username):
     # Valid session
-    app = Twitter("twitter")
+    app = Twitter("session")
 
     cookie_keys = ["guest_id", "guest_id_marketing", "guest_id_ads", "kdt", "auth_token", "ct0", "twid", "personalization_id"]
     json_cookies = get_twitter_cookies(cookie_keys)
@@ -209,6 +210,8 @@ def get_twitter_user_info(username):
                 tweets_info.append(tweet_item)
         except Exception:
             continue
+
+    os.remove('./session.json')
 
     return user_info, number, retweets, tweets_info
 
