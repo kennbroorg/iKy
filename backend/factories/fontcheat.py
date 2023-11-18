@@ -19,7 +19,7 @@ def fontawesome_cheat_5():
 
 def search_icon_5(name, font_list):
     if (name.lower() in fa.icons.keys()):
-        return 'fas fa-' + name.lower()
+        return 'fab fa-' + name.lower()
     else:
         return None
 
