@@ -13,10 +13,10 @@ tweety-ns @ https://github.com/mahrtayyab/tweety/archive/main.zip
 geopy==1.22.0
 git+https://github.com/KennBro/yagooglesearch.git@origin/add-output-param#egg=yagooglesearch
 socialscan==2.0.0
-instaloader==4.9.6
+instaloader==4.10.1
 requests-futures==1.0.0
 torrequest
-holehe==1.60.2
+holehe==1.61
 search-engine-parser==0.6.8
 # git+https://github.com/KennBro/search-engine-parser.git@origin/KALI/2022.2#egg=search-engine-parser
 fuzzywuzzy==0.18.0
