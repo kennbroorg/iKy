@@ -85,6 +85,7 @@ def p_spotify(username, from_m, level):
     playlist_count = 0
     track_count = 0
 
+    playlist = []
     playlist_list = []
     words = []
     autors = []
