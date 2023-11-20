@@ -2,6 +2,8 @@
 
   <div class="col-md-4">
 
+    <div class="accordheight"></div>
+
     <nb-card (click)="openDialog(dialogDisclaimer)" style="cursor: pointer;">
       <nb-card-body style="height: 3.75rem; padding: 1.25rem; font-family: Roboto; font-size: 15px; font-weight: 300;overflow: auto;">
         Disclaimer (You must read this)
@@ -638,8 +640,24 @@
       </nb-accordion-item>
     </nb-accordion>
 
+  </div>
+
+  <!-- Logo -->
+  <div class="col-md-4">
+    <nb-card size="large" class="border-default" id="imagePrincipal">
+      <nb-card-body style="text-align: center;"> 
+        <div style="height: 100%; vertical-align: middle;">
+          <img style="position:absolute; top:0; bottom:0; left:0; right: 0; margin:auto;" src="assets/images/iKy-Logo.png">
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+
+  <div class="col-md-4">
+
+    <div class="accordheight"></div>
+
     <!-- Projects -->
-    <div style="height: 20px;"></div>
     <nb-accordion multi>
       <nb-accordion-item>
         <nb-accordion-item-header>
@@ -1328,42 +1346,20 @@
       </nb-accordion-item>
     </nb-accordion>
 
-  </div>
+    <!-- <nb-card size="small" class="border-default"> -->
+    <!--   <nb-card-body style="overflow: hidden; margin: 0px; padding: 0px;">  -->
+    <!--     <div #nbCardGitlabCode id="nbCardGitlabCode" style="overflow: hidden; margin: 0px; padding: 0px;"> -->
+    <!--       <ngx-charts-pie-chart -->
+    <!--         [view]="[width, height]" -->
+    <!--         [doughnut]="false" -->
+    <!--         [scheme]="colorScheme" -->
+    <!--         [results]="gitlabCode" -->
+    <!--         [labels]="true"> -->
+    <!--       </ngx-charts-pie-chart> -->
+    <!--     </div> -->
+    <!--   </nb-card-body> -->
+    <!-- </nb-card> -->
 
-  <!-- Logo -->
-  <div class="col-md-4">
-    <nb-card size="large" class="border-default" id="imagePrincipal">
-      <nb-card-body style="text-align: center;"> 
-        <div style="height: 100%; vertical-align: middle;">
-          <img style="position:absolute; top:0; bottom:0; left:0; right: 0; margin:auto;" src="assets/images/iKy-Logo.png">
-        </div>
-      </nb-card-body>
-    </nb-card>
-  </div>
-
-  <div class="col-md-4">
-    <nb-card size="small" class="border-default">
-      <nb-card-body style="overflow: hidden; margin: 0px; padding: 0px;"> 
-        <div #nbCardGitlabCode id="nbCardGitlabCode" style="overflow: hidden; margin: 0px; padding: 0px;">
-          <ngx-charts-pie-chart
-            [view]="[width, height]"
-            [doughnut]="false"
-            [scheme]="colorScheme"
-            [results]="gitlabCode"
-            [labels]="true">
-          </ngx-charts-pie-chart>
-        </div>
-        <!-- <iframe src="https://player.vimeo.com/video/326114716" width="100%" height="100%" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> -->
-      </nb-card-body>
-    </nb-card>
-
-    <!--
-    <nb-card size="xsmall" class="border-default">
-      <nb-card-body style="text-align: center;"> 
-        <iframe src="https://player.vimeo.com/video/326114716" width="100%" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-      </nb-card-body>
-    </nb-card>
-    -->
   </div>
 
 </div>

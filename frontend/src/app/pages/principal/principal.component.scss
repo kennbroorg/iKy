@@ -79,6 +79,10 @@
     height: calc(#{nb-theme(layout-min-height)} - #{nb-theme(header-height)} - #{nb-theme(footer-height)} - #{nb-theme(header-height)}) !important;  
   }
 
+  .accordheight {
+    height: calc((#{nb-theme(layout-min-height)} - #{nb-theme(header-height)} - #{nb-theme(footer-height)} - #{nb-theme(header-height)} * 4 )/2) !important;  
+  }
+
   ngx-charts-pie-chart {
     display: block;
 
