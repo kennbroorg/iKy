@@ -211,7 +211,10 @@ def get_twitter_user_info(username):
         except Exception:
             continue
 
-    os.remove('./session.json')
+    try:
+        os.remove('./session.json')
+    except Exception:
+        pass
 
     return user_info, number, retweets, tweets_info
 
