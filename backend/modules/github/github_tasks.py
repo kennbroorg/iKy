@@ -3,6 +3,7 @@
 
 import sys
 import json
+from time import strftime
 import requests
 import re
 from bs4 import BeautifulSoup
@@ -26,10 +27,8 @@ except ImportError:
     from factories.iKy_functions import location_geo
     celery = create_celery(create_application())
 
-# from requests.packages.urllib3.exceptions import InsecureRequestWarning
-# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
 logger = get_task_logger(__name__)
+
 
 def findReposFromUsername(username):
     response = requests.get(
@@ -79,39 +78,39 @@ def p_github(email, from_m="Initial"):
         username = email
 
     req = requests.get("https://api.github.com/users/%s" % username)
+    print(req.json())
 
-    # today = date.today()
-    # actual_year_from = date(today.year, today.month, 1)
-    # actual_year_to = date(today.year, today.month, today.day)
-    # previous_year_from = date(today.year - 1, today.month, 1)
-    # previous_year_to = date(today.year - 1, today.month, today.day)
+    if (req.json().get("message", "") == 'Not Found'):
+        raise Exception("User not found")
 
-    # svg_req = "https://github.com/users/%s/contributions?from=%s&to=%s"
-    svg_req = "https://github.com/users/%s/contributions"
-    svg_actual_r = requests.get(svg_req % (username))
+    # if (req.json().get("type", "") == 'Organization'):
+    #     raise Exception("It's an Organization")
+
+    today = datetime.today()
+    actual_year_from = datetime(today.year, today.month, 1).strftime("%Y-%m-%d")
+    actual_year_to = datetime(today.year, today.month, today.day).strftime("%Y-%m-%d")
+
+    # print(actual_year_from)
+
+    svg_req = f"https://github.com/{username}?tab=overview&amp;" + \
+              f"from={actual_year_from}&amp;" + \
+              f"to={actual_year_to}"
+    # svg_req = "https://github.com/KennBro?tab=overview&amp;from=2023-11-01&amp;to=2023-11-18"
+    # print(svg_req)
+
+    svg_actual_r = requests.get(svg_req)
 
     html_doc = BeautifulSoup(svg_actual_r.content, "html.parser")
-    svg_actual_r = html_doc.find('div', class_='graph-before-activity-overview')
+    svg_actual_div = html_doc.find('div', class_='graph-before-activity-overview')
     # print(f"Type : {type(svg_actual_r)}")
-    # print(f"data : {svg_actual_r}")
-    # print("\n\n\n\n\n")
 
-    # svg_actual_r = requests.get(svg_req % (username, str(actual_year_from),
-    #                                        str(actual_year_to)))
-    # svg_previous_r = requests.get(svg_req % (username, str(previous_year_from),
-    #                                          str(previous_year_to)))
+    for tag in svg_actual_div.find_all():
+        tag.replace_with(tag.decode_contents())
 
-    # Change color of calendar
-    # svg_actual = svg_actual_r.text.replace('ebedf0', '4d4d4d')
-    # svg_previous = svg_previous_r.text.replace('ebedf0', '4d4d4d')
-    # svg_actual = svg_actual_r.text
-    svg_actual = svg_actual_r.decode()
-    svg_actual = svg_actual.replace('data-level="0"', 'style="fill:rgb(0,0,0);"')
-    svg_actual = svg_actual.replace('data-level="1"', 'style="fill:rgb(44, 230, 155, 0.2);"')
-    svg_actual = svg_actual.replace('data-level="2"', 'style="fill:rgb(44, 230, 155, 0.4);"')
-    svg_actual = svg_actual.replace('data-level="3"', 'style="fill:rgb(44, 230, 155, 0.6);"')
-    svg_actual = svg_actual.replace('data-level="4"', 'style="fill:rgb(44, 230, 155, 0.8);"')
-    # svg_previous = svg_previous_r.text.replace('ebedf0', '295757')
+    # print(svg_actual_div)
+
+    # Change size
+    svg_actual = svg_actual_div.text.replace('width: 11px', 'width: 13px; height: 13px;')
 
     # Raw Array
     raw_node = json.loads(req.text)

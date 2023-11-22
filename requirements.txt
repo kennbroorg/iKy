@@ -2,9 +2,9 @@ chardet==3.0.4
 aiohttp==3.8.4
 beautifulsoup4==4.9.3
 httpx==0.24.1
-Flask==2.1.2
+Flask==3.0.0
 celery==5.2.7
-Flask-Cors==3.0.9
+Flask-Cors==4.0.0
 requests==2.27.0
 bs4==0.0.1
 cfscrape==2.1.1
@@ -13,10 +13,10 @@ tweety-ns @ https://github.com/mahrtayyab/tweety/archive/main.zip
 geopy==1.22.0
 git+https://github.com/KennBro/yagooglesearch.git@origin/add-output-param#egg=yagooglesearch
 socialscan==2.0.0
-instaloader==4.9.6
+instaloader==4.10.1
 requests-futures==1.0.0
 torrequest
-holehe==1.60.2
+holehe==1.61
 search-engine-parser==0.6.8
 # git+https://github.com/KennBro/search-engine-parser.git@origin/KALI/2022.2#egg=search-engine-parser
 fuzzywuzzy==0.18.0
@@ -34,3 +34,4 @@ browser-cookie3
 google-api-python-client==2.33.0
 python-Levenshtein
 requests_html
+fontawesome==5.10.1.post1

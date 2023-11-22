@@ -29,7 +29,7 @@ logger = get_task_logger(__name__)
 
 async def p_holehe(email, from_m):
 
-    holehe.core.check_if_email(email)
+    # holehe.core.is_mail(email)
 
     modules = holehe.core.import_submodules("holehe.modules")
     websites = holehe.core.get_functions(modules)

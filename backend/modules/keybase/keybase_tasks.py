@@ -12,7 +12,6 @@ import re
 try:
     from factories._celery import create_celery
     from factories.application import create_application
-    # from factories.fontcheat import fontawesome_cheat, search_icon
     from factories.fontcheat import fontawesome_cheat_5, search_icon_5
     from celery.utils.log import get_task_logger
     from factories.iKy_functions import analize_rrss
@@ -23,7 +22,6 @@ except ImportError:
     sys.path.append('../../')
     from factories._celery import create_celery
     from factories.application import create_application
-    # from factories.fontcheat import fontawesome_cheat, search_icon
     from factories.fontcheat import fontawesome_cheat_5, search_icon_5
     from celery.utils.log import get_task_logger
     from factories.iKy_functions import analize_rrss
@@ -37,7 +35,6 @@ logger = get_task_logger(__name__)
 
 
 def p_keybase(username, from_m):
-    print(f"Procesando: {username}")
     url = "https://keybase.io/_/api/1.0/user/lookup.json?" + \
           "usernames=%s" % username
     req = requests.get(url)

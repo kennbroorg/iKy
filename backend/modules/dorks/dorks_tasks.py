@@ -45,7 +45,7 @@ def p_dorks_cse(api_key, cx, keywords, dorks=''):
                  'keybase': 'site:keybase.io',
                  'linkedin': 'site:linkedin.com',
                  # 'facebook': 'site:facebook.com',
-                 #  'pinterest': 'site:pinterest.com',
+                 # 'pinterest': 'site:pinterest.com',
                  'tiktok': 'site:tiktok.com'}
 
     node = []
@@ -58,7 +58,7 @@ def p_dorks_cse(api_key, cx, keywords, dorks=''):
                      'descriptions': item["snippet"]})
 
     for dork in dorks:
-        timeDelay = random.randrange(0, 15)
+        timeDelay = random.randrange(5, 15)
         time.sleep(timeDelay)
         query = f"{keywords} {dorks[dork]}"
 
@@ -401,7 +401,7 @@ if __name__ == "__main__":
     # dorks = {'twitter': 'site:twitter.com',
     #          'github': 'site:github.com'}
     # dorks = {'twitter': 'site:twitter.com'}
-    dorks = {'linkedin': 'site:linkedin.com'}
-    # dorks = ''
+    # dorks = {'instagram': 'site:instagram.com'}
+    dorks = ''
     result = t_dorks(username, dorks=dorks)
     output(result)
