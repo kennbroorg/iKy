@@ -133,7 +133,7 @@ A continuación se muestra una tabla con todos los campos a rellenar
 | Fullcontact    | :octagonal\_sign: |  | Discontinuado |
 | PeopleDataLabs | :warning: |  | En revision |
 | Linkedin | :ok: | linkedin\_li\_at / linkedin\_JSESSIONID [\(***\)](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#postdata) | :free: Cookie browser(:cookie:) Metodo. Explicado [aquí](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#linkedin) |
-| Twitter        | :ok: | twitter\_user / twitter\_pass [\(***\)](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#postdata) | :free: Cookie browser(:cookie:) o usuario/password. Explained [here](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#twitter) |
+| Twitter        | :ok: | twitter\_user / twitter\_pass [\(***\)](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#postdata) | :free: Cookie browser(:cookie:) o usuario/password. Explicado [aquí](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#twitter) |
 | Instagram      | :warning: |  | En revision |
 | HaveIBeenPwned | :ok: | haveibeenpwned\_key |:heavy\_dollar\_sign: API **Paid**. Explicado [aquí](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#haveibeenpwned) |
 | Emailrep       | :ok: | emailrep\_key | :free: API **Free**. Explicado [aquí](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#emailrep) |
