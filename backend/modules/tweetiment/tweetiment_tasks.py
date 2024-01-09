@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import json
 import requests
 import re
 import traceback
+import time
 
 import redis
 from langdetect import detect
@@ -34,7 +36,24 @@ logger = get_task_logger(__name__)
 
 
 def p_tweetiment_twint(tweets, task_id, username):
+    """ Task of Celery that get info from twitter sentiment """
 
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-tweetiment.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.info(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     raw = []
     neg = []
     pos = []
@@ -206,6 +225,7 @@ def p_tweetiment_twitter(tweets, task_id, username):
 def t_tweetiment(username, task_id, from_m="Initial"):
     total = []
     tweets = []
+    tic = time.perf_counter()
     try:
         task_id_complete = "celery-task-meta-" + task_id
         print("TaskID : " + task_id_complete)
@@ -229,6 +249,14 @@ def t_tweetiment(username, task_id, from_m="Initial"):
             tweets = json_value['result'][3]['raw'][1]['raw_node_tweets']
             total = p_tweetiment_twitter(tweets, task_id, username)
     except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
         traceback.print_exc()
         traceback_text = traceback.format_exc()
         total.append({'module': 'tweetiment'})
@@ -236,11 +264,17 @@ def t_tweetiment(username, task_id, from_m="Initial"):
         total.append({'validation': 'not_used'})
 
         raw_node = []
-        raw_node.append({"status": "fail",
-                         "reason": "{}".format(e),
-                         # "traceback": 1})
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
                          "traceback": traceback_text})
         total.append({"raw": raw_node})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"PeopleDataLabs - Response in {toc - tic:0.4f} seconds")
+
     return total
 
 

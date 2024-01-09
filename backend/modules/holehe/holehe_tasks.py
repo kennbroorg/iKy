@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import traceback
 import json
+import time
 
 import trio
 import httpx
@@ -29,6 +31,22 @@ logger = get_task_logger(__name__)
 
 async def p_holehe(email, from_m):
 
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-holehe.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     # holehe.core.is_mail(email)
 
     modules = holehe.core.import_submodules("holehe.modules")
@@ -114,21 +132,36 @@ async def p_holehe(email, from_m):
 @celery.task
 def t_holehe(email, from_m="initial"):
     total = []
+    tic = time.perf_counter()
     try:
         total = trio.run(p_holehe, email, from_m)
     except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
         traceback.print_exc()
         traceback_text = traceback.format_exc()
         total.append({'module': 'holehe'})
         total.append({'param': email})
-        total.append({'validation': 'hard'})
+        total.append({'validation': 'not_used'})
 
         raw_node = []
-        raw_node.append({"status": "fail",
-                         "reason": "{}".format(e),
-                         # "traceback": 1})
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
                          "traceback": traceback_text})
         total.append({"raw": raw_node})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"Holehe - Response in {toc - tic:0.4f} seconds")
+
     return total
 
 

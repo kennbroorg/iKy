@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import json
+import time
+import traceback
 from socialscan.util import Platforms, sync_execute_queries
 
 try:
@@ -23,10 +26,25 @@ except ImportError:
 logger = get_task_logger(__name__)
 
 
-@celery.task
-def t_socialscan(email, from_m="Initial"):
+def p_socialscan(email, from_m="Initial"):
     """ Task of Celery that get info from socialscan """
 
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-socialscan.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     username = email.split("@")[0]
 
     # Total
@@ -105,7 +123,42 @@ def t_socialscan(email, from_m="Initial"):
     total.append({'profile': profile})
     total.append({'timeline': timeline})
 
-    print(total)
+    return total
+
+
+@celery.task
+def t_socialscan(email, from_m="Initial"):
+    total = []
+    tic = time.perf_counter()
+    try:
+        total = p_socialscan(email)
+    except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
+        traceback.print_exc()
+        traceback_text = traceback.format_exc()
+        total.append({'module': 'socialscan'})
+        total.append({'param': email})
+        total.append({'validation': 'not_used'})
+
+        raw_node = []
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
+                         "traceback": traceback_text})
+        total.append({"raw": raw_node})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"SocialScan - Response in {toc - tic:0.4f} seconds")
+
     return total
 
 

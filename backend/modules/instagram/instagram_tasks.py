@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import json
+import time
 import requests
 import re
 import instaloader
@@ -36,6 +38,22 @@ logger = get_task_logger(__name__)
 def p_instaloader(username, num=10, from_m="Initial"):
     """ Task of Celery that get info from instagram"""
 
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-instagram.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     instagram_user = api_keys_search('instagram_user')
     instagram_pass = api_keys_search('instagram_pass')
     raw_node = []
@@ -781,11 +799,20 @@ def p_instagram(app, server, username, num=30, from_m="Initial"):
 @celery.task
 def t_instagram(username, num=30, from_m="Initial"):
     total = []
+    tic = time.perf_counter()
     try:
-        # total = p_instaloader(username, from_m)
-        app_id, server_id = obtain_ids(username)
-        total = p_instagram(app_id, server_id, username, num=num)
+        total = p_instaloader(username, from_m)
+        # app_id, server_id = obtain_ids(username)
+        # total = p_instagram(app_id, server_id, username, num=num)
     except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
         traceback.print_exc()
         traceback_text = traceback.format_exc()
         total.append({'module': 'instagram'})
@@ -793,11 +820,17 @@ def t_instagram(username, num=30, from_m="Initial"):
         total.append({'validation': 'not_used'})
 
         raw_node = []
-        raw_node.append({"status": "fail or user not found",
-                         "reason": "{}".format(e),
-                         # "traceback": 1})
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
                          "traceback": traceback_text})
         total.append({"raw": raw_node})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"Instagram - Response in {toc - tic:0.4f} seconds")
+
     return total
 
 

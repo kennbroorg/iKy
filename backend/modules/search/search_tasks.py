@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import json
 import requests
@@ -17,7 +18,7 @@ import re
 import urllib.parse
 import collections
 from fuzzywuzzy import process
-from time import gmtime, strftime
+from time import gmtime, strftime, time
 
 try:
     from factories._celery import create_celery
@@ -34,8 +35,8 @@ except ImportError:
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# from requests.packages.urllib3.exceptions import InsecureRequestWarning
+# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
@@ -489,9 +490,25 @@ def deep_analysis(names, usernames, searcher, data, output):
     return output
 
 
-@celery.task
-def t_search(username, from_m="Initial"):
+def p_search(username, from_m="Initial"):
     """ Task of Celery that get info from searchers """
+
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-search.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.info(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            pass
+
+    # Code
     output = {}
 
     # Fix : eliminate cache directory
@@ -912,6 +929,42 @@ def t_search(username, from_m="Initial"):
     total.append({'profile': profile})
     total.append({'timeline': timeline})
     total.append({'tasks': tasks})
+
+    return total
+
+
+@celery.task
+def t_search(username, from_m="Initial"):
+    total = []
+    tic = time.perf_counter()
+    try:
+        total = p_search(username)
+    except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
+        traceback.print_exc()
+        traceback_text = traceback.format_exc()
+        total.append({'module': 'search'})
+        total.append({'param': username})
+        total.append({'validation': 'not_used'})
+
+        raw_node = []
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
+                         "traceback": traceback_text})
+        total.append({"raw": raw_node})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"Search - Response in {toc - tic:0.4f} seconds")
 
     return total
 

@@ -9,7 +9,9 @@ import re
 from collections import Counter
 from datetime import datetime, timedelta
 import browser_cookie3
-from tweety import Twitter
+# from tweety import Twitter
+import tweety
+import time
 
 
 try:
@@ -78,7 +80,7 @@ def get_twitter_cookies(cookie_keys):
 
 def get_twitter_user_info(username):
     # Valid session
-    app = Twitter("session")
+    app = tweety.Twitter("session")
 
     cookie_keys = ["guest_id", "guest_id_marketing", "guest_id_ads", "kdt", "auth_token", "ct0", "twid", "personalization_id"]
     json_cookies = get_twitter_cookies(cookie_keys)
@@ -94,10 +96,19 @@ def get_twitter_user_info(username):
     # Get user and pass
     else:
         twitter_user = api_keys_search('twitter_user')
+        if (not twitter_user):
+            raise Exception("iKy - Missing or invalid user. Needed because the cookies can't be recovered")
         twitter_pass = api_keys_search('twitter_pass')
+        if (not twitter_pass):
+            raise Exception("iKy - Missing or invalid pass. Needed because the cookies can't be recovered")
         app.sign_in(twitter_user, twitter_pass)
 
-    user = app.get_user_info(username)
+    try:
+        user = app.get_user_info(username)
+    except tweety.exceptions_.UserNotFound:
+        raise Exception("iKy - User not found")
+    except Exception:
+        raise Exception("iKy - API Error")
 
     # Get urls
     url_list = []
@@ -220,6 +231,24 @@ def get_twitter_user_info(username):
 
 
 def p_twitter(username, from_m):
+    """ Task of Celery that get info from twitter """
+
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-twitter.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     total = []
     user_info, tweets, retweets, tweets_info = get_twitter_user_info(username)
 
@@ -641,9 +670,18 @@ def p_twitter(username, from_m):
 @celery.task
 def t_twitter(username, from_m):
     total = []
+    tic = time.perf_counter()
     try:
         total = p_twitter(username, from_m)
     except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
         traceback.print_exc()
         traceback_text = traceback.format_exc()
         total.append({'module': 'twitter'})
@@ -651,11 +689,17 @@ def t_twitter(username, from_m):
         total.append({'validation': 'not_used'})
 
         raw_node = []
-        raw_node.append({"status": "fail",
-                         "reason": "{}".format(e),
-                         # "traceback": 1})
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
                          "traceback": traceback_text})
         total.append({"raw": raw_node})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"Twitter X - Response in {toc - tic:0.4f} seconds")
+
     return total
 
 

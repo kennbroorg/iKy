@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import json
 import traceback
@@ -91,7 +92,7 @@ def p_dorks_yagoogle(keywords, dorks=''):
 
     # Search without dorks
     query = f"{keywords}"
-    print(f"Processing QUERY : {query}")
+    # print(f"Processing QUERY : {query}")
     client = yagooglesearch.SearchClient(
         query,
         tbs="li:1",
@@ -117,7 +118,7 @@ def p_dorks_yagoogle(keywords, dorks=''):
         time.sleep(timeDelay)
         query = f"{keywords} {dorks[dork]}"
 
-        print(f"Processing QUERY : {query}")
+        # print(f"Processing QUERY : {query}")
         client = yagooglesearch.SearchClient(
             query,
             # tbs="li:1",
@@ -159,6 +160,22 @@ def p_dorks(keywords, dorks, from_m="Initial"):
         - pinterest
     """
 
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-dorks.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     api_key = api_keys_search('cse_api_key')
     cx = api_keys_search('cse_cx')
 
@@ -361,28 +378,25 @@ def t_dorks(user, dorks=''):
         total = p_dorks(user, dorks)
     # Error handle
     except Exception as e:
-        # Error description
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
         traceback.print_exc()
         traceback_text = traceback.format_exc()
-        code = 10
-        if ('Search dork Error' in traceback_text):
-            code = 5
+        total.append({'module': 'dorks'})
+        total.append({'param': user})
+        total.append({'validation': 'not_used'})
 
-        # Set module name in JSON format
-        total.append({"module": "dork"})
-        total.append({"param": user})
-        total.append({"validation": "null"})
-
-        # Set status code and reason
-        status = []
-        status.append(
-            {
-                "code": code,
-                "reason": "{}".format(e),
-                "traceback": traceback_text,
-            }
-        )
-        total.append({"raw": status})
+        raw_node = []
+        raw_node.append({"status": status,
+                         "reason": reason,
+                         "traceback": traceback_text})
+        total.append({"raw": raw_node})
 
     # Take final time
     toc = time.perf_counter()

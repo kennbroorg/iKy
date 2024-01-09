@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import json
 import requests
@@ -31,8 +32,8 @@ except ImportError:
     from factories.iKy_functions import location_geo
     celery = create_celery(create_application())
 
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# from requests.packages.urllib3.exceptions import InsecureRequestWarning
+# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
@@ -43,7 +44,7 @@ def username_search(username):
     data = json.loads(response.text)
 
     if response.text == ('{"accounts":[],"statuses":[],"hashtags":[]}'):
-        raise RuntimeError(f'Username: {username} NOT found using the Mastodon API!')
+        raise Exception(f'iKy - Username: {username} NOT found using the Mastodon API!')
 
     data = filter(
         lambda x: x.get("username").lower() == username.lower(), data["accounts"]
@@ -54,20 +55,37 @@ def username_search(username):
 
 
 def p_mastodon(username, from_m):
+    """ Task of Celery that get info from mastodon """
 
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-mastodon.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     # Evaluate param
     match = re.search(r'[@]?(\w+)[@]?([a-zA-Z0-9_\-\.]+)?', username)
     if (match):
         try:
             user = match.groups()[0]
         except Exception:
-            raise RuntimeError('Invalid input parameters')
+            raise Exception('iKy - Invalid input parameters')
         try:
             server = match.groups()[1]
         except Exception:
             server = ''
     else:
-        raise RuntimeError('Invalid input parameters')
+        raise Exception('iKy - Invalid input parameters')
 
     print(f"User : {user}")
     print(f"Server : {server}")
@@ -105,7 +123,7 @@ def p_mastodon(username, from_m):
         if (found):
             total = one_user(username, [info])
         else:
-            raise RuntimeError(f'Username: {user} NOT found using the Mastodon API!')
+            raise Exception(f'iKy - Username: {user} NOT found using the Mastodon API!')
 
     return total
 
@@ -386,9 +404,18 @@ def one_user(username, user_data, server=''):
 @celery.task
 def t_mastodon(username, from_m="Initial"):
     total = []
+    tic = time.perf_counter()
     try:
         total = p_mastodon(username, from_m)
     except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
         traceback.print_exc()
         traceback_text = traceback.format_exc()
         total.append({'module': 'mastodon'})
@@ -396,11 +423,17 @@ def t_mastodon(username, from_m="Initial"):
         total.append({'validation': 'not_used'})
 
         raw_node = []
-        raw_node.append({"status": "Fail",
-                         "reason": "{}".format(e),
-                         # "traceback": 1})
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
                          "traceback": traceback_text})
         total.append({"raw": raw_node})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"Mastodon - Response in {toc - tic:0.4f} seconds")
+
     return total
 
 

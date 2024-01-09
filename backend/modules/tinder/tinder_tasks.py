@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import json
 import requests
 from bs4 import BeautifulSoup
 from datetime import date
 import random
+import time
+import traceback
 
 
 try:
@@ -23,16 +26,31 @@ except ImportError:
     celery = create_celery(create_application())
 
 
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# from requests.packages.urllib3.exceptions import InsecureRequestWarning
+# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
 
-@celery.task
-def t_tinder(username, from_m="Initial"):
+def p_tinder(username, from_m="Initial"):
     """Task of Celery that get info from tinder"""
 
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-tinder.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     user_agents = [
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
         'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
@@ -70,7 +88,7 @@ def t_tinder(username, from_m="Initial"):
                      'teaser': str(soup.find(id='teaser').text.encode('ascii', 'ignore')),
                    }
     else:
-        raw_node = { 'status': 'Not found'}
+        raise Exception("iKy - User not found")
 
     # Total
     total = []
@@ -171,6 +189,42 @@ def t_tinder(username, from_m="Initial"):
     total.append({'graphic': graphic})
     total.append({'profile': profile})
     total.append({'timeline': timeline})
+
+    return total
+
+
+@celery.task
+def t_tinder(username, from_m="Initial"):
+    total = []
+    tic = time.perf_counter()
+    try:
+        total = p_tinder(username)
+    except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
+        traceback.print_exc()
+        traceback_text = traceback.format_exc()
+        total.append({'module': 'tinder'})
+        total.append({'param': username})
+        total.append({'validation': 'not_used'})
+
+        raw_node = []
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
+                         "traceback": traceback_text})
+        total.append({"raw": raw_node})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"Tinder - Response in {toc - tic:0.4f} seconds")
 
     return total
 

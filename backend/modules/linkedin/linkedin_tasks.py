@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import json
 import requests
@@ -41,7 +42,24 @@ def date_convert(date):
 
 
 def p_linkedin(user):
+    """ Task of Celery that get info from psbdmp """
 
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-linkedin.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     s = requests.Session()
     headers = {'User-Agent': 
                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) ' + 
@@ -93,7 +111,7 @@ def p_linkedin(user):
         v_li_at = api_keys_search('linkedin_li_at')
         v_JSESSIONID = api_keys_search('linkedin_JSESSIONID')
         if (v_li_at == '' or v_JSESSIONID == ''):
-            raise RuntimeError('iKy can\'t detect cookies!!! \n' + 
+            raise Exception('iKy - iKy can\'t detect cookies!!! \n' + 
                                'You will have to load them manually, by ' +
                                'extracting the cookies named \'li_at\' and ' + 
                                '\'JSESSIONID\' from the browser and loading ' +
@@ -102,6 +120,15 @@ def p_linkedin(user):
                                '\nPlease refer to ' +
                                'https://gitlab.com/kennbroorg/iKy/-/wikis/' +
                                'APIs/ApiKeys-get#linkedin \n')
+            # raise RuntimeError('iKy can\'t detect cookies!!! \n' + 
+            #                    'You will have to load them manually, by ' +
+            #                    'extracting the cookies named \'li_at\' and ' + 
+            #                    '\'JSESSIONID\' from the browser and loading ' +
+            #                    'them in \'linkedin_li_at\' and ' +
+            #                    '\'linkedin_JSESSIONID\' accordingly.'
+            #                    '\nPlease refer to ' +
+            #                    'https://gitlab.com/kennbroorg/iKy/-/wikis/' +
+            #                    'APIs/ApiKeys-get#linkedin \n')
         else:
             s.cookies['li_at'] = v_li_at
             s.cookies['JSESSIONID'] = v_JSESSIONID
@@ -119,9 +146,9 @@ def p_linkedin(user):
     if (match):
         ids = match.groups()[0].strip()
     elif ('This profile can\'t be accessed' in req.text):
-        raise RuntimeError('Linkedin user don\'t exist')  # TODO
+        raise Exception('iKy - Linkedin user don\'t exist')  # TODO
     else:
-        raise RuntimeError('The cookies in apikeys are wrong or expired\n' +
+        raise Exception('iKy - The cookies in apikeys are wrong or expired\n' +
                            'Reload them in apikeys section or file and ' +
                            'try again ')
 
@@ -136,10 +163,10 @@ def p_linkedin(user):
         total.append({'validation': 'hard'})
         url = user
         found = True
-        raise RuntimeError('Linkedin don\'t work with url')
+        raise Exception('iKy - Linkedin don\'t work with url')
     # Get profile from email
     elif ("@" in user):
-        raise RuntimeError('Linkedin don\'t work with email')
+        raise Exception('iKy - Linkedin don\'t work with email')
     else:
         total.append({'validation': 'hard'})
         url = "https://www.linkedin.com/in/%s/" % user
@@ -549,24 +576,29 @@ def p_linkedin(user):
 
 @celery.task
 def t_linkedin(user, from_m):
-    # Variable principal
     total = []
-    # Take initial time
     tic = time.perf_counter()
-
     try:
         total = p_linkedin(user)
     except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
         traceback.print_exc()
         traceback_text = traceback.format_exc()
         total.append({'module': 'linkedin'})
         total.append({'param': user})
-        total.append({'validation': from_m})
+        total.append({'validation': 'not_used'})
 
         raw_node = []
-        raw_node.append({"status": "Fail",
-                         "reason": "{}".format(e),
-                         # "traceback": 1})
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
                          "traceback": traceback_text})
         total.append({"raw": raw_node})
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import json
 import requests
@@ -8,7 +9,6 @@ from datetime import datetime
 from collections import Counter
 import time
 import random
-import os
 import traceback
 
 try:
@@ -24,14 +24,28 @@ except ImportError:
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
-# from requests.packages.urllib3.exceptions import InsecureRequestWarning
-# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
 logger = get_task_logger(__name__)
 
 
 def p_reddit(username, from_m='Initial'):
+    """ Task of Celery that get info from reddit """
 
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-reddit.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     user_agents = [
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
         'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
@@ -206,7 +220,7 @@ def p_reddit(username, from_m='Initial'):
             wddata = y
 
     else:
-        raw_node = { 'status': 'Not found'}
+        raise Exception("iKy - User not found")
 
     # Total
     total = []
@@ -361,38 +375,31 @@ def p_reddit(username, from_m='Initial'):
 
 @celery.task
 def t_reddit(user, from_m='Initial'):
-    # Variable principal
     total = []
-    # Take initial time
     tic = time.perf_counter()
-
-    # try execution principal function
     try:
         total = p_reddit(user, from_m)
-    # Error handle
     except Exception as e:
-        # Error description
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
         traceback.print_exc()
         traceback_text = traceback.format_exc()
-        code = 10
-        # if ('Reddit user don\'t exist' in traceback_text):
-        #     code = 5
-
-        # Set module name in JSON format
         total.append({"module": "reddit"})
         total.append({"param": user})
-        total.append({"validation": "null"})
+        total.append({'validation': 'not_used'})
 
-        # Set status code and reason
-        status = []
-        status.append(
-            {
-                "code": code,
-                "reason": "{}".format(e),
-                "traceback": traceback_text,
-            }
-        )
-        total.append({"raw": status})
+        raw_node = []
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
+                         "traceback": traceback_text})
+        total.append({"raw": raw_node})
 
     # Take final time
     toc = time.perf_counter()
