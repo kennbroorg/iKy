@@ -559,6 +559,23 @@ def r_dorks(username=None):
 
 
 ################################################
+# PsbDmp
+################################################
+@home.route("/psbdmp", methods=["POST"])
+def r_psbdmp(username=None):
+    celery = create_celery(current_app)
+    json_result = request.get_json()
+    username = json_result.get("username", "")
+    from_m = json_result.get("from", "")
+    print("PsbDmp - Detected Username : ", username, from_m)
+    res = celery.send_task('modules.psbdmp.psbdmp_tasks.t_psbdmp',
+                           args=(username, ))
+    print("PsbDmp - Task : ", res.task_id)
+    return jsonify(module="psbdmp", task=res.task_id,
+                   param=username, from_m=from_m)
+
+
+################################################
 # Twitter info for comparison (first account)
 ################################################
 @home.route("/twitter_info", methods=["POST"])
