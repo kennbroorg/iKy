@@ -1,0 +1,53 @@
+  <nb-card size="small" class="border-default">
+    <nb-card-header>
+      <div (click)="openDialog(dialogPsbDmpLeak)">
+          PASTEBIN DUMP Leak
+      </div>
+      <div class="help" [nbPopover]="psbdmpLeakHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
+    </nb-card-header>
+    <nb-card-body id="nbCardPsbdmpLeak" style="text-align: center; overflow: hidden; margin: 0px; padding: 0px;">
+        <div #nbCardPsbdmpLeak>
+          <ngx-text-cloud [data]="psbdmpLeak"></ngx-text-cloud>
+        </div>
+    </nb-card-body>
+  </nb-card>
+
+
+  <ng-template #dialogPsmdmpLeak let-data let-ref="dialogRef">
+    <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+      <nb-card-header>PASTEBIN DUMP Leak</nb-card-header>
+      <nb-card-body>
+
+        <ngx-text-cloud [data]="psbdmpLeak"></ngx-text-cloud>
+
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
+
+  <ng-template #psbdmpLeakHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        PASTEBIN DUMP Leak Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : Psbdmp</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        This is a words present inside the paste
+        </p>
+        <p style="text-align: justify;">
+        If a word is repeated its font-size increases
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module can be executed only by entering an email in the <strong style="font-weight: 600;">email</strong> field of the advanced search or in normal search, being its validation indicator high since it has been entered by the user
+        </p> 
+        <p style="text-align: justify;">
+        Finally, and with a low validation indicator, the module can be executed if a username was entered in the "username" field of the advanced search or if a mail was entered in the mail or advanced search. In this case the @domain.ext is cut out and the username is used as input
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p>psbdmp page</p> 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>
