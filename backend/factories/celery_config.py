@@ -31,5 +31,6 @@ app = Celery('celery_config', broker='redis://localhost:6379/0',
                       'modules.spotify.spotify_tasks',
                       'modules.twitch.twitch_tasks',
                       'modules.mastodon.mastodon_tasks',
-                      'modules.dorks.dorks_tasks'
+                      'modules.dorks.dorks_tasks',
+                      'modules.psbdmp.psbdmp_tasks'
                       ])

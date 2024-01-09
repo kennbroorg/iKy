@@ -41,6 +41,7 @@ def get_config():
                           'modules.twitch.twitch_tasks',
                           'modules.mastodon.mastodon_tasks',
                           'modules.dorks.dorks_tasks',
+                          'modules.psbdmp.psbdmp_tasks',
                           'modules.twitter_comparison.twitter_info_tasks',
                           'modules.twitter_comparison.twitter_comp_tasks')
     return Config
