@@ -230,17 +230,17 @@ export class DataGatherInfoService {
             );
         }
 
-        // Fullcontact
-        if (this.isModuleParamRunTaskExec('fullcontact', this.email, 'User', 100)) {
-            this.showToast('info', 'Fullcontact', 'Send information gathering');
-            this.globalGather['taskresume'][0].PP++;
-            this.executeRequest$('fullcontact', {username: this.email, from: 'User'})
-                .subscribe(this.processResponse,
-                           // err => console.error('Ops: ', err.message),
-                           err => this.processRetry(err, 'User', 'fullcontact', this.email),
-                           () => console.log('Completed Fullcontact'),
-            );
-        }
+        // Fullcontact (discontinued)
+        // if (this.isModuleParamRunTaskExec('fullcontact', this.email, 'User', 100)) {
+        //     this.showToast('info', 'Fullcontact', 'Send information gathering');
+        //     this.globalGather['taskresume'][0].PP++;
+        //     this.executeRequest$('fullcontact', {username: this.email, from: 'User'})
+        //         .subscribe(this.processResponse,
+        //                    // err => console.error('Ops: ', err.message),
+        //                    err => this.processRetry(err, 'User', 'fullcontact', this.email),
+        //                    () => console.log('Completed Fullcontact'),
+        //     );
+        // }
 
         // Peopledatalabs
         if (this.isModuleParamRunTaskExec('peopledatalabs', this.email, 'User', 100)) {
@@ -425,6 +425,18 @@ export class DataGatherInfoService {
                            // err => console.error('Ops: ', err.message),
                            err => this.processRetry(err, 'iKy', 'mastodon', this.username),
                            () => console.log('Completed Mastodon'),
+            );
+        }
+
+        // Psbdmp
+        if (this.isModuleParamRunTaskExec('psbdmp', this.email, 'User', 100)) {
+            this.showToast('info', 'PsbDmp', 'Send information gathering');
+            this.globalGather['taskresume'][0].PP++;
+            this.executeRequest$('psbdmp', {username: this.email, from: 'User'})
+                .subscribe(this.processResponse,
+                           // err => console.error('Ops: ', err.message),
+                           err => this.processRetry(err, 'User', 'psbdmp', this.email),
+                           () => console.log('Completed Pastebin Dump'),
             );
         }
 
@@ -742,17 +754,17 @@ export class DataGatherInfoService {
                 );
             }
 
-            // Fullcontact
-            if (this.isModuleParamRunTaskExec('fullcontact', this.email, 'User', 100)) {
-                this.showToast('info', 'Fullcontact', 'Send information gathering');
-                this.globalGather['taskresume'][0].PP++;
-                this.executeRequest$('fullcontact', {username: this.email, from: 'User'})
-                    .subscribe(this.processResponse,
-                               // err => console.error('Ops: ', err.message),
-                               err => this.processRetry(err, 'User', 'fullcontact', this.email),
-                               () => console.log('Completed Fullcontact'),
-                );
-            }
+            // Fullcontact (discontinued)
+            // if (this.isModuleParamRunTaskExec('fullcontact', this.email, 'User', 100)) {
+            //     this.showToast('info', 'Fullcontact', 'Send information gathering');
+            //     this.globalGather['taskresume'][0].PP++;
+            //     this.executeRequest$('fullcontact', {username: this.email, from: 'User'})
+            //         .subscribe(this.processResponse,
+            //                    // err => console.error('Ops: ', err.message),
+            //                    err => this.processRetry(err, 'User', 'fullcontact', this.email),
+            //                    () => console.log('Completed Fullcontact'),
+            //     );
+            // }
 
             // Peopledatalabs
             if (this.isModuleParamRunTaskExec('peopledatalabs', this.email, 'User', 100)) {
@@ -923,6 +935,17 @@ export class DataGatherInfoService {
                 }
             }
 
+            // Psbdmp
+            if (this.isModuleParamRunTaskExec('psbdmp', this.email, 'User', 100)) {
+                this.showToast('info', 'PsbDmp', 'Send information gathering');
+                this.globalGather['taskresume'][0].PP++;
+                this.executeRequest$('psbdmp', {username: this.email, from: 'User'})
+                    .subscribe(this.processResponse,
+                               // err => console.error('Ops: ', err.message),
+                               err => this.processRetry(err, 'User', 'psbdmp', this.email),
+                               () => console.log('Completed Pastebin Dump'),
+                );
+            }
         }
     }
 
@@ -1077,10 +1100,11 @@ export class DataGatherInfoService {
         this.response = data;
         let module_name = this.response.result[0].module;
         let param = this.response.result[1].param;
-        console.log('************************************************************************');
-        console.log('Module :', module_name);
-        console.log('Param  :', param);
-        console.log('************************************************************************');
+        console.log('KKK - ************************************************************************');
+        console.log('KKK - Module :', module_name);
+        console.log('KKK - Param  :', param);
+        console.log('KKK - Data   :', data);
+        console.log('KKK - ************************************************************************');
 
         // Valitate tasks to exec others
         for (let index in this.response.result) {
@@ -1151,16 +1175,21 @@ export class DataGatherInfoService {
             data.result[3].raw[0].status.toLowerCase() === 'fail') {
             stateTask = 'FAILURE';
             stateTooltip = '** ' + data.result[3].raw[0].reason + ' **          ' + data.result[3].raw[0].traceback;
+        } else if (data.result[3].raw[0] !== undefined &&
+                   data.result[3].raw[0].status !== undefined &&
+                   data.result[3].raw[0].status.toLowerCase() === 'warning') {
+            stateTask = 'WARNING';
+            stateTooltip = data.result[3].raw[0].reason;
         }
-
-        this.globalGather['taskresume'][0].PS++;
 
         if (stateTask == 'SUCCESS') {
             this.showToast('success', module_name, 'Gather ended');
             this.globalGather[module_name] = data;
+        } else if (stateTask == 'WARNING') {
+            this.showToast('warning', module_name, 'Gather ended');
+            this.globalGather[module_name] = data;
         } else {
             this.showToast('danger', module_name, 'Gather ended');
-            // TODO : Remove this?
             this.globalGather[module_name] = data;
         }
 
@@ -1170,7 +1199,7 @@ export class DataGatherInfoService {
 
                 this.globalGather['taskexec'][indexTaskexec].state = stateTask;
                 this.globalGather['taskexec'][indexTaskexec].reason = stateTooltip;
-                // console.log('State change..................',stateTask);
+                console.log('KKK - State change..................',stateTask);
                 // console.log(this.globalGather[module_name].result[2].validation);
 
                 // Reprocess validation
@@ -1185,18 +1214,18 @@ export class DataGatherInfoService {
             }
         }
 
-        console.log('Gathered :', this.globalGather);
+        // console.log('Gathered :', this.globalGather);
     }
 
     // Error Callback : Retry
     private processRetry = (data: any, from_m: any, module_m: any, param: any): any => {
-        console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-        console.log('Module: ', module_m);
-        console.log('Data: ', data.url);
-        console.log('Error: ', data);
+        // console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+        // console.log('Module: ', module_m);
+        // console.log('Data: ', data.url);
+        // console.log('Error: ', data);
         // console.log('Slice: ', data.url.slice(-37));
-        console.log('Slice: ', data.url.split('/')[4]);
-        console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+        // console.log('Slice: ', data.url.split('/')[4]);
+        // console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
 
         // let tasks = {'from_m': from_m, 'module': module_m, 'param': param, 'task': data.url.split('/')[4]}
         let url: string = 'state/' + data.url.split('/')[4] + '/' + module_m
@@ -1215,9 +1244,9 @@ export class DataGatherInfoService {
     }
 
     private processStateVal = (data: any, from_m: any, module_m: any, param: any): any => {
-        // console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-        // console.log('Module: ', module_m);
-        // console.log('data: ', data);
+        // console.log('++KKK++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        // console.log('KKK Module: ', module_m);
+        // console.log('KKK data: ', data);
 
         if (data.state == 'FAILURE') {
             for (let indexTaskexec in this.globalGather['taskexec']) {
@@ -1228,9 +1257,18 @@ export class DataGatherInfoService {
                     this.globalGather['taskexec'][indexTaskexec].state = 'FAILURE';
                 }
             }
+        } else if (data.state == 'WARNING') {
+            for (let indexTaskexec in this.globalGather['taskexec']) {
+                if (this.globalGather['taskexec'][indexTaskexec].module == module_m && 
+                    this.globalGather['taskexec'][indexTaskexec].param == param) {
+
+                    this.globalGather['taskexec'][indexTaskexec].task_id = data.task_id;
+                    this.globalGather['taskexec'][indexTaskexec].state = 'WARNING';
+                }
+            }
         } else {
-            let tasks = {'from_m': from_m, 'module': module_m, 'param': param, 'task': data.task_id}
-            let url: string = 'result/' + data.task_id
+            let tasks = {'from_m': from_m, 'module': module_m, 'param': param, 'task': data.task_id};
+            let url: string = 'result/' + data.task_id;
             console.log('URL: ', url);
             console.log('ID:  ', data.task_id);
             this.getRequestResult$(url, tasks)
@@ -1239,8 +1277,8 @@ export class DataGatherInfoService {
                            () => console.log('Completed RETRY - ' + module),
             );
         }
-        console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-        
+        // console.log('++KKK++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+
     }
 
     // Toaster
