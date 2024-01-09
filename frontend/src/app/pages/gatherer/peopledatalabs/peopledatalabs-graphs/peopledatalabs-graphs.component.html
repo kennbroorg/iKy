@@ -1,19 +1,20 @@
   <nb-card size="small" class="border-default">
-    <nb-card-header (click)="openDialog(dialogPeopledatalabsGraph)">
-      PEOPLEDATALABS Data
-      <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div>
+
+    <!-- <nb-card-header (click)="openDialog(dialogPeopledatalabsGraph)"> -->
+    <!--   PEOPLEDATALABS Data -->
+    <!--   <div [ngClass]="data.result[2].validation"><span class="icon validation"></span></div> -->
+    <!-- </nb-card-header> -->
+
+    <nb-card-header>
+      <div (click)="openDialog(dialogPeopledatalabsGraph)">
+        PEOPLEDATALABS Data
+      </div>
+      <div class="help" [nbPopover]="peopledatalabsGraphsHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
     </nb-card-header>
+
     <nb-card-body style="text-align: center; overflow: hidden;">
         <ngx-graphs [data]="peopledatalabsGraphs"></ngx-graphs>
-        <div nbTooltip="No information found about the mail" nbTooltipStatus="success" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 200px; z-index: 2;" *ngIf="statusFull == 404">
-            <i class="fas fa-shield-alt" style="font-size: 200px;"></i>
-        </div>
-        <div nbTooltip="The PeopleDataLabs API is missing or invalid" nbTooltipStatus="danger" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 150px; z-index: 2;" *ngIf="statusFull == 401">
-            <i class="fas fa-key" style="font-size: 150px;"></i>
-        </div>
-        <div nbTooltip="{{statusMessages.message}}" nbTooltipStatus="danger" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; width: 50%; height: 150px; z-index: 2;" *ngIf="statusFull !== 200 && statusFull !== 401 && statusFull !== 404">
-            <i class="fas fa-exclamation-circle" style="font-size: 150px;"></i>
-        </div>
     </nb-card-body>
   </nb-card>
 
@@ -24,4 +25,28 @@
           <ngx-graphs [data]="peopledatalabsGraphs" modal="true"></ngx-graphs>
         </nb-card-body>
       </nb-card>
+  </ng-template>
+
+  <ng-template #peopledatalabsGraphsHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        PEOPLEDATALABS Data Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : PeopleDataLabs</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        This graph shows in network nodes the basic information extracted, such as name, company, location, etc.
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module can be executed only by entering an email in the <strong style="font-weight: 600;">email</strong> field of the advanced search or in normal search, being its validation indicator high since it has been entered by the user
+        </p> 
+        <p style="text-align: justify;">
+        Finally, and with a low validation indicator, the module can be executed if a username was entered in the "username" field of the advanced search or if a mail was entered in the mail or advanced search. In this case the @domain.ext is cut out and the username is used as input
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p>PeopleDataLabs API</p> 
+      </nb-card-body>
+    </nb-card>
   </ng-template>
