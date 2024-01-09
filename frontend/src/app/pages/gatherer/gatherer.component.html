@@ -160,12 +160,13 @@
           </div> -->
 
           <!-- Peopledatalabs Data -->
-          <div id="divPeopledatalabsGraphs" #divPeopledatalabsGraphs class="col-md-4" *ngIf="gathered['peopledatalabs'] && gathered['peopledatalabs'].result && validationShow[gathered['peopledatalabs'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <!-- <div class="col-md-4" id="divDorksEmails" #divDorksEmails *ngIf="gathered['dorks'] && gathered['dorks'].result[4] && gathered['dorks'].result[4].graphic[7].emails?.length > 0 && validationShow[gathered['search'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage=""> -->
+          <div id="divPeopledatalabsGraphs" #divPeopledatalabsGraphs class="col-md-4" *ngIf="gathered['peopledatalabs'] && gathered['peopledatalabs'].result && gathered['peopledatalabs'].result[4] && validationShow[gathered['peopledatalabs'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-peopledatalabs-graphs [data]="gathered['peopledatalabs']"></ngx-peopledatalabs-graphs>
           </div>
 
           <!-- Peopledatalabs Social -->
-          <div id="divPeopledatalabsSocial" #divPeopledatalabsSocial class="col-md-4" *ngIf="gathered['peopledatalabs'] && gathered['peopledatalabs'].result && gathered['peopledatalabs'].result[4].graphic[1].social?.length > 1 && validationShow[gathered['peopledatalabs'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+          <div id="divPeopledatalabsSocial" #divPeopledatalabsSocial class="col-md-4" *ngIf="gathered['peopledatalabs'] && gathered['peopledatalabs'].result && gathered['peopledatalabs'].result[4] && gathered['peopledatalabs'].result[4].graphic[1].social?.length > 1 && validationShow[gathered['peopledatalabs'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-peopledatalabs-social [data]="gathered['peopledatalabs']"></ngx-peopledatalabs-social>
           </div>
 
@@ -535,6 +536,15 @@
           <!-- LeakLookup -->
           <div class="col-md-4" id="divLeaklookupEmail" #divLeaklookupEmail *ngIf="gathered['leaklookup'] && gathered['leaklookup'].result[4] && validationShow[gathered['leaklookup'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
             <ngx-leaklookup-email [data]="gathered['leaklookup']"></ngx-leaklookup-email>
+          </div>
+
+          <!-- PsbDmp -->
+          <div class="col-md-4" id="divPsbdmpList" #divPsbdmpList *ngIf="gathered['psbdmp'] && gathered['psbdmp'].result[4] && validationShow[gathered['psbdmp'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-psbdmp-list [data]="gathered['psbdmp']"></ngx-psbdmp-list>
+          </div>
+
+          <div class="col-md-4" id="divPsbdmpLeak" #divPsbdmpLeak *ngIf="gathered['psbdmp'] && gathered['psbdmp'].result[4] && validationShow[gathered['psbdmp'].result[2]['validation']]" [nbSpinner]="processing" nbSpinnerStatus="secondary" nbSpinnerSize="xxlarge" nbSpinnerMessage="">
+            <ngx-psbdmp-leak [data]="gathered['psbdmp']"></ngx-psbdmp-leak>
           </div>
 
           <!-- Darkpass -->
