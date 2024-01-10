@@ -161,10 +161,13 @@
               State
             </ng-template>
             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template cellClass="tag-tag">
-              <div class="tag-tag" *ngIf="row['state'] != 'FAILURE'">
+              <div class="tag-tag" *ngIf="row['state'] != 'FAILURE' && row['state'] != 'WARNING'">
                 {{ value }}
               </div>
               <div class="tag-tag" [nbTooltip]="row['reason']" nbTooltipStatus="danger" *ngIf="row['state'] == 'FAILURE'">
+                {{ value }}
+              </div>
+              <div class="tag-tag" [nbTooltip]="row['reason']" nbTooltipStatus="warning" *ngIf="row['state'] == 'WARNING'">
                 {{ value }}
               </div>
             </ng-template>

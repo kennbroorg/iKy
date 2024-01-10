@@ -1,0 +1,41 @@
+@import '../../../../@theme/styles/themes';
+
+@include nb-install-component() {
+
+  nb-list {
+    overflow-x: hidden;
+  }
+
+  nb-list-item {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin: 0 -0.25rem;
+  }
+
+  .visited-date,
+  .visited-pages-count,
+  .visited-percentages {
+    flex: 1 0 auto;
+    margin: 0 0.25rem;
+  }
+
+  .caption {
+    color: nb-theme(color-success-default);
+  }
+
+  .value {
+    margin-top: 0.25rem;
+    color: #05fcfc;
+  }
+
+  .badvalue {
+    margin-top: 0.25rem;
+    color: nb-theme(color-success-default);
+    background-color: rgba(0, 214, 143, 0.3);
+    border: 1px solid nb-theme(color-success-default);
+    border-radius: 20px;
+    text-align: center;
+  }
+
+}

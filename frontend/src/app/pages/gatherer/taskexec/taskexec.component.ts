@@ -35,6 +35,7 @@ export class TaskexecComponent {
       'success-color': value === 'SUCCESS', 
       'process-color': value === 'PROCESS',
       'pending-color': value === 'PENDING',
+      'warning-color': value === 'WARNING',
       'failure-color': value === 'FAILURE'
     };
   }

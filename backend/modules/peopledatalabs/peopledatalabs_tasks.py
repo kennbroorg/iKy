@@ -1,10 +1,14 @@
 #!/usr/bin/env json.dump(raw_node, f)
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import json
+import time
 import requests
 import random
+from peopledatalabs import PDLPY
+import traceback
 
 
 try:
@@ -26,60 +30,57 @@ except ImportError:
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
 logger = get_task_logger(__name__)
 
 
-@celery.task
-def t_peopledatalabs(email):
+def p_peopledatalabs(email):
     """ Task of Celery that get info from peopledatalabs """
 
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-peopledatalabs.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     raw_node = []
-    user_agents = [
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-        'Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)',
-        'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
-        'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)',
-        'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)',
-        'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)',
-        'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)'
-    ]
 
     key = api_keys_search('peopledatalabs_key')
 
     if (not key):
-        return {"status": 401,
-                "error": {
-                     "type": "authentication_error",
-                     "message": "Request contained a missing or invalid key"
-                }}
+        raise Exception("iKy - Missing or invalid Key")
 
-    headers = {'User-Agent': random.choice(user_agents)}
+    # Create a client, specifying your API key
+    CLIENT = PDLPY(
+        api_key=key,
+    )
 
-    api_version = "v5"
-    url = "https://api.peopledatalabs.com/" + api_version + "/person"
-    params = {"api_key": key, "email": [email]}
-    
-    req = requests.get(url,  params=params, headers=headers)
-    raw_node = req.json()
+    # Create a parameters JSON object
+    PARAMS = {
+        "email": [email] 
+    }
+
+    # Pass the parameters object to the Person Enrichment API
+    json_response = CLIENT.person.enrichment(**PARAMS).json()
+
+    # Check for successful response
+    if json_response["status"] != 200:
+        raise Exception(f"iKy - Enrichment unsuccessful. See error and try again. Desc: {json_response}")
+
+    raw_node = json_response['data']
+
+    # Save enrichment data to JSON file
+    # with open("my_pdl_enrichment.jsonl", "w") as out:
+    #     out.write(json.dumps(raw_node) + "\n")
 
     # Total
     total = []
@@ -111,425 +112,215 @@ def t_peopledatalabs(email):
 
     company = []
 
-    if (raw_node.get("status", "") == 200):
+    link_social = "Social"
+    social_item = {"name-node": "Social", "title": "Social",
+                   "subtitle": "", "icon": "fas fa-user",
+                   "link": link_social}
+    socialp.append(social_item)
 
-        link_social = "Social"
-        social_item = {"name-node": "Social", "title": "Social",
-                       "subtitle": "", "icon": search_icon_5(
-                           "child", font_list),
-                       "link": link_social}
-        socialp.append(social_item)
+    link_data = "DataLab"
+    data_item = {"name-node": "DataLab", "title": "DataLab",
+                 "subtitle": "",
+                 "icon": "fas fa-info-circle",
+                 "link": link_data}
+    datalabs.append(data_item)
 
-        link_data = "DataLab"
-        data_item = {"name-node": "DataLab", "title": "DataLab",
-                     "subtitle": "",
-                     "icon": "fas fa-info-circle",
+    data = raw_node
+    if (data.get("job_company_name", "") != "") and (data.get("job_company_name", "") != None):
+
+        data_item = {"name-node": "DataCompany",
+                     "title": "Company",
+                     "subtitle": data.get("job_company_name", "").capitalize(),
+                     "icon": "fas fa-people-carry",
                      "link": link_data}
         datalabs.append(data_item)
 
-        data = raw_node.get("data", "")
-        # Primary Job V4
-        if (api_version == "v4"):
-            if ((data.get("primary", "") != "" and 
-                    data.get("primary", "").get("job", "") != None)):
-                temp = data.get("primary", "").get("job", "")
+        # Profile
+        company_item = {'name': data.get("job_company_name", "").capitalize(),
+                        'title': data.get("job_title", "").capitalize(),
+                        'start': data.get("job_start_date", ""),
+                        'end': data.get("job_last_update", "")}
+        company.append(company_item)
+        profile_item = {'location': data.get(
+            "job_company_location_name", "")}
+        profile.append(profile_item)
 
-                if (temp.get("company", "") != "" and temp.get(
-                        "company", "") != "null" and temp.get(
-                            "company", "") != None):
+        # Geolocalization
+        geo_item = location_geo(data.get("job_company_location_name", ""), 
+                                data.get("job_last_updated", ""))
+        if(geo_item):
+            profile.append({'geo': geo_item})
 
-                    data_item = {"name-node": "DataCompany",
-                                 "title": "Company",
-                                 "subtitle": temp.get("company", ""),
-                                 "icon": "fas fa-people-carry",
-                                 "link": link_data}
-                    datalabs.append(data_item)
+        # Timeline
+        if (data.get("job_start_date", "")):
+            timeline.append({'action': 'Start : ' + data.get("job_company_name", "").capitalize(),
+                             'date': data.get("job_start_date", "")
+                             .replace("-", "/"),
+                             # 'icon': 'fa-building',
+                             'desc': str(data.get("job_title", "")).capitalize() + " - Source PDL",
+                             })
+        if (data.get("end_date", "")):
+            timeline.append({'action': 'End : ' + data.get("job_company_name", "").capitalize(),
+                             'date': data.get("job_last_updated", "")
+                             .replace("-", "/"),
+                             # 'icon': 'fa-ban',
+                             'desc': str(data.get("job_title", "")).capitalize() + " - Source PDL"})
 
-                    # Profile
-                    company_item = {'name': temp.get("company", ""),
-                                    'title': temp.get("title", "").get(
-                                        "name", ""),
-                                    'start': temp.get("startDate", ""),
-                                    'end': temp.get("endDate", "")}
-                    company.append(company_item)
+    # Primary location
+    if (data.get("location_name", "") != "") and (data.get("location_name", "") != None):
 
-                    # Timeline
-                    if (temp.get("start_date", "") != "" and temp.get(
-                            "start_date", "") != None):
-                        timeline.append({'action': 'Start : ' + temp
-                                         .get("company", "").get(
-                                             "name", "").title(),
-                                         'date': temp.get("start_date", "")
-                                         .replace("-", "/"),
-                                         # 'icon': 'fa-building',
-                                         'desc': str(temp.get("title", "").get(
-                                             "name", "")).title() + 
-                                             " - Source PDL"})
-                    if (temp.get("end_date", "") != "" and temp.get(
-                            "end_date", "") != None):
-                        timeline.append({'action': 'End : ' + temp
-                                         .get("company", "").get(
-                                             "name", "").title(),
-                                         'date': temp.get("end_date", "")
-                                         .replace("-", "/"),
-                                         # 'icon': 'fa-ban',
-                                         'desc': str(temp.get("title", "").get(
-                                             "name", "")).
-                                         title() + " - Source PDL"})
+        data_item = {"name-node": "DataLocation",
+                     "title": "Location",
+                     "subtitle": data.get("location_name", ""),
+                     "icon": "fas fa-globe-americas",
+                     "link": link_data}
+        datalabs.append(data_item)
 
-        # Primary Job V5
-        if (api_version == "v5"):
-            if (data.get("job_company_name", "") and 
-                    data.get("job_company_name", "") != ""):
+        # Profile
+        profile_item = {'location': data.get(
+            "location_name", "")}
+        profile.append(profile_item)
 
-               data_item = {"name-node": "DataCompany",
-                            "title": "Company",
-                            "subtitle": data.get("job_company_name", ""),
-                            "icon": "fas fa-people-carry",
-                            "link": link_data}
-               datalabs.append(data_item)
+        # Geolocalization
+        geo_item = location_geo(data.get("location_name", "").capitalize(), 
+                                data.get("location_last_updated", ""))
+        if(geo_item):
+            profile.append({'geo': geo_item})
 
-               # Profile
-               company_item = {'name': data.get("job_company_name", ""),
-                               'title': data.get("job_title", ""),
-                               'start': data.get("job_start_date", "")}
-               company.append(company_item)
+    # Primary name
+    if (data.get("full_name", "") != "") and (data.get("full_name", "") != None):
 
-               # Timeline
-               if (data.get("job_start_date", "") and data.get(
-                       "job_start_date", "") != ""):
-                   timeline.append({'action': 'Start : ' + data
-                                    .get("job_company_name", ""),
-                                    'date': data.get("start_date", ""),
-                                    'desc': str(data.get("job_title", "")) +
-                                        " - Source PDL"})
+        try:
+            name_complete = data.get("first_name", "").capitalize() + " " + \
+                            data.get("middle_name", "").capitalize() + " " + \
+                            data.get("last_name", "").capitalize()
+        except Exception:
+            name_complete = data.get("first_name", "").capitalize() + " " + \
+                            data.get("last_name", "").capitalize()
 
-        # Primary location
-        if (api_version == "v4"):
-            if (data.get("primary", "") != "" and data.get("primary", "").
-                    get("location", "") != None):
+        data_item = {"name-node": "DataName",
+                     "title": "Name",
+                     "subtitle": name_complete,
+                     "icon": "fas fa-signature",
+                     "link": link_data}
+        datalabs.append(data_item)
 
-                temp = data.get("primary", "").get("location", "")
+        # Profile
+        profile_item = {'name': name_complete}
+        profile.append(profile_item)
 
-                data_item = {"name-node": "DataLocation",
-                             "title": "Location",
-                             "subtitle": temp.get("name", "").title(),
-                             "icon": "fas fa-globe-americas",
-                             "link": link_data}
-                datalabs.append(data_item)
+    # Primary industry
+    if (data.get("industry", "") and (data.get("industry", "") != None)):
+        data_item = {"name-node": "DataInsdustry",
+                     "title": "Industry",
+                     "subtitle": str(data.get("industry")).capitalize(),
+                     "icon": "fas fa-briefcase",
+                     "link": link_data}
+        datalabs.append(data_item)
 
-                # Profile
-                profile_item = {'location': temp.get("name", "").title()}
-                profile.append(profile_item)
+    # Primary birthdate
+    if (data.get("birth_date", "") != "") and (data.get("birth_date", "") != None):
 
-                # Geolocalization
-                geo_item = location_geo(temp.get("name", "")) 
-                if (geo_item):
-                    profile.append({'geo': geo_item})
+        data_item = {"name-node": "DataBirth",
+                     "title": "Birthday",
+                     "subtitle": data.get("birth_date", ""),
+                     "icon": "fas fa-birthday-cake",
+                     "link": link_data}
+        datalabs.append(data_item)
 
-        # Primary location V5
-        if (api_version == "v5"):
-            if (data.get("location_name", "") != ""):
+        timeline.append({'action': 'BirthDay : ' + data.get("birth_date", "")})
 
-                data_item = {"name-node": "DataLocation",
-                             "title": "Location",
-                             "subtitle": data.get("location_name", "").title(),
-                             "icon": "fas fa-globe-americas",
-                             "link": link_data}
-                datalabs.append(data_item)
+    elif (data.get("birth_year", "") != "") and (data.get("birth_year", "") != None):
 
-                # Profile
-                profile_item = {'location': data.get(
-                    "location_name", "").title()}
-                profile.append(profile_item)
+        data_item = {"name-node": "DataBirth",
+                     "title": "BirthYear",
+                     "subtitle": data.get("birth_year", ""),
+                     "icon": "fas fa-birthday-cake",
+                     "link": link_data}
+        datalabs.append(data_item)
 
-                # Geolocalization
-                geo_item = location_geo(data.get("location_name", ""), 
-                                        data.get("location_last_updated", ""))
-                if(geo_item):
-                    profile.append({'geo': geo_item})
+        timeline.append({'action': 'BirthYear : ' + data.get("birth_year", "")})
 
-        # Primary name
-        if (api_version == "v4"):
-            if (data.get("primary", "") != "" and data.get("primary", "").
-                    get("name", "") != None):
+    # Gender
+    if (data.get("gender", "") != "") and (data.get("gender", "") != None):
 
-                temp = data.get("primary", "").get("name", "")
+        temp = data.get("gender", "")
 
-                try:
-                    name_complete = temp.get("first_name", "") + " " + \
-                                    temp.get("middle_name", "") + " " + \
-                                    temp.get("last_name", "")
-                except:
-                    name_complete = temp.get("first_name", "") + " " + \
-                                    temp.get("last_name", "")
+        if (temp == "male"):
+            icon = "fas fa-mars"
+        elif (temp == "female"):
+            icon = "fas fa-venus"
+        else:
+            icon = "fas fa-genderless"
 
-                data_item = {"name-node": "DataName",
-                             "title": "Name",
-                             "subtitle": name_complete.title(),
-                             "icon": "fas fa-signature",
-                             "link": link_data}
-                datalabs.append(data_item)
+        data_item = {"name-node": "DataGener",
+                     "title": "Gender",
+                     "subtitle": temp,
+                     "icon": icon,
+                     "link": link_data}
+        datalabs.append(data_item)
 
-                # Profile
-                profile_item = {'name': name_complete.title()}
-                profile.append(profile_item)
-
-        # Primary name V5
-        if (api_version == "v5"):
-            if (data.get("full_name", "") and data.get("full_name", "") != ""):
-
-                try:
-                    name_complete = data.get("first_name", "") + " " + \
-                                    data.get("middle_name", "") + " " + \
-                                    data.get("last_name", "")
-                except Exception:
-                    name_complete = data.get("first_name", "") + " " + \
-                                    data.get("last_name", "")
-
-                data_item = {"name-node": "DataName",
-                             "title": "Name",
-                             "subtitle": name_complete.title(),
-                             "icon": "fas fa-signature",
-                             "link": link_data}
-                datalabs.append(data_item)
-
-                # Profile
-                profile_item = {'name': name_complete.title()}
-                profile.append(profile_item)
-
-        # Primary industry
-        if (api_version == "v4"):
-            if (data.get("primary", "") != "" and data.get("primary", "").
-                    get("industry", "") != None):
-
-                temp = data.get("primary", "").get("industry", "")
-
-                data_item = {"name-node": "DataInsdustry",
-                             "title": "Industry",
-                             "subtitle": temp,
-                             "icon": "fas fa-briefcase",
-                             "link": link_data}
-                datalabs.append(data_item)
-
-        # Primary industry V5
-        if (api_version == "v5"):
-            if (data.get("industry", "")):
-                data_item = {"name-node": "DataInsdustry",
-                             "title": "Industry",
-                             "subtitle": data.get("industry"),
-                             "icon": "fas fa-briefcase",
-                             "link": link_data}
-                datalabs.append(data_item)
-
-        # Primary birthdate
-        if (api_version == "v4"):
-            if (data.get("birth_date", "") != "" and data.get(
-                    "birth_date", "") != None):
-
-                temp = data.get("birth_date", "")
-
-                data_item = {"name-node": "DataBirth",
-                             "title": "Birthday",
-                             "subtitle": temp,
-                             "icon": "fas fa-birthday-cake",
-                             "link": link_data}
-                datalabs.append(data_item)
-
-                timeline.append({'action': 'BirthDay : ' + temp})
-
-            elif (data.get("birth_date_fuzzy", "") != "" and data.get(
-                    "birth_date_fuzzy", "") != None):
-
-                temp = data.get("birth_date_fuzzy", "")
-
-                data_item = {"name-node": "DataBirth",
-                             "title": "Fuzzy Birthday",
-                             "subtitle": temp,
-                             "icon": "fas fa-birthday-cake",
-                             "link": link_data}
-                datalabs.append(data_item)
-
-                timeline.append({'action': 'Fuzzy BirthDay : ' + temp})
-
-        # Primary birthdate V5
-        if (api_version == "v5"):
-            if (data.get("birth_date", "") and data.get(
-                    "birth_date", "") != ""):
-
-                data_item = {"name-node": "DataBirth",
-                             "title": "Birthday",
-                             "subtitle": data.get("birth_date"),
-                             "icon": "fas fa-birthday-cake",
-                             "link": link_data}
-                datalabs.append(data_item)
-
-                timeline.append({'action': 'BirthDay : ' + data.get("birth_date")})
-
-            elif (data.get("birth_year", "") and data.get(
-                    "birth_year", "") != ""):
-
-                data_item = {"name-node": "DataBirth",
-                             "title": "BirthYear",
-                             "subtitle": data.get("birth_year"),
-                             "icon": "fas fa-birthday-cake",
-                             "link": link_data}
-                datalabs.append(data_item)
-
-                timeline.append({'action': 'BirthYear : ' + data.get(
-                    "birth_year")})
-
-        # Gender
-        if (data.get("gender", "") and data.get("gender", "") != ""):
-
-            temp = data.get("gender", "")
-
-            if (temp == "male"):
-                icon = "fas fa-mars"
-            elif (temp == "female"):
-                icon = "fas fa-venus"
-            else:
-                icon = "fas fa-genderless"
-
-            data_item = {"name-node": "DataGener",
-                         "title": "Gender",
-                         "subtitle": temp,
-                         "icon": icon,
-                         "link": link_data}
-            datalabs.append(data_item)
-
-        # Emails profile
-        if (api_version == "v4"):
-            e = 1
-            for mail in data.get("primary", "").get("work_emails", ""):
-                data_item = {"name-node": "DataWEmail" + str(e),
-                             "title": "Work Email",
-                             "subtitle": mail,
-                             "icon": "fas fa-at",
-                             "link": link_data}
-                datalabs.append(data_item)
-                e = + 1
-            e = 1
-            for mail in data.get("primary", "").get("personal_emails", ""):
-                data_item = {"name-node": "DataPEmail" + str(e),
-                             "title": "Personal Email",
-                             "subtitle": mail,
-                             "icon": "fas fa-at",
-                             "link": link_data}
-                datalabs.append(data_item)
-                e = + 1
-            e = 1
-            for mail in data.get("primary", "").get("other_emails", ""):
-                data_item = {"name-node": "DataOEmail" + str(e),
-                             "title": "Other Email",
-                             "subtitle": mail,
-                             "icon": "fas fa-at",
-                             "link": link_data}
-                datalabs.append(data_item)
-                e = + 1
-
-        # Emails profile V5
-        if (api_version == "v5"):
-            e = 1
-            for mail in data.get("emails", ""):
-                data_item = {"name-node": "DataWEmail" + str(e),
-                             "title": mail.get("type"),
-                             "subtitle": mail.get("address"),
-                             "icon": "fas fa-at",
-                             "link": link_data}
-                datalabs.append(data_item)
-                e = + 1
-
-        # Profiles RRSS
-        if (data.get("profiles", "") != ""):
-            for social in data.get("profiles", ""):
-                if (social.get("username", "")):
-                    subtitle = social.get("username", "")
-                else:
-                    subtitle = "Not identified"
-
-                fa_icon = search_icon_5(social.get("network", ""), font_list)
-                if (fa_icon is None):
-                    fa_icon = search_icon_5("question", font_list)
-
-                social_item = {"name-node": social.get("network", ""),
-                               "title": social.get("network", ""),
-                               "subtitle": subtitle,
-                               "icon": fa_icon,
-                               "link": link_social}
-                socialp.append(social_item)
-                social_profile_item = {
-                                       "name": social.get("network"),
-                                       "icon": fa_icon,
-                                       "source": "PeopleDataLabs",
-                                       "username": social.get("username"),
-                                       "url": social.get("url")}
-                social_profile.append(social_profile_item)
-
-                tasks.append({"module": social.get("network", "").lower(),
-                             "param": social.get("username", "")})
-
-            profile.append({'social': social_profile})
-
-        # Profiles emails
+    # Emails profile
+    if (data.get("emails", "") != "") and (data.get("emails", "") != None):
         for mail in data.get("emails", ""):
             profile_item = {'email': mail['address']}
             profile.append(profile_item)
-        # Profiles phones
-        if (api_version == "v4"):
-            for phone in data.get("phone_numbers", ""):
-                profile_item = {'phone': phone['number']}
-                profile.append(profile_item)
-        else:
-            for phone in data.get("phone_numbers", ""):
-                profile_item = {'phone': phone}
-                profile.append(profile_item)
-        # Profiles names
-        if (api_version == "v4"):
-            for name in data.get("names", ""):
-                profile_item = {'name': name['name'].title()}
-                profile.append(profile_item)
-        else:
-            if (data.get("first_name")):
-                profile_item = {'name': data.get("first_name").title()}
-                profile.append(profile_item)
-            if (data.get("middle_name")):
-                profile_item = {'name': data.get("middle_name").title()}
-                profile.append(profile_item)
-            if (data.get("last_name")):
-                profile_item = {'name': data.get("last_name").title()}
-                profile.append(profile_item)
-            if (data.get("full_name")):
-                profile_item = {'name': data.get("full_name").title()}
-                profile.append(profile_item)
+            # data_item = {"name-node": "DataWEmail" + str(e),
+            #              "title": mail.get("type"),
+            #              "subtitle": mail.get("address"),
+            #              "icon": "fas fa-at",
+            #              "link": link_data}
+            # datalabs.append(data_item)
 
-        # Profiles location
-        if (api_version == "v4"):
-            for location in data.get("locations", ""):
-                if (location['name']):
-                    profile_item = {'location': location['name'].title()}
-                    profile.append(profile_item)
-                if (location['geo']):
-                    profile_item = {'Caption': location['name'],
-                                    'Accessability': "",
-                                    'Latitude': location['geo'].split(",")[0],
-                                    'Longitude': location['geo'].split(",")[1],
-                                    'Name': location['name'],
-                                    'Time': ""
-                                    }
-                    profile.append({'geo': profile_item})
-        if (api_version == "v5"):
-            for location in data.get("location_names", ""):
-                profile_item = {'location': location.title()}
-                profile.append(profile_item)
+    # Profiles RRSS
+    if (data.get("profiles", "") != "") and (data.get("profiles", "") != None):
+        for social in data.get("profiles", ""):
+            if (social.get("username", "")):
+                subtitle = social.get("username", "")
+            else:
+                subtitle = "Not identified"
 
-                # Geolocalization
-                geo_item = location_geo(location, 
-                                        data.get("location_last_updated", ""))
-                if(geo_item):
-                    profile.append({'geo': geo_item})
+            fa_icon = search_icon_5(social.get("network", ""), font_list)
+            if (fa_icon is None):
+                # fa_icon = search_icon_5("question", font_list)
+                fa_icon = "far fa-user"
 
-    # Falta email, phone, locations loop, name loop
+            social_item = {"name-node": social.get("network", ""),
+                           "title": social.get("network", ""),
+                           "subtitle": subtitle,
+                           "icon": fa_icon,
+                           "link": link_social}
+            socialp.append(social_item)
+            social_profile_item = {
+                                   "name": social.get("network"),
+                                   "icon": fa_icon,
+                                   "source": "PeopleDataLabs",
+                                   "username": social.get("username"),
+                                   "url": social.get("url")}
+            social_profile.append(social_profile_item)
+
+            tasks.append({"module": social.get("network", "").lower(),
+                         "param": social.get("username", "")})
+
+        profile.append({'social': social_profile})
+
+    # Profiles phones
+    if (data.get("phone_numbers", "") != "") and (data.get("phone_numbers", "") != None):
+        for phone in data.get("phone_numbers", ""):
+            profile_item = {'phone': phone}
+            profile.append(profile_item)
+
+    # Profiles location
+    if (data.get("location_names", "") != "") and (data.get("location_names", "") != None):
+        for location in data.get("location_names", ""):
+            profile_item = {'location': location.capitalize()}
+            profile.append(profile_item)
+
+            # Geolocalization
+            geo_item = location_geo(location)
+            if(geo_item):
+                profile.append({'geo': geo_item})
+
     total.append({'raw': raw_node})
     graphic.append({'data': datalabs})
     graphic.append({'social': socialp})
@@ -540,6 +331,42 @@ def t_peopledatalabs(email):
         total.append({'timeline': timeline})
     if (tasks != []):
         total.append({'tasks': tasks})
+
+    return total
+
+
+@celery.task
+def t_peopledatalabs(email, from_m="Initial"):
+    total = []
+    tic = time.perf_counter()
+    try:
+        total = p_peopledatalabs(email)
+    except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
+        traceback.print_exc()
+        traceback_text = traceback.format_exc()
+        total.append({'module': 'peopledatalabs'})
+        total.append({'param': email})
+        total.append({'validation': 'not_used'})
+
+        raw_node = []
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
+                         "traceback": traceback_text})
+        total.append({"raw": raw_node})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"PeopleDataLabs - Response in {toc - tic:0.4f} seconds")
 
     return total
 

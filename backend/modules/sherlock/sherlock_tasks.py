@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import json
 import requests
 import re
-import os
-# from time import time
+import time
 from time import monotonic
 from requests_futures.sessions import FuturesSession
 from torrequest import TorRequest
 from enum import Enum
 from colorama import Fore, Style, init
+import traceback
 
 try:
     from factories._celery import create_celery
@@ -28,16 +29,31 @@ except ImportError:
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# from requests.packages.urllib3.exceptions import InsecureRequestWarning
+# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
 
-@celery.task
-def t_sherlock(username):
+def p_sherlock(username):
     """ Task of Celery that get info from differents sites """
 
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-sherlock.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     data_file_path = os.path.join(os.path.dirname(
         os.path.realpath(__file__)), "data_sherlock.json")
 
@@ -612,6 +628,42 @@ def sherlock(username, site_data, query_notify,
     query_notify.finish()
 
     return results_total
+
+
+@celery.task
+def t_sherlock(username):
+    total = []
+    tic = time.perf_counter()
+    try:
+        total = p_sherlock(username)
+    except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
+        traceback.print_exc()
+        traceback_text = traceback.format_exc()
+        total.append({'module': 'sherlock'})
+        total.append({'param': username})
+        total.append({'validation': 'not_used'})
+
+        raw_node = []
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
+                         "traceback": traceback_text})
+        total.append({"raw": raw_node})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"Sherlock - Response in {toc - tic:0.4f} seconds")
+
+    return total
 
 
 def output(data):

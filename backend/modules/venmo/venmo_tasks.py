@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import json
 import requests
@@ -8,6 +9,7 @@ from bs4 import BeautifulSoup
 from datetime import date
 import random
 import traceback
+import time
 
 
 try:
@@ -23,9 +25,8 @@ except ImportError:
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
-
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# from requests.packages.urllib3.exceptions import InsecureRequestWarning
+# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
@@ -86,6 +87,22 @@ user_agents = [
 def p_venmo(username, from_m="Initial"):
     """Task of Celery that get info from venmo"""
 
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-venmo.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     raw_node = []
     # Parsing user information
     user = []
@@ -97,7 +114,7 @@ def p_venmo(username, from_m="Initial"):
     # print(data_user)
 
     if (data_user.get("error", "") != ""):
-        raw_node = { 'status': 'Not found'}
+        raise Exception("iKy - User not found")
     else:
         raw_node.append({'user': data_user["data"]})
         # transaction = {"friends": [], "details": []}
@@ -327,9 +344,18 @@ def p_venmo(username, from_m="Initial"):
 @celery.task
 def t_venmo(username, from_m="Initial"):
     total = []
+    tic = time.perf_counter()
     try:
         total = p_venmo(username, from_m)
     except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
         traceback.print_exc()
         traceback_text = traceback.format_exc()
         total.append({'module': 'venmo'})
@@ -337,11 +363,17 @@ def t_venmo(username, from_m="Initial"):
         total.append({'validation': 'not_used'})
 
         raw_node = []
-        raw_node.append({"status": "Fail",
-                         "reason": "{}".format(e),
-                         # "traceback": 1})
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
                          "traceback": traceback_text})
         total.append({"raw": raw_node})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"Venmo - Response in {toc - tic:0.4f} seconds")
+
     return total
 
 

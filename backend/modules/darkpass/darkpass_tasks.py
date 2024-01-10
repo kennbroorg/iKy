@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import json
 import requests
 from bs4 import BeautifulSoup
 import random
+import time
 
 
 try:
@@ -31,6 +33,24 @@ logger = get_task_logger(__name__)
 @celery.task
 def t_darkpass(email, from_m="Initial", proxy="127.0.0.1:9050"):
     """Task of Celery that get info from skype"""
+
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-darkpass.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            time.sleep(2)
+            return data
+        except Exception:
+            logger.error(f"Developer mode error")
+
+    # Code
     raw_node = []
 
     user_agents = [

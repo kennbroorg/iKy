@@ -149,6 +149,9 @@ import { MastodonGraphComponent } from './mastodon/mastodon-graph/mastodon-graph
 import { MastodonSocialComponent } from './mastodon/mastodon-social/mastodon-social.component';
 import { MastodonListComponent } from './mastodon/mastodon-list/mastodon-list.component';
 
+import { PsbDmpListComponent } from './psbdump/psbdmp-list/psbdmp-list.component';
+import { PsbDmpLeakComponent } from './psbdump/psbdmp-leak/psbdmp-leak.component';
+
 // import { FsIconComponent, TaskexecComponent } from './taskexec/taskexec.component';
 import { TaskexecComponent } from './taskexec/taskexec.component';
 
@@ -280,6 +283,8 @@ import { ErrorGraphsComponent } from './error/error-graphs.component';
     MastodonGraphComponent,
     MastodonSocialComponent,
     MastodonListComponent,
+    PsbDmpListComponent,
+    PsbDmpLeakComponent,
   ],
   providers: [
     InstagramMapService,

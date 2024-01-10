@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
-# [ ] - proba con eko1212 que no tiene videos
+# [ ] - Test with eko1212
 # [ ] - Games
 
+import os
 import sys
 import traceback
 import json
@@ -34,8 +35,30 @@ logger = get_task_logger(__name__)
 
 def p_twitch(username, from_m, level):
     """ Get basic info from Twitch"""
+
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-twitch.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     client_id = api_keys_search('twitch_client_id')
     client_secret = api_keys_search('twitch_client_secret')
+    if (not client_id):
+        raise Exception("iKy - Missing or invalid Key")
+    if (not client_secret):
+        raise Exception("iKy - Missing or invalid Key")
+
     helix = twitch.Helix(client_id, client_secret)
 
     user = helix.user(username)
@@ -201,7 +224,7 @@ def p_twitch(username, from_m, level):
         profile_item = {'name': user.display_name}
         profile.append(profile_item)
     except Exception:
-        raise Exception('User not FOUND')
+        raise Exception('iKy - User not FOUND')
 
     gather_item = {"name-node": "TwitchUserName",
                    "title": "Username",
@@ -326,33 +349,36 @@ def p_twitch(username, from_m, level):
 
 @celery.task
 def t_twitch(username, from_m="initial", level=1):
-    """ Task of Celery that get info from twitch"""
     total = []
     tic = time.perf_counter()
     try:
         total = p_twitch(username, from_m, level)
     except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
         traceback.print_exc()
         traceback_text = traceback.format_exc()
         total.append({'module': 'twitch'})
         total.append({'param': username})
-        total.append({'validation': 'soft'})
+        total.append({'validation': 'not_used'})
 
         raw_node = []
-        if (e.args[0] == "User not FOUND"):
-            raw_node.append({"status": "fail",
-                            "code": 1,
-                            "reason": "{}".format(e),
-                            "traceback": traceback_text})
-        else:
-            raw_node.append({"status": "fail",
-                            "code": 10,
-                            "reason": "{}".format(e),
-                            "traceback": traceback_text})
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
+                         "traceback": traceback_text})
         total.append({"raw": raw_node})
 
+    # Take final time
     toc = time.perf_counter()
-    print(f"Twitch - Response in {toc - tic:0.4f} seconds")
+    # Show process time
+    logger.info(f"Twitch - Response in {toc - tic:0.4f} seconds")
 
     return total
 

@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import json
+import time
 from time import strftime
 import requests
 import re
@@ -72,6 +74,22 @@ def findEmailFromUsername(username):
 def p_github(email, from_m="Initial"):
     """ Task of Celery that get info from github """
 
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-github.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     if ("@" in email):
         username = email.split("@")[0]
     else:
@@ -81,7 +99,7 @@ def p_github(email, from_m="Initial"):
     print(req.json())
 
     if (req.json().get("message", "") == 'Not Found'):
-        raise Exception("User not found")
+        raise Exception("iKy - User not found")
 
     # if (req.json().get("type", "") == 'Organization'):
     #     raise Exception("It's an Organization")
@@ -323,9 +341,18 @@ def p_github(email, from_m="Initial"):
 @celery.task
 def t_github(email, from_m="Initial"):
     total = []
+    tic = time.perf_counter()
     try:
         total = p_github(email, from_m)
     except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
         traceback.print_exc()
         traceback_text = traceback.format_exc()
         total.append({'module': 'github'})
@@ -333,11 +360,17 @@ def t_github(email, from_m="Initial"):
         total.append({'validation': 'not_used'})
 
         raw_node = []
-        raw_node.append({"status": "Fail",
-                         "reason": "{}".format(e),
-                         # "traceback": 1})
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
                          "traceback": traceback_text})
         total.append({"raw": raw_node})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"Github - Response in {toc - tic:0.4f} seconds")
+
     return total
 
 

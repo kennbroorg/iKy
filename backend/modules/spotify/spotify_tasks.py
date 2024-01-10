@@ -5,6 +5,7 @@
 # TODO : Sentiment over song's title
 # TODO : Research how to get followers profiles and Following profiles
 
+import os
 import sys
 import traceback
 import json
@@ -71,6 +72,23 @@ def analize_tracks(sp, tracks, level):
 
 def p_spotify(username, from_m, level):
     """ Get basic info from spotify"""
+
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-spotify.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     client_id = api_keys_search('spotify_client_id')
     client_secret = api_keys_search('spotify_client_secret')
 
@@ -251,27 +269,36 @@ def p_spotify(username, from_m, level):
 
 @celery.task
 def t_spotify(username, from_m, level=1):
-    """ Task of Celery that get info from spotify"""
     total = []
     tic = time.perf_counter()
     try:
         total = p_spotify(username, from_m, level)
     except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
         traceback.print_exc()
         traceback_text = traceback.format_exc()
         total.append({'module': 'spotify'})
         total.append({'param': username})
-        total.append({'validation': 'soft'})
+        total.append({'validation': 'not_used'})
 
         raw_node = []
-        raw_node.append({"status": "fail",
-                         "reason": "{}".format(e),
-                         # "traceback": 1})
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
                          "traceback": traceback_text})
         total.append({"raw": raw_node})
 
+    # Take final time
     toc = time.perf_counter()
-    print(f"Spotify - Response in {toc - tic:0.4f} seconds")
+    # Show process time
+    logger.info(f"Spotify - Response in {toc - tic:0.4f} seconds")
 
     return total
 

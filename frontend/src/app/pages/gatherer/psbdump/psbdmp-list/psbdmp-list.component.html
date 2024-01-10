@@ -1,0 +1,83 @@
+<nb-card size="small">
+
+    <nb-card-header>
+      <div>
+          PASTEBIN DUMP List
+      </div>
+      <div class="help" [nbPopover]="psbdmpListHelp" nbPopoverPlacement="bottom"><i class="far fa-question-circle"></i></div>
+      <div [ngClass]="data.result[2].validation"><i class="far fa-check-circle"></i></div>
+    </nb-card-header>
+
+  <nb-card-body id="nbCardPsbDmpList" #nbCardPsbDmpList>
+      <!-- <div class="contact" *ngFor="let c of psbdmpList"> -->
+      <!--   <nb-user [name]="c.id" [title]="c.id"></nb-user> -->
+      <!-- </div> -->
+
+
+    <nb-list class="user-activity-list">
+      <nb-list-item *ngFor="let item of psbdmpList">
+
+        <div class="visited-date">
+          {{ item.time }}
+        </div>
+
+        <div class="visited-pages-count">
+          <div class="caption">ID</div>
+          <div class="value">{{ item.id }}</div>
+        </div>
+
+        <div class="visited-percentages">
+        <!--   <div class="caption">New visits, %</div> -->
+        <!--   <div class="delta value" [class.up]="item.deltaUp" [class.down]="!item.deltaUp"> -->
+        <!--     <nb-icon [icon]="item.deltaUp ? 'arrow-up' : 'arrow-down'" pack="eva"></nb-icon> -->
+        <!--     {{ item.newVisits }}% -->
+        <!--   </div> -->
+          <div class="caption">Badge</div>
+          <div class="badvalue">{{ item.tags }}</div>
+        </div>
+
+      </nb-list-item>
+    </nb-list>
+
+
+
+
+
+  </nb-card-body>
+</nb-card>
+
+  <ng-template #dialogPsbDmpList let-data let-ref="dialogRef">
+      <nb-card style="height: 600px; width: 700px; background-color: rgba(0, 0, 0, 0.8); padding: 0px;">
+        <nb-card-header>PASTEBIN DUMP List</nb-card-header>
+          <div style="padding: 1rem;border-bottom: 1px solid rgba(255, 255, 255, 0.2);" 
+              *ngFor="let c of psbdmpList">
+            <nb-user style="font-size: 20px;font-family: Exo;" [name]="c.desc" [title]="c.name"></nb-user>
+          </div>
+        <nb-card-body style="overflow: hidden; padding: 0px;">
+        </nb-card-body>
+      </nb-card>
+  </ng-template>
+
+  <ng-template #psbdmpListHelp>
+    <nb-card style="margin: 0px; max-width: 50rem;">
+      <nb-card-header status="warning">
+        PASTEBIN DUMP List Help
+      </nb-card-header>
+      <nb-card-body>
+        <p><strong style="font-weight: 600;">Module</strong> : PsbDmp</p> 
+        <p style="font-weight: 600;">Description</p> 
+        <p style="text-align: justify;">
+        This list show the pastebin dump of a user or mail
+        </p>
+        <p style="font-weight: 600;">Execution</p> 
+        <p style="text-align: justify;">
+        This module can be executed only by entering an email in the <strong style="font-weight: 600;">email</strong> field of the advanced search or in normal search, being its validation indicator high since it has been entered by the user
+        </p> 
+        <p style="text-align: justify;">
+        Finally, and with a low validation indicator, the module can be executed if a username was entered in the "username" field of the advanced search or if a mail was entered in the mail or advanced search. In this case the @domain.ext is cut out and the username is used as input
+        </p> 
+        <p style="font-weight: 600;">Source</p> 
+        <p>psbdmp page</p> 
+      </nb-card-body>
+    </nb-card>
+  </ng-template>

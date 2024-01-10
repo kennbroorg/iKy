@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import json
 import requests
-import urllib
+# import urllib
 import cfscrape
+import time
+import traceback
 
 try:
     from factories._celery import create_celery
@@ -22,25 +25,43 @@ except ImportError:
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# from requests.packages.urllib3.exceptions import InsecureRequestWarning
+# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
 # Compatibility code
-try:
-    # Python 2: "unicode" is built-in
-    unicode
-except NameError:
-    unicode = str
+# try:
+#     # Python 2: "unicode" is built-in
+#     unicode
+# except NameError:
+#     unicode = str
 
-@celery.task
-def t_leaks(email):
+def p_leaks(email):
     """ Task of Celery that get info from Have I Been Pwned """
 
+    # Code to develop the frontend without burning APIs
+    cd = os.getcwd()
+    td = os.path.join(cd, "outputs")
+    output = "output-leaks.json"
+    file_path = os.path.join(td, output)
+
+    if os.path.exists(file_path):
+        logger.warning(f"Developer frontend mode - {file_path}")
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except json.JSONDecodeError:
+            logger.error(f"Developer mode ERROR")
+
+    # Code
     key = ""
     url = 'https://haveibeenpwned.com/api/v3/breachedaccount/{}'.format(email)
     key = api_keys_search('haveibeenpwned_key')
+
+    if (not key):
+        raise Exception("iKy - Missing or invalid Key")
 
     # For the future
     # scraper = cfscrape.create_scraper()
@@ -53,13 +74,13 @@ def t_leaks(email):
     if (req.status_code == 200):
         raw_node = json.loads(unicode(req.text))
     elif (req.status_code == 403):
-        raw_node = [{"title": "KEY"}]
+        raise Exception("iKy - Missing or invalid Key")
     elif (req.status_code == 404):
-        raw_node = [{"title": "NOLEAK"}]
+        raise Exception("iKy - No leak found")
     elif (req.status_code == 503):
-        raw_node = [{"title": "BLOCKED"}]
+        raise Exception("iKy - Service blocked")
     else:
-        raw_node = [{"title": "ERROR"}]
+        raise Exception("iKy - API Error")
 
     # Total
     total = []
@@ -121,6 +142,42 @@ def t_leaks(email):
     total.append({'graphic': graphic})
     total.append({'profile': profile})
     total.append({'timeline': timeline})
+
+    return total
+
+
+@celery.task
+def t_leaks(email):
+    total = []
+    tic = time.perf_counter()
+    try:
+        total = p_leaks(email)
+    except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - "):]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
+        traceback.print_exc()
+        traceback_text = traceback.format_exc()
+        total.append({'module': 'leaks'})
+        total.append({'param': email})
+        total.append({'validation': 'not_used'})
+
+        raw_node = []
+        raw_node.append({"status": status,
+                         # "reason": "{}".format(e),
+                         "reason": reason,
+                         "traceback": traceback_text})
+        total.append({"raw": raw_node})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"leaks - Response in {toc - tic:0.4f} seconds")
 
     return total
 
