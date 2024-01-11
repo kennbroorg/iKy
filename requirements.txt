@@ -27,7 +27,7 @@ TranslatorX==1.2
 vaderSentiment==3.3.2
 emailrep==0.0.4
 stop_words
-spotipy==2.16.1
+spotipy==2.22.1
 twitch-python
 parse
 browser-cookie3
