@@ -1,32 +1,35 @@
-FROM python:3.9.2-buster
+FROM python:3.9-slim-bookworm
 
 WORKDIR /app
 
+# Install system dependencies in a single layer
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        supervisor \
+        git && \
+    mkdir -p /var/log/supervisor /etc/supervisor/conf.d && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy and install Python dependencies (cached layer)
 COPY requirements.txt .
+RUN pip install --no-cache-dir -U pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-RUN pip install -U pip
-RUN pip install -r requirements.txt
-
+# Copy backend code
 COPY ./backend .
 
-RUN sed -i "s/CELERY_BROKER_URL.*/CELERY_BROKER_URL = 'redis:\/\/redis:6379\/0'/g" /app/factories/configuration.py
-RUN sed -i "s/CELERY_RESULT_BACKEND.*/CELERY_RESULT_BACKEND = 'redis:\/\/redis:6379\/0'/g" /app/factories/configuration.py
+# Configure Redis URLs for Docker
+RUN sed -i "s/CELERY_BROKER_URL.*/CELERY_BROKER_URL = 'redis:\/\/redis:6379\/0'/g" /app/factories/configuration.py && \
+    sed -i "s/CELERY_RESULT_BACKEND.*/CELERY_RESULT_BACKEND = 'redis:\/\/redis:6379\/0'/g" /app/factories/configuration.py && \
+    sed -i "s/redis:\/\/localhost/redis:\/\/redis/g" /app/factories/celery_config.py
 
-RUN sed -i "s/redis:\/\/localhost/redis:\/\/redis/g" /app/factories/celery_config.py
-
-# supervisor installation &&
-# create directory for child images to store configuration in
-RUN apt-get update
-# RUN apt-get update && \
-#     apt-get -y upgrade
-RUN apt-get -y install supervisor && \
-  mkdir -p /var/log/supervisor && \
-  mkdir -p /etc/supervisor/conf.d
-
-# supervisor base configuration
-ADD install/docker/backend/supervisor.conf /etc/supervisor.conf
+# Supervisor configuration
+COPY install/docker/backend/supervisor.conf /etc/supervisor.conf
 
 EXPOSE 5000
 
-# default command
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/')" || exit 1
+
 CMD ["supervisord", "-c", "/etc/supervisor.conf"]
