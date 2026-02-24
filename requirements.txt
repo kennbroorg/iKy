@@ -5,7 +5,7 @@ Flask==3.0.0
 celery==5.4.0
 Flask-Cors==4.0.0
 requests==2.32.3
-cfscrape==2.1.1
+cloudscraper==1.2.71
 tweepy==4.14.0
 tweety-ns @ https://github.com/mahrtayyab/tweety/archive/main.zip
 geopy==2.4.1
@@ -35,3 +35,4 @@ fontawesome==5.10.1.post1
 peopledatalabs==4.2.0
 playwright==1.50.0
 TikTokApi==6.3.0
+w3lib==2.2.1

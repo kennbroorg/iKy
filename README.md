@@ -6,7 +6,7 @@
 
 <div align="center" style="margin-bottom: 10px;">
     <img alt="Redis" src="https://img.shields.io/badge/storage-redis-red.svg?style=for-the-badge">
-    <img alt="Python" src="https://img.shields.io/badge/python-3.9-informational.svg?style=for-the-badge">
+    <img alt="Python" src="https://img.shields.io/badge/python-3.12-informational.svg?style=for-the-badge">
     <img alt="Celery" src="https://img.shields.io/badge/multiprocessing-celery-green.svg?style=for-the-badge">
     <img alt="Flask" src="https://img.shields.io/badge/interface-flask-yellowgreen.svg?style=for-the-badge">
     <img alt="Node" src="https://img.shields.io/badge/node-22.x-brightgreen.svg?style=for-the-badge">

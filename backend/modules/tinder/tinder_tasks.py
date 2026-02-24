@@ -83,9 +83,9 @@ def p_tinder(username, from_m="Initial"):
 
     if soup.find(id='card-container'):
         raw_node = { 'name': str(soup.find(id='name').text),
-                     'age': int(str(soup.find(id='age').text.encode('utf-8'))[10:13]),
+                     'age': int(soup.find(id='age').text.strip()),
                      'picture': str(soup.find(id='user-photo').get('src')),
-                     'teaser': str(soup.find(id='teaser').text.encode('ascii', 'ignore')),
+                     'teaser': soup.find(id='teaser').text,
                    }
     else:
         raise Exception("iKy - User not found")

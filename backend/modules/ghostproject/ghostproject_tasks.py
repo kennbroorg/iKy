@@ -4,7 +4,7 @@
 import sys
 import json
 import requests
-import cfscrape
+import cloudscraper
 
 try:
     from factories._celery import create_celery
@@ -37,7 +37,7 @@ def t_ghostproject(username):
     #                     data={'param': username},
     #                     cookies=cookies)
 
-    scraper = cfscrape.create_scraper()
+    scraper = cloudscraper.create_scraper()
     req = scraper.post(GHOSTPROJECT_URL + "/x000x1337.php",
                         data={'param': username},
                         cookies=cookies)
