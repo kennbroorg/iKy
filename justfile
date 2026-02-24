@@ -51,6 +51,10 @@ fmt:
     ruff format .
     ruff check --fix .
 
+# Run backend tests inside the container
+test *args:
+    docker compose exec backend pytest -v {{ args }}
+
 # Restart a service
 restart service:
     docker compose restart {{ service }}
