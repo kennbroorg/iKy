@@ -28,7 +28,7 @@ stop_words==2018.7.23
 spotipy==2.25.2
 twitch-python==0.0.20
 parse==1.21.1
-browser-cookie3==0.19.1
+browser-cookie3==0.20.1
 google-api-python-client==2.163.0
 requests_html==0.10.0
 fontawesome==5.10.1.post1
