@@ -24,7 +24,7 @@ langdetect==1.0.9
 TranslatorX==1.2
 vaderSentiment==3.3.2
 emailrep==0.0.5
-stop_words==2018.7.23
+stop_words==2025.11.4
 spotipy==2.25.2
 twitch-python==0.0.20
 parse==1.21.1
