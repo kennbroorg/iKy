@@ -9,8 +9,8 @@ import random
 import time
 import yagooglesearch
 import collections
-from fuzzywuzzy import process
-from apiclient.discovery import build
+from thefuzz import process
+from googleapiclient.discovery import build
 
 
 try:
