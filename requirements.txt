@@ -6,7 +6,7 @@ celery==5.6.2
 Flask-Cors==6.0.2
 requests==2.32.5
 cloudscraper==1.2.71
-tweepy==4.14.0
+tweepy==4.16.0
 tweety-ns @ https://github.com/mahrtayyab/tweety/archive/main.zip
 geopy==2.4.1
 git+https://github.com/KennBro/yagooglesearch.git@origin/add-output-param#egg=yagooglesearch
