@@ -1,0 +1,252 @@
+import type { ModuleConfig } from "@/types/modules";
+
+export const MODULE_REGISTRY: ModuleConfig[] = [
+  {
+    id: "emailrep",
+    label: "EmailRep",
+    icon: "mail-check",
+    category: "email",
+    inputType: "email",
+    requiresApiKey: "emailrep_key",
+    visualization: { useGenericChart: true, useGenericTable: true },
+  },
+  {
+    id: "leaklookup",
+    label: "LeakLookup",
+    icon: "shield-alert",
+    category: "leak",
+    inputType: "email",
+    visualization: { useGenericTable: true },
+  },
+  {
+    id: "leaks",
+    label: "HIBP",
+    icon: "lock-keyhole",
+    category: "leak",
+    inputType: "email",
+    requiresApiKey: "haveibeenpwned_key",
+    visualization: { useGenericTable: true },
+  },
+  {
+    id: "darkpass",
+    label: "Darkpass",
+    icon: "skull",
+    category: "leak",
+    inputType: "email",
+    visualization: { useGenericTable: true },
+  },
+  {
+    id: "psbdmp",
+    label: "PsbDmp",
+    icon: "file-text",
+    category: "leak",
+    inputType: "email",
+    visualization: { useGenericTable: true },
+  },
+  {
+    id: "holehe",
+    label: "Holehe",
+    icon: "user-search",
+    category: "username",
+    inputType: "email",
+    visualization: { useGenericTable: true },
+  },
+  {
+    id: "github",
+    label: "GitHub",
+    icon: "github",
+    category: "social",
+    inputType: "username",
+    visualization: { useGenericGraph: true, useGenericTable: true },
+  },
+  {
+    id: "gitlab",
+    label: "GitLab",
+    icon: "gitlab",
+    category: "social",
+    inputType: "username",
+    visualization: { useGenericGraph: true, useGenericTable: true },
+  },
+  {
+    id: "twitter",
+    label: "Twitter",
+    icon: "twitter",
+    category: "social",
+    inputType: "username",
+    visualization: { useGenericGraph: true, useGenericChart: true },
+  },
+  {
+    id: "instagram",
+    label: "Instagram",
+    icon: "instagram",
+    category: "social",
+    inputType: "username",
+    visualization: { useGenericGraph: true, useGenericChart: true },
+  },
+  {
+    id: "tiktok",
+    label: "TikTok",
+    icon: "music",
+    category: "social",
+    inputType: "username",
+    visualization: { useGenericChart: true, useGenericTable: true },
+  },
+  {
+    id: "reddit",
+    label: "Reddit",
+    icon: "message-circle",
+    category: "social",
+    inputType: "username",
+    visualization: { useGenericGraph: true, useGenericTable: true },
+  },
+  {
+    id: "mastodon",
+    label: "Mastodon",
+    icon: "at-sign",
+    category: "social",
+    inputType: "username",
+    visualization: { useGenericChart: true, useGenericTable: true },
+  },
+  {
+    id: "twitch",
+    label: "Twitch",
+    icon: "tv",
+    category: "social",
+    inputType: "username",
+    visualization: { useGenericChart: true },
+  },
+  {
+    id: "spotify",
+    label: "Spotify",
+    icon: "headphones",
+    category: "social",
+    inputType: "username",
+    specialParams: { proc: 1 },
+    visualization: { useGenericChart: true, useGenericTable: true },
+  },
+  {
+    id: "tinder",
+    label: "Tinder",
+    icon: "flame",
+    category: "social",
+    inputType: "username",
+    visualization: { useGenericTable: true },
+  },
+  {
+    id: "venmo",
+    label: "Venmo",
+    icon: "dollar-sign",
+    category: "social",
+    inputType: "username",
+    visualization: { useGenericGraph: true, useGenericTable: true },
+  },
+  {
+    id: "linkedin",
+    label: "LinkedIn",
+    icon: "briefcase",
+    category: "social",
+    inputType: "username",
+    visualization: { useGenericGraph: true, useGenericTable: true },
+  },
+  {
+    id: "keybase",
+    label: "Keybase",
+    icon: "key",
+    category: "social",
+    inputType: "username",
+    visualization: { useGenericGraph: true, useGenericTable: true },
+  },
+  {
+    id: "skype",
+    label: "Skype",
+    icon: "phone",
+    category: "social",
+    inputType: "username",
+    visualization: { useGenericTable: true },
+  },
+  {
+    id: "usersearch",
+    label: "UserSearch",
+    icon: "search",
+    category: "username",
+    inputType: "username",
+    visualization: { useGenericTable: true },
+  },
+  {
+    id: "socialscan",
+    label: "SocialScan",
+    icon: "scan",
+    category: "username",
+    inputType: "email",
+    visualization: { useGenericTable: true },
+  },
+  {
+    id: "sherlock",
+    label: "Sherlock",
+    icon: "fingerprint",
+    category: "username",
+    inputType: "username",
+    visualization: { useGenericTable: true },
+  },
+  {
+    id: "search",
+    label: "Searchers",
+    icon: "globe",
+    category: "search",
+    inputType: "username",
+    visualization: { useGenericTable: true },
+  },
+  {
+    id: "dorks",
+    label: "Dorks",
+    icon: "terminal",
+    category: "search",
+    inputType: "username",
+    specialParams: { dorks: "" },
+    visualization: { useGenericTable: true },
+  },
+  {
+    id: "peopledatalabs",
+    label: "PeopleDataLabs",
+    icon: "database",
+    category: "enrichment",
+    inputType: "email",
+    requiresApiKey: "peopledatalabs_key",
+    visualization: { useGenericTable: true },
+  },
+  {
+    id: "fullcontact",
+    label: "FullContact",
+    icon: "contact",
+    category: "enrichment",
+    inputType: "email",
+    requiresApiKey: "fullcontact_key",
+    visualization: { useGenericTable: true },
+  },
+  {
+    id: "ghostproject",
+    label: "GhostProject",
+    icon: "ghost",
+    category: "enrichment",
+    inputType: "email",
+    visualization: { useGenericTable: true },
+  },
+];
+
+export function getModulesByCategory(category: string): ModuleConfig[] {
+  if (category === "all") return MODULE_REGISTRY;
+  return MODULE_REGISTRY.filter((m) => m.category === category);
+}
+
+export function getModule(id: string): ModuleConfig | undefined {
+  return MODULE_REGISTRY.find((m) => m.id === id);
+}
+
+export function getModulesForInput(input: string): ModuleConfig[] {
+  const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input);
+  return MODULE_REGISTRY.filter(
+    (m) =>
+      m.inputType === "both" ||
+      (email ? m.inputType === "email" : m.inputType === "username"),
+  );
+}
