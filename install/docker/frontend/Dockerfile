@@ -1,4 +1,4 @@
-FROM node:14-bullseye-slim
+FROM node:22-bookworm-slim
 
 WORKDIR /app
 
@@ -19,6 +19,9 @@ COPY frontend .
 
 # Configure ng serve for Docker
 RUN sed -i 's/"start":.*/"start": "ng serve --host 0.0.0.0 --disable-host-check",/' package.json
+
+# TODO: remove --openssl-legacy-provider once frontend is rewritten on modern Angular
+ENV NODE_OPTIONS=--openssl-legacy-provider
 
 EXPOSE 4200
 

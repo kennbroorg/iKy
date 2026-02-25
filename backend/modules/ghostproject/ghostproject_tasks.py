@@ -4,7 +4,7 @@
 import sys
 import json
 import requests
-import cfscrape
+import cloudscraper
 
 try:
     from factories._celery import create_celery
@@ -19,8 +19,8 @@ except ImportError:
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
@@ -37,7 +37,7 @@ def t_ghostproject(username):
     #                     data={'param': username},
     #                     cookies=cookies)
 
-    scraper = cfscrape.create_scraper()
+    scraper = cloudscraper.create_scraper()
     req = scraper.post(GHOSTPROJECT_URL + "/x000x1337.php",
                         data={'param': username},
                         cookies=cookies)

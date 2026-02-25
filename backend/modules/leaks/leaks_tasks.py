@@ -6,7 +6,7 @@ import sys
 import json
 import requests
 # import urllib
-import cfscrape
+import cloudscraper
 import time
 import traceback
 
@@ -25,17 +25,11 @@ except ImportError:
     from celery.utils.log import get_task_logger
     celery = create_celery(create_application())
 
-# from requests.packages.urllib3.exceptions import InsecureRequestWarning
-# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# import urllib3
+# urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
-# Compatibility code
-# try:
-#     # Python 2: "unicode" is built-in
-#     unicode
-# except NameError:
-#     unicode = str
 
 def p_leaks(email):
     """ Task of Celery that get info from Have I Been Pwned """
@@ -64,7 +58,7 @@ def p_leaks(email):
         raise Exception("iKy - Missing or invalid Key")
 
     # For the future
-    # scraper = cfscrape.create_scraper()
+    # scraper = cloudscraper.create_scraper()
     # req = scraper.get(url)
 
     req = requests.get(url, headers={'User-Agent': 'iKy', 'hibp-api-key': key},
@@ -72,7 +66,7 @@ def p_leaks(email):
 
     # Raw Array
     if (req.status_code == 200):
-        raw_node = json.loads(unicode(req.text))
+        raw_node = json.loads(req.text)
     elif (req.status_code == 403):
         raise Exception("iKy - Missing or invalid Key")
     elif (req.status_code == 404):
