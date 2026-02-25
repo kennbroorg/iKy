@@ -29,7 +29,7 @@ emailrep==0.0.4
 stop_words
 spotipy==2.16.1
 twitch-python
-parse
+parse==1.21.1
 browser-cookie3
 google-api-python-client==2.33.0
 python-Levenshtein
