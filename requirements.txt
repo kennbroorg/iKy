@@ -3,7 +3,7 @@ aiohttp==3.8.4
 beautifulsoup4==4.12.3
 httpx[http2]
 Flask==3.0.0
-celery==5.2.7
+celery==5.6.2
 Flask-Cors==4.0.0
 requests==2.27.0
 bs4==0.0.1
