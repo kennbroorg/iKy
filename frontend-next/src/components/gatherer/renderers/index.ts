@@ -5,6 +5,11 @@ import {
   SherlockRenderer,
   SocialscanRenderer,
 } from "./account-check-renderer";
+import {
+  EmailRepRenderer,
+  FullContactRenderer,
+  PeopleDataLabsRenderer,
+} from "./enrichment-renderer";
 import { GithubRenderer } from "./github-renderer";
 import { InstagramRenderer } from "./instagram-renderer";
 import { KeybaseRenderer } from "./keybase-renderer";
@@ -18,8 +23,15 @@ import { LinkedinRenderer } from "./linkedin-renderer";
 import { MastodonRenderer } from "./mastodon-renderer";
 import { RedditRenderer } from "./reddit-renderer";
 import { SearchResultRenderer } from "./search-renderer";
+import {
+  GhostprojectRenderer,
+  GitlabRenderer,
+  SkypeRenderer,
+  TinderRenderer,
+} from "./simple-renderer";
 import { SpotifyRenderer } from "./spotify-renderer";
 import { TiktokRenderer } from "./tiktok-renderer";
+import { TweetimentRenderer } from "./tweetiment-renderer";
 import { TwitchRenderer } from "./twitch-renderer";
 import { TwitterRenderer } from "./twitter-renderer";
 import { VenmoRenderer } from "./venmo-renderer";
@@ -55,4 +67,12 @@ export const MODULE_RENDERERS: Record<
   leaklookup: LeakLookupRenderer,
   darkpass: DarkpassRenderer,
   psbdmp: PsbdmpRenderer,
+  emailrep: EmailRepRenderer,
+  fullcontact: FullContactRenderer,
+  peopledatalabs: PeopleDataLabsRenderer,
+  gitlab: GitlabRenderer,
+  tinder: TinderRenderer,
+  skype: SkypeRenderer,
+  ghostproject: GhostprojectRenderer,
+  tweetiment: TweetimentRenderer,
 };
