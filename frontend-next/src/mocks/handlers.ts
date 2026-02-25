@@ -4,7 +4,10 @@ import {
   MOCK_API_KEYS,
   MOCK_EMAILREP_RESULT,
   MOCK_GITHUB_RESULT,
+  MOCK_HOLEHE_RESULT,
   MOCK_MODULES,
+  MOCK_SEARCH_RESULT,
+  MOCK_TWITTER_RESULT,
   makeMockTaskState,
 } from "./data";
 
@@ -13,13 +16,16 @@ const API = import.meta.env.VITE_API_URL ?? "http://localhost:5000";
 let taskCounter = 0;
 let apiKeys = [...MOCK_API_KEYS];
 
+/** Maps task IDs to the module that dispatched them */
+const taskModuleMap = new Map<string, string>();
+
 export const handlers = [
   // GET /tasklist
   http.get(`${API}/tasklist`, () => {
     return HttpResponse.json({ modules: MOCK_MODULES });
   }),
 
-  // POST /<module> — dispatch a module search
+  // POST /<module> -- dispatch a module search
   http.post(`${API}/:module`, async ({ params, request }) => {
     const module = params.module as string;
 
@@ -40,6 +46,7 @@ export const handlers = [
 
     const body = (await request.json()) as { username?: string };
     const taskId = `mock-task-${++taskCounter}`;
+    taskModuleMap.set(taskId, module);
     await delay(200);
     return HttpResponse.json({
       module,
@@ -57,13 +64,24 @@ export const handlers = [
     );
   }),
 
-  // GET /result/:taskId — return mock result based on task ID
-  http.get(`${API}/result/:taskId`, async () => {
+  // GET /result/:taskId -- return mock result based on dispatched module
+  http.get(`${API}/result/:taskId`, async ({ params }) => {
     await delay(200);
-    // Alternate between different mock results
-    if (taskCounter % 2 === 0) {
-      return HttpResponse.json(MOCK_GITHUB_RESULT);
+    const taskId = params.taskId as string;
+    const module = taskModuleMap.get(taskId) ?? "github";
+
+    switch (module) {
+      case "twitter":
+        return HttpResponse.json(MOCK_TWITTER_RESULT);
+      case "holehe":
+        return HttpResponse.json(MOCK_HOLEHE_RESULT);
+      case "search":
+      case "dorks":
+        return HttpResponse.json(MOCK_SEARCH_RESULT);
+      case "emailrep":
+        return HttpResponse.json(MOCK_EMAILREP_RESULT);
+      default:
+        return HttpResponse.json(MOCK_GITHUB_RESULT);
     }
-    return HttpResponse.json(MOCK_EMAILREP_RESULT);
   }),
 ];
