@@ -15,7 +15,7 @@ try:
     from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
     from factories.iKy_functions import analize_rrss
 
     celery = create_celery(create_application())
@@ -25,7 +25,7 @@ except ImportError:
     from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
     from factories.iKy_functions import analize_rrss
 
     celery = create_celery(create_application())
@@ -85,8 +85,6 @@ def p_keybase(username, from_m):
     except Exception:
         pass
 
-    # Icons
-    font_list = fontawesome_cheat_5()
     # Total
     total = []
     total.append({"module": "keybase"})
@@ -283,11 +281,9 @@ def p_keybase(username, from_m):
         for dev in raw.get("devices", ""):
             # print(dev)
             # print(" Type ", raw.get("devices").get(dev).get("type", ""))
-            fa_icon = search_icon_5(
-                raw.get("devices").get(dev).get("type", ""), font_list
-            )
+            fa_icon = search_icon_5(raw.get("devices").get(dev).get("type", ""))
             if fa_icon is None:
-                fa_icon = search_icon_5("question", font_list)
+                fa_icon = search_icon_5("question")
 
             device_item = {
                 "name-node": raw.get("devices").get(dev).get("type", ""),
@@ -300,9 +296,9 @@ def p_keybase(username, from_m):
 
         if raw.get("proofs_summary", "") != "":
             for soc in raw.get("proofs_summary", "").get("all"):
-                fa_icon = search_icon_5(soc.get("proof_type"), font_list)
+                fa_icon = search_icon_5(soc.get("proof_type"))
                 if fa_icon is None:
-                    fa_icon = search_icon_5("question", font_list)
+                    fa_icon = search_icon_5("question")
 
                 social_item = {
                     "name-node": "keybase" + soc.get("proof_type", ""),

@@ -13,7 +13,7 @@ try:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
 
     celery = create_celery(create_application())
 except ImportError:
@@ -23,7 +23,7 @@ except ImportError:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
 
     celery = create_celery(create_application())
 
@@ -85,8 +85,6 @@ def p_emailrep(username, from_m="Initial"):
 
         req = emailrep.query(username)
 
-        # Icons unicode
-        font_list = fontawesome_cheat_5()
         # Raw Array
         raw_node = req
         # raw_node = json.loads(unicode(req))
@@ -315,15 +313,15 @@ def p_emailrep(username, from_m="Initial"):
                     "name-node": "Social",
                     "title": "Social",
                     "subtitle": "",
-                    "icon": search_icon_5("child", font_list),
+                    "icon": search_icon_5("child"),
                     "link": link_social,
                 }
                 socialp.append(social_item)
 
                 for social in raw_node["details"]["profiles"]:
-                    fa_icon = search_icon_5(social, font_list)
+                    fa_icon = search_icon_5(social)
                     if fa_icon is None:
-                        fa_icon = search_icon_5("question", font_list)
+                        fa_icon = search_icon_5("question")
 
                     social_item = {
                         "name-node": "ER" + social,

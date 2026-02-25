@@ -50,7 +50,17 @@ def t_gitlab(username):
                 elif div.find("i", {"class": "fa fa-briefcase"}):
                     gitlabdetails.append("Organisation: " + div.text.strip())
 
-    return gitlabdetails
+    total = []
+    total.append({"module": "gitlab"})
+    total.append({"param": username})
+    total.append({"validation": "no"})
+    total.append({"raw": gitlabdetails})
+    total.append({"graphic": []})
+    total.append({"profile": []})
+    total.append({"timeline": []})
+    total.append({"tasks": []})
+
+    return total
 
 
 def output(data):

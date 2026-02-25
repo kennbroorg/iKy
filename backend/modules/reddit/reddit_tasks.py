@@ -76,7 +76,6 @@ def p_reddit(username, from_m="Initial"):
 
     lastaction = 0
     headers = {"User-Agent": random.choice(user_agents)}
-    curts = int(time.time())
     commentdata = []
     linkdata = []
     timelist = []
@@ -102,45 +101,13 @@ def p_reddit(username, from_m="Initial"):
         userdata = req.json()["data"]
         raw_node.append({"profile": userdata})
 
-        # Comments
-        while True:
-            comurl = (
-                "https://api.pushshift.io/reddit/search/comment/?author="
-                + username
-                + "&size=500&before="
-                + str(curts)
-            )
-            req = requests.get(comurl, headers=headers, timeout=30)
-
-            tempdata = req.json()["data"]
-            commentdata += tempdata
-            try:
-                if tempdata[499]:
-                    curts = tempdata[499]["created_utc"]
-            except Exception:
-                break
-
-        raw_node.append({"comments": commentdata})
-        curts = int(time.time())
-
-        # Posts/Submissions
+        # NOTE: Pushshift API was decommissioned in April 2023.
+        # Comment/post history via Pushshift is no longer available.
+        # The subreddit analysis, hour/week charts, and last-activity
+        # features that depended on it will be empty until a replacement
+        # data source is integrated.
         postdata = []
-        while True:
-            linkurl = (
-                "https://api.pushshift.io/reddit/search/submission/?author="
-                + username
-                + "&size=500&before="
-                + str(curts)
-            )
-            req = requests.get(linkurl, headers=headers, timeout=30)
-            postdata = req.json()["data"]
-            linkdata += postdata
-            try:
-                if postdata[499]:
-                    curts = postdata[499]["created_utc"]
-            except Exception:
-                break
-
+        raw_node.append({"comments": commentdata})
         raw_node.append({"posts": linkdata})
 
         if commentdata:

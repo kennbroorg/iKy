@@ -12,9 +12,7 @@ try:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-
-    # from factories.fontcheat import fontawesome_cheat, search_icon
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
 
     celery = create_celery(create_application())
 except ImportError:
@@ -24,9 +22,7 @@ except ImportError:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-
-    # from factories.fontcheat import fontawesome_cheat, search_icon
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
 
     celery = create_celery(create_application())
 
@@ -73,9 +69,6 @@ def p_fullcontact(email):
     total.append({"param": email})
     total.append({"validation": "hard"})
 
-    # Icons unicode
-    font_list = fontawesome_cheat_5()
-
     # Graphic Array
     graphic = []
 
@@ -113,7 +106,7 @@ def p_fullcontact(email):
             "name-node": "Social",
             "title": "Social",
             "subtitle": "",
-            "icon": search_icon_5("child", font_list),
+            "icon": search_icon_5("child"),
             "link": link_social,
         }
         socialp.append(social_item)
@@ -122,7 +115,7 @@ def p_fullcontact(email):
             "name-node": "Photos",
             "title": "Photos",
             "subtitle": "",
-            "icon": search_icon_5("camera-retro", font_list),
+            "icon": search_icon_5("camera-retro"),
             "link": link_photo,
         }
         photo.append(photo_item)
@@ -194,9 +187,9 @@ def p_fullcontact(email):
                 else:
                     subtitle = "Not identified"
 
-                fa_icon = search_icon_5(social.get("typeId", ""), font_list)
+                fa_icon = search_icon_5(social.get("typeId", ""))
                 if fa_icon is None:
-                    fa_icon = search_icon_5("question", font_list)
+                    fa_icon = search_icon_5("question")
 
                 social_item = {
                     "name-node": social.get("typeName", ""),
@@ -313,7 +306,7 @@ def p_fullcontact(email):
             "name-node": "Social",
             "title": "Social",
             "subtitle": "",
-            "icon": search_icon_5("child", font_list),
+            "icon": search_icon_5("child"),
             "link": link_social,
         }
         socialp.append(social_item)
@@ -322,7 +315,7 @@ def p_fullcontact(email):
             "name-node": "Photos",
             "title": "Photos",
             "subtitle": "",
-            "icon": search_icon_5("camera-retro", font_list),
+            "icon": search_icon_5("camera-retro"),
             "link": link_photo,
         }
         photo.append(photo_item)
@@ -365,9 +358,9 @@ def p_fullcontact(email):
             for social in raw_node.get("details", "").get("profiles", ""):
                 rrss = raw_node.get("details", "").get("profiles", "")[social]
                 username = rrss.get("url", "").split("/")[-1]
-                fa_icon = search_icon_5(rrss.get("service", ""), font_list)
+                fa_icon = search_icon_5(rrss.get("service", ""))
                 if fa_icon is None:
-                    fa_icon = search_icon_5("question", font_list)
+                    fa_icon = search_icon_5("question")
                 social_item = {
                     "name-node": rrss.get("service", ""),
                     "title": rrss.get("service", ""),
@@ -449,7 +442,7 @@ def p_fullcontact(email):
             "name-node": "Social",
             "title": "Social",
             "subtitle": "",
-            "icon": search_icon_5("child", font_list),
+            "icon": search_icon_5("child"),
             "link": link_social,
         }
         socialp = []

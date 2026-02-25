@@ -12,7 +12,7 @@ try:
     from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
 
     celery = create_celery(create_application())
 except ImportError:
@@ -21,7 +21,7 @@ except ImportError:
     from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
 
     celery = create_celery(create_application())
 
@@ -55,9 +55,6 @@ def p_socialscan(email, from_m="Initial"):
     total.append({"param": email})
     total.append({"validation": "no"})
 
-    # Icons unicode
-    font_list = fontawesome_cheat_5()
-
     # Arrays
     raw_node = []
     graphic = []
@@ -85,9 +82,9 @@ def p_socialscan(email, from_m="Initial"):
 
     for result in res_email:
         if not result.available:
-            fa_icon = search_icon_5(str(result.platform), font_list)
+            fa_icon = search_icon_5(str(result.platform))
             if fa_icon is None:
-                fa_icon = search_icon_5("question", font_list)
+                fa_icon = search_icon_5("question")
 
             social_item = {
                 "name-node": "SC" + str(result.platform),
@@ -116,9 +113,9 @@ def p_socialscan(email, from_m="Initial"):
 
     for result in res_user:
         if not result.available:
-            fa_icon = search_icon_5(str(result.platform), font_list)
+            fa_icon = search_icon_5(str(result.platform))
             if fa_icon is None:
-                fa_icon = search_icon_5("question", font_list)
+                fa_icon = search_icon_5("question")
 
             social_item = {
                 "name-node": "SCE" + str(result.platform),

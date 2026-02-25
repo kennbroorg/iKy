@@ -15,9 +15,7 @@ try:
     from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-
-    # from factories.fontcheat import fontawesome_cheat, search_icon
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
     from factories.iKy_functions import analize_rrss
 
     celery = create_celery(create_application())
@@ -27,9 +25,7 @@ except ImportError:
     from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-
-    # from factories.fontcheat import fontawesome_cheat, search_icon
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
     from factories.iKy_functions import analize_rrss
 
     celery = create_celery(create_application())
@@ -181,8 +177,6 @@ def one_user(username, user_data, server=""):
     info = user_data[0]
     print(f"INFO: {info}")
 
-    # Icons
-    font_list = fontawesome_cheat_5()
     # Total
     total = []
     total.append({"module": "mastodon"})
@@ -380,14 +374,20 @@ def one_user(username, user_data, server=""):
         value = field.get("value")
         print(f"Name: {name} - Value: {value}")
 
-        if value and "</" not in value:
+        if not value:
             continue
 
-        soup = BeautifulSoup(value, "html.parser")
-        a = soup.find("a")
-        if a:
-            fields.append({name: a.get("href")})
-            analyze = analize_rrss(a.get("href"))
+        # Extract URL: parse HTML fields for <a> href, use plain text as-is
+        if "</" in value:
+            soup = BeautifulSoup(value, "html.parser")
+            a = soup.find("a")
+            url = a.get("href") if a else None
+        else:
+            url = value
+
+        if url:
+            fields.append({name: url})
+            analyze = analize_rrss(url)
             for item in analyze:
                 if item == "url":
                     for i in analyze["url"]:
@@ -396,9 +396,9 @@ def one_user(username, user_data, server=""):
                     for i in analyze["tasks"]:
                         tasks.append(i)
 
-                        fa_icon = search_icon_5(i["module"], font_list)
+                        fa_icon = search_icon_5(i["module"])
                         if fa_icon is None:
-                            fa_icon = search_icon_5("question", font_list)
+                            fa_icon = search_icon_5("question")
 
                         social_item = {
                             "name-node": "MastoSocial" + name,
@@ -414,7 +414,7 @@ def one_user(username, user_data, server=""):
                             "username": i["param"],
                             "Source": "Mastodon",
                             "icon": fa_icon,
-                            "url": a.get("href"),
+                            "url": url,
                         }
                         social_profile.append(social_profile_item)
         else:

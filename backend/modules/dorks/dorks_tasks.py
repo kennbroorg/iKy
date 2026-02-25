@@ -17,7 +17,7 @@ try:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
     from factories.iKy_functions import deep_analysis, simple_analysis
 
     celery = create_celery(create_application())
@@ -28,7 +28,7 @@ except ImportError:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
     from factories.iKy_functions import deep_analysis, simple_analysis
 
     celery = create_celery(create_application())
@@ -70,7 +70,7 @@ def p_dorks_cse(api_key, cx, keywords, dorks=""):
         query = f"{keywords} {dorks[dork]}"
 
         print(f"Processing QUERY : {query}")
-        result = resource.list(q=query, cx="40b052eff66bf4730").execute()
+        result = resource.list(q=query, cx=cx).execute()
 
         if "items" in result:
             for item in result["items"]:
@@ -207,9 +207,6 @@ def p_dorks(keywords, dorks, from_m="Initial"):
     else:
         raw_node = p_dorks_yagoogle(keywords, dorks)
 
-    # Icons unicode
-    font_list = fontawesome_cheat_5()
-
     output = {}
     for i in raw_node:
         try:
@@ -266,7 +263,7 @@ def p_dorks(keywords, dorks, from_m="Initial"):
         "name-node": "Social",
         "title": "Social",
         "subtitle": "",
-        "icon": search_icon_5("child", font_list),
+        "icon": search_icon_5("child"),
         "link": link_social,
     }
     social_raw.append(social_item)
@@ -286,7 +283,7 @@ def p_dorks(keywords, dorks, from_m="Initial"):
             "name-node": "Social" + s["rrss"] + str(title_count),
             "title": s["rrss"] + " (" + s["source"] + ")" + nounce,
             "subtitle": s["user"],
-            "icon": search_icon_5(s["rrss"], font_list),
+            "icon": search_icon_5(s["rrss"]),
             "link": link_social,
         }
         social_raw.append(social_item)
@@ -324,7 +321,7 @@ def p_dorks(keywords, dorks, from_m="Initial"):
             "name-node": "Social",
             "title": "Social",
             "subtitle": "",
-            "icon": search_icon_5("child", font_list),
+            "icon": search_icon_5("child"),
             "link": link_social,
         }
         socialp.append(social_item)
@@ -338,7 +335,7 @@ def p_dorks(keywords, dorks, from_m="Initial"):
                 "name-node": social.split("-|-")[0],
                 "title": social.split("-|-")[0],
                 "subtitle": social.split("-|-")[1],
-                "icon": search_icon_5(social.split("-|-")[0], font_list),
+                "icon": search_icon_5(social.split("-|-")[0]),
                 "link": link_social,
             }
             socialp.append(social_item)

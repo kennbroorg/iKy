@@ -272,7 +272,7 @@ def t_tweetiment(username, task_id, from_m="Initial"):
     # Take final time
     toc = time.perf_counter()
     # Show process time
-    logger.info(f"PeopleDataLabs - Response in {toc - tic:0.4f} seconds")
+    logger.info(f"Tweetiment - Response in {toc - tic:0.4f} seconds")
 
     return total
 

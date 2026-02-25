@@ -64,7 +64,7 @@ def p_psbdmp(email, from_m="Initial"):
         )
         dump_list.append({"id": dump["id"], "tags": dump["tags"], "time": dump["time"]})
         dump_text = response.json()["content"]
-        regex = rf"(.*(?:{username}).*)\r?\n?"
+        regex = rf"(.*(?:{re.escape(username)}).*)\r?\n?"
         matches = re.findall(regex, dump_text, re.IGNORECASE)
         for match in matches:
             dump_word.append({"label": match.strip(), "value": 1})

@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 """
 Get comparison information about Twitter account
+
+DEPRECATED: This module uses the Twitter v1.1 API via Tweepy v3, which has
+been decommissioned by Twitter/X. The task returns an immediate error response.
+The original code is preserved in case API access is restored in the future.
 """
 
 import json
@@ -44,6 +48,25 @@ logger = get_task_logger(__name__)
 
 @celery.task
 def t_twitter_comp(username, date_from, date_to, from_m="Init", module=None):
+    # DEPRECATED: Twitter v1.1 API is decommissioned — return error immediately
+    mod_name = module if module else "twitter_comp"
+    total = []
+    total.append({"module": mod_name})
+    total.append({"param": username})
+    total.append({"validation": "not_used"})
+    raw_node = [
+        {
+            "status": "Fail",
+            "reason": (
+                "Twitter v1.1 API has been decommissioned. "
+                "This module is no longer functional."
+            ),
+        }
+    ]
+    total.append({"raw": raw_node})
+    return total
+
+    # --- Original code preserved below (Twitter v1.1 / Tweepy v3) ---
     twitter_consumer_key = api_keys_search("twitter_consumer_key")
     twitter_consumer_secret = api_keys_search("twitter_consumer_secret")
     twitter_access_token = api_keys_search("twitter_access_token")

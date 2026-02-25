@@ -187,7 +187,16 @@ def analize_rrss(text):
     tasks_temp.append(extract_instagram(text))
     tasks_temp.append(extract_linkedin(text))
 
-    tasks = [val for sublist in tasks_temp for val in sublist]
+    # Flatten and deduplicate: both extract_url_* and extract_*
+    # can match the same user for a platform, producing duplicate
+    # Celery tasks. Keep only one task per (module, param) pair.
+    seen: set[tuple[str, str]] = set()
+    tasks = []
+    for task in (val for sublist in tasks_temp for val in sublist):
+        key = (task["module"], task["param"])
+        if key not in seen:
+            seen.add(key)
+            tasks.append(task)
 
     analized["tasks"] = tasks
 
@@ -201,6 +210,174 @@ def name_match(names, data):
         if name in data:
             matchs = matchs + 1
     return matchs >= min_matching
+
+
+def _extract_user_default(match):
+    """Standard username extraction: group 4, split on / and ?."""
+    raw = match.group(5)
+    user = raw.split("/")[0] if "/" in raw else raw
+    if "?" in user:
+        user = user.split("?")[0]
+    return user
+
+
+def _extract_user_twitter(match):
+    """Twitter: standard extraction plus %40 decode."""
+    user = _extract_user_default(match)
+    return user.replace("%40", "")
+
+
+def _extract_user_facebook(match):
+    """Facebook: handle /public/ URLs.
+
+    NOTE: The original code tried ``match.groups()[6]`` for "public"
+    URLs, but the regex only captures 5 groups so that would always
+    raise IndexError.  We preserve the intent by returning an empty
+    string for "/public/" paths (the URL format changed long ago).
+    """
+    raw = match.group(5)
+    if "public" in raw:
+        return ""
+    user = raw.split("/")[0] if "/" in raw else raw
+    if "?" in user:
+        user = user.split("?")[0]
+    return user
+
+
+def _extract_user_strip(match):
+    """Pinterest / TikTok: strip slashes, skip /pin/ paths."""
+    raw = match.group(5)
+    stripped = raw.strip("/")
+    if "/" in stripped:
+        user = raw.split("/")[0]
+    elif "/pin/" not in stripped:
+        user = stripped
+    else:
+        user = ""
+    if "?" in user:
+        user = user.split("?")[0]
+    return user
+
+
+def _extract_user_keybase(match):
+    """Keybase: split on / only, no ? cleanup."""
+    raw = match.group(5)
+    return raw.split("/")[0] if "/" in raw else raw
+
+
+# Each name-extraction rule: (regex_pattern, group_index_for_name).
+# A platform may list multiple rules; all matching rules append names.
+_NAME_RULES: dict[str, list[tuple[str, int]]] = {
+    "twitter": [
+        (r"^(Media Tweets by )?(.*)\(@(.*)\) \| Twitter", 2),
+        (r"^(.*) on Twitter: (.*)$", 1),
+    ],
+    "github": [(r"(.*)\((.*)\) · GitHub", 2)],
+    "instagram": [(r"(.*)\((.*)\)(.*)?Instagram(.*)?", 1)],
+    "linkedin": [(r"^(.*?) \- (.*)", 1)],
+    "facebook": [(r"^(.*?)( News - Home)? \| (.*)", 1)],
+    "pinterest": [(r"^(.*?) \((.*)\)(.*)?Pinterest(.*)?$", 1)],
+    "tiktok": [(r"^(.*) \(@(\w+)\) Official TikTok .*", 1)],
+}
+
+# Platform configs for the URL-parsing loop inside simple_analysis.
+# Fields:
+#   rrss          - social-network identifier
+#   url_pattern   - regex matched against data[1] (the URL)
+#   extract_user  - callable(match) -> username string
+#   user_guard    - optional callable(user) -> bool; if it returns
+#                   False the platform is skipped (linkedin dash rule)
+_PLATFORM_CONFIGS = [
+    {
+        "rrss": "twitter",
+        "url_pattern": (
+            r"^(https:\/\/www.google.com\/url\?q=|)"
+            r"(http:\/\/\w+\.|https:\/\/\w+\."
+            r"|http:\/\/|https:\/\/)?[a-z0-9\.]*?"
+            r"(twitter+)\.[a-z]{2,5}"
+            r"(:[0-9]{1,5})?\/(\w+)"
+        ),
+        "extract_user": _extract_user_twitter,
+    },
+    {
+        "rrss": "github",
+        "url_pattern": (
+            r"^(https:\/\/www.google.com\/url\?q=|)"
+            r"(http:\/\/\w+\.|https:\/\/\w+\."
+            r"|http:\/\/|https:\/\/)?[a-z0-9\.]*?"
+            r"(github+)\.[a-z]{2,5}"
+            r"(:[0-9]{1,5})?\/(\w+)"
+        ),
+        "extract_user": _extract_user_default,
+    },
+    {
+        "rrss": "instagram",
+        "url_pattern": (
+            r"^(https:\/\/www.google.com\/url\?q=|)"
+            r"(http:\/\/www\.|https:\/\/www\."
+            r"|http:\/\/|https:\/\/)?[a-z0-9\.]*?"
+            r"(instagram+)\.[a-z]{2,5}"
+            r"(:[0-9]{1,5})?\/([^p].*?)(%3|\/)(.*)"
+        ),
+        "extract_user": _extract_user_default,
+    },
+    {
+        "rrss": "keybase",
+        "url_pattern": (
+            r"^(https:\/\/www.google.com\/url\?q=|)"
+            r"(http:\/\/www\.|https:\/\/www\."
+            r"|http:\/\/|https:\/\/)?[a-z0-9\.]*?"
+            r"(keybase+)\.[a-z]{2,5}"
+            r"(:[0-9]{1,5})?\/(\w+)"
+        ),
+        "extract_user": _extract_user_keybase,
+    },
+    {
+        "rrss": "linkedin",
+        "url_pattern": (
+            r"^(https:\/\/www.google.com\/url\?q=|)"
+            r"(http:\/\/www\.|https:\/\/www\."
+            r"|http:\/\/|https:\/\/)?[a-z0-9\.]*?"
+            r"(linkedin+)\.[a-z]{2,5}"
+            r"(:[0-9]{1,5})?\/in\/?\/(\w+)"
+        ),
+        "extract_user": _extract_user_default,
+        "user_guard": lambda u: u.count("-") < 2,
+    },
+    {
+        "rrss": "facebook",
+        "url_pattern": (
+            r"^(https:\/\/www.google.com\/url\?q=|)"
+            r"(http:\/\/\w+\.|https:\/\/\w+\."
+            r"|http:\/\/|https:\/\/)?[a-z0-9\.]?"
+            r"(facebook+)\.[a-z]{2,5}"
+            r"(:[0-9]{1,5})?\/(\w+)"
+        ),
+        "extract_user": _extract_user_facebook,
+    },
+    {
+        "rrss": "pinterest",
+        "url_pattern": (
+            r"^(https:\/\/www.google.com\/url\?q=|)"
+            r"(http:\/\/www\.|https:\/\/www\."
+            r"|http:\/\/|https:\/\/)?[a-z0-9\.]*?"
+            r"(pinterest+)\.[a-z]{2,5}"
+            r"(:[0-9]{1,5})?\/(.*?)(%3|\/|&)(.*)"
+        ),
+        "extract_user": _extract_user_strip,
+    },
+    {
+        "rrss": "tiktok",
+        "url_pattern": (
+            r"^(https:\/\/www.google.com\/url\?q=|)"
+            r"(http:\/\/www\.|https:\/\/www\."
+            r"|http:\/\/|https:\/\/)?[a-z0-9\.]*?"
+            r"(tiktok+)\.[a-z]{2,5}"
+            r"(:[0-9]{1,5})?\/%40(\w+)"
+        ),
+        "extract_user": _extract_user_strip,
+    },
+]
 
 
 def simple_analysis(source, type_s, username, data, output):
@@ -234,357 +411,51 @@ def simple_analysis(source, type_s, username, data, output):
     hashtags = output.get("hashtags", [])
     emails = output.get("emails", [])
 
-    match_twitter = re.match(
-        r"^(https:\/\/www.google.com\/url\?q=|)(http:\/\/\w+\.|https:\/\/\w+\.|http:\/\/|https:\/\/)?[a-z0-9\.]*?(twitter+)\.[a-z]{2,5}(:[0-9]{1,5})?\/(\w+)",
-        data[1],
-    )
-    if match_twitter:
-        twitter_user = ""
-        if "/" in match_twitter.groups()[4]:
-            twitter_user = match_twitter.groups()[4].split("/")[0]
-        else:
-            twitter_user = match_twitter.groups()[4]
-        if "?" in twitter_user:
-            twitter_user = twitter_user.split("?")[0]
-        if "%40" in twitter_user:
-            twitter_user = twitter_user.replace("%40", "")
+    for cfg in _PLATFORM_CONFIGS:
+        rrss = cfg["rrss"]
+        url_match = re.match(cfg["url_pattern"], data[1])
+        if not url_match:
+            continue
+
+        platform_user = cfg["extract_user"](url_match)
+
+        # Optional guard (e.g. linkedin rejects users with >= 2 dashes)
+        guard = cfg.get("user_guard")
+        if guard and not guard(platform_user):
+            continue
+
         usernames.append(
             {
                 "source": source,
                 "type": type_s,
-                "usernames": twitter_user,
-                "rrss": "twitter",
-            }
-        )
-        twitter_name = ""
-        match_name = re.match(r"^(Media Tweets by )?(.*)\(@(.*)\) \| Twitter", data[0])
-        if match_name:
-            twitter_name = match_name.groups()[1].strip()
-            names.append(
-                {
-                    "source": source,
-                    "type": type_s,
-                    "name": twitter_name,
-                    "rrss": "twitter",
-                }
-            )
-        match_name_o = re.match("^(.*) on Twitter: (.*)$", data[0])
-        if match_name_o:
-            twitter_name = match_name_o.groups()[0].strip()
-            names.append(
-                {
-                    "source": source,
-                    "type": type_s,
-                    "name": twitter_name,
-                    "rrss": "twitter",
-                }
-            )
-            # ^(.*) on Twitter: (.*)$
-        social.append(
-            {
-                "source": source,
-                "type": type_s,
-                "name": twitter_name,
-                "user": twitter_user,
-                "rrss": "twitter",
+                "usernames": platform_user,
+                "rrss": rrss,
             }
         )
 
-    match_github = re.match(
-        r"^(https:\/\/www.google.com\/url\?q=|)(http:\/\/\w+\.|https:\/\/\w+\.|http:\/\/|https:\/\/)?[a-z0-9\.]*?(github+)\.[a-z]{2,5}(:[0-9]{1,5})?\/(\w+)",
-        data[1],
-    )
-    if match_github:
-        github_user = ""
-        if "/" in match_github.groups()[4]:
-            github_user = match_github.groups()[4].split("/")[0]
-        else:
-            github_user = match_github.groups()[4]
-        if "?" in github_user:
-            github_user = github_user.split("?")[0]
-        usernames.append(
-            {
-                "source": source,
-                "type": type_s,
-                "usernames": github_user,
-                "rrss": "github",
-            }
-        )
-        match_name = re.match(r"(.*)\((.*)\) · GitHub", data[0])
-        github_name = ""
-        if match_name:
-            github_name = match_name.groups()[1].strip()
-            names.append(
-                {
-                    "source": source,
-                    "type": type_s,
-                    "name": github_name,
-                    "rrss": "github",
-                }
-            )
-        social.append(
-            {
-                "source": source,
-                "type": type_s,
-                "name": github_name,
-                "user": github_user,
-                "rrss": "github",
-            }
-        )
-
-    match_instagram = re.match(
-        r"^(https:\/\/www.google.com\/url\?q=|)"
-        + r"(http:\/\/www\.|https:\/\/www\.|http:\/\/|"
-        + r"https:\/\/)?[a-z0-9\.]*?(instagram+)\.[a-z]"
-        + r"{2,5}(:[0-9]{1,5})?\/([^p].*?)(%3|\/)(.*)",
-        data[1],
-    )
-    if match_instagram:
-        instagram_user = ""
-        if "/" in match_instagram.groups()[4]:
-            instagram_user = match_instagram.groups()[4].split("/")[0]
-        else:
-            instagram_user = match_instagram.groups()[4]
-        if "?" in instagram_user:
-            instagram_user = instagram_user.split("?")[0]
-        usernames.append(
-            {
-                "source": source,
-                "type": type_s,
-                "usernames": instagram_user,
-                "rrss": "instagram",
-            }
-        )
-        match_name = re.match(r"(.*)\((.*)\)(.*)?Instagram(.*)?", data[0])
-        instagram_name = ""
-        if match_name:
-            instagram_name = match_name.groups()[0].strip()
-            names.append(
-                {
-                    "source": source,
-                    "type": type_s,
-                    "name": instagram_name,
-                    "rrss": "instagram",
-                }
-            )
-        social.append(
-            {
-                "source": source,
-                "type": type_s,
-                "name": instagram_name,
-                "user": instagram_user,
-                "rrss": "instagram",
-            }
-        )
-
-    match_keybase = re.match(
-        r"^(https:\/\/www.google.com\/url\?q=|)(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9\.]*?(keybase+)\.[a-z]{2,5}(:[0-9]{1,5})?\/(\w+)",
-        data[1],
-    )
-    if match_keybase:
-        keybase_user = ""
-        if "/" in match_keybase.groups()[4]:
-            keybase_user = match_keybase.groups()[4].split("/")[0]
-        else:
-            keybase_user = match_keybase.groups()[4]
-        usernames.append(
-            {
-                "source": source,
-                "type": type_s,
-                "usernames": keybase_user,
-                "rrss": "keybase",
-            }
-        )
-        keybase_name = ""
-        social.append(
-            {
-                "source": source,
-                "type": type_s,
-                "name": keybase_name,
-                "user": keybase_user,
-                "rrss": "keybase",
-            }
-        )
-
-    match_linkedin = re.match(
-        r"^(https:\/\/www.google.com\/url\?q=|)(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9\.]*?(linkedin+)\.[a-z]{2,5}(:[0-9]{1,5})?\/in\/?\/(\w+)",
-        data[1],
-    )
-    if match_linkedin:
-        linkedin_user = ""
-        if "/" in match_linkedin.groups()[4]:
-            linkedin_user = match_linkedin.groups()[4].split("/")[0]
-        else:
-            linkedin_user = match_linkedin.groups()[4]
-        if "?" in linkedin_user:
-            linkedin_user = linkedin_user.split("?")[0]
-        if linkedin_user.count("-") < 2:
-            usernames.append(
-                {
-                    "source": source,
-                    "type": type_s,
-                    "usernames": linkedin_user,
-                    "rrss": "linkedin",
-                }
-            )
-            match_name = re.match(r"^(.*?) \- (.*)", data[0])
-            linkedin_name = ""
-            if match_name:
-                linkedin_name = match_name.groups()[0].strip()
+        # Extract display name from the page title (data[0]).
+        # Some platforms have multiple title patterns (e.g. twitter).
+        platform_name = ""
+        for pattern, group_idx in _NAME_RULES.get(rrss, []):
+            name_match = re.match(pattern, data[0])
+            if name_match:
+                platform_name = name_match.group(group_idx).strip()
                 names.append(
                     {
                         "source": source,
                         "type": type_s,
-                        "name": linkedin_name,
-                        "rrss": "linkedin",
+                        "name": platform_name,
+                        "rrss": rrss,
                     }
                 )
-            social.append(
-                {
-                    "source": source,
-                    "type": type_s,
-                    "name": linkedin_name,
-                    "user": linkedin_user,
-                    "rrss": "linkedin",
-                }
-            )
 
-    match_facebook = re.match(
-        r"^(https:\/\/www.google.com\/url\?q=|)(http:\/\/\w+\.|https:\/\/\w+\.|http:\/\/|https:\/\/)?[a-z0-9\.]?(facebook+)\.[a-z]{2,5}(:[0-9]{1,5})?\/(\w+)",
-        data[1],
-    )
-    if match_facebook:
-        facebook_user = ""
-        if "public" in match_facebook.groups()[4]:
-            facebook_user = match_facebook.groups()[6]
-        elif "/" in match_facebook.groups()[4]:
-            facebook_user = match_facebook.groups()[4].split("/")[0]
-        else:
-            facebook_user = match_facebook.groups()[4]
-        if "?" in facebook_user:
-            facebook_user = facebook_user.split("?")[0]
-        usernames.append(
-            {
-                "source": source,
-                "type": type_s,
-                "usernames": facebook_user,
-                "rrss": "facebook",
-            }
-        )
-        # match_name = re.match("^(.*?) \| (.*)", data[0])
-        match_name = re.match(r"^(.*?)( News - Home)? \| (.*)", data[0])
-        facebook_name = ""
-        if match_name:
-            facebook_name = match_name.groups()[0].strip()
-            names.append(
-                {
-                    "source": source,
-                    "type": type_s,
-                    "name": facebook_name,
-                    "rrss": "facebook",
-                }
-            )
         social.append(
             {
                 "source": source,
                 "type": type_s,
-                "name": facebook_name,
-                "user": facebook_user,
-                "rrss": "facebook",
-            }
-        )
-
-    match_pinterest = re.match(
-        r"^(https:\/\/www.google.com\/url\?q=|)"
-        + r"(http:\/\/www\.|https:\/\/www\.|http:\/\/|"
-        + r"https:\/\/)?[a-z0-9\.]*?(pinterest+)\.[a-z]"
-        + r"{2,5}(:[0-9]{1,5})?\/(.*?)(%3|\/|&)(.*)",
-        data[1],
-    )
-    if match_pinterest:
-        pinterest_user = ""
-        if "/" in match_pinterest.groups()[4].strip("/"):
-            pinterest_user = match_pinterest.groups()[4].split("/")[0]
-        elif "/pin/" not in match_pinterest.groups()[4].strip("/"):
-            pinterest_user = match_pinterest.groups()[4].strip("/")
-
-        if "?" in pinterest_user:
-            pinterest_user = pinterest_user.split("?")[0]
-
-        usernames.append(
-            {
-                "source": source,
-                "type": type_s,
-                "usernames": pinterest_user,
-                "rrss": "pinterest",
-            }
-        )
-        match_name = re.match(r"^(.*?) \((.*)\)(.*)?Pinterest(.*)?$", data[0])
-        pinterest_name = ""
-        if match_name:
-            pinterest_name = match_name.groups()[0].strip()
-            names.append(
-                {
-                    "source": source,
-                    "type": type_s,
-                    "name": pinterest_name,
-                    "rrss": "pinterest",
-                }
-            )
-        social.append(
-            {
-                "source": source,
-                "type": type_s,
-                "name": pinterest_name,
-                "user": pinterest_user,
-                "rrss": "pinterest",
-            }
-        )
-
-    match_tiktok = re.match(
-        r"^(https:\/\/www.google.com\/url\?q=|)"
-        + r"(http:\/\/www\.|https:\/\/www\.|http:\/\/|"
-        + r"https:\/\/)?[a-z0-9\.]*?(tiktok+)\.[a-z]"
-        + r"{2,5}(:[0-9]{1,5})?\/%40(\w+)",
-        data[1],
-    )
-    if match_tiktok:
-        tiktok_user = ""
-        if "/" in match_tiktok.groups()[4].strip("/"):
-            tiktok_user = match_tiktok.groups()[4].split("/")[0]
-        elif "/pin/" not in match_tiktok.groups()[4].strip("/"):
-            tiktok_user = match_tiktok.groups()[4].strip("/")
-
-        if "?" in tiktok_user:
-            tiktok_user = tiktok_user.split("?")[0]
-
-        usernames.append(
-            {
-                "source": source,
-                "type": type_s,
-                "usernames": tiktok_user,
-                "rrss": "tiktok",
-            }
-        )
-        match_name = re.match(r"^(.*) \(@(\w+)\) Official TikTok .*", data[0])
-        tiktok_name = ""
-        if match_name:
-            tiktok_name = match_name.groups()[0].strip()
-            names.append(
-                {
-                    "source": source,
-                    "type": type_s,
-                    "name": tiktok_name,
-                    "rrss": "tiktok",
-                }
-            )
-        social.append(
-            {
-                "source": source,
-                "type": type_s,
-                "name": tiktok_name,
-                "user": tiktok_user,
-                "rrss": "tiktok",
+                "name": platform_name,
+                "user": platform_user,
+                "rrss": rrss,
             }
         )
 
@@ -647,26 +518,14 @@ def deep_analysis(names, usernames, searcher, data, output):
     else:
         icon = "fas fa-search"
 
-    if searcher == "google":
-        end = " "
-    elif searcher == "yahoo":
-        end = "  "
-    elif searcher == "bing":
-        end = "   "
-    elif searcher == "duckduckgo":
-        end = "    "
-    elif searcher == "yandex":
-        end = "     "
-    elif searcher == "baidu":
-        end = "      "
-    elif searcher == "dorks":
-        end = "       "
-    else:
-        end = "        "
+    # Build a unique title that includes the searcher name, so that
+    # the d3 graph (which uses title as a cache key) keeps separate
+    # nodes for the same headline coming from different search engines.
+    unique_title = f"{data[0]} [{searcher}]"
 
     rawresult_item = {
         "name-node": "References",
-        "title": data[0] + end,
+        "title": unique_title,
         "subtitle": "",
         "icon": icon,
         "simple": data[0],
@@ -687,7 +546,7 @@ def deep_analysis(names, usernames, searcher, data, output):
             search_included = True
             search_item = {
                 "name-node": "References",
-                "title": data[0] + end,
+                "title": unique_title,
                 "subtitle": "",
                 "icon": icon,
                 "help": "Title : "
@@ -710,7 +569,7 @@ def deep_analysis(names, usernames, searcher, data, output):
             search_included = True
             search_item = {
                 "name-node": "References",
-                "title": data[0] + end,
+                "title": unique_title,
                 "subtitle": "",
                 "icon": icon,
                 "help": "Title : "
@@ -730,7 +589,7 @@ def deep_analysis(names, usernames, searcher, data, output):
             search_included = True
             search_item = {
                 "name-node": "References",
-                "title": data[0] + end,
+                "title": unique_title,
                 "subtitle": "",
                 "icon": icon,
                 "help": "Title : "
@@ -750,7 +609,7 @@ def deep_analysis(names, usernames, searcher, data, output):
             search_included = True
             search_item = {
                 "name-node": "References",
-                "title": data[0] + end,
+                "title": unique_title,
                 "subtitle": data[1],
                 "icon": icon,
                 "help": "Title : "

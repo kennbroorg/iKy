@@ -13,7 +13,7 @@ try:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
     from factories.iKy_functions import location_geo
 
     celery = create_celery(create_application())
@@ -24,7 +24,7 @@ except ImportError:
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
     from factories.iKy_functions import location_geo
 
     celery = create_celery(create_application())
@@ -86,9 +86,6 @@ def p_peopledatalabs(email):
     total.append({"module": "peopledatalabs"})
     total.append({"param": email})
     total.append({"validation": "hard"})
-
-    # Icons unicode
-    font_list = fontawesome_cheat_5()
 
     # Graphic Array
     graphic = []
@@ -318,9 +315,9 @@ def p_peopledatalabs(email):
             else:
                 subtitle = "Not identified"
 
-            fa_icon = search_icon_5(social.get("network", ""), font_list)
+            fa_icon = search_icon_5(social.get("network", ""))
             if fa_icon is None:
-                # fa_icon = search_icon_5("question", font_list)
+                # fa_icon = search_icon_5("question")
                 fa_icon = "far fa-user"
 
             social_item = {

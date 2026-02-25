@@ -18,7 +18,7 @@ try:
     from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
 
     celery = create_celery(create_application())
 except ImportError:
@@ -27,7 +27,7 @@ except ImportError:
     from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
 
     celery = create_celery(create_application())
 
@@ -79,9 +79,6 @@ def p_sherlock(username):
     total.append({"param": username})
     total.append({"validation": "hard"})
 
-    # Icons unicode
-    font_list = fontawesome_cheat_5()
-
     # Graphic Array
     graphic = []
 
@@ -126,9 +123,9 @@ def p_sherlock(username):
         }
         lists.append(lists_item)
         if raw_node[rrss]["status"].status == QueryStatus.CLAIMED:
-            fa_icon = search_icon_5(rrss, font_list)
+            fa_icon = search_icon_5(rrss)
             if fa_icon is None:
-                fa_icon = search_icon_5("dot-circle", font_list)
+                fa_icon = search_icon_5("dot-circle")
 
             gather_item = {
                 "name-node": rrss,
@@ -631,7 +628,7 @@ def sherlock(
                 )
         elif error_type == "status_code":
             # Checks if the status code of the response is 2XX
-            if not r.status_code >= 300 or r.status_code < 200:
+            if 200 <= r.status_code < 300:
                 result = QueryResult(
                     username,
                     social_network,

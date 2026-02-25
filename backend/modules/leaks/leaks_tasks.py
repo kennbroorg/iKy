@@ -99,33 +99,18 @@ def p_leaks(email):
     # Gather Array
     gather = []
 
-    if (
-        (raw_node[0].get("title", "") == "NOLEAK")
-        or (raw_node[0].get("title", "") == "BLOCKED")
-        or (raw_node[0].get("title", "") == "KEY")
-        or (raw_node[0].get("title", "") == "ERROR")
-    ):
-        link = "Leaks"
-        gather_item = {
-            "name-node": "Leaks",
-            "title": "Leaks",
-            "subtitle": "",
-            "icon": "fas fa-unlock-alt",
-            "link": link,
-        }
-        gather.append(gather_item)
+    link = "Leaks"
+    gather_item = {
+        "name-node": "Leaks",
+        "title": "Leaks",
+        "subtitle": "",
+        "icon": "fas fa-unlock-alt",
+        "link": link,
+    }
+    gather.append(gather_item)
 
-    else:
-        link = "Leaks"
-        gather_item = {
-            "name-node": "Leaks",
-            "title": "Leaks",
-            "subtitle": "",
-            "icon": "fas fa-unlock-alt",
-            "link": link,
-        }
-        gather.append(gather_item)
-
+    skip_titles = {"NOLEAK", "BLOCKED", "KEY", "ERROR"}
+    if raw_node[0].get("title", "") not in skip_titles:
         for leak in raw_node:
             gather_item = {
                 "name-node": leak.get("Title", ""),

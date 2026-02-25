@@ -24,7 +24,7 @@ try:
     from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
 
     celery = create_celery(create_application())
 except ImportError:
@@ -33,7 +33,7 @@ except ImportError:
     from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.fontcheat import search_icon_5
 
     celery = create_celery(create_application())
 
@@ -513,22 +513,14 @@ def deep_analysis(names, usernames, searcher, data, output):
     else:
         icon = "fas fa-search"
 
-    if searcher == "google":
-        end = " "
-    elif searcher == "yahoo":
-        end = "  "
-    elif searcher == "bing":
-        end = "   "
-    elif searcher == "duckduckgo":
-        end = "    "
-    elif searcher == "yandex":
-        end = "     "
-    elif searcher == "baidu":
-        end = "      "
+    # Build a unique title that includes the searcher name, so that
+    # the d3 graph (which uses title as a cache key) keeps separate
+    # nodes for the same headline coming from different search engines.
+    unique_title = f"{data[0]} [{searcher}]"
 
     rawresult_item = {
         "name-node": "References",
-        "title": data[0] + end,
+        "title": unique_title,
         "subtitle": "",
         "icon": icon,
         "simple": data[0],
@@ -549,7 +541,7 @@ def deep_analysis(names, usernames, searcher, data, output):
             search_included = True
             search_item = {
                 "name-node": "References",
-                "title": data[0] + end,
+                "title": unique_title,
                 "subtitle": "",
                 "icon": icon,
                 "help": "Title : "
@@ -572,7 +564,7 @@ def deep_analysis(names, usernames, searcher, data, output):
             search_included = True
             search_item = {
                 "name-node": "References",
-                "title": data[0] + end,
+                "title": unique_title,
                 "subtitle": "",
                 "icon": icon,
                 "help": "Title : "
@@ -592,7 +584,7 @@ def deep_analysis(names, usernames, searcher, data, output):
             search_included = True
             search_item = {
                 "name-node": "References",
-                "title": data[0] + end,
+                "title": unique_title,
                 "subtitle": "",
                 "icon": icon,
                 "help": "Title : "
@@ -612,7 +604,7 @@ def deep_analysis(names, usernames, searcher, data, output):
             search_included = True
             search_item = {
                 "name-node": "References",
-                "title": data[0] + end,
+                "title": unique_title,
                 "subtitle": data[1],
                 "icon": icon,
                 "help": "Title : "
@@ -657,9 +649,6 @@ def p_search(username, from_m="Initial"):
     # Fix : eliminate cache directory
     with contextlib.suppress(Exception):
         rmtree("cache")
-
-    # Icons unicode
-    font_list = fontawesome_cheat_5()
 
     search_args = (username, 1)
 
@@ -851,7 +840,7 @@ def p_search(username, from_m="Initial"):
         "name-node": "Social",
         "title": "Social",
         "subtitle": "",
-        "icon": search_icon_5("child", font_list),
+        "icon": search_icon_5("child"),
         "link": link_social,
     }
     social_raw.append(social_item)
@@ -871,7 +860,7 @@ def p_search(username, from_m="Initial"):
             "name-node": "Social" + s["rrss"] + str(title_count),
             "title": s["rrss"] + " (" + s["source"] + ")" + nounce,
             "subtitle": s["user"],
-            "icon": search_icon_5(s["rrss"], font_list),
+            "icon": search_icon_5(s["rrss"]),
             "link": link_social,
         }
         social_raw.append(social_item)
@@ -905,7 +894,7 @@ def p_search(username, from_m="Initial"):
             "name-node": "Social",
             "title": "Social",
             "subtitle": "",
-            "icon": search_icon_5("child", font_list),
+            "icon": search_icon_5("child"),
             "link": link_social,
         }
         socialp.append(social_item)
@@ -919,7 +908,7 @@ def p_search(username, from_m="Initial"):
                 "name-node": social.split("-|-")[0],
                 "title": social.split("-|-")[0],
                 "subtitle": social.split("-|-")[1],
-                "icon": search_icon_5(social.split("-|-")[0], font_list),
+                "icon": search_icon_5(social.split("-|-")[0]),
                 "link": link_social,
             }
             socialp.append(social_item)
@@ -1172,7 +1161,7 @@ def p_search(username, from_m="Initial"):
     )
 
     # TODO : Repair raw-node
-    total.append({"raw": "raw_node"})
+    total.append({"raw": raw_node})
     graphic.append({"names": name_cloud})
     graphic.append({"username": username_cloud})
     graphic.append({"social": social_raw})

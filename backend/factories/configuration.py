@@ -1,13 +1,19 @@
-# import ConfigParser
 import json
 import os
+from pathlib import Path
 from typing import ClassVar
+
+_FACTORIES_DIR = Path(__file__).resolve().parent
 
 
 def get_config():
     class Config:
-        CELERY_BROKER_URL = "redis://localhost:6379/0"
-        CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+        CELERY_BROKER_URL = os.environ.get(
+            "CELERY_BROKER_URL", "redis://localhost:6379/0"
+        )
+        CELERY_RESULT_BACKEND = os.environ.get(
+            "CELERY_RESULT_BACKEND", "redis://localhost:6379/0"
+        )
         CELERY_ACCEPT_CONTENT: ClassVar[list] = ["json", "yaml"]
         CELERY_TASK_SERIALIZER = "json"
         CELERY_RESULT_SERIALIZER = "json"
@@ -49,32 +55,26 @@ def get_config():
     return Config
 
 
+def _api_keys_path() -> Path:
+    """Return the absolute path to apikeys.json."""
+    return _FACTORIES_DIR / "apikeys.json"
+
+
 def api_keys_read():
-    cur_dir = os.getcwd()
-    api_keys_file = cur_dir + "/factories/apikeys.json"
-    with open(api_keys_file) as f:
-        items = json.load(f)
-    return items
+    with _api_keys_path().open() as f:
+        return json.load(f)
 
 
 def api_keys_write(api_keys):
-    cur_dir = os.getcwd()
-    api_keys_file = cur_dir + "/factories/apikeys.json"
-    with open(api_keys_file, "w") as f:
+    with _api_keys_path().open("w") as f:
         json.dump(api_keys, f)
     return api_keys
 
 
 def api_keys_search(api_name):
-    cur_dir = os.getcwd()
-    relativePath = ""
-    if os.path.basename(os.getcwd()) != "backend":
-        relativePath = "/../.."
-    api_keys_file = cur_dir + relativePath + "/factories/apikeys.json"
-    with open(api_keys_file) as f:
+    with _api_keys_path().open() as f:
         items = json.load(f)
-    key = False
     for item in items:
         if item["name"] == api_name:
-            key = item["key"]
-    return key
+            return item["key"]
+    return False
