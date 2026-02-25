@@ -13,10 +13,19 @@ import "@fontsource/jetbrains-mono/400.css";
 import "@fontsource/jetbrains-mono/500.css";
 import "./index.css";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <Providers>
-      <RouterProvider router={router} />
-    </Providers>
-  </React.StrictMode>,
-);
+async function enableMocking() {
+  if (import.meta.env.DEV && import.meta.env.VITE_ENABLE_MOCKS === "true") {
+    const { worker } = await import("./mocks/browser");
+    return worker.start({ onUnhandledRequest: "bypass" });
+  }
+}
+
+enableMocking().then(() => {
+  ReactDOM.createRoot(document.getElementById("root")!).render(
+    <React.StrictMode>
+      <Providers>
+        <RouterProvider router={router} />
+      </Providers>
+    </React.StrictMode>,
+  );
+});
