@@ -21,7 +21,7 @@ search-engine-parser==0.6.8
 # git+https://github.com/KennBro/search-engine-parser.git@origin/KALI/2022.2#egg=search-engine-parser
 fuzzywuzzy==0.18.0
 redis==3.5.3
-langdetect==1.0.8
+langdetect==1.0.9
 # googletrans==3.0.0
 TranslatorX==1.2
 vaderSentiment==3.3.2
