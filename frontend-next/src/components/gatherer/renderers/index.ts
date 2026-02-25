@@ -1,5 +1,8 @@
 import type { ComponentType } from "react";
 
+import { InstagramRenderer } from "./instagram-renderer";
+import { TiktokRenderer } from "./tiktok-renderer";
+import { TwitterRenderer } from "./twitter-renderer";
 import type { RendererProps } from "./types";
 
 export type { RendererProps } from "./types";
@@ -12,5 +15,7 @@ export const MODULE_RENDERERS: Record<
   string,
   ComponentType<RendererProps>
 > = {
-  // Will be populated by subsequent tasks
+  twitter: TwitterRenderer,
+  instagram: InstagramRenderer,
+  tiktok: TiktokRenderer,
 };
