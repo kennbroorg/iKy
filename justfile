@@ -9,7 +9,7 @@ default:
 setup:
     python3 -m venv .venv
     .venv/bin/pip install --upgrade pip
-    .venv/bin/pip install pre-commit ruff
+    .venv/bin/pip install pre-commit ruff==0.9.7
     .venv/bin/pre-commit install
     @echo "Done. Activate with: source .venv/bin/activate"
 
@@ -43,13 +43,13 @@ shell-frontend:
 
 # Run linter checks (no auto-fix)
 lint:
-    ruff check .
-    ruff format --check .
+    .venv/bin/ruff check .
+    .venv/bin/ruff format --check .
 
 # Auto-format Python code
 fmt:
-    ruff format .
-    ruff check --fix .
+    .venv/bin/ruff format .
+    .venv/bin/ruff check --fix .
 
 # Run backend tests inside the container
 test *args:
