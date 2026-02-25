@@ -1,5 +1,7 @@
 """Tests for backend/factories/iKy_functions.py - pure extraction functions."""
 
+from unittest.mock import MagicMock, patch
+
 from factories.iKy_functions import (
     analize_rrss,
     deep_analysis,
@@ -18,6 +20,7 @@ from factories.iKy_functions import (
     extract_url_linkedin,
     extract_url_tiktok,
     extract_url_twitter,
+    location_geo,
     name_match,
     simple_analysis,
 )
@@ -57,12 +60,13 @@ class TestExtractMentions:
         assert "bob" in result
 
     def test_no_mentions(self):
-        result = [m for m in extract_mentions("no mentions") if m]
-        assert result == []
+        # No filter workaround: the function itself should return []
+        # (the regex ^| alternative matches start-of-line but the
+        # function's ``if match.group() != ""`` guard skips it).
+        assert extract_mentions("no mentions") == []
 
     def test_empty_string(self):
-        result = [m for m in extract_mentions("") if m]
-        assert result == []
+        assert extract_mentions("") == []
 
 
 # -- extract_url -------------------------------------------------------------
@@ -101,6 +105,27 @@ class TestExtractMails:
 
     def test_empty_string(self):
         assert extract_mails("") == []
+
+    def test_inline_email(self):
+        """H13 regression: emails embedded in text must be found
+        (old ^$ anchors would have rejected this)."""
+        result = extract_mails("contact me at user@example.com for info")
+        assert len(result) == 1
+        assert result[0]["email"] == "user@example.com"
+
+    def test_multiple_inline_emails(self):
+        """Multiple emails within running text."""
+        result = extract_mails("email user1@a.com or user2@b.com")
+        assert len(result) == 2
+        emails = [r["email"] for r in result]
+        assert "user1@a.com" in emails
+        assert "user2@b.com" in emails
+
+    def test_email_in_sentence(self):
+        """Email followed by punctuation inside a sentence."""
+        result = extract_mails("His email is john.doe@company.org, please contact him")
+        assert len(result) == 1
+        assert result[0]["email"] == "john.doe@company.org"
 
 
 # -- extract_url_linkedin ----------------------------------------------------
@@ -176,6 +201,50 @@ class TestExtractUrlGithub:
 
     def test_no_github(self):
         assert extract_url_github("https://example.com") == []
+
+    def test_non_github_url_not_matched(self):
+        """H14 regression: non-github URLs must not match.
+        The old ``(github)*`` regex made the platform name optional,
+        so ``https://www.example.com/johndoe/`` would have matched."""
+        assert extract_url_github("https://www.example.com/johndoe/") == []
+
+    def test_other_platform_not_matched(self):
+        """A twitter URL must never match the github extractor."""
+        assert extract_url_github("https://www.twitter.com/johndoe/") == []
+
+
+# -- extract_url_twitter regression ------------------------------------------
+
+
+class TestExtractUrlTwitterRegression:
+    def test_non_twitter_url_not_matched(self):
+        """Non-twitter URLs must not match the twitter extractor."""
+        assert extract_url_twitter("https://www.example.com/johndoe/") == []
+
+    def test_github_url_not_matched_by_twitter(self):
+        assert extract_url_twitter("https://www.github.com/johndoe/") == []
+
+
+# -- extract_url_instagram regression ----------------------------------------
+
+
+class TestExtractUrlInstagramRegression:
+    def test_non_instagram_url_not_matched(self):
+        assert extract_url_instagram("https://www.example.com/johndoe/") == []
+
+    def test_github_url_not_matched_by_instagram(self):
+        assert extract_url_instagram("https://www.github.com/johndoe/") == []
+
+
+# -- extract_url_tiktok regression ------------------------------------------
+
+
+class TestExtractUrlTiktokRegression:
+    def test_non_tiktok_url_not_matched(self):
+        assert extract_url_tiktok("https://www.example.com/@johndoe/") == []
+
+    def test_github_url_not_matched_by_tiktok(self):
+        assert extract_url_tiktok("https://www.github.com/@johndoe/") == []
 
 
 # -- extract_url_githubio ----------------------------------------------------
@@ -292,6 +361,96 @@ class TestNameMatch:
 
     def test_no_match(self):
         assert name_match(["Alice", "Bob"], "Charlie is here") is False
+
+    def test_single_name_present(self):
+        """H16 regression: single-name list where the name IS present.
+        With ``min_matching = max(1, len(names) - 1)`` a 1-element list
+        requires 1 match, so this should be True."""
+        assert name_match(["John"], "John is here") is True
+
+    def test_single_name_absent(self):
+        """Single name not in the text should be False."""
+        assert name_match(["John"], "Alice is here") is False
+
+    def test_single_name_not_always_true(self):
+        """H16 bug: old code used ``max(1, 0)`` = 1 but matched 0 names
+        against min_matching=1, so it returned False — which was correct
+        by accident. The real bug was 2-name lists where 0 matches still
+        returned True. Verify single-name unrelated text is False."""
+        assert name_match(["Xyz"], "unrelated text") is False
+
+
+# -- location_geo ------------------------------------------------------------
+
+
+class TestLocationGeo:
+    @patch("factories.iKy_functions.Nominatim")
+    def test_valid_location(self, mock_nominatim_cls):
+        """A successful geocode returns a dict with expected keys."""
+        mock_geo = MagicMock()
+        mock_location = MagicMock()
+        mock_location.raw = {
+            "display_name": "Buenos Aires, Argentina",
+            "class": "place",
+        }
+        mock_location.latitude = -34.6037
+        mock_location.longitude = -58.3816
+        mock_location.address = "Buenos Aires, Argentina"
+        mock_geo.geocode.return_value = mock_location
+        mock_nominatim_cls.return_value = mock_geo
+
+        result = location_geo("Buenos Aires")
+        assert result["Latitude"] == -34.6037
+        assert result["Longitude"] == -58.3816
+        assert result["Caption"] == "Buenos Aires, Argentina"
+        assert result["Name"] == "Buenos Aires, Argentina"
+        assert result["Accessibility"] == "place"
+        assert result["Time"] == ""
+
+    @patch("factories.iKy_functions.Nominatim")
+    def test_valid_location_with_time(self, mock_nominatim_cls):
+        """Time parameter is forwarded into the result dict."""
+        mock_geo = MagicMock()
+        mock_location = MagicMock()
+        mock_location.raw = {
+            "display_name": "NYC",
+            "class": "city",
+        }
+        mock_location.latitude = 40.7128
+        mock_location.longitude = -74.006
+        mock_location.address = "New York"
+        mock_geo.geocode.return_value = mock_location
+        mock_nominatim_cls.return_value = mock_geo
+
+        result = location_geo("New York", time="2024-01-01")
+        assert result["Time"] == "2024-01-01"
+
+    @patch("factories.iKy_functions.Nominatim")
+    def test_empty_location_returns_false(self, mock_nominatim_cls):
+        """When geocode returns None (no result), function returns False."""
+        mock_geo = MagicMock()
+        mock_geo.geocode.return_value = None
+        mock_nominatim_cls.return_value = mock_geo
+
+        assert location_geo("") is False
+
+    @patch("factories.iKy_functions.Nominatim")
+    def test_none_location_returns_false(self, mock_nominatim_cls):
+        """Passing None as location — geocode may raise or return None."""
+        mock_geo = MagicMock()
+        mock_geo.geocode.return_value = None
+        mock_nominatim_cls.return_value = mock_geo
+
+        assert location_geo(None) is False
+
+    @patch("factories.iKy_functions.Nominatim")
+    def test_geocoding_exception_returns_false(self, mock_nominatim_cls):
+        """Network/service errors are caught; function returns False."""
+        mock_geo = MagicMock()
+        mock_geo.geocode.side_effect = Exception("timeout")
+        mock_nominatim_cls.return_value = mock_geo
+
+        assert location_geo("Atlantis") is False
 
 
 # -- simple_analysis ---------------------------------------------------------
