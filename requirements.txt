@@ -30,7 +30,7 @@ stop_words
 spotipy==2.16.1
 twitch-python
 parse
-browser-cookie3
+browser-cookie3==0.20.1
 google-api-python-client==2.33.0
 python-Levenshtein
 requests_html
