@@ -35,7 +35,9 @@ def flaskServer(ip="127.0.0.1", port=5000, env="prod"):
     if env == "prod":
         socketio.run(app, port=port, debug=False, host=ip, use_reloader=False)
     else:
-        socketio.run(app, host=ip, port=port, debug=debug)
+        socketio.run(
+            app, host=ip, port=port, debug=debug, allow_unsafe_werkzeug=True
+        )
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
