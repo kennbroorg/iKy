@@ -12,10 +12,17 @@ def create_celery(application: Flask | tuple) -> Celery:
     if isinstance(application, tuple):
         application = application[0]
 
+    cfg = application.config
     celery = Celery(
-        application.import_name, broker=application.config["CELERY_BROKER_URL"]
+        application.import_name, broker=cfg["CELERY_BROKER_URL"]
     )
-    celery.conf.update(application.config)
+    celery.conf.update(
+        result_backend=cfg["CELERY_RESULT_BACKEND"],
+        accept_content=cfg["CELERY_ACCEPT_CONTENT"],
+        task_serializer=cfg["CELERY_TASK_SERIALIZER"],
+        result_serializer=cfg["CELERY_RESULT_SERIALIZER"],
+        imports=cfg["CELERY_IMPORTS"],
+    )
     TaskBase = celery.Task
 
     class ContextTask(TaskBase):
