@@ -5,12 +5,25 @@ services:
             dockerfile: ./install/docker/frontend/Dockerfile
         ports:
             - "4200:4200"
+    frontend-next:
+        build:
+            context: .
+            dockerfile: ./install/docker/frontend-next/Dockerfile
+            args:
+                VITE_API_URL: http://backend:5000
+                VITE_WS_URL: ws://backend:5000
+        ports:
+            - "5173:5173"
+        depends_on:
+            - backend
     backend:
         build:
             context: .
             dockerfile: ./install/docker/backend/Dockerfile
         ports:
             - "5000:5000"
+        environment:
+            - CORS_ORIGINS=http://localhost:4200,http://localhost:5173,http://frontend:4200,http://frontend-next:5173
         links:
             - "redis:redis"
     redis:
