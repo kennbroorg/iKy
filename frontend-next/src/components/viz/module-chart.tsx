@@ -31,6 +31,12 @@ interface ModuleChartProps {
   type?: "bar" | "pie" | "line";
   dataKey?: string;
   nameKey?: string;
+  /** Pie chart variant: "donut" (innerRadius=60), "full-pie" (0), default (40) */
+  variant?: "default" | "donut" | "full-pie";
+  /** Bar chart layout: "horizontal" renders bars horizontally via BarChart layout="vertical" */
+  layout?: "vertical" | "horizontal";
+  /** Chart height in px (default 300) */
+  height?: number;
 }
 
 /** Date-like patterns for auto-detection */
@@ -145,6 +151,9 @@ export function ModuleChart({
   type,
   dataKey,
   nameKey,
+  variant = "default",
+  layout = "vertical",
+  height = 300,
 }: ModuleChartProps) {
   if (!data || data.length === 0) {
     return (
@@ -164,9 +173,12 @@ export function ModuleChart({
     [resolvedDataKey]: Number(d[resolvedDataKey] ?? 0),
   }));
 
+  const pieInnerRadius =
+    variant === "donut" ? 60 : variant === "full-pie" ? 0 : 40;
+
   if (chartType === "pie") {
     return (
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={height}>
         <PieChart>
           <Pie
             data={cleanData}
@@ -175,7 +187,7 @@ export function ModuleChart({
             cx="50%"
             cy="50%"
             outerRadius={100}
-            innerRadius={40}
+            innerRadius={pieInnerRadius}
             strokeWidth={1}
             stroke="rgba(39, 39, 42, 0.8)"
             label={({ name, percent }: { name?: string; percent?: number }) =>
@@ -201,7 +213,7 @@ export function ModuleChart({
 
   if (chartType === "line") {
     return (
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={height}>
         <LineChart data={cleanData}>
           <CartesianGrid
             strokeDasharray="3 3"
@@ -232,9 +244,46 @@ export function ModuleChart({
     );
   }
 
-  // Default: bar chart
+  // Horizontal layout: BarChart with layout="vertical", swapped axes
+  if (layout === "horizontal") {
+    return (
+      <ResponsiveContainer width="100%" height={height}>
+        <BarChart data={cleanData} layout="vertical">
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="rgba(63, 63, 70, 0.5)"
+          />
+          <XAxis
+            type="number"
+            tick={{ fill: "rgba(161, 161, 170, 0.8)", fontSize: 11 }}
+            axisLine={{ stroke: "rgba(63, 63, 70, 0.5)" }}
+            tickLine={{ stroke: "rgba(63, 63, 70, 0.5)" }}
+          />
+          <YAxis
+            type="category"
+            dataKey={resolvedNameKey}
+            tick={{ fill: "rgba(161, 161, 170, 0.8)", fontSize: 11 }}
+            axisLine={{ stroke: "rgba(63, 63, 70, 0.5)" }}
+            tickLine={{ stroke: "rgba(63, 63, 70, 0.5)" }}
+            width={100}
+          />
+          <Tooltip content={<DarkTooltip />} />
+          <Bar dataKey={resolvedDataKey} radius={[0, 4, 4, 0]}>
+            {cleanData.map((_, i) => (
+              <Cell
+                key={i}
+                fill={CHART_COLORS[i % CHART_COLORS.length]}
+              />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  }
+
+  // Default: vertical bar chart
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width="100%" height={height}>
       <BarChart data={cleanData}>
         <CartesianGrid
           strokeDasharray="3 3"
