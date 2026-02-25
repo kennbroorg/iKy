@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 import json
-import os
 import re
 import sys
 import time
 import traceback
 from datetime import datetime
+from pathlib import Path
 from urllib.parse import quote
 
 import requests
@@ -76,12 +76,9 @@ def p_github(email, from_m="Initial"):
     """Task of Celery that get info from github"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-github.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-github.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:
@@ -342,7 +339,7 @@ def p_github(email, from_m="Initial"):
             if loc:
                 loc_item = {
                     "Caption": "Github",
-                    "Accessability": "",
+                    "Accessibility": "",
                     "Latitude": loc["Latitude"],
                     "Longitude": loc["Longitude"],
                     "Name": loc["Caption"],

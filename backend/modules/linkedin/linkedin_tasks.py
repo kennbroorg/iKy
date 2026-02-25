@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 import json
-import os
 import re
 import sys
 import time
 import traceback
 from collections import Counter
+from pathlib import Path
 
 import browser_cookie3
 import requests
@@ -45,12 +45,9 @@ def p_linkedin(user):
     """Task of Celery that get info from psbdmp"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-linkedin.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-linkedin.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:

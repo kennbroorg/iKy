@@ -1,12 +1,12 @@
 import json
 import os
 from pathlib import Path
-from typing import ClassVar
+from typing import Any, ClassVar
 
 _FACTORIES_DIR = Path(__file__).resolve().parent
 
 
-def get_config():
+def get_config() -> type:
     class Config:
         CELERY_BROKER_URL = os.environ.get(
             "CELERY_BROKER_URL", "redis://localhost:6379/0"
@@ -60,18 +60,20 @@ def _api_keys_path() -> Path:
     return _FACTORIES_DIR / "apikeys.json"
 
 
-def api_keys_read():
+def api_keys_read() -> list[dict[str, Any]]:
     with _api_keys_path().open() as f:
         return json.load(f)
 
 
-def api_keys_write(api_keys):
+def api_keys_write(
+    api_keys: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
     with _api_keys_path().open("w") as f:
         json.dump(api_keys, f)
     return api_keys
 
 
-def api_keys_search(api_name):
+def api_keys_search(api_name: str) -> str | bool:
     with _api_keys_path().open() as f:
         items = json.load(f)
     for item in items:

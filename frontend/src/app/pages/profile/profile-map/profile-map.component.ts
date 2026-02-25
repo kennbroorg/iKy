@@ -86,7 +86,7 @@ export class ProfileMapComponent implements OnDestroy {
         for (let loc in this.profileMaps) {
             console.warn("LOXXXXXXXXX", this.profileMaps[loc])
             if (this.profileMaps[loc]['Latitude'] != "None") {
-                L.marker([this.profileMaps[loc]['Latitude'], this.profileMaps[loc]['Longitude']], {icon: greenIcon}).addTo(map).bindPopup("<b>" + this.profileMaps[loc]['Name'] + "</b><br>Caption : " + this.profileMaps[loc]['Caption'] + "<br>Time : " + this.profileMaps[loc]['Time'] + "<br>Accessability : " + this.profileMaps[loc]['Accessability']);
+                L.marker([this.profileMaps[loc]['Latitude'], this.profileMaps[loc]['Longitude']], {icon: greenIcon}).addTo(map).bindPopup("<b>" + this.profileMaps[loc]['Name'] + "</b><br>Caption : " + this.profileMaps[loc]['Caption'] + "<br>Time : " + this.profileMaps[loc]['Time'] + "<br>Accessibility : " + this.profileMaps[loc]['Accessibility']);
             }
         }
     }

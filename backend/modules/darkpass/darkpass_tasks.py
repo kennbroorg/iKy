@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 import json
-import os
 import random
 import sys
 import time
+from pathlib import Path
 
 import requests
 
@@ -39,12 +39,9 @@ def t_darkpass(email, from_m="Initial", proxy="127.0.0.1:9050"):
     """Task of Celery that get info from skype"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-darkpass.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-darkpass.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:
@@ -115,7 +112,7 @@ def t_darkpass(email, from_m="Initial", proxy="127.0.0.1:9050"):
     except Exception as err:
         raw_node = {"status": "No TOR", "desc": str(type(err))}
 
-    if raw_node == []:
+    if not raw_node:
         if "Array" in req.text:
             leaks = req.text.split("Array")[1:]
             emails = []

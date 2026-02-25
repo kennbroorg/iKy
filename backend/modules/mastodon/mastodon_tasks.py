@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 import json
-import os
 import re
 import sys
 import time
 import traceback
+from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
@@ -56,12 +56,9 @@ def p_mastodon(username, from_m):
     """Task of Celery that get info from mastodon"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-mastodon.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-mastodon.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:

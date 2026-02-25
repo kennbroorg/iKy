@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 import json
-import os
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from socialscan.util import sync_execute_queries
 
@@ -32,12 +32,9 @@ def p_socialscan(email, from_m="Initial"):
     """Task of Celery that get info from socialscan"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-socialscan.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-socialscan.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:

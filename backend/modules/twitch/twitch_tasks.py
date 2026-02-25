@@ -4,12 +4,12 @@
 # [ ] - Games
 
 import json
-import os
 import sys
 import time
 import traceback
 from collections import Counter
 from datetime import datetime
+from pathlib import Path
 
 import twitch
 from parse import parse
@@ -38,12 +38,9 @@ def p_twitch(username, from_m, level):
     """Get basic info from Twitch"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-twitch.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-twitch.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:

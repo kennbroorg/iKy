@@ -15,7 +15,7 @@ def location_geo(location, time=""):
     if latlong:
         return {
             "Caption": latlong.raw["display_name"],
-            "Accessability": latlong.raw["class"],
+            "Accessibility": latlong.raw["class"],
             "Latitude": latlong.latitude,
             "Longitude": latlong.longitude,
             "Name": latlong.address,

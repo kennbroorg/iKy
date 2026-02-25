@@ -3,10 +3,10 @@
 import collections
 import contextlib
 import json
-import os
 import re
 import sys
 import traceback
+from pathlib import Path
 from shutil import rmtree
 from time import time
 
@@ -629,12 +629,9 @@ def p_search(username, from_m="Initial"):
     """Task of Celery that get info from searchers"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-search.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-search.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.info(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:
@@ -700,7 +697,7 @@ def p_search(username, from_m="Initial"):
     }
 
     print(raw_node)
-    if raw_node["Google"] != []:
+    if raw_node["Google"]:
         for i in range(len(raw_node["Google"]["titles"])):
             try:
                 output = simple_analysis(
@@ -716,7 +713,7 @@ def p_search(username, from_m="Initial"):
                 )
             except Exception:
                 continue
-    if raw_node["Yahoo"] != []:
+    if raw_node["Yahoo"]:
         for i in range(len(raw_node["Yahoo"]["titles"])):
             try:
                 output = simple_analysis(
@@ -732,7 +729,7 @@ def p_search(username, from_m="Initial"):
                 )
             except Exception:
                 continue
-    if raw_node["Bing"] != []:
+    if raw_node["Bing"]:
         for i in range(len(raw_node["Bing"]["titles"])):
             try:
                 output = simple_analysis(
@@ -748,7 +745,7 @@ def p_search(username, from_m="Initial"):
                 )
             except Exception:
                 continue
-    if raw_node["DuckDuckGo"] != []:
+    if raw_node["DuckDuckGo"]:
         for i in range(len(raw_node["DuckDuckGo"]["titles"])):
             try:
                 output = simple_analysis(
@@ -764,7 +761,7 @@ def p_search(username, from_m="Initial"):
                 )
             except Exception:
                 continue
-    if raw_node["Yandex"] != []:
+    if raw_node["Yandex"]:
         for i in range(len(raw_node["Yandex"]["titles"])):
             try:
                 output = simple_analysis(
@@ -780,7 +777,7 @@ def p_search(username, from_m="Initial"):
                 )
             except Exception:
                 continue
-    if raw_node["Baidu"] != []:
+    if raw_node["Baidu"]:
         for i in range(len(raw_node["Baidu"]["titles"])):
             try:
                 output = simple_analysis(
@@ -913,7 +910,7 @@ def p_search(username, from_m="Initial"):
             }
             socialp.append(social_item)
 
-    if raw_node["Google"] != []:
+    if raw_node["Google"]:
         for i in range(len(raw_node["Google"]["titles"])):
             with contextlib.suppress(Exception):
                 output = deep_analysis(
@@ -927,7 +924,7 @@ def p_search(username, from_m="Initial"):
                     ],
                     output,
                 )
-    if raw_node["Yahoo"] != []:
+    if raw_node["Yahoo"]:
         for i in range(len(raw_node["Yahoo"]["titles"])):
             with contextlib.suppress(Exception):
                 output = deep_analysis(
@@ -941,7 +938,7 @@ def p_search(username, from_m="Initial"):
                     ],
                     output,
                 )
-    if raw_node["Bing"] != []:
+    if raw_node["Bing"]:
         for i in range(len(raw_node["Bing"]["titles"])):
             with contextlib.suppress(Exception):
                 output = deep_analysis(
@@ -955,7 +952,7 @@ def p_search(username, from_m="Initial"):
                     ],
                     output,
                 )
-    if raw_node["DuckDuckGo"] != []:
+    if raw_node["DuckDuckGo"]:
         for i in range(len(raw_node["DuckDuckGo"]["titles"])):
             with contextlib.suppress(Exception):
                 output = deep_analysis(
@@ -969,7 +966,7 @@ def p_search(username, from_m="Initial"):
                     ],
                     output,
                 )
-    if raw_node["Yandex"] != []:
+    if raw_node["Yandex"]:
         for i in range(len(raw_node["Yandex"]["titles"])):
             with contextlib.suppress(Exception):
                 output = deep_analysis(
@@ -983,7 +980,7 @@ def p_search(username, from_m="Initial"):
                     ],
                     output,
                 )
-    if raw_node["Baidu"] != []:
+    if raw_node["Baidu"]:
         for i in range(len(raw_node["Baidu"]["titles"])):
             with contextlib.suppress(Exception):
                 output = deep_analysis(
@@ -999,7 +996,7 @@ def p_search(username, from_m="Initial"):
                 )
 
     # Check ENGINE FAILURE
-    if raw_node["Google"] == []:
+    if not raw_node["Google"]:
         search_item = {
             "name-node": "Engine_failure Google",
             "title": "Detected and flagged as unusual traffic (Google)",
@@ -1009,7 +1006,7 @@ def p_search(username, from_m="Initial"):
         }
         output["rawresult"].append(search_item)
         output["search"].append(search_item)
-    if raw_node["Bing"] == []:
+    if not raw_node["Bing"]:
         search_item = {
             "name-node": "Engine_failure Bing",
             "title": "Detected and flagged as unusual traffic (Bing)",
@@ -1019,7 +1016,7 @@ def p_search(username, from_m="Initial"):
         }
         output["rawresult"].append(search_item)
         output["search"].append(search_item)
-    if raw_node["Yahoo"] == []:
+    if not raw_node["Yahoo"]:
         search_item = {
             "name-node": "Engine_failure yahoo",
             "title": "Detected and flagged as unusual traffic (Yahoo)",
@@ -1029,7 +1026,7 @@ def p_search(username, from_m="Initial"):
         }
         output["rawresult"].append(search_item)
         output["search"].append(search_item)
-    if raw_node["Yandex"] == []:
+    if not raw_node["Yandex"]:
         search_item = {
             "name-node": "Engine_failure yandex",
             "title": "Detected and flagged as unusual traffic (Yandex)",
@@ -1039,7 +1036,7 @@ def p_search(username, from_m="Initial"):
         }
         output["rawresult"].append(search_item)
         output["search"].append(search_item)
-    if raw_node["DuckDuckGo"] == []:
+    if not raw_node["DuckDuckGo"]:
         search_item = {
             "name-node": "Engine_failure duckduckgo",
             "title": "Detected and flagged as unusual traffic (duckduckgo)",
@@ -1049,7 +1046,7 @@ def p_search(username, from_m="Initial"):
         }
         output["rawresult"].append(search_item)
         output["search"].append(search_item)
-    if raw_node["Baidu"] == []:
+    if not raw_node["Baidu"]:
         search_item = {
             "name-node": "Engine_failure baidu",
             "title": "Detected and flagged as unusual traffic (Baidu)",

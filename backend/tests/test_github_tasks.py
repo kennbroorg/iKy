@@ -73,7 +73,7 @@ def mock_location_geo():
     with patch("modules.github.github_tasks.location_geo") as mock_geo:
         mock_geo.return_value = {
             "Caption": "Buenos Aires, Argentina",
-            "Accessability": "place",
+            "Accessibility": "place",
             "Latitude": -34.6037,
             "Longitude": -58.3816,
             "Name": "Buenos Aires",

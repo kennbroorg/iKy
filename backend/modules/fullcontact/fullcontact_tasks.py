@@ -169,7 +169,7 @@ def p_fullcontact(email):
                         }
                     )
 
-            if company != []:
+            if company:
                 profile_item = {"organization": company}
                 profile.append(profile_item)
 
@@ -276,28 +276,28 @@ def p_fullcontact(email):
                 }
                 photo.append(photo_item)
                 photo_profile.append(photo_item)
-            if photo_profile != []:
+            if photo_profile:
                 profile_item = {"photos": photo_profile}
                 profile.append(profile_item)
 
         total.append({"raw": raw_node})
         graphic.append({"social": socialp})
-        if bios != []:
+        if bios:
             graphic.append({"bios": bios})
         if len(photo) > 1:
             graphic.append({"photo": photo})
-        if webs != []:
+        if webs:
             graphic.append({"webs": webs})
-        if footprint != []:
+        if footprint:
             graphic.append({"footprint": footprint})
-        if social_profile != []:
+        if social_profile:
             profile.append({"social": social_profile})
         total.append({"graphic": graphic})
-        if profile != []:
+        if profile:
             total.append({"profile": profile})
-        if timeline != []:
+        if timeline:
             total.append({"timeline": timeline})
-        if tasks != []:
+        if tasks:
             total.append({"tasks": tasks})
 
     elif raw_node.get("status", "") == "":
@@ -350,7 +350,7 @@ def p_fullcontact(email):
                 }
                 company.append(company_item)
 
-            if company != []:
+            if company:
                 profile_item = {"organization": company}
                 profile.append(profile_item)
 
@@ -411,28 +411,28 @@ def p_fullcontact(email):
                 }
                 photo.append(photo_item)
                 photo_profile.append(photo_item)
-            if photo_profile != []:
+            if photo_profile:
                 profile_item = {"photos": photo_profile}
                 profile.append(profile_item)
 
         total.append({"raw": raw_node})
         graphic.append({"social": socialp})
-        if bios != []:
+        if bios:
             graphic.append({"bios": bios})
         if len(photo) > 1:
             graphic.append({"photo": photo})
         # if (webs != []):
         #     graphic.append({'webs': webs})
-        if footprint != []:
+        if footprint:
             graphic.append({"footprint": footprint})
-        if social_profile != []:
+        if social_profile:
             profile.append({"social": social_profile})
         total.append({"graphic": graphic})
-        if profile != []:
+        if profile:
             total.append({"profile": profile})
-        if timeline != []:
+        if timeline:
             total.append({"timeline": timeline})
-        if tasks != []:
+        if tasks:
             total.append({"tasks": tasks})
 
     else:

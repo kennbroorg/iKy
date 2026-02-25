@@ -32,11 +32,19 @@ def t_usersearch(username):
     )
     soup = BeautifulSoup(req.content, "lxml")
     atag = soup.findAll("a", {"class": "pretty-button results-button"})
-    profiles = []
-    for at in atag:
-        if at.text == "View Profile":
-            profiles.append(at["href"])
-    return profiles
+    profiles = [at["href"] for at in atag if at.text == "View Profile"]
+
+    total = []
+    total.append({"module": "usersearch"})
+    total.append({"param": username})
+    total.append({"validation": "no"})
+    total.append({"raw": profiles})
+    total.append({"graphic": []})
+    total.append({"profile": []})
+    total.append({"timeline": []})
+    total.append({"tasks": []})
+
+    return total
 
 
 def output(data):

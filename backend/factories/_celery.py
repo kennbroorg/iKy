@@ -1,7 +1,8 @@
 from celery import Celery
+from flask import Flask
 
 
-def create_celery(application):
+def create_celery(application: Flask) -> Celery:
     """
     Configures celery instance from application, using it's config
     :param application: Flask application instance

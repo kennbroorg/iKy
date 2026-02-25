@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 import json
-import os
 import re
 import sys
 import time
 import traceback
 from enum import Enum
+from pathlib import Path
 from time import monotonic
 
 import requests
@@ -41,12 +41,9 @@ def p_sherlock(username):
     """Task of Celery that get info from differents sites"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-sherlock.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-sherlock.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:
@@ -56,9 +53,7 @@ def p_sherlock(username):
             logger.error("Developer mode ERROR")
 
     # Code
-    data_file_path = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), "data_sherlock.json"
-    )
+    data_file_path = Path(__file__).resolve().parent / "data_sherlock.json"
 
     with open(data_file_path, encoding="utf-8") as data_file:
         data = json.load(data_file)

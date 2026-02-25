@@ -2,11 +2,11 @@
 
 import collections
 import json
-import os
 import random
 import sys
 import time
 import traceback
+from pathlib import Path
 
 import yagooglesearch
 from googleapiclient.discovery import build
@@ -184,12 +184,9 @@ def p_dorks(keywords, dorks, from_m="Initial"):
     """
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-dorks.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-dorks.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:

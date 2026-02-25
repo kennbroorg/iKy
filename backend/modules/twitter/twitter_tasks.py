@@ -2,12 +2,12 @@
 
 import contextlib
 import json
-import os
 import sys
 import time
 import traceback
 from collections import Counter
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import browser_cookie3
 
@@ -243,7 +243,7 @@ def get_twitter_user_info(username):
             continue
 
     with contextlib.suppress(Exception):
-        os.remove("./session.json")
+        Path("./session.json").unlink()
 
     return user_info, number, retweets, tweets_info
 
@@ -252,12 +252,9 @@ def p_twitter(username, from_m):
     """Task of Celery that get info from twitter"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-twitter.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-twitter.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:

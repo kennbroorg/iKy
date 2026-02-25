@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 import json
-import os
 import re
 import sys
 import time
 import traceback
+from pathlib import Path
 from urllib.parse import quote
 
 import requests
@@ -35,12 +35,9 @@ logger = get_task_logger(__name__)
 
 def p_keybase(username, from_m):
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-keybase.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-keybase.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:
@@ -360,16 +357,16 @@ def p_keybase(username, from_m):
         if len(graph) > 1:
             graphic.append({"keygraph": graph})
         total.append({"graphic": graphic})
-        if social_profile != []:
+        if social_profile:
             profile.append({"social": social_profile})
-        if profile != []:
+        if profile:
             total.append({"profile": profile})
-        if timeline != []:
+        if timeline:
             total.append({"timeline": timeline})
 
         # Keybase : TODO : Before send task,
         # code the validation for duplicate proccess
-        if tasks != []:
+        if tasks:
             total.append({"tasks": tasks})
 
     else:

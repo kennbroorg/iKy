@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 
 import asyncio
-import glob
 import json
-import os
 import subprocess
 import sys
 import time
 import traceback
 from collections import Counter
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import browser_cookie3
 from TikTokApi import TikTokApi
@@ -79,16 +78,16 @@ def get_twitter_cookies(cookie_keys):
 
 def get_browser_paths():
     if sys.platform == "win32":
-        base_path = os.path.expanduser("~\\AppData\\Local\\ms-playwright")
+        base_path = Path.home() / "AppData" / "Local" / "ms-playwright"
     elif sys.platform == "darwin":
-        base_path = os.path.expanduser("~/Library/Caches/ms-playwright")
+        base_path = Path.home() / "Library" / "Caches" / "ms-playwright"
     else:
-        base_path = os.path.expanduser("~/.cache/ms-playwright")
+        base_path = Path.home() / ".cache" / "ms-playwright"
 
     return {
-        "chromium": os.path.join(base_path, "chromium-*"),
-        "firefox": os.path.join(base_path, "firefox-*"),
-        "webkit": os.path.join(base_path, "webkit-*"),
+        "chromium": str(base_path / "chromium-*"),
+        "firefox": str(base_path / "firefox-*"),
+        "webkit": str(base_path / "webkit-*"),
     }
 
 
@@ -96,7 +95,8 @@ def check_browsers_installed():
     browser_paths = get_browser_paths()
     print(f"PATHS: {browser_paths}")
     for _browser, path in browser_paths.items():
-        if not any(os.path.exists(p) for p in glob.glob(path)):
+        pattern = Path(path)
+        if not list(pattern.parent.glob(pattern.name)):
             return False
     return True
 
@@ -148,12 +148,9 @@ def p_tiktok(username, num, from_m="Initial"):
     """Task of Celery that get info from tiktok"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-tiktok.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-tiktok.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:
@@ -201,7 +198,7 @@ def p_tiktok(username, num, from_m="Initial"):
     else:
         total.append({"validation": "soft"})
 
-    if raw_node == []:
+    if not raw_node:
         # Graphic Array
         graphic = []
         photos = []

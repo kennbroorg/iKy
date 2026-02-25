@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 import json
-import os
 import re
 import sys
 import time
 import traceback
+from pathlib import Path
 
 import requests
 
@@ -33,12 +33,9 @@ def p_psbdmp(email, from_m="Initial"):
     """Task of Celery that get info from psbdmp"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-psbdmp.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-psbdmp.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.info(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:
@@ -52,7 +49,7 @@ def p_psbdmp(email, from_m="Initial"):
 
     req = requests.get(f"https://psbdmp.ws/api/v3/search/{username}", timeout=30)
 
-    if req.json() == []:
+    if not req.json():
         raise Exception("iKy - Pastebin Dump not found")
 
     dump_list = []

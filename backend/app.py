@@ -1,11 +1,11 @@
 import argparse
 import http.server
 import multiprocessing
-import os
 import shutil
 import socketserver
 import subprocess
 import sys
+from pathlib import Path
 
 from factories.application import create_application
 from termcolor import colored
@@ -21,11 +21,11 @@ def celeryServer():
 
 def flaskServer(ip="127.0.0.1", port=5000, env="prod"):
     # For apiKey initialization
-    cur_dir = os.getcwd()
-    api_keys_file = cur_dir + "/factories/apikeys.json"
-    api_keys_default = cur_dir + "/factories/apikeys_default.json"
+    cur_dir = Path.cwd()
+    api_keys_file = cur_dir / "factories" / "apikeys.json"
+    api_keys_default = cur_dir / "factories" / "apikeys_default.json"
 
-    if not os.path.exists(api_keys_file) and not os.path.isfile(api_keys_file):
+    if not api_keys_file.is_file():
         shutil.copy(api_keys_default, api_keys_file)
 
     app = create_application()
@@ -81,7 +81,7 @@ if __name__ == "__main__":
         celery_proc = multiprocessing.Process(name="celery", target=celeryServer)
         celery_proc.daemon = True
 
-        print(colored("Falsk serving...", "yellow"))
+        print(colored("Flask serving...", "yellow"))
         sys.stdout.flush()
         kwargs_flask = {"ip": ip, "port": 5000}
         flask_proc = multiprocessing.Process(

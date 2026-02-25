@@ -267,7 +267,7 @@ def r_darkpass():
 # Gitlab
 ################################################
 @home.route("/gitlab", methods=["POST"])
-def r_gitlab(username=None):
+def r_gitlab():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -282,7 +282,7 @@ def r_gitlab(username=None):
 # Usersearch
 ################################################
 @home.route("/usersearch", methods=["POST"])
-def r_usersearch(username=None):
+def r_usersearch():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -299,7 +299,7 @@ def r_usersearch(username=None):
 # EmailRepIO
 ################################################
 @home.route("/emailrep", methods=["POST"])
-def r_emailrep(username=None):
+def r_emailrep():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -316,7 +316,7 @@ def r_emailrep(username=None):
 # SocialScan
 ################################################
 @home.route("/socialscan", methods=["POST"])
-def r_socialscan(username=None):
+def r_socialscan():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -333,7 +333,7 @@ def r_socialscan(username=None):
 # Instagram
 ################################################
 @home.route("/instagram", methods=["POST"])
-def r_instagram(username=None):
+def r_instagram():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -350,7 +350,7 @@ def r_instagram(username=None):
 # Tiktok
 ################################################
 @home.route("/tiktok", methods=["POST"])
-def r_tiktok(username=None):
+def r_tiktok():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -365,7 +365,7 @@ def r_tiktok(username=None):
 # Sherlock
 ################################################
 @home.route("/sherlock", methods=["POST"])
-def r_sherlock(username=None):
+def r_sherlock():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -382,7 +382,7 @@ def r_sherlock(username=None):
 # Holehe
 ################################################
 @home.route("/holehe", methods=["POST"])
-def r_holehe(username=None):
+def r_holehe():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -397,7 +397,7 @@ def r_holehe(username=None):
 # Spotify
 ################################################
 @home.route("/spotify", methods=["POST"])
-def r_spotify(username=None):
+def r_spotify():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -417,7 +417,7 @@ def r_spotify(username=None):
 # Tinder
 ################################################
 @home.route("/tinder", methods=["POST"])
-def r_tinder(username=None):
+def r_tinder():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -432,7 +432,7 @@ def r_tinder(username=None):
 # Venmo
 ################################################
 @home.route("/venmo", methods=["POST"])
-def r_venmo(username=None):
+def r_venmo():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -447,7 +447,7 @@ def r_venmo(username=None):
 # Skype
 ################################################
 @home.route("/skype", methods=["POST"])
-def r_skype(username=None):
+def r_skype():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -462,7 +462,7 @@ def r_skype(username=None):
 # Searches
 ################################################
 @home.route("/search", methods=["POST"])
-def r_search(username=None):
+def r_search():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -477,7 +477,7 @@ def r_search(username=None):
 # Tweetiment
 ################################################
 @home.route("/tweetiment", methods=["POST"])
-def r_tweetiment(username=None):
+def r_tweetiment():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -501,7 +501,7 @@ def r_tweetiment(username=None):
 # Reddit
 ################################################
 @home.route("/reddit", methods=["POST"])
-def r_reddit(username=None):
+def r_reddit():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -516,7 +516,7 @@ def r_reddit(username=None):
 # Leaklookup
 ################################################
 @home.route("/leaklookup", methods=["POST"])
-def r_leaklookup(username=None):
+def r_leaklookup():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -533,7 +533,7 @@ def r_leaklookup(username=None):
 # Twitch
 ################################################
 @home.route("/twitch", methods=["POST"])
-def r_twitch(username=None):
+def r_twitch():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -548,7 +548,7 @@ def r_twitch(username=None):
 # Mastodon
 ################################################
 @home.route("/mastodon", methods=["POST"])
-def r_mastodon(username=None):
+def r_mastodon():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -565,7 +565,7 @@ def r_mastodon(username=None):
 # Dorks
 ################################################
 @home.route("/dorks", methods=["POST"])
-def r_dorks(username=None):
+def r_dorks():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -581,7 +581,7 @@ def r_dorks(username=None):
 # PsbDmp
 ################################################
 @home.route("/psbdmp", methods=["POST"])
-def r_psbdmp(username=None):
+def r_psbdmp():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -596,7 +596,7 @@ def r_psbdmp(username=None):
 # Twitter info for comparison (first account)
 ################################################
 @home.route("/twitter_info", methods=["POST"])
-def r_twitter_infof(username=None):
+def r_twitter_infof():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -623,7 +623,7 @@ def r_twitter_infof(username=None):
 # Twitter info for comparison (second account)
 ################################################
 @home.route("/twitter_infos", methods=["POST"])
-def r_twitter_infos(username=None):
+def r_twitter_infos():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -646,7 +646,7 @@ def r_twitter_infos(username=None):
 # Twitter comp for comparison (first period)
 ################################################
 @home.route("/twitter_comp", methods=["POST"])
-def r_twitter_compf(username=None):
+def r_twitter_compf():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")
@@ -684,7 +684,7 @@ def r_twitter_compf(username=None):
 # Twitter comp for comparison (second period)
 ################################################
 @home.route("/twitter_comps", methods=["POST"])
-def r_twitter_comps(username=None):
+def r_twitter_comps():
     celery = create_celery(current_app)
     json_result = _get_json_or_400()
     username = json_result.get("username", "")

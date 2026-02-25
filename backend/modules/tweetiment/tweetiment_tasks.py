@@ -6,6 +6,7 @@ import re
 import sys
 import time
 import traceback
+from pathlib import Path
 
 import redis
 
@@ -36,12 +37,9 @@ def p_tweetiment_twint(tweets, task_id, username):
     """Task of Celery that get info from twitter sentiment"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-tweetiment.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-tweetiment.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.info(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:
@@ -112,7 +110,7 @@ def p_tweetiment_twint(tweets, task_id, username):
     # Timeline Array
     timeline = []
 
-    if raw == []:
+    if not raw:
         raw.append({"status": "Not found"})
 
     sentiment.append({"name": "compound", "series": compound})
@@ -199,7 +197,7 @@ def p_tweetiment_twitter(tweets, task_id, username):
     # Timeline Array
     timeline = []
 
-    if raw == []:
+    if not raw:
         raw.append({"status": "Not found"})
 
     sentiment.append({"name": "compound", "series": compound})

@@ -5,11 +5,11 @@
 # TODO : Research how to get followers profiles and Following profiles
 
 import json
-import os
 import sys
 import time
 import traceback
 from collections import Counter
+from pathlib import Path
 
 import spotipy
 from langdetect import detect
@@ -74,12 +74,9 @@ def p_spotify(username, from_m, level):
     """Get basic info from spotify"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-spotify.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-spotify.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:

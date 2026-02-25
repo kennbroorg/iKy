@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
 import json
-import os
 import random
 import sys
 import time
 import traceback
 from collections import Counter
 from datetime import datetime
+from pathlib import Path
 
 import requests
 
@@ -33,12 +33,9 @@ def p_reddit(username, from_m="Initial"):
     """Task of Celery that get info from reddit"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-reddit.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-reddit.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:
@@ -135,9 +132,7 @@ def p_reddit(username, from_m="Initial"):
             # And create a set for comparison purposes
             sublistset = set(subList)
 
-            location_file = os.path.join(
-                os.path.dirname(os.path.realpath(__file__)), "all-locations.txt"
-            )
+            location_file = Path(__file__).resolve().parent / "all-locations.txt"
 
             # Load subreddits from file and check them against comments
             with open(location_file) as f:

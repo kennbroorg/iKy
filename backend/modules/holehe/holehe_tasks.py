@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 import json
-import os
 import sys
 import time
 import traceback
+from pathlib import Path
 
 import holehe.core
 import httpx
@@ -32,12 +32,9 @@ logger = get_task_logger(__name__)
 
 async def p_holehe(email, from_m):
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-holehe.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-holehe.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
             with open(file_path) as file:
