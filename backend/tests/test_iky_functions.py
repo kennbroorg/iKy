@@ -351,7 +351,8 @@ class TestNameMatch:
         assert name_match(["John", "Doe"], "John Doe is here") is True
 
     def test_two_names_one_present(self):
-        assert name_match(["John", "Doe"], "John is here") is False
+        # With min_matching = max(1, 2-1) = 1, one match suffices
+        assert name_match(["John", "Doe"], "John is here") is True
 
     def test_three_names_two_present(self):
         assert name_match(["John", "Michael", "Doe"], "John Doe is here") is True

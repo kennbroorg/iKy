@@ -15,7 +15,8 @@ class TestTasklistEndpoint:
 
 
 class TestTestingEndpoint:
-    def test_testing_echoes_json(self, client):
+    def test_testing_echoes_json(self, app, client):
+        app.debug = True
         payload = {"key": "value", "num": 42}
         resp = client.post(
             "/testing",
@@ -24,6 +25,15 @@ class TestTestingEndpoint:
         )
         assert resp.status_code == 200
         assert resp.get_json() == payload
+
+    def test_testing_returns_404_in_production(self, app, client):
+        app.debug = False
+        resp = client.post(
+            "/testing",
+            data=json.dumps({"key": "value"}),
+            content_type="application/json",
+        )
+        assert resp.status_code == 404
 
 
 class TestModuleEndpoints:

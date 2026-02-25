@@ -242,8 +242,8 @@ class TestPGithub:
 
             mock_req.get.side_effect = se
 
-            # No 'login' key -> KeyError at raw_node["login"]
-            with pytest.raises(KeyError):
+            # No 'login' key -> caught and re-raised as Exception
+            with pytest.raises(Exception, match="User not found"):
                 p_github("baduser")
 
 
