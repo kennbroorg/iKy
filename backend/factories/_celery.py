@@ -2,12 +2,16 @@ from celery import Celery
 from flask import Flask
 
 
-def create_celery(application: Flask) -> Celery:
+def create_celery(application: Flask | tuple) -> Celery:
+    """Configure a Celery instance from a Flask application.
+
+    *application* may be a plain ``Flask`` instance **or** the
+    ``(Flask, SocketIO)`` tuple returned by ``create_application()``.
     """
-    Configures celery instance from application, using it's config
-    :param application: Flask application instance
-    :return: Celery instance
-    """
+    # Unpack tuple returned by the updated create_application()
+    if isinstance(application, tuple):
+        application = application[0]
+
     celery = Celery(
         application.import_name, broker=application.config["CELERY_BROKER_URL"]
     )

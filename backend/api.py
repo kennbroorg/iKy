@@ -2,6 +2,7 @@ import logging
 
 from factories._celery import create_celery
 from factories.configuration import api_keys_read, api_keys_write
+from factories.extensions import socketio
 from flask import Blueprint, abort, current_app, jsonify, request
 
 logger = logging.getLogger(__name__)
@@ -48,8 +49,12 @@ def r_tasklist():
 @home.route("/state/<task_id>/<task_app>")
 def r_state(task_id, task_app):
     celery = create_celery(current_app)
-    res = celery.AsyncResult(task_id).state
-    return jsonify(state=res, task_id=task_id, task_app=task_app)
+    state = celery.AsyncResult(task_id).state
+    socketio.emit(
+        f"task:state:{task_id}",
+        {"task_id": task_id, "module": task_app, "state": state},
+    )
+    return jsonify(state=state, task_id=task_id, task_app=task_app)
 
 
 ################################################
@@ -61,7 +66,15 @@ def r_result(task_id):
     try:
         res = celery.AsyncResult(task_id).get(timeout=120)
     except Exception:
+        socketio.emit(
+            f"task:error:{task_id}",
+            {"task_id": task_id, "error": "Task timed out or failed"},
+        )
         return jsonify(error="Task timed out or failed"), 504
+    socketio.emit(
+        f"task:result:{task_id}",
+        {"task_id": task_id, "result": res},
+    )
     return jsonify(result=res)
 
 

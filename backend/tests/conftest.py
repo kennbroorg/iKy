@@ -6,7 +6,7 @@ from factories.application import create_application
 
 @pytest.fixture
 def app():
-    application = create_application()
+    application, _sio = create_application()
     application.config["TESTING"] = True
     yield application
 
@@ -43,7 +43,10 @@ def mock_celery_send(app):
     # namespace.  Per unittest.mock docs we must patch where the
     # name is LOOKED UP, i.e. ``"api.create_celery"``, NOT the
     # definition site ``"factories._celery.create_celery"``.
-    with patch("api.create_celery") as mock_create:
+    with (
+        patch("api.create_celery") as mock_create,
+        patch("api.socketio") as _mock_sio,
+    ):
         mock_celery = MagicMock()
         mock_celery.send_task.return_value = mock_send_result
         mock_celery.AsyncResult.return_value = mock_async_result

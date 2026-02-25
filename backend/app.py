@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from factories.application import create_application
+from factories.extensions import socketio
 from termcolor import colored
 
 
@@ -28,13 +29,13 @@ def flaskServer(ip="127.0.0.1", port=5000, env="prod"):
     if not api_keys_file.is_file():
         shutil.copy(api_keys_default, api_keys_file)
 
-    app = create_application()
+    app, _sio = create_application()
 
     debug = env != "prod"
     if env == "prod":
-        app.run(port=port, debug=False, host=ip, use_reloader=False)
+        socketio.run(app, port=port, debug=False, host=ip, use_reloader=False)
     else:
-        app.run(host=ip, port=port, debug=debug)
+        socketio.run(app, host=ip, port=port, debug=debug)
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
