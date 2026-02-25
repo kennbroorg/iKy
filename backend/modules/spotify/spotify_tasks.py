@@ -96,7 +96,6 @@ def p_spotify(username, from_m, level):
         client_id=client_id, client_secret=client_secret
     )
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-    sp.trace = True
     user = sp.user(username)
     user_id = user["id"]
 

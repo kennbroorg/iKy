@@ -56,7 +56,7 @@ def extract_url(text):
 
 def extract_mails(text):
     mails = []
-    regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
+    regex = r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+\b"
     matches = re.finditer(regex, text, re.MULTILINE)
     for _matchNum, match in enumerate(matches, start=1):
         mails.append({"email": match.group()})
@@ -75,7 +75,7 @@ def extract_url_linkedin(text):
 
 def extract_url_instagram(text):
     tasks = []
-    regex = r"((http(s)?(\:\/\/))+(www\.)?(instagram)*(\.[a-zA-Z]{2,3}\/?))(\w+)(/)?"
+    regex = r"((http(s)?(\:\/\/))+(www\.)?(instagram)(\.[a-zA-Z]{2,3}\/?))(\w+)(/)?"
     matches = re.finditer(regex, text, re.MULTILINE)
     for _matchNum, match in enumerate(matches, start=1):
         tasks.append({"module": "instagram", "param": match.group(8)})
@@ -84,7 +84,7 @@ def extract_url_instagram(text):
 
 def extract_url_twitter(text):
     tasks = []
-    regex = r"((http(s)?(\:\/\/))+(www\.)?(twitter)*(\.[a-zA-Z]{2,3}\/?))(\w+)(/)?"
+    regex = r"((http(s)?(\:\/\/))+(www\.)?(twitter)(\.[a-zA-Z]{2,3}\/?))(\w+)(/)?"
     matches = re.finditer(regex, text, re.MULTILINE)
     for _matchNum, match in enumerate(matches, start=1):
         tasks.append({"module": "twitter", "param": match.group(8)})
@@ -93,7 +93,7 @@ def extract_url_twitter(text):
 
 def extract_url_tiktok(text):
     tasks = []
-    regex = r"((http(s)?(\:\/\/))+(www\.)?(tiktok)*(\.[a-zA-Z]{2,3}\/?))(@)?(\w+)(/)?"
+    regex = r"((http(s)?(\:\/\/))+(www\.)?(tiktok)(\.[a-zA-Z]{2,3}\/?))(@)?(\w+)(/)?"
     matches = re.finditer(regex, text, re.MULTILINE)
     for _matchNum, match in enumerate(matches, start=1):
         tasks.append({"module": "tiktok", "param": match.group(9)})
@@ -102,7 +102,7 @@ def extract_url_tiktok(text):
 
 def extract_url_github(text):
     tasks = []
-    regex = r"((http(s)?(\:\/\/))+(www\.)?(github)*(\.[a-zA-Z]{2,3}\/?))(@)?(\w+)(/)?"
+    regex = r"((http(s)?(\:\/\/))+(www\.)?(github)(\.[a-zA-Z]{2,3}\/?))(@)?(\w+)(/)?"
     matches = re.finditer(regex, text, re.MULTILINE)
     for _matchNum, match in enumerate(matches, start=1):
         tasks.append({"module": "github", "param": match.group(9)})
@@ -120,46 +120,46 @@ def extract_url_githubio(text):
 
 def extract_github(text):
     tasks = []
-    regex = r"(?i)(|.*)github(:)?( *)?(@)?(\w+)"
+    regex = r"(?i)github(:)?( *)?(@)?(\w+)"
     matches = re.finditer(regex, text, re.MULTILINE)
     for _matchNum, match in enumerate(matches, start=1):
-        tasks.append({"module": "github", "param": match.group(5)})
+        tasks.append({"module": "github", "param": match.group(4)})
     return tasks
 
 
 def extract_tiktok(text):
     tasks = []
-    regex = r"(?i)(|.*)tiktok(:)?( *)?(@)?(\w+)"
+    regex = r"(?i)tiktok(:)?( *)?(@)?(\w+)"
     matches = re.finditer(regex, text, re.MULTILINE)
     for _matchNum, match in enumerate(matches, start=1):
-        tasks.append({"module": "tiktok", "param": match.group(5)})
+        tasks.append({"module": "tiktok", "param": match.group(4)})
     return tasks
 
 
 def extract_twitter(text):
     tasks = []
-    regex = r"(?i)(|.*)twitter(:)?( *)?(@)?(\w+)"
+    regex = r"(?i)twitter(:)?( *)?(@)?(\w+)"
     matches = re.finditer(regex, text, re.MULTILINE)
     for _matchNum, match in enumerate(matches, start=1):
-        tasks.append({"module": "twitter", "param": match.group(5)})
+        tasks.append({"module": "twitter", "param": match.group(4)})
     return tasks
 
 
 def extract_instagram(text):
     tasks = []
-    regex = r"(?i)(|.*)instagram(:)?( *)?(@)?(\w+)"
+    regex = r"(?i)instagram(:)?( *)?(@)?(\w+)"
     matches = re.finditer(regex, text, re.MULTILINE)
     for _matchNum, match in enumerate(matches, start=1):
-        tasks.append({"module": "instagram", "param": match.group(5)})
+        tasks.append({"module": "instagram", "param": match.group(4)})
     return tasks
 
 
 def extract_linkedin(text):
     tasks = []
-    regex = r"(?i)(|.*)linkedin(:)?( *)?(@)?(\w+)"
+    regex = r"(?i)linkedin(:)?( *)?(@)?(\w+)"
     matches = re.finditer(regex, text, re.MULTILINE)
     for _matchNum, match in enumerate(matches, start=1):
-        tasks.append({"module": "linkedin", "param": match.group(5)})
+        tasks.append({"module": "linkedin", "param": match.group(4)})
     return tasks
 
 
@@ -195,7 +195,7 @@ def analize_rrss(text):
 
 
 def name_match(names, data):
-    min_matching = 2 if (len(names) == 2) else len(names) - 1
+    min_matching = max(1, len(names) - 1)
     matchs = 0
     for name in names:
         if name in data:

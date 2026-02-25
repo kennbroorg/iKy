@@ -21,10 +21,6 @@ except ImportError:
 
     celery = create_celery(create_application())
 
-import urllib3
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 logger = get_task_logger(__name__)
 
 
@@ -32,7 +28,7 @@ logger = get_task_logger(__name__)
 def t_usersearch(username):
     data = {"username": username}
     req = requests.post(
-        "https://usersearch.org/results_normal.php", data=data, verify=False
+        "https://usersearch.org/results_normal.php", data=data, timeout=30
     )
     soup = BeautifulSoup(req.content, "lxml")
     atag = soup.findAll("a", {"class": "pretty-button results-button"})

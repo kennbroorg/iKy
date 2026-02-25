@@ -508,24 +508,26 @@ def p_tiktok(username, num, from_m="Initial"):
 
             stop += 1
 
-        # LastPost
-        timeline_item = {
-            "date": t_timeline[-1]["name"],
-            "action": "Tiktok : Last Post",
-            "icon": "fa-tiktok",
-        }
-        timeline.append(timeline_item)
-
-        # Timeline
-        start_date = datetime.strptime(t_timeline[0]["name"], "%Y-%m-%d")
-        end_date = datetime.strptime(t_timeline[-1]["name"], "%Y-%m-%d")
-        delta_days = (end_date - start_date).days
-
+        # LastPost and Timeline (guard against empty timeline)
         tiktok_time = []
-        for i in range(delta_days + 1):
-            current_date = (start_date + timedelta(days=i)).strftime("%Y-%m-%d")
-            record_count = sum(1 for item in t_timeline if item["name"] == current_date)
-            tiktok_time.append({"name": current_date, "value": record_count})
+        if t_timeline:
+            timeline_item = {
+                "date": t_timeline[-1]["name"],
+                "action": "Tiktok : Last Post",
+                "icon": "fa-tiktok",
+            }
+            timeline.append(timeline_item)
+
+            start_date = datetime.strptime(t_timeline[0]["name"], "%Y-%m-%d")
+            end_date = datetime.strptime(t_timeline[-1]["name"], "%Y-%m-%d")
+            delta_days = (end_date - start_date).days
+
+            for i in range(delta_days + 1):
+                current_date = (start_date + timedelta(days=i)).strftime("%Y-%m-%d")
+                record_count = sum(
+                    1 for item in t_timeline if item["name"] == current_date
+                )
+                tiktok_time.append({"name": current_date, "value": record_count})
 
         # Likes, comments (continue)
         lk_cm.append({"name": "Likes", "series": s_lk})

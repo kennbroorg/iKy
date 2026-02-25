@@ -24,6 +24,9 @@ except ImportError:
     celery = create_celery(create_application())
 
 
+# urllib3 warning suppression kept intentionally: TOR .onion hidden
+# services use self-signed certificates, so verify=False is expected
+# when routing through a SOCKS proxy to the Tor network.
 import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -104,7 +107,10 @@ def t_darkpass(email, from_m="Initial", proxy="127.0.0.1:9050"):
 
     try:
         req = session.post(
-            url, data=request_data, headers={"User-Agent": random.choice(user_agents)}
+            url,
+            data=request_data,
+            headers={"User-Agent": random.choice(user_agents)},
+            timeout=60,
         )
     except Exception as err:
         raw_node = {"status": "No TOR", "desc": str(type(err))}

@@ -27,10 +27,6 @@ except ImportError:
 
     celery = create_celery(create_application())
 
-import urllib3
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 __author__ = "KennBro"
 __copyright__ = "Copyright 2020, iKy"
 __credits__ = ["KennBro"]

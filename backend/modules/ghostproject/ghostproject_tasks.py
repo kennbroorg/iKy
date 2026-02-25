@@ -21,10 +21,6 @@ except ImportError:
 
     celery = create_celery(create_application())
 
-import urllib3
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 logger = get_task_logger(__name__)
 
 
@@ -34,7 +30,7 @@ def t_ghostproject(username):
 
     GHOSTPROJECT_URL = "https://ghostproject.fr"
 
-    cookies = dict(requests.get(GHOSTPROJECT_URL).cookies)
+    cookies = dict(requests.get(GHOSTPROJECT_URL, timeout=30).cookies)
     # req = requests.post(GHOSTPROJECT_URL + "/search.php",
     #                     data={'param': username},
     #                     cookies=cookies)

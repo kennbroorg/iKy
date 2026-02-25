@@ -22,10 +22,6 @@ except ImportError:
     celery = create_celery(create_application())
 
 
-import urllib3
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 logger = get_task_logger(__name__)
 
 
@@ -41,12 +37,14 @@ def t_skype(email, from_m="Initial"):
     }
 
     try:
-        response = requests.get("https://webresolver.nl/tools/email_to_skype")
+        response = requests.get(
+            "https://webresolver.nl/tools/email_to_skype", timeout=30
+        )
         soup = BeautifulSoup(response.content, "html.parser")
 
         cookies = dict(response.cookies)
 
-        r = requests.post(url, data=data, headers=headers, cookies=cookies)
+        r = requests.post(url, data=data, headers=headers, cookies=cookies, timeout=30)
         soup = BeautifulSoup(r.content, "html.parser")
 
         results = str(soup.div).replace("</div>", "").split("<br/>")[1:]

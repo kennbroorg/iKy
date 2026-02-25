@@ -87,7 +87,9 @@ def p_reddit(username, from_m="Initial"):
 
     # Profile
     req = requests.get(
-        "https://www.reddit.com/user/" + username + "/about.json", headers=headers
+        "https://www.reddit.com/user/" + username + "/about.json",
+        headers=headers,
+        timeout=30,
     )
     user_status = req.status_code
 
@@ -108,7 +110,7 @@ def p_reddit(username, from_m="Initial"):
                 + "&size=500&before="
                 + str(curts)
             )
-            req = requests.get(comurl, headers=headers)
+            req = requests.get(comurl, headers=headers, timeout=30)
 
             tempdata = req.json()["data"]
             commentdata += tempdata
@@ -122,6 +124,7 @@ def p_reddit(username, from_m="Initial"):
         curts = int(time.time())
 
         # Posts/Submissions
+        postdata = []
         while True:
             linkurl = (
                 "https://api.pushshift.io/reddit/search/submission/?author="
@@ -129,7 +132,7 @@ def p_reddit(username, from_m="Initial"):
                 + "&size=500&before="
                 + str(curts)
             )
-            req = requests.get(linkurl, headers=headers)
+            req = requests.get(linkurl, headers=headers, timeout=30)
             postdata = req.json()["data"]
             linkdata += postdata
             try:
@@ -143,7 +146,7 @@ def p_reddit(username, from_m="Initial"):
         if commentdata:
             # Last activity
             lastcomment = commentdata[0]["created_utc"]
-            lastpost = postdata[0]["created_utc"]
+            lastpost = postdata[0]["created_utc"] if postdata else 0
 
             lastaction = lastcomment if lastcomment > lastpost else lastpost
 

@@ -328,16 +328,17 @@ def p_twitter(username, from_m):
         hours.append(created_at.strftime("%H"))
         days.append(created_at.strftime("%A"))
 
-    # Timeline
-    start_date = datetime.strptime(t_timeline[-1]["name"], "%Y-%m-%d")
-    end_date = datetime.strptime(t_timeline[0]["name"], "%Y-%m-%d")
-    delta_days = (end_date - start_date).days
-
+    # Timeline (guard against empty timeline)
     tweet_time = []
-    for i in range(delta_days + 1):
-        current_date = (start_date + timedelta(days=i)).strftime("%Y-%m-%d")
-        record_count = sum(1 for item in t_timeline if item["name"] == current_date)
-        tweet_time.append({"name": current_date, "value": record_count})
+    if t_timeline:
+        start_date = datetime.strptime(t_timeline[-1]["name"], "%Y-%m-%d")
+        end_date = datetime.strptime(t_timeline[0]["name"], "%Y-%m-%d")
+        delta_days = (end_date - start_date).days
+
+        for i in range(delta_days + 1):
+            current_date = (start_date + timedelta(days=i)).strftime("%Y-%m-%d")
+            record_count = sum(1 for item in t_timeline if item["name"] == current_date)
+            tweet_time.append({"name": current_date, "value": record_count})
 
     # Tweet vs Retweets
     tw_vs_rt = []

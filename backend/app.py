@@ -4,6 +4,7 @@ import multiprocessing
 import os
 import shutil
 import socketserver
+import subprocess
 import sys
 
 from factories.application import create_application
@@ -11,11 +12,11 @@ from termcolor import colored
 
 
 def redisServer():
-    os.system("redis-server")
+    subprocess.run(["redis-server"], check=True)
 
 
 def celeryServer():
-    os.system("./celery.sh")
+    subprocess.run(["./celery.sh"], check=True)
 
 
 def flaskServer(ip="127.0.0.1", port=5000, env="prod"):

@@ -1,8 +1,16 @@
 from factories._celery import create_celery
 from factories.configuration import api_keys_read, api_keys_write
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, abort, current_app, jsonify, request
 
 home = Blueprint("home_views", __name__)
+
+
+def _get_json_or_400() -> dict:
+    """Return parsed JSON body or abort with 400."""
+    data = request.get_json(silent=True)
+    if data is None:
+        abort(400, description="Request body must be valid JSON")
+    return data
 
 
 ################################################
@@ -10,7 +18,7 @@ home = Blueprint("home_views", __name__)
 ################################################
 @home.route("/testing", methods=["POST"])
 def r_testing():
-    result = request.get_json()
+    result = _get_json_or_400()
     print("JSON : ", result)
     return jsonify(result)
 
@@ -57,7 +65,7 @@ def r_result(task_id):
 @home.route("/apikey", methods=["POST"])
 def r_apikey():
     if request.json:
-        api_keys = request.get_json()
+        api_keys = _get_json_or_400()
         if not isinstance(api_keys, list) or not all(
             isinstance(k, dict) and set(k.keys()) <= {"id", "name", "key"}
             for k in api_keys
@@ -75,7 +83,7 @@ def r_apikey():
 @home.route("/fullcontact", methods=["POST"])
 def r_fullcontact():
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Fullcontact - Detected Username : ", username, from_m)
@@ -94,7 +102,7 @@ def r_fullcontact():
 @home.route("/peopledatalabs", methods=["POST"])
 def r_peopledatalabs():
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Peopledatalabs - Detected Username : ", username, from_m)
@@ -114,7 +122,7 @@ def r_peopledatalabs():
 @home.route("/github", methods=["POST"])
 def r_github():
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Github - Detected Username : ", username, from_m)
@@ -131,7 +139,7 @@ def r_github():
 @home.route("/ghostproject", methods=["POST"])
 def r_ghostproject():
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("GhostProject - Detected Username : ", username, from_m)
@@ -150,7 +158,7 @@ def r_ghostproject():
 @home.route("/keybase", methods=["POST"])
 def r_keybase():
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Keybase - Detected Username : ", username, from_m)
@@ -167,7 +175,7 @@ def r_keybase():
 @home.route("/twitter", methods=["POST"])
 def r_twitter():
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Twitter - Detected Username : ", username, from_m)
@@ -184,7 +192,7 @@ def r_twitter():
 # @home.route("/twint", methods=["POST"])
 # def r_twint():
 #     celery = create_celery(current_app)
-#     json_result = request.get_json()
+#     json_result = _get_json_or_400()
 #     username = json_result.get("username", "")
 #     from_m = json_result.get("from", "")
 #     print("Twint - Detected Username : ", username, from_m)
@@ -201,7 +209,7 @@ def r_twitter():
 @home.route("/linkedin", methods=["POST"])
 def r_linkedin():
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Linkedin - Detected Username : ", username, from_m)
@@ -218,7 +226,7 @@ def r_linkedin():
 @home.route("/leaks", methods=["POST"])
 def r_leaks():
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Leaks - Detected Username : ", username, from_m)
@@ -233,7 +241,7 @@ def r_leaks():
 @home.route("/darkpass", methods=["POST"])
 def r_darkpass():
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Darkpass - Detected Username : ", username, from_m)
@@ -250,7 +258,7 @@ def r_darkpass():
 @home.route("/gitlab", methods=["POST"])
 def r_gitlab(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Gitlab - Detected Username : ", username, from_m)
@@ -265,7 +273,7 @@ def r_gitlab(username=None):
 @home.route("/usersearch", methods=["POST"])
 def r_usersearch(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Usersearch - Detected Username : ", username, from_m)
@@ -282,7 +290,7 @@ def r_usersearch(username=None):
 @home.route("/emailrep", methods=["POST"])
 def r_emailrep(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("EmailRep - Detected Username : ", username, from_m)
@@ -299,7 +307,7 @@ def r_emailrep(username=None):
 @home.route("/socialscan", methods=["POST"])
 def r_socialscan(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("SocialScan - Detected Username : ", username, from_m)
@@ -316,7 +324,7 @@ def r_socialscan(username=None):
 @home.route("/instagram", methods=["POST"])
 def r_instagram(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Instagram - Detected Username : ", username, from_m)
@@ -333,7 +341,7 @@ def r_instagram(username=None):
 @home.route("/tiktok", methods=["POST"])
 def r_tiktok(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Tiktok - Detected Username : ", username, from_m)
@@ -348,7 +356,7 @@ def r_tiktok(username=None):
 @home.route("/sherlock", methods=["POST"])
 def r_sherlock(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Sherlock - Detected Username : ", username, from_m)
@@ -365,7 +373,7 @@ def r_sherlock(username=None):
 @home.route("/holehe", methods=["POST"])
 def r_holehe(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Holehe - Detected Username : ", username, from_m)
@@ -380,7 +388,7 @@ def r_holehe(username=None):
 @home.route("/spotify", methods=["POST"])
 def r_spotify(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "initial")
     proc = json_result.get("proc", 1)
@@ -400,7 +408,7 @@ def r_spotify(username=None):
 @home.route("/tinder", methods=["POST"])
 def r_tinder(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Tinder - Detected Username : ", username, from_m)
@@ -415,7 +423,7 @@ def r_tinder(username=None):
 @home.route("/venmo", methods=["POST"])
 def r_venmo(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Venmo - Detected Username : ", username, from_m)
@@ -430,7 +438,7 @@ def r_venmo(username=None):
 @home.route("/skype", methods=["POST"])
 def r_skype(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Skype - Detected Username : ", username, from_m)
@@ -445,7 +453,7 @@ def r_skype(username=None):
 @home.route("/search", methods=["POST"])
 def r_search(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Search - Detected Username : ", username, from_m)
@@ -460,7 +468,7 @@ def r_search(username=None):
 @home.route("/tweetiment", methods=["POST"])
 def r_tweetiment(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     task_id = json_result.get("task_id", "")
@@ -479,7 +487,7 @@ def r_tweetiment(username=None):
 @home.route("/reddit", methods=["POST"])
 def r_reddit(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Reddit - Detected Username : ", username, from_m)
@@ -494,7 +502,7 @@ def r_reddit(username=None):
 @home.route("/leaklookup", methods=["POST"])
 def r_leaklookup(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Leaklookup - Detected Username : ", username, from_m)
@@ -511,7 +519,7 @@ def r_leaklookup(username=None):
 @home.route("/twitch", methods=["POST"])
 def r_twitch(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Twitch - Detected Username : ", username, from_m)
@@ -526,7 +534,7 @@ def r_twitch(username=None):
 @home.route("/mastodon", methods=["POST"])
 def r_mastodon(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Mastodon - Detected Username : ", username, from_m)
@@ -543,7 +551,7 @@ def r_mastodon(username=None):
 @home.route("/dorks", methods=["POST"])
 def r_dorks(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     dorks = json_result.get("dorks", "")
     from_m = json_result.get("from", "")
@@ -559,7 +567,7 @@ def r_dorks(username=None):
 @home.route("/psbdmp", methods=["POST"])
 def r_psbdmp(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("PsbDmp - Detected Username : ", username, from_m)
@@ -574,7 +582,7 @@ def r_psbdmp(username=None):
 @home.route("/twitter_info", methods=["POST"])
 def r_twitter_infof(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     if json_result.get("module_name", "") == "":
@@ -596,7 +604,7 @@ def r_twitter_infof(username=None):
 @home.route("/twitter_infos", methods=["POST"])
 def r_twitter_infos(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     from_m = json_result.get("from", "")
     print("Twitter_info second - Detected Username : ", username, from_m)
@@ -615,7 +623,7 @@ def r_twitter_infos(username=None):
 @home.route("/twitter_comp", methods=["POST"])
 def r_twitter_compf(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     date_from = json_result.get("date_from", "")
     date_to = json_result.get("date_to", "")
@@ -653,7 +661,7 @@ def r_twitter_compf(username=None):
 @home.route("/twitter_comps", methods=["POST"])
 def r_twitter_comps(username=None):
     celery = create_celery(current_app)
-    json_result = request.get_json()
+    json_result = _get_json_or_400()
     username = json_result.get("username", "")
     date_from = json_result.get("date_from", "")
     date_to = json_result.get("date_to", "")

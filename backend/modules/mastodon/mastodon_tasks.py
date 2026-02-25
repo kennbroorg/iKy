@@ -42,7 +42,7 @@ logger = get_task_logger(__name__)
 
 def username_search(username):
     url = f"https://mastodon.social/api/v2/search?q={username}"
-    response = requests.request("GET", url)
+    response = requests.get(url, timeout=30)
     data = json.loads(response.text)
 
     if response.text == ('{"accounts":[],"statuses":[],"hashtags":[]}'):

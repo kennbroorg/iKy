@@ -23,10 +23,6 @@ except ImportError:
 
     celery = create_celery(create_application())
 
-import urllib3
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 logger = get_task_logger(__name__)
 
 
@@ -34,8 +30,8 @@ logger = get_task_logger(__name__)
 def t_gitlab(username):
     gitlabdetails = []
     url = "https://gitlab.com/" + quote(username, safe="")
-    if requests.head(url, verify=False).status_code == 200:
-        response = requests.get(url)
+    if requests.head(url, timeout=30).status_code == 200:
+        response = requests.get(url, timeout=30)
         soup = BeautifulSoup(response.content, "lxml")
         handle = soup.find("span", {"class": "middle-dot-divider"})
         if handle:

@@ -147,7 +147,7 @@ def p_emailrep(username, from_m="Initial"):
             gather.append(gather_item)
 
         if "details" in raw_node:
-            if "blacklisted" not in raw_node["details"]:
+            if "blacklisted" in raw_node["details"]:
                 if raw_node["details"]["blacklisted"]:
                     icon_rep = "fas fa-thumbs-up"
                 else:
@@ -220,11 +220,11 @@ def p_emailrep(username, from_m="Initial"):
             if ("domain_reputation" in raw_node["details"]) and not (
                 raw_node["details"]["free_provider"]
             ):
-                if raw_node["details"]["free_provider"] == "high":
+                if raw_node["details"]["domain_reputation"] == "high":
                     icon_rep = "fas fa-smile"
-                elif raw_node["details"]["free_provider"] == "medium":
+                elif raw_node["details"]["domain_reputation"] == "medium":
                     icon_rep = "fas fa-meh"
-                elif raw_node["details"]["free_provider"] == "low":
+                elif raw_node["details"]["domain_reputation"] == "low":
                     icon_rep = "fas fa-sad-tear"
                 else:
                     icon_rep = "fas fa-poo"
@@ -373,7 +373,7 @@ def t_emailrep(email, from_m="Initial"):
 
         traceback.print_exc()
         traceback_text = traceback.format_exc()
-        total.append({"module": "psbdmp"})
+        total.append({"module": "emailrep"})
         total.append({"param": email})
         total.append({"validation": "not_used"})
 

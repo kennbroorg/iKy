@@ -2,6 +2,8 @@
 
 import json
 import sys
+import time
+import traceback
 
 import requests
 
@@ -28,21 +30,18 @@ except ImportError:
 
     celery = create_celery(create_application())
 
-import urllib3
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 logger = get_task_logger(__name__)
 
 
-@celery.task
-def t_fullcontact(email):
+def p_fullcontact(email):
+    """Process fullcontact data for the given email."""
     username = email.split("@")[0]
     key = api_keys_search("fullcontact_api")
     if key and len(key) < 20:
         req = requests.get(
             f"https://api.fullcontact.com/v2/person.json?email={email}",
             headers={"X-FullContact-APIKey": key},
+            timeout=30,
         )
         raw_node = json.loads(req.text)
         print(json.dumps(raw_node, ensure_ascii=True, indent=2))
@@ -51,7 +50,10 @@ def t_fullcontact(email):
         headers = {"Authorization": "Bearer " + key}
         data = json.dumps({"email": email})
         req = s.post(
-            "https://api.fullcontact.com/v3/person.enrich", data=data, headers=headers
+            "https://api.fullcontact.com/v3/person.enrich",
+            data=data,
+            headers=headers,
+            timeout=30,
         )
 
         raw_node = json.loads(req.text)
@@ -455,6 +457,45 @@ def t_fullcontact(email):
         socialp.append(social_item)
         graphic.append({"social": socialp})
         total.append({"graphic": graphic})
+
+    return total
+
+
+@celery.task
+def t_fullcontact(email):
+    total = []
+    tic = time.perf_counter()
+    try:
+        total = p_fullcontact(email)
+    except Exception as e:
+        # Check internal error
+        if str(e).startswith("iKy - "):
+            reason = str(e)[len("iKy - ") :]
+            status = "Warning"
+        else:
+            reason = str(e)
+            status = "Fail"
+
+        traceback.print_exc()
+        traceback_text = traceback.format_exc()
+        total.append({"module": "fullcontact"})
+        total.append({"param": email})
+        total.append({"validation": "not_used"})
+
+        raw_node = []
+        raw_node.append(
+            {
+                "status": status,
+                "reason": reason,
+                "traceback": traceback_text,
+            }
+        )
+        total.append({"raw": raw_node})
+
+    # Take final time
+    toc = time.perf_counter()
+    # Show process time
+    logger.info(f"Fullcontact - Response in {toc - tic:0.4f} seconds")
 
     return total
 

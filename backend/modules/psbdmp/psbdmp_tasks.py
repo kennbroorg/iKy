@@ -50,7 +50,7 @@ def p_psbdmp(email, from_m="Initial"):
     # Code
     username = email.split("@")[0] if "@" in email else email
 
-    req = requests.get(f"https://psbdmp.ws/api/v3/search/{username}")
+    req = requests.get(f"https://psbdmp.ws/api/v3/search/{username}", timeout=30)
 
     if req.json() == []:
         raise Exception("iKy - Pastebin Dump not found")
@@ -58,7 +58,10 @@ def p_psbdmp(email, from_m="Initial"):
     dump_list = []
     dump_word = []
     for dump in req.json():
-        response = requests.get("https://psbdmp.ws/api/v3/dump/{}".format(dump["id"]))
+        response = requests.get(
+            "https://psbdmp.ws/api/v3/dump/{}".format(dump["id"]),
+            timeout=30,
+        )
         dump_list.append({"id": dump["id"], "tags": dump["tags"], "time": dump["time"]})
         dump_text = response.json()["content"]
         regex = rf"(.*(?:{username}).*)\r?\n?"

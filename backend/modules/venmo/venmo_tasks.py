@@ -82,7 +82,6 @@ user_agents = [
 ]
 
 
-@celery.task
 def p_venmo(username, from_m="Initial"):
     """Task of Celery that get info from venmo"""
 
@@ -107,7 +106,9 @@ def p_venmo(username, from_m="Initial"):
     url = f"https://venmo.com/{username}"
     url_user = f"https://api.venmo.com/v1/users/{username}"
     response = requests.get(
-        url_user, headers={"User-Agent": random.choice(user_agents)}, verify=False
+        url_user,
+        headers={"User-Agent": random.choice(user_agents)},
+        timeout=30,
     )
     data_user = response.json()
     # print(" USER : ")

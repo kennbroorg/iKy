@@ -35,7 +35,8 @@ logger = get_task_logger(__name__)
 def findReposFromUsername(username):
     safe_user = quote(username, safe="")
     response = requests.get(
-        f"https://api.github.com/users/{safe_user}/repos?per_page=100&sort=pushed"
+        f"https://api.github.com/users/{safe_user}/repos?per_page=100&sort=pushed",
+        timeout=30,
     ).text
     repos = re.findall(rf'"full_name":"{username}\/(.*?)",.*?"fork":(.*?),', response)
     nonForkedRepos = []
@@ -47,12 +48,14 @@ def findReposFromUsername(username):
 
 def findEmailFromContributor(username, repo, contributor):
     response = requests.get(
-        f"https://github.com/{username}/{repo}/commits?author={contributor}"
+        f"https://github.com/{username}/{repo}/commits?author={contributor}",
+        timeout=30,
     ).text
     latestCommit = re.search(rf'href="/{username}/{repo}/commit/(.*?)"', response)
     latestCommit = latestCommit.group(1) if latestCommit else "dummy"
     commitDetails = requests.get(
-        f"https://github.com/{username}/{repo}/commit/{latestCommit}.patch"
+        f"https://github.com/{username}/{repo}/commit/{latestCommit}.patch",
+        timeout=30,
     ).text
     email = re.search(r"<(.*)>", commitDetails)
     if email:
@@ -91,7 +94,7 @@ def p_github(email, from_m="Initial"):
     username = email.split("@")[0] if "@" in email else email
 
     safe_user = quote(username, safe="")
-    req = requests.get(f"https://api.github.com/users/{safe_user}")
+    req = requests.get(f"https://api.github.com/users/{safe_user}", timeout=30)
     print(req.json())
 
     if req.json().get("message", "") == "Not Found":
@@ -114,7 +117,7 @@ def p_github(email, from_m="Initial"):
     # svg_req = "https://github.com/KennBro?tab=overview&amp;from=2023-11-01&amp;to=2023-11-18"
     # print(svg_req)
 
-    svg_actual_r = requests.get(svg_req)
+    svg_actual_r = requests.get(svg_req, timeout=30)
 
     html_doc = BeautifulSoup(svg_actual_r.content, "html.parser")
     svg_actual_div = html_doc.find("div", class_="graph-before-activity-overview")

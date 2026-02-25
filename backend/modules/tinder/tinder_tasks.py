@@ -79,7 +79,9 @@ def p_tinder(username, from_m="Initial"):
     ]
 
     url = f"https://gotinder.com/@{username}"
-    req = requests.get(url, headers={"User-Agent": random.choice(user_agents)})
+    req = requests.get(
+        url, headers={"User-Agent": random.choice(user_agents)}, timeout=30
+    )
     soup = BeautifulSoup(req.content, "lxml")
 
     if soup.find(id="card-container"):

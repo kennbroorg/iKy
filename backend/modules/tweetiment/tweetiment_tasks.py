@@ -29,10 +29,6 @@ except ImportError:
 
     celery = create_celery(create_application())
 
-import urllib3
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 logger = get_task_logger(__name__)
 
 
@@ -228,7 +224,8 @@ def t_tweetiment(username, task_id, from_m="Initial"):
         task_id_complete = "celery-task-meta-" + task_id
         print("TaskID : " + task_id_complete)
 
-        redis_db = redis.Redis(host="localhost", port=6379, db=0)
+        redis_host = os.environ.get("REDIS_HOST", "localhost")
+        redis_db = redis.Redis(host=redis_host, port=6379, db=0)
         value = redis_db.get(task_id_complete)
 
         # Evaluate Twint or Twitter
