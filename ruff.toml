@@ -1,10 +1,35 @@
-target-version = "py39"
-line-length = 120
+target-version = "py312"
+line-length = 88
 
-exclude = [
-    "__pycache__",
+extend-exclude = [
     ".venv",
+    "venv",
+    "build",
+    "dist",
+    "node_modules",
+    "frontend",
+    "backend/static",
+    "backend/templates",
 ]
 
 [lint]
-select = ["E", "F", "W"]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "W",    # pycodestyle warnings
+    "I",    # import sorting
+    "B",    # flake8-bugbear
+    "UP",   # pyupgrade
+    "SIM",  # flake8-simplify
+    "C4",   # flake8-comprehensions
+    "A",    # flake8-builtins
+    "RUF",  # Ruff-specific rules
+]
+
+ignore = [
+    "E203",  # Black-compatible
+    "E501",  # Line length handled by formatter
+]
+
+[lint.per-file-ignores]
+"**/tests/**" = ["S101"]
