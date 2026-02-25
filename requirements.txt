@@ -34,6 +34,6 @@ requests_html==0.10.0
 fontawesome==5.10.1.post1
 peopledatalabs==6.4.13
 playwright==1.58.0
-TikTokApi==6.3.0
-w3lib==2.3.1
+TikTokApi==7.3.1
+w3lib==2.4.0
 pytest==8.3.5
