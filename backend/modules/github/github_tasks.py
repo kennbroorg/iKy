@@ -7,6 +7,7 @@ import sys
 import time
 import traceback
 from datetime import datetime
+from urllib.parse import quote
 
 import requests
 from bs4 import BeautifulSoup
@@ -32,8 +33,9 @@ logger = get_task_logger(__name__)
 
 
 def findReposFromUsername(username):
+    safe_user = quote(username, safe="")
     response = requests.get(
-        f"https://api.github.com/users/{username}/repos?per_page=100&sort=pushed"
+        f"https://api.github.com/users/{safe_user}/repos?per_page=100&sort=pushed"
     ).text
     repos = re.findall(rf'"full_name":"{username}\/(.*?)",.*?"fork":(.*?),', response)
     nonForkedRepos = []
@@ -88,7 +90,8 @@ def p_github(email, from_m="Initial"):
     # Code
     username = email.split("@")[0] if "@" in email else email
 
-    req = requests.get(f"https://api.github.com/users/{username}")
+    safe_user = quote(username, safe="")
+    req = requests.get(f"https://api.github.com/users/{safe_user}")
     print(req.json())
 
     if req.json().get("message", "") == "Not Found":

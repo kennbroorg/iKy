@@ -3,6 +3,7 @@
 # import time
 import json
 import sys
+from urllib.parse import quote
 
 import requests
 from bs4 import BeautifulSoup
@@ -32,7 +33,7 @@ logger = get_task_logger(__name__)
 @celery.task
 def t_gitlab(username):
     gitlabdetails = []
-    url = "https://gitlab.com/" + username
+    url = "https://gitlab.com/" + quote(username, safe="")
     if requests.head(url, verify=False).status_code == 200:
         response = requests.get(url)
         soup = BeautifulSoup(response.content, "lxml")

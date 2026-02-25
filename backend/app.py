@@ -29,10 +29,11 @@ def flaskServer(ip="127.0.0.1", port=5000, env="prod"):
 
     app = create_application()
 
+    debug = env != "prod"
     if env == "prod":
-        app.run(port=port, debug=True, host=ip, use_reloader=False)
+        app.run(port=port, debug=False, host=ip, use_reloader=False)
     else:
-        app.run(host=ip, port=port, debug=True)
+        app.run(host=ip, port=port, debug=debug)
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):

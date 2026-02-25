@@ -44,7 +44,10 @@ def r_state(task_id, task_app):
 @home.route("/result/<task_id>")
 def r_result(task_id):
     celery = create_celery(current_app)
-    res = celery.AsyncResult(task_id).get()
+    try:
+        res = celery.AsyncResult(task_id).get(timeout=120)
+    except Exception:
+        return jsonify(error="Task timed out or failed"), 504
     return jsonify(result=res)
 
 
@@ -55,6 +58,11 @@ def r_result(task_id):
 def r_apikey():
     if request.json:
         api_keys = request.get_json()
+        if not isinstance(api_keys, list) or not all(
+            isinstance(k, dict) and set(k.keys()) <= {"id", "name", "key"}
+            for k in api_keys
+        ):
+            return jsonify(error="Invalid API key format"), 400
         keys = api_keys_write(api_keys)
     else:
         keys = api_keys_read()

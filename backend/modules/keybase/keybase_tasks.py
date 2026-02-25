@@ -6,6 +6,7 @@ import re
 import sys
 import time
 import traceback
+from urllib.parse import quote
 
 import requests
 from requests_html import HTMLSession
@@ -53,12 +54,13 @@ def p_keybase(username, from_m):
             logger.error("Developer mode ERROR")
 
     # Code
-    url = "https://keybase.io/_/api/1.0/user/lookup.json?" + f"usernames={username}"
+    safe_user = quote(username, safe="")
+    url = f"https://keybase.io/_/api/1.0/user/lookup.json?usernames={safe_user}"
     req = requests.get(url)
     raw_node = json.loads(req.text)
 
     # Get Followers and Following throw crawling
-    url_user = f"https://keybase.io/{username}"
+    url_user = f"https://keybase.io/{safe_user}"
     session = HTMLSession()
     r_html = session.get(url_user)
     follow = r_html.html.find("#profile-tracking-section", first=True)

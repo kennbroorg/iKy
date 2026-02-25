@@ -30,10 +30,7 @@ logger = get_task_logger(__name__)
 
 @celery.task
 def t_ghostproject(username):
-    import pdb
-
-    pdb.set_trace()
-    """ Task of Celery that gets info from GhostProject """
+    """Task of Celery that gets info from GhostProject"""
 
     GHOSTPROJECT_URL = "https://ghostproject.fr"
 

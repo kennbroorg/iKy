@@ -223,7 +223,7 @@ def p_linkedin(user):
         # TODO : KKK : For person relationship
         url = (
             "https://www.linkedin.com/voyager/api/identity/profiles/"
-            + id[0][0]
+            + user_id[0][0]
             + "/recommendations?q=received&recommendationStatuses=List(VISIBLE)"
         )
         # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
@@ -234,7 +234,7 @@ def p_linkedin(user):
         # TODO : KKK : For person relationship
         url = (
             "https://www.linkedin.com/voyager/api/identity/profiles/"
-            + id[0][0]
+            + user_id[0][0]
             + "/recommendations?q=given"
         )
         # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
@@ -244,7 +244,7 @@ def p_linkedin(user):
 
         url = (
             "https://www.linkedin.com/voyager/api/identity/profiles/"
-            + id[0][0]
+            + user_id[0][0]
             + "/profileView"
         )
         # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})
@@ -263,7 +263,7 @@ def p_linkedin(user):
 
         url = (
             "https://www.linkedin.com/voyager/api/identity/profiles/"
-            + id[0][0]
+            + user_id[0][0]
             + "/networkinfo"
         )
         # s.headers.update({'csrf-token': csrfToken[0].replace('"', '')})

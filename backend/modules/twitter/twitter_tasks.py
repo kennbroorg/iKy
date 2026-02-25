@@ -53,19 +53,21 @@ def get_twitter_cookies(cookie_keys):
     ):
         try:
             for cookie in cookie_fn(domain_name=""):
-                if ".x.com" in cookie.domain:
-                    print(f"COOKIE - {ref[index]}: {cookie}")
-                    if cookie.name in cookie_keys and not cookie.is_expired():
-                        json_cookie["browser"] = ref[index]
-                        json_cookie[cookie.name] = cookie.value
-                        json_cookie[cookie.name + "_expires"] = cookie.expires
+                if (
+                    ".x.com" in cookie.domain
+                    and cookie.name in cookie_keys
+                    and not cookie.is_expired()
+                ):
+                    json_cookie["browser"] = ref[index]
+                    json_cookie[cookie.name] = cookie.value
+                    json_cookie[cookie.name + "_expires"] = cookie.expires
 
-                # Check
-                found = True
-                for key in cookie_keys:
-                    if json_cookie.get(key, "") == "":
-                        found = False
-                        break
+            # Check after processing all cookies from this browser
+            found = True
+            for key in cookie_keys:
+                if json_cookie.get(key, "") == "":
+                    found = False
+                    break
 
         except Exception as e:
             print(e)

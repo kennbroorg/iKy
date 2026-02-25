@@ -1,4 +1,4 @@
-#!/usr/bin/env json.dump(raw_node, f)
+#!/usr/bin/env python
 
 import json
 import os

@@ -61,12 +61,12 @@ def get_twitter_cookies(cookie_keys):
                     json_cookie[cookie.name] = cookie.value
                     json_cookie[cookie.name + "_expires"] = cookie.expires
 
-                # Check
-                found = True
-                for key in cookie_keys:
-                    if json_cookie.get(key, "") == "":
-                        found = False
-                        break
+            # Check after processing all cookies from this browser
+            found = True
+            for key in cookie_keys:
+                if json_cookie.get(key, "") == "":
+                    found = False
+                    break
 
         except Exception as e:
             print(e)

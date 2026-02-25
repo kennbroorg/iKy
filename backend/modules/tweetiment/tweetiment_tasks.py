@@ -82,6 +82,7 @@ def p_tweetiment_twint(tweets, task_id, username):
                 lang_detect = detect(text)
             except Exception:
                 lang_detect = "en"
+            translated = text
             if lang_detect != "en":
                 try:
                     # trans = translator.translate(text, dest='en')
