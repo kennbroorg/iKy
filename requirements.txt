@@ -37,4 +37,4 @@ requests_html
 fontawesome==5.10.1.post1
 peopledatalabs==3.1.3
 playwright==1.30.0
-TikTokApi==6.3.0
+TikTokApi==7.3.1
