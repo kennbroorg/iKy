@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { ChevronDown, ChevronRight } from "lucide-react";
 
+import { MODULE_RENDERERS } from "@/components/gatherer/renderers";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -448,22 +449,30 @@ export function ResultCard({ moduleId, task }: ResultCardProps) {
       {/* Body */}
       {expanded && (
         <div className="border-t border-border px-4 py-4">
-          <Tabs defaultValue="details">
-            <TabsList className="bg-muted/50 border border-border mb-4">
-              <TabsTrigger value="details">Details</TabsTrigger>
-              <TabsTrigger value="table">Table</TabsTrigger>
-              <TabsTrigger value="raw">Raw</TabsTrigger>
-            </TabsList>
-            <TabsContent value="details">
-              <DetailsView graphic={result.graphic} mod={mod} />
-            </TabsContent>
-            <TabsContent value="table">
-              <TableView graphic={result.graphic} />
-            </TabsContent>
-            <TabsContent value="raw">
-              <RawView raw={result.raw} />
-            </TabsContent>
-          </Tabs>
+          {(() => {
+            const CustomRenderer = MODULE_RENDERERS[moduleId];
+            if (CustomRenderer) {
+              return <CustomRenderer result={result} />;
+            }
+            return (
+              <Tabs defaultValue="details">
+                <TabsList className="bg-muted/50 border border-border mb-4">
+                  <TabsTrigger value="details">Details</TabsTrigger>
+                  <TabsTrigger value="table">Table</TabsTrigger>
+                  <TabsTrigger value="raw">Raw</TabsTrigger>
+                </TabsList>
+                <TabsContent value="details">
+                  <DetailsView graphic={result.graphic} mod={mod} />
+                </TabsContent>
+                <TabsContent value="table">
+                  <TableView graphic={result.graphic} />
+                </TabsContent>
+                <TabsContent value="raw">
+                  <RawView raw={result.raw} />
+                </TabsContent>
+              </Tabs>
+            );
+          })()}
         </div>
       )}
     </Card>
