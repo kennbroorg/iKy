@@ -5,7 +5,7 @@ httpx[http2]
 Flask==3.0.0
 celery==5.2.7
 Flask-Cors==4.0.0
-requests==2.27.0
+requests==2.32.5
 bs4==0.0.1
 cfscrape==2.1.1
 tweepy==4.5.0
