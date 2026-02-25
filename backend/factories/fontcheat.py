@@ -1,10 +1,5 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 
-import requests
-import re
-import os
-import json
 import fontawesome as fa
 
 # import urllib3
@@ -12,14 +7,14 @@ import fontawesome as fa
 
 
 def fontawesome_cheat_5():
-    """ Get icon name for fontawesome 5. This function is for compatibility """
+    """Get icon name for fontawesome 5. This function is for compatibility"""
     fonta = {}
     return fonta
 
 
 def search_icon_5(name, font_list):
-    if (name.lower() in fa.icons.keys()):
-        return 'fab fa-' + name.lower()
+    if name.lower() in fa.icons:
+        return "fab fa-" + name.lower()
     else:
         return None
 

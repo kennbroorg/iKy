@@ -1,35 +1,32 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 
-import os
-import sys
 import json
-import time
+import os
 import random
-import requests
-import re
-import instaloader
-from datetime import datetime
-from collections import Counter
+import sys
+import time
 import traceback
+from collections import Counter
+
+import instaloader
 
 try:
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
     from factories.iKy_functions import analize_rrss
-    from factories.iKy_functions import location_geo
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
-    sys.path.append('../../')
+    sys.path.append("../../")
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
     from factories.iKy_functions import analize_rrss
-    from factories.iKy_functions import location_geo
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 
 
@@ -37,7 +34,7 @@ logger = get_task_logger(__name__)
 
 
 def p_instaloader(username, num=5, from_m="Initial"):
-    """ Task of Celery that get info from instagram"""
+    """Task of Celery that get info from instagram"""
 
     # Code to develop the frontend without burning APIs
     cd = os.getcwd()
@@ -48,35 +45,35 @@ def p_instaloader(username, num=5, from_m="Initial"):
     if os.path.exists(file_path):
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
-            with open(file_path, 'r') as file:
+            with open(file_path) as file:
                 data = json.load(file)
             return data
         except json.JSONDecodeError:
-            logger.error(f"Developer mode ERROR")
+            logger.error("Developer mode ERROR")
 
     # Code
-    instagram_user = api_keys_search('instagram_user')
-    instagram_pass = api_keys_search('instagram_pass')
+    instagram_user = api_keys_search("instagram_user")
+    instagram_pass = api_keys_search("instagram_pass")
     raw_node = []
 
     L = instaloader.Instaloader()
     L.context.fatal_status_codes = {400, 401, 403, 404, 429, 500, 502, 503}
     try:
-        L.load_session_from_file(instagram_user, './.session-' + instagram_user)
+        L.load_session_from_file(instagram_user, "./.session-" + instagram_user)
         logger.info("Using stored session")
     except Exception as e:
         logger.error(e)
 
-        if (instagram_user and instagram_pass):
+        if instagram_user and instagram_pass:
             try:
                 L.login(instagram_user, instagram_pass)
-                L.save_session_to_file('./.session-' + instagram_user)
+                L.save_session_to_file("./.session-" + instagram_user)
             except instaloader.exceptions.BadCredentialsException:
-                raise Exception("iKy - Invalid credentials")
+                raise Exception("iKy - Invalid credentials") from None
             except instaloader.exceptions.LoginException as e:
-                raise Exception(e)
+                raise Exception(e) from e
         else:
-            raise Exception("iKy - Credentials not provided")
+            raise Exception("iKy - Credentials not provided") from e
 
     logged_as = L.test_login()
     logger.info(f"Logged as: {logged_as}")
@@ -85,20 +82,20 @@ def p_instaloader(username, num=5, from_m="Initial"):
     try:
         profili = instaloader.Profile.from_username(L.context, username)
     except instaloader.exceptions.ProfileNotExistsException:
-        raise Exception("iKy - Profile not found")
+        raise Exception("iKy - Profile not found") from None
     logger.info("End Getting profile information")
 
     # Total
     total = []
-    total.append({'module': 'instagram'})
-    total.append({'param': username})
+    total.append({"module": "instagram"})
+    total.append({"param": username})
     # Evaluates the module that executed the task and set validation
-    if (from_m == 'Initial'):
-        total.append({'validation': 'no'})
+    if from_m == "Initial":
+        total.append({"validation": "no"})
     else:
-        total.append({'validation': 'soft'})
+        total.append({"validation": "soft"})
 
-    if (raw_node == []):
+    if raw_node == []:
         # Graphic Array
         graphic = []
         photos = []
@@ -117,116 +114,163 @@ def p_instaloader(username, num=5, from_m="Initial"):
         tasks = []
 
         link = "Instagram"
-        gather_item = {"name-node": "Instagram", "title": "Instagram",
-                       "subtitle": "", "icon": "fab fa-instagram",
-                       "link": link}
+        gather_item = {
+            "name-node": "Instagram",
+            "title": "Instagram",
+            "subtitle": "",
+            "icon": "fab fa-instagram",
+            "link": link,
+        }
         gather.append(gather_item)
 
-        gather_item = {"name-node": "Instname", "title": "Name",
-                       "subtitle": profili.full_name,
-                       "icon": "fas fa-user",
-                       "link": link}
-        profile_item = {'name': profili.full_name}
+        gather_item = {
+            "name-node": "Instname",
+            "title": "Name",
+            "subtitle": profili.full_name,
+            "icon": "fas fa-user",
+            "link": link,
+        }
+        profile_item = {"name": profili.full_name}
         profile.append(profile_item)
         gather.append(gather_item)
 
-        gather_item = {"name-node": "InstPosts", "title": "Posts",
-                       "subtitle": profili.mediacount,
-                       "icon": "fas fa-photo-video", "link": link}
+        gather_item = {
+            "name-node": "InstPosts",
+            "title": "Posts",
+            "subtitle": profili.mediacount,
+            "icon": "fas fa-photo-video",
+            "link": link,
+        }
         gather.append(gather_item)
 
         try:
-            gather_item = {"name-node": "InstPosts", "title": "IGTV",
-                           "subtitle": profili.igtvcount,
-                           "icon": "fas fa-tv", "link": link}
+            gather_item = {
+                "name-node": "InstPosts",
+                "title": "IGTV",
+                "subtitle": profili.igtvcount,
+                "icon": "fas fa-tv",
+                "link": link,
+            }
             gather.append(gather_item)
         except Exception:
             pass
 
-        gather_item = {"name-node": "InstFollowers", "title": "Followers",
-                       "subtitle": profili.followers,
-                       "icon": "fas fa-users", "link": link}
+        gather_item = {
+            "name-node": "InstFollowers",
+            "title": "Followers",
+            "subtitle": profili.followers,
+            "icon": "fas fa-users",
+            "link": link,
+        }
         gather.append(gather_item)
 
-        gather_item = {"name-node": "InstFollowing", "title": "Following",
-                       "subtitle": profili.followees,
-                       "icon": "fas fa-users", "link": link}
+        gather_item = {
+            "name-node": "InstFollowing",
+            "title": "Following",
+            "subtitle": profili.followees,
+            "icon": "fas fa-users",
+            "link": link,
+        }
         gather.append(gather_item)
 
-        gather_item = {"name-node": "InstAvatar", "title": "Avatar",
-                       "picture": profili.profile_pic_url,
-                       "subtitle": "",
-                       "link": link}
+        gather_item = {
+            "name-node": "InstAvatar",
+            "title": "Avatar",
+            "picture": profili.profile_pic_url,
+            "subtitle": "",
+            "link": link,
+        }
         gather.append(gather_item)
-        profile_item = {'photos': [{"picture": profili.profile_pic_url,
-                                    "title": "Instagram"}]}
+        profile_item = {
+            "photos": [{"picture": profili.profile_pic_url, "title": "Instagram"}]
+        }
         profile.append(profile_item)
 
-        gather_item = {"name-node": "InstBio", "title": "Bio",
-                       "subtitle": profili.biography,
-                       "icon": "fas fa-heart",
-                       "link": link}
+        gather_item = {
+            "name-node": "InstBio",
+            "title": "Bio",
+            "subtitle": profili.biography,
+            "icon": "fas fa-heart",
+            "link": link,
+        }
         gather.append(gather_item)
-        profile_item = {'bio': profili.biography}
+        profile_item = {"bio": profili.biography}
         profile.append(profile_item)
         if profili.biography:
             analyze = analize_rrss(profili.biography)
             for item in analyze:
-                if(item == 'url'):
-                    for i in analyze['url']:
+                if item == "url":
+                    for i in analyze["url"]:
                         profile.append(i)
-                if(item == 'tasks'):
-                    for i in analyze['tasks']:
+                if item == "tasks":
+                    for i in analyze["tasks"]:
                         tasks.append(i)
 
-        gather_item = {"name-node": "InstURL", "title": "URL",
-                       "subtitle": profili.external_url,
-                       "icon": "fas fa-code",
-                       "link": link}
+        gather_item = {
+            "name-node": "InstURL",
+            "title": "URL",
+            "subtitle": profili.external_url,
+            "icon": "fas fa-code",
+            "link": link,
+        }
         gather.append(gather_item)
 
-        gather_item = {"name-node": "InstPrivate", "title": "Private Account",
-                       "subtitle": profili.is_private,
-                       "icon": "fas fa-user-shield",
-                       "link": link}
+        gather_item = {
+            "name-node": "InstPrivate",
+            "title": "Private Account",
+            "subtitle": profili.is_private,
+            "icon": "fas fa-user-shield",
+            "link": link,
+        }
         gather.append(gather_item)
 
-        gather_item = {"name-node": "InstUsername", "title": "Username",
-                       "subtitle": profili.username,
-                       "icon": "fas fa-user",
-                       "link": link}
+        gather_item = {
+            "name-node": "InstUsername",
+            "title": "Username",
+            "subtitle": profili.username,
+            "icon": "fas fa-user",
+            "link": link,
+        }
         gather.append(gather_item)
 
-        gather_item = {"name-node": "InstUserID", "title": "UserID",
-                       "subtitle": profili.userid,
-                       "icon": "fas fa-user-circle",
-                       "link": link}
+        gather_item = {
+            "name-node": "InstUserID",
+            "title": "UserID",
+            "subtitle": profili.userid,
+            "icon": "fas fa-user-circle",
+            "link": link,
+        }
         gather.append(gather_item)
 
-        gather_item = {"name-node": "InstBuss", "title": "Bussiness Account",
-                       "subtitle": profili.is_business_account,
-                       "icon": "fas fa-building",
-                       "link": link}
+        gather_item = {
+            "name-node": "InstBuss",
+            "title": "Bussiness Account",
+            "subtitle": profili.is_business_account,
+            "icon": "fas fa-building",
+            "link": link,
+        }
         gather.append(gather_item)
 
-        gather_item = {"name-node": "InstVerified",
-                       "title": "Verified Account",
-                       "subtitle": profili.is_verified,
-                       "icon": "fas fa-certificate",
-                       "link": link}
+        gather_item = {
+            "name-node": "InstVerified",
+            "title": "Verified Account",
+            "subtitle": profili.is_verified,
+            "icon": "fas fa-certificate",
+            "link": link,
+        }
         gather.append(gather_item)
 
-        gather_item = {"name": "Instagram",
-                       "url": "https://instagram.com/" + username,
-                       "icon": "fab fa-instagram",
-                       "source": "Instagram",
-                       "username": username}
+        gather_item = {
+            "name": "Instagram",
+            "url": "https://instagram.com/" + username,
+            "icon": "fab fa-instagram",
+            "source": "Instagram",
+            "username": username,
+        }
         profile.append({"social": [gather_item]})
 
         # Geo and Bar
         postloc = []
-        postloc_item = []
-        stop = 0
         acc_captions = []
         captions = []
         mentions = []
@@ -247,18 +291,24 @@ def p_instaloader(username, num=5, from_m="Initial"):
         # Mention_temp
 
         link = "Instagram"
-        photos_item = {"name-node": "Instagram", "title": "Instagram",
-                       "subtitle": "", "icon": "fab fa-instagram",
-                       "link": link}
+        photos_item = {
+            "name-node": "Instagram",
+            "title": "Instagram",
+            "subtitle": "",
+            "icon": "fab fa-instagram",
+            "link": link,
+        }
         photos.append(photos_item)
 
         logger.info("Begin - Getting post information")
-        for post in profili.get_posts():
+        for stop, post in enumerate(profili.get_posts()):
             # TODO: Last POST is the first iter
-            if (stop == 0):  # INFO: Last post
-                timeline_item = {"date": str(post.date_utc),
-                                 "action": "Instagram : Last Post",
-                                 "icon": "fa-instagram"}
+            if stop == 0:  # INFO: Last post
+                timeline_item = {
+                    "date": str(post.date_utc),
+                    "action": "Instagram : Last Post",
+                    "icon": "fa-instagram",
+                }
                 timeline.append(timeline_item)
 
             print(f"POST: {stop}-{num}")
@@ -275,7 +325,7 @@ def p_instaloader(username, num=5, from_m="Initial"):
                 tagged_temp.append(u)
             # Captions
             captions.append(post.caption)
-            if (post.accessibility_caption):
+            if post.accessibility_caption:
                 acc_captions.append(post.accessibility_caption)
 
             # post_date = datetime.strptime(post.date, "%Y-%m-%d %H:%M:%S")
@@ -283,20 +333,22 @@ def p_instaloader(username, num=5, from_m="Initial"):
             # INFO: For hours you must work with date_utc
             hour_temp.append(post.date_utc.strftime("%H"))
 
-            if (post.typename == 'GraphImage'):
-                photos_item = {"name-node": "Inst" + str(stop),
-                               "title": "Image" + str(stop),
-                               "picture": post.url,
-                               "subtitle": "",
-                               "link": link}
+            if post.typename == "GraphImage":
+                photos_item = {
+                    "name-node": "Inst" + str(stop),
+                    "title": "Image" + str(stop),
+                    "picture": post.url,
+                    "subtitle": "",
+                    "link": link,
+                }
                 photos.append(photos_item)
                 graphImage += 1
-            elif (post.typename == 'GraphVideo'):
+            elif post.typename == "GraphVideo":
                 graphVideo += 1
-            elif (post.typename == 'GraphSidecar'):
+            elif post.typename == "GraphSidecar":
                 graphSidecar += 1
 
-            # FIX: Eliminate location because ERROR!!! 
+            # FIX: Eliminate location because ERROR!!!
             # try:
             #     if (post.location):
             #         postloc_item = {'Caption': post.location.name,
@@ -311,9 +363,8 @@ def p_instaloader(username, num=5, from_m="Initial"):
             #         profile.append({'geo': postloc_item})
             # except Exception:
             #     pass
-            
-            stop += 1
-            if (stop == num):
+
+            if stop == num - 1:
                 break
 
             time.sleep(random.uniform(0.5, 2.0))
@@ -337,35 +388,31 @@ def p_instaloader(username, num=5, from_m="Initial"):
 
         # hourset
         hourset = []
-        hournames = '00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23'.split()
+        hournames = "00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23".split()
 
         twCounter = Counter(hour_temp)
         tgdata = twCounter.most_common()
         tgdata = sorted(tgdata)
         e = 0
         for g in hournames:
-            if (e >= len(tgdata)):
+            if (e >= len(tgdata)) or (g < tgdata[e][0]):
                 hourset.append({"name": g, "value": 0})
-            elif (g < tgdata[e][0]):
-                hourset.append({"name": g, "value": 0})
-            elif (g == tgdata[e][0]):
+            elif g == tgdata[e][0]:
                 hourset.append({"name": g, "value": int(tgdata[e][1])})
                 e += 1
 
         # weekset
         weekset = []
-        weekdays = 'Monday Tuesday Wednesday Thursday Friday Saturday Sunday'.split()
+        weekdays = "Monday Tuesday Wednesday Thursday Friday Saturday Sunday".split()
         wdCounter = Counter(week_temp)
         wddata = wdCounter.most_common()
         wddata = sorted(wddata)
         y = []
-        c = 0
-        for z in weekdays:
+        for c, z in enumerate(weekdays):
             try:
                 weekset.append({"name": z, "value": int(wddata[c][1])})
             except Exception:
                 weekset.append({"name": z, "value": 0})
-            c += 1
         wddata = y
 
         # children = []
@@ -380,39 +427,38 @@ def p_instaloader(username, num=5, from_m="Initial"):
         # resume = {"name": "instagram", "children": children}
 
         mediatype = []
-        mediatype.append({"name": "Images",
-                          "value": str(graphImage)})
-        mediatype.append({"name": "Sidecar",
-                          "value": str(graphSidecar)})
-        mediatype.append({"name": "Videos",
-                          "value": str(graphVideo)})
+        mediatype.append({"name": "Images", "value": str(graphImage)})
+        mediatype.append({"name": "Sidecar", "value": str(graphSidecar)})
+        mediatype.append({"name": "Videos", "value": str(graphVideo)})
 
-        presence.append({"name": "instagram",
-                         "children": [
-                             {"name": "followers", 
-                              "value": int(profili.followers)},
-                             {"name": "following", 
-                              "value": int(profili.followees)},
-                         ]})
-        profile.append({'presence': presence})
+        presence.append(
+            {
+                "name": "instagram",
+                "children": [
+                    {"name": "followers", "value": int(profili.followers)},
+                    {"name": "following", "value": int(profili.followees)},
+                ],
+            }
+        )
+        profile.append({"presence": presence})
 
-        raw_node = {'captions': captions, 'acc_captions': acc_captions}
-        total.append({'raw': raw_node})
-        graphic.append({'instagram': gather})
-        graphic.append({'postslist': lk_cm})
-        graphic.append({'postsloc': postloc})
-        graphic.append({'hashtags': hashtags})
-        graphic.append({'mentions': mentions})
-        graphic.append({'tagged': tagged})
-        graphic.append({'hour': hourset})
-        graphic.append({'week': weekset})
-        graphic.append({'mediatype': mediatype})
+        raw_node = {"captions": captions, "acc_captions": acc_captions}
+        total.append({"raw": raw_node})
+        graphic.append({"instagram": gather})
+        graphic.append({"postslist": lk_cm})
+        graphic.append({"postsloc": postloc})
+        graphic.append({"hashtags": hashtags})
+        graphic.append({"mentions": mentions})
+        graphic.append({"tagged": tagged})
+        graphic.append({"hour": hourset})
+        graphic.append({"week": weekset})
+        graphic.append({"mediatype": mediatype})
         # graphic.append({'resume': resume})
-        graphic.append({'photos': photos})
-        total.append({'graphic': graphic})
-        total.append({'profile': profile})
-        total.append({'timeline': timeline})
-        total.append({'tasks': tasks})
+        graphic.append({"photos": photos})
+        total.append({"graphic": graphic})
+        total.append({"profile": profile})
+        total.append({"timeline": timeline})
+        total.append({"tasks": tasks})
 
     return total
 
@@ -797,9 +843,9 @@ def p_instaloader(username, num=5, from_m="Initial"):
 
 #         presence.append({"name": "instagram",
 #                          "children": [
-#                              {"name": "followers", 
+#                              {"name": "followers",
 #                               "value": int(profili['edge_followed_by']['count'])},
-#                              {"name": "following", 
+#                              {"name": "following",
 #                               "value": int(profili['edge_follow']['count'])},
 #                          ]})
 #         profile.append({'presence': presence})
@@ -835,7 +881,7 @@ def t_instagram(username):
     except Exception as e:
         # Check internal error
         if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - "):]
+            reason = str(e)[len("iKy - ") :]
             status = "Warning"
         else:
             reason = str(e)
@@ -843,15 +889,19 @@ def t_instagram(username):
 
         traceback.print_exc()
         traceback_text = traceback.format_exc()
-        total.append({'module': 'instagram'})
-        total.append({'param': username})
-        total.append({'validation': 'not_used'})
+        total.append({"module": "instagram"})
+        total.append({"param": username})
+        total.append({"validation": "not_used"})
 
         raw_node = []
-        raw_node.append({"status": status,
-                         # "reason": "{}".format(e),
-                         "reason": reason,
-                         "traceback": traceback_text})
+        raw_node.append(
+            {
+                "status": status,
+                # "reason": "{}".format(e),
+                "reason": reason,
+                "traceback": traceback_text,
+            }
+        )
         total.append({"raw": raw_node})
 
     # Take final time

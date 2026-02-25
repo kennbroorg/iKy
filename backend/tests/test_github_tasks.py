@@ -1,9 +1,9 @@
 """Tests for backend/modules/github/github_tasks.py - p_github processor."""
 
 import json
-from unittest.mock import patch, MagicMock
-import pytest
+from unittest.mock import MagicMock, patch
 
+import pytest
 
 GITHUB_USER_RESPONSE = {
     "login": "testuser",
@@ -89,7 +89,7 @@ class TestPGithub:
         result = p_github("testuser", "Initial")
 
         assert isinstance(result, list)
-        keys = [list(item.keys())[0] for item in result if isinstance(item, dict)]
+        keys = [next(iter(item.keys())) for item in result if isinstance(item, dict)]
         assert "module" in keys
         assert "param" in keys
         assert "validation" in keys
@@ -101,18 +101,14 @@ class TestPGithub:
         from modules.github.github_tasks import p_github
 
         result = p_github("testuser", "Initial")
-        validation = next(
-            item["validation"] for item in result if "validation" in item
-        )
+        validation = next(item["validation"] for item in result if "validation" in item)
         assert validation == "no"
 
     def test_validation_non_initial(self, mock_github_api, mock_location_geo):
         from modules.github.github_tasks import p_github
 
         result = p_github("testuser", "github")
-        validation = next(
-            item["validation"] for item in result if "validation" in item
-        )
+        validation = next(item["validation"] for item in result if "validation" in item)
         assert validation == "soft"
 
     def test_not_found_raises(self, mock_github_not_found):

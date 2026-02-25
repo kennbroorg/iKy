@@ -1,36 +1,36 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 
+import json
 import os
 import sys
-import traceback
-import json
 import time
+import traceback
 
-import trio
-import httpx
 import holehe.core
+import httpx
+import trio
 
 try:
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.fontcheat import fontawesome_cheat_5, search_icon_5
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
-    sys.path.append('../../')
+    sys.path.append("../../")
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.fontcheat import fontawesome_cheat_5, search_icon_5
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 
 logger = get_task_logger(__name__)
 
 
 async def p_holehe(email, from_m):
-
     # Code to develop the frontend without burning APIs
     cd = os.getcwd()
     td = os.path.join(cd, "outputs")
@@ -40,11 +40,11 @@ async def p_holehe(email, from_m):
     if os.path.exists(file_path):
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
-            with open(file_path, 'r') as file:
+            with open(file_path) as file:
                 data = json.load(file)
             return data
         except json.JSONDecodeError:
-            logger.error(f"Developer mode ERROR")
+            logger.error("Developer mode ERROR")
 
     # Code
     # holehe.core.is_mail(email)
@@ -56,17 +56,16 @@ async def p_holehe(email, from_m):
     out = []
     async with trio.open_nursery() as nursery:
         for website in websites:
-            nursery.start_soon(holehe.core.launch_module, website, email, 
-                               client, out)
+            nursery.start_soon(holehe.core.launch_module, website, email, client, out)
             # nursery.start_soon(website, email, client, out)
-    raw_node = sorted(out, key=lambda i: i['name'])  # We sort by modules names
+    raw_node = sorted(out, key=lambda i: i["name"])  # We sort by modules names
     await client.aclose()
 
     # Total
     total = []
-    total.append({'module': 'holehe'})
-    total.append({'param': email})
-    total.append({'validation': 'hard'})
+    total.append({"module": "holehe"})
+    total.append({"param": email})
+    total.append({"validation": "hard"})
 
     # Icons unicode
     font_list = fontawesome_cheat_5()
@@ -88,43 +87,53 @@ async def p_holehe(email, from_m):
     social = []
 
     link = "Holehe"
-    gather_item = {"name-node": "Holehe", "title": "Holehe",
-                   "subtitle": email, "icon": "fas fa-at",
-                   "link": link}
+    gather_item = {
+        "name-node": "Holehe",
+        "title": "Holehe",
+        "subtitle": email,
+        "icon": "fas fa-at",
+        "link": link,
+    }
     gather.append(gather_item)
 
     for rrss in raw_node:
-        lists_item = {"title": rrss['name'],
-                      "exists": rrss['exists'],
-                      "rateLimit": rrss['rateLimit'],
-                      "emailrecovery": rrss['emailrecovery'],
-                      "phoneNumber": rrss['phoneNumber'],
-                      "others": rrss['others']}
+        lists_item = {
+            "title": rrss["name"],
+            "exists": rrss["exists"],
+            "rateLimit": rrss["rateLimit"],
+            "emailrecovery": rrss["emailrecovery"],
+            "phoneNumber": rrss["phoneNumber"],
+            "others": rrss["others"],
+        }
         lists.append(lists_item)
-        if (rrss['exists'] == True):
-            fa_icon = search_icon_5(rrss['name'], font_list)
-            if (fa_icon is None):
+        if rrss["exists"] is True:
+            fa_icon = search_icon_5(rrss["name"], font_list)
+            if fa_icon is None:
                 fa_icon = search_icon_5("dot-circle", font_list)
 
-            gather_item = {"name-node": rrss['name'],
-                           "title": rrss['name'],
-                           "icon": fa_icon,
-                           "link": link}
+            gather_item = {
+                "name-node": rrss["name"],
+                "title": rrss["name"],
+                "icon": fa_icon,
+                "link": link,
+            }
             gather.append(gather_item)
-            social_item = {"name": rrss['name'],
-                           "url": "Not Determined",
-                           "icon": fa_icon,
-                           "source": "holehe",
-                           "username": email}
+            social_item = {
+                "name": rrss["name"],
+                "url": "Not Determined",
+                "icon": fa_icon,
+                "source": "holehe",
+                "username": email,
+            }
             social.append(social_item)
     profile.append({"social": social})
 
-    total.append({'raw': raw_node})
-    graphic.append({'holehe': gather})
-    graphic.append({'lists': lists})
-    total.append({'graphic': graphic})
-    total.append({'profile': profile})
-    total.append({'timeline': timeline})
+    total.append({"raw": raw_node})
+    graphic.append({"holehe": gather})
+    graphic.append({"lists": lists})
+    total.append({"graphic": graphic})
+    total.append({"profile": profile})
+    total.append({"timeline": timeline})
 
     return total
 
@@ -138,7 +147,7 @@ def t_holehe(email, from_m="initial"):
     except Exception as e:
         # Check internal error
         if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - "):]
+            reason = str(e)[len("iKy - ") :]
             status = "Warning"
         else:
             reason = str(e)
@@ -146,15 +155,19 @@ def t_holehe(email, from_m="initial"):
 
         traceback.print_exc()
         traceback_text = traceback.format_exc()
-        total.append({'module': 'holehe'})
-        total.append({'param': email})
-        total.append({'validation': 'not_used'})
+        total.append({"module": "holehe"})
+        total.append({"param": email})
+        total.append({"validation": "not_used"})
 
         raw_node = []
-        raw_node.append({"status": status,
-                         # "reason": "{}".format(e),
-                         "reason": reason,
-                         "traceback": traceback_text})
+        raw_node.append(
+            {
+                "status": status,
+                # "reason": "{}".format(e),
+                "reason": reason,
+                "traceback": traceback_text,
+            }
+        )
         total.append({"raw": raw_node})
 
     # Take final time

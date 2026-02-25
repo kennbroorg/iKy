@@ -1,6 +1,7 @@
 """Tests for backend/api.py - Flask API endpoints with mocked Celery dispatch."""
 
 import json
+from typing import ClassVar
 
 
 class TestTasklistEndpoint:
@@ -28,7 +29,7 @@ class TestTestingEndpoint:
 class TestModuleEndpoints:
     """Test that POST module endpoints dispatch Celery tasks correctly."""
 
-    SIMPLE_MODULES = [
+    SIMPLE_MODULES: ClassVar[list] = [
         ("github", "modules.github.github_tasks.t_github"),
         ("twitter", "modules.twitter.twitter_tasks.t_twitter"),
         ("linkedin", "modules.linkedin.linkedin_tasks.t_linkedin"),
@@ -76,11 +77,13 @@ class TestModuleEndpoints:
         """Spotify endpoint accepts extra 'proc' parameter."""
         resp = client.post(
             "/spotify",
-            data=json.dumps({
-                "username": "testuser",
-                "from": "Initial",
-                "proc": 2,
-            }),
+            data=json.dumps(
+                {
+                    "username": "testuser",
+                    "from": "Initial",
+                    "proc": 2,
+                }
+            ),
             content_type="application/json",
         )
         assert resp.status_code == 200
@@ -93,11 +96,13 @@ class TestModuleEndpoints:
         """Dorks endpoint accepts extra 'dorks' parameter."""
         resp = client.post(
             "/dorks",
-            data=json.dumps({
-                "username": "testuser",
-                "dorks": "site:example.com",
-                "from": "Initial",
-            }),
+            data=json.dumps(
+                {
+                    "username": "testuser",
+                    "dorks": "site:example.com",
+                    "from": "Initial",
+                }
+            ),
             content_type="application/json",
         )
         assert resp.status_code == 200

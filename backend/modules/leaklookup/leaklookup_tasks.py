@@ -1,27 +1,30 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 
+import json
 import os
 import sys
-import json
 import time
-import requests
+
 # import urllib
 import traceback
 
+import requests
+
 try:
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
-    sys.path.append('../../')
+    sys.path.append("../../")
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 
 # import urllib3
@@ -31,7 +34,7 @@ logger = get_task_logger(__name__)
 
 
 def p_leaklookup(email):
-    """ Task of Celery that get info from leak-lookup.com """
+    """Task of Celery that get info from leak-lookup.com"""
 
     # Code to develop the frontend without burning APIs
     cd = os.getcwd()
@@ -42,52 +45,51 @@ def p_leaklookup(email):
     if os.path.exists(file_path):
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
-            with open(file_path, 'r') as file:
+            with open(file_path) as file:
                 data = json.load(file)
             return data
         except json.JSONDecodeError:
-            logger.error(f"Developer mode ERROR")
+            logger.error("Developer mode ERROR")
 
     # Code
     url = "https://leak-lookup.com/api/search"
-    key = api_keys_search('leaklookup_key')
+    key = api_keys_search("leaklookup_key")
 
-    if (not key):
+    if not key:
         raise Exception("iKy - Missing or invalid Key")
 
     payload = {"key": key, "type": "email_address", "query": email}
-    req = requests.post(url, headers={'User-Agent': 'iKy'}, data=payload,
-                        timeout=30)
+    req = requests.post(url, headers={"User-Agent": "iKy"}, data=payload, timeout=30)
     email_response = req.json()
 
     leak_email = []
-    if (email_response['error'] == 'false'):
-        if (len(email_response['message']) == 0):
+    if email_response["error"] == "false":
+        if len(email_response["message"]) == 0:
             raise Exception("iKy - No leak found")
-        for leak in email_response['message']:
-            if (len(email_response['message'][leak]) > 0):
-                for details in email_response['message'][leak]:
+        for leak in email_response["message"]:
+            if len(email_response["message"][leak]) > 0:
+                for details in email_response["message"][leak]:
                     detail = []
                     for d in details:
                         detail.append({"name": d, "value": details[d]})
-                    leak_email.append({"name": leak,
-                                       "value": detail})
+                    leak_email.append({"name": leak, "value": detail})
 
             else:
-                leak_email.append({"name": leak,
-                                   "value": [{"name": "API",
-                                              "value":
-                                              "Public, try Private"}]})
+                leak_email.append(
+                    {
+                        "name": leak,
+                        "value": [{"name": "API", "value": "Public, try Private"}],
+                    }
+                )
     else:
         raise Exception("iKy - Leaklookup API Error")
-        
 
     # TODO: Add user request
     # Total
     total = []
-    total.append({'module': 'leaklookup'})
-    total.append({'param': email})
-    total.append({'validation': 'hard'})
+    total.append({"module": "leaklookup"})
+    total.append({"param": email})
+    total.append({"validation": "hard"})
 
     # Graphic Array
     graphic = []
@@ -98,11 +100,11 @@ def p_leaklookup(email):
     # Timeline Array
     timeline = []
 
-    total.append({'raw': email_response})
-    graphic.append({'email': leak_email})
-    total.append({'graphic': graphic})
-    total.append({'profile': profile})
-    total.append({'timeline': timeline})
+    total.append({"raw": email_response})
+    graphic.append({"email": leak_email})
+    total.append({"graphic": graphic})
+    total.append({"profile": profile})
+    total.append({"timeline": timeline})
 
     return total
 
@@ -116,7 +118,7 @@ def t_leaklookup(email):
     except Exception as e:
         # Check internal error
         if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - "):]
+            reason = str(e)[len("iKy - ") :]
             status = "Warning"
         else:
             reason = str(e)
@@ -124,15 +126,19 @@ def t_leaklookup(email):
 
         traceback.print_exc()
         traceback_text = traceback.format_exc()
-        total.append({'module': 'leaklookup'})
-        total.append({'param': email})
-        total.append({'validation': 'not_used'})
+        total.append({"module": "leaklookup"})
+        total.append({"param": email})
+        total.append({"validation": "not_used"})
 
         raw_node = []
-        raw_node.append({"status": status,
-                         # "reason": "{}".format(e),
-                         "reason": reason,
-                         "traceback": traceback_text})
+        raw_node.append(
+            {
+                "status": status,
+                # "reason": "{}".format(e),
+                "reason": reason,
+                "traceback": traceback_text,
+            }
+        )
         total.append({"raw": raw_node})
 
     # Take final time

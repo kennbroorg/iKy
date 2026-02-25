@@ -1,42 +1,43 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 
-import os
-import sys
 import json
-import requests
+import os
 import re
-import traceback
+import sys
 import time
+import traceback
 
 import redis
-from langdetect import detect
+
 # from googletrans import Translator
 import TranslatorX
+from langdetect import detect
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-from datetime import datetime
 
 try:
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
-    sys.path.append('../../')
+    sys.path.append("../../")
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 
 import urllib3
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
 
 def p_tweetiment_twint(tweets, task_id, username):
-    """ Task of Celery that get info from twitter sentiment """
+    """Task of Celery that get info from twitter sentiment"""
 
     # Code to develop the frontend without burning APIs
     cd = os.getcwd()
@@ -47,11 +48,11 @@ def p_tweetiment_twint(tweets, task_id, username):
     if os.path.exists(file_path):
         logger.info(f"Developer frontend mode - {file_path}")
         try:
-            with open(file_path, 'r') as file:
+            with open(file_path) as file:
                 data = json.load(file)
             return data
         except json.JSONDecodeError:
-            logger.error(f"Developer mode ERROR")
+            logger.error("Developer mode ERROR")
 
     # Code
     raw = []
@@ -69,30 +70,29 @@ def p_tweetiment_twint(tweets, task_id, username):
         create_date = c
         c = c + 1
         # Remove mentions
-        text = re.sub(r'@\w+\s+', "", tweet)
+        text = re.sub(r"@\w+\s+", "", tweet)
         # Remove URLs
-        text = re.sub(r'https?:\/\/.*[\r\n]*', '', text, flags=re.MULTILINE)
+        text = re.sub(r"https?:\/\/.*[\r\n]*", "", text, flags=re.MULTILINE)
         # Remove emojis
-        RE_EMOJI = re.compile('[\U00010000-\U0010ffff]', flags=re.UNICODE)
-        text = RE_EMOJI.sub(r'', text)
+        RE_EMOJI = re.compile("[\U00010000-\U0010ffff]", flags=re.UNICODE)
+        text = RE_EMOJI.sub(r"", text)
         text = text.replace("\n", " ")
-        if (len(text) > 3):
+        if len(text) > 3:
             try:
                 lang_detect = detect(text)
             except Exception:
-                lang_detect = 'en'
-            if (lang_detect != 'en'):
+                lang_detect = "en"
+            if lang_detect != "en":
                 try:
                     # trans = translator.translate(text, dest='en')
-                    trans = translator.Translate(text, to_lang='en')
+                    trans = translator.Translate(text, to_lang="en")
                     translated = trans.text
                 except Exception:
                     translated = text
 
             vs = analyzer.polarity_scores(translated)
 
-            raw.append({"text": translated, "date": create_date,
-                        "sentiment": vs})
+            raw.append({"text": translated, "date": create_date, "sentiment": vs})
             neg.append({"name": create_date, "value": vs["neg"]})
             pos.append({"name": create_date, "value": vs["pos"]})
             neu.append({"name": create_date, "value": vs["neu"]})
@@ -100,10 +100,10 @@ def p_tweetiment_twint(tweets, task_id, username):
 
     # Total
     total = []
-    total.append({'module': 'tweetiment'})
-    total.append({'param': username})
+    total.append({"module": "tweetiment"})
+    total.append({"param": username})
     # Evaluates the module that executed the task and set validation
-    total.append({'validation': 'no'})
+    total.append({"validation": "no"})
 
     # Graphic Array
     graphic = []
@@ -115,24 +115,23 @@ def p_tweetiment_twint(tweets, task_id, username):
     # Timeline Array
     timeline = []
 
-    if (raw == []):
+    if raw == []:
         raw.append({"status": "Not found"})
 
     sentiment.append({"name": "compound", "series": compound})
     sentiment.append({"name": "pos", "series": pos})
     sentiment.append({"name": "neu", "series": neu})
     sentiment.append({"name": "neg", "series": neg})
-    total.append({'raw': raw})
-    graphic.append({'sentiment': sentiment})
-    total.append({'graphic': graphic})
-    total.append({'profile': profile})
-    total.append({'timeline': timeline})
+    total.append({"raw": raw})
+    graphic.append({"sentiment": sentiment})
+    total.append({"graphic": graphic})
+    total.append({"profile": profile})
+    total.append({"timeline": timeline})
 
     return total
 
 
 def p_tweetiment_twitter(tweets, task_id, username):
-
     raw = []
     neg = []
     pos = []
@@ -145,33 +144,32 @@ def p_tweetiment_twitter(tweets, task_id, username):
 
     c = 0
     for tweet in tweets:
-        if (tweet['text'][:3] != 'RT '):
+        if tweet["text"][:3] != "RT ":
             c = c + 1
             # Get date
-            create_date = tweet['created_at']
+            create_date = tweet["created_at"]
             # date_format = datetime.strptime(create_date,
             #                                 "%a %b %d %H:%M:%S +0000 %Y")
             # create_date = date_format.strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
             # Remove mentions
-            text = re.sub(r'@\w+\s+', "", tweet['text'])
+            text = re.sub(r"@\w+\s+", "", tweet["text"])
             # Remove URLs
-            text = re.sub(r'https?:\/\/.*[\r\n]*', '', text,
-                          flags=re.MULTILINE)
+            text = re.sub(r"https?:\/\/.*[\r\n]*", "", text, flags=re.MULTILINE)
             # Remove emojis
-            RE_EMOJI = re.compile('[\U00010000-\U0010ffff]', flags=re.UNICODE)
-            text = RE_EMOJI.sub(r'', text)
+            RE_EMOJI = re.compile("[\U00010000-\U0010ffff]", flags=re.UNICODE)
+            text = RE_EMOJI.sub(r"", text)
             text = text.replace("\n", " ")
-            if (len(text) > 3):
+            if len(text) > 3:
                 translated = text
                 try:
                     lang_detect = detect(text)
                 except Exception:
-                    lang_detect = 'en'
-                if (lang_detect != 'en'):
+                    lang_detect = "en"
+                if lang_detect != "en":
                     try:
                         # trans = translator.translate(text, dest='en')
-                        trans = translator.Translate(text, to_lang='en')
+                        trans = translator.Translate(text, to_lang="en")
                         translated = trans.text
                     except Exception:
                         # translator = TLT(from_lang=lang_detect, to_lang="en")
@@ -181,8 +179,7 @@ def p_tweetiment_twitter(tweets, task_id, username):
                     # sentences.append(trans.text)
                 vs = analyzer.polarity_scores(translated)
 
-                raw.append({"text": translated, "date": create_date,
-                            "sentiment": vs})
+                raw.append({"text": translated, "date": create_date, "sentiment": vs})
                 neg.append({"name": create_date, "value": vs["neg"]})
                 pos.append({"name": create_date, "value": vs["pos"]})
                 neu.append({"name": create_date, "value": vs["neu"]})
@@ -190,10 +187,10 @@ def p_tweetiment_twitter(tweets, task_id, username):
 
     # Total
     total = []
-    total.append({'module': 'tweetiment'})
-    total.append({'param': username})
+    total.append({"module": "tweetiment"})
+    total.append({"param": username})
     # Evaluates the module that executed the task and set validation
-    total.append({'validation': 'no'})
+    total.append({"validation": "no"})
 
     # Graphic Array
     graphic = []
@@ -205,18 +202,18 @@ def p_tweetiment_twitter(tweets, task_id, username):
     # Timeline Array
     timeline = []
 
-    if (raw == []):
+    if raw == []:
         raw.append({"status": "Not found"})
 
     sentiment.append({"name": "compound", "series": compound})
     sentiment.append({"name": "pos", "series": pos})
     sentiment.append({"name": "neu", "series": neu})
     sentiment.append({"name": "neg", "series": neg})
-    total.append({'raw': raw})
-    graphic.append({'sentiment': sentiment})
-    total.append({'graphic': graphic})
-    total.append({'profile': profile})
-    total.append({'timeline': timeline})
+    total.append({"raw": raw})
+    graphic.append({"sentiment": sentiment})
+    total.append({"graphic": graphic})
+    total.append({"profile": profile})
+    total.append({"timeline": timeline})
 
     return total
 
@@ -230,28 +227,28 @@ def t_tweetiment(username, task_id, from_m="Initial"):
         task_id_complete = "celery-task-meta-" + task_id
         print("TaskID : " + task_id_complete)
 
-        redis_db = redis.Redis(host='localhost', port=6379, db=0)
+        redis_db = redis.Redis(host="localhost", port=6379, db=0)
         value = redis_db.get(task_id_complete)
 
         # Evaluate Twint or Twitter
         json_value = json.loads(value)
-        module = json_value['result'][0]['module']
+        module = json_value["result"][0]["module"]
         print("Module : " + module)
-        if (module == 'twint'):
+        if module == "twint":
             print("Tweetiment : Twint")
-            tweets_json = json_value['result'][3]['raw'][1]['raw_node_tweets']
-            tweets_json = json.loads(tweets_json)['tweet']
+            tweets_json = json_value["result"][3]["raw"][1]["raw_node_tweets"]
+            tweets_json = json.loads(tweets_json)["tweet"]
             for tweet in tweets_json:
                 tweets.append(tweets_json[tweet])
             total = p_tweetiment_twint(tweets, task_id, username)
         else:
             print("Tweetiment : Twitter")
-            tweets = json_value['result'][3]['raw'][1]['raw_node_tweets']
+            tweets = json_value["result"][3]["raw"][1]["raw_node_tweets"]
             total = p_tweetiment_twitter(tweets, task_id, username)
     except Exception as e:
         # Check internal error
         if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - "):]
+            reason = str(e)[len("iKy - ") :]
             status = "Warning"
         else:
             reason = str(e)
@@ -259,15 +256,19 @@ def t_tweetiment(username, task_id, from_m="Initial"):
 
         traceback.print_exc()
         traceback_text = traceback.format_exc()
-        total.append({'module': 'tweetiment'})
-        total.append({'param': username})
-        total.append({'validation': 'not_used'})
+        total.append({"module": "tweetiment"})
+        total.append({"param": username})
+        total.append({"validation": "not_used"})
 
         raw_node = []
-        raw_node.append({"status": status,
-                         # "reason": "{}".format(e),
-                         "reason": reason,
-                         "traceback": traceback_text})
+        raw_node.append(
+            {
+                "status": status,
+                # "reason": "{}".format(e),
+                "reason": reason,
+                "traceback": traceback_text,
+            }
+        )
         total.append({"raw": raw_node})
 
     # Take final time

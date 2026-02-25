@@ -1,25 +1,27 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 
-import os
-import sys
 import json
-import requests
+import os
 import re
-import traceback
+import sys
 import time
+import traceback
+
+import requests
 
 try:
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
-    sys.path.append('../../')
+    sys.path.append("../../")
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from celery.utils.log import get_task_logger
+
     # from factories.iKy_functions import analize_rrss
     # from factories.iKy_functions import location_geo
     celery = create_celery(create_application())
@@ -28,7 +30,7 @@ logger = get_task_logger(__name__)
 
 
 def p_psbdmp(email, from_m="Initial"):
-    """ Task of Celery that get info from psbdmp """
+    """Task of Celery that get info from psbdmp"""
 
     # Code to develop the frontend without burning APIs
     cd = os.getcwd()
@@ -39,31 +41,26 @@ def p_psbdmp(email, from_m="Initial"):
     if os.path.exists(file_path):
         logger.info(f"Developer frontend mode - {file_path}")
         try:
-            with open(file_path, 'r') as file:
+            with open(file_path) as file:
                 data = json.load(file)
             return data
         except json.JSONDecodeError:
-            logger.error(f"Developer mode ERROR")
+            logger.error("Developer mode ERROR")
 
     # Code
-    if ("@" in email):
-        username = email.split("@")[0]
-    else:
-        username = email
+    username = email.split("@")[0] if "@" in email else email
 
-    req = requests.get("https://psbdmp.ws/api/v3/search/%s" % username)
+    req = requests.get(f"https://psbdmp.ws/api/v3/search/{username}")
 
-    if (req.json() == []):
+    if req.json() == []:
         raise Exception("iKy - Pastebin Dump not found")
 
     dump_list = []
     dump_word = []
     for dump in req.json():
-        response = requests.get("https://psbdmp.ws/api/v3/dump/%s" % dump['id'])
-        dump_list.append({'id': dump['id'], 
-                          'tags': dump['tags'], 
-                          'time': dump['time']})
-        dump_text = response.json()['content']
+        response = requests.get("https://psbdmp.ws/api/v3/dump/{}".format(dump["id"]))
+        dump_list.append({"id": dump["id"], "tags": dump["tags"], "time": dump["time"]})
+        dump_text = response.json()["content"]
         regex = rf"(.*(?:{username}).*)\r?\n?"
         matches = re.findall(regex, dump_text, re.IGNORECASE)
         for match in matches:
@@ -71,13 +68,13 @@ def p_psbdmp(email, from_m="Initial"):
 
     # Total
     total = []
-    total.append({'module': 'psbdmp'})
-    total.append({'param': email})
+    total.append({"module": "psbdmp"})
+    total.append({"param": email})
     # Evaluates the module that executed the task and set validation
-    if (from_m == 'Initial'):
-        total.append({'validation': 'no'})
+    if from_m == "Initial":
+        total.append({"validation": "no"})
     else:
-        total.append({'validation': 'soft'})
+        total.append({"validation": "soft"})
 
     # Graphic Array
     graphic = []
@@ -92,18 +89,20 @@ def p_psbdmp(email, from_m="Initial"):
     tasks = []
 
     for dump_time in dump_list:
-        timeline_item = {'date': dump_time['time'],
+        timeline_item = {
+            "date": dump_time["time"],
             "action": "Pastebin : Dump",
-            "icon": "fa-bars"}
+            "icon": "fa-bars",
+        }
         timeline.append(timeline_item)
 
-    total.append({'raw': ''})
-    graphic.append({'dlist': dump_list})
-    graphic.append({'dword': dump_word})
-    total.append({'graphic': graphic})
-    total.append({'profile': profile})
-    total.append({'timeline': timeline})
-    total.append({'tasks': tasks})
+    total.append({"raw": ""})
+    graphic.append({"dlist": dump_list})
+    graphic.append({"dword": dump_word})
+    total.append({"graphic": graphic})
+    total.append({"profile": profile})
+    total.append({"timeline": timeline})
+    total.append({"tasks": tasks})
 
     return total
 
@@ -117,7 +116,7 @@ def t_psbdmp(email, from_m="Initial"):
     except Exception as e:
         # Check internal error
         if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - "):]
+            reason = str(e)[len("iKy - ") :]
             status = "Warning"
         else:
             reason = str(e)
@@ -125,15 +124,19 @@ def t_psbdmp(email, from_m="Initial"):
 
         traceback.print_exc()
         traceback_text = traceback.format_exc()
-        total.append({'module': 'psbdmp'})
-        total.append({'param': email})
-        total.append({'validation': 'not_used'})
+        total.append({"module": "psbdmp"})
+        total.append({"param": email})
+        total.append({"validation": "not_used"})
 
         raw_node = []
-        raw_node.append({"status": status,
-                         # "reason": "{}".format(e),
-                         "reason": reason,
-                         "traceback": traceback_text})
+        raw_node.append(
+            {
+                "status": status,
+                # "reason": "{}".format(e),
+                "reason": reason,
+                "traceback": traceback_text,
+            }
+        )
         total.append({"raw": raw_node})
 
     # Take final time

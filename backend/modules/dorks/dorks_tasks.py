@@ -1,62 +1,68 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 
-import os
-import sys
-import json
-import traceback
-import random
-import time
-import yagooglesearch
 import collections
-from thefuzz import process
-from googleapiclient.discovery import build
+import json
+import os
+import random
+import sys
+import time
+import traceback
 
+import yagooglesearch
+from googleapiclient.discovery import build
+from thefuzz import process
 
 try:
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
     from factories.configuration import api_keys_search
-    from factories.iKy_functions import simple_analysis
-    from factories.iKy_functions import deep_analysis
-    from celery.utils.log import get_task_logger
+    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.iKy_functions import deep_analysis, simple_analysis
+
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
-    sys.path.append('../../')
+    sys.path.append("../../")
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
     from factories.configuration import api_keys_search
-    from factories.iKy_functions import simple_analysis
-    from factories.iKy_functions import deep_analysis
-    from celery.utils.log import get_task_logger
+    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
+    from factories.iKy_functions import deep_analysis, simple_analysis
+
     celery = create_celery(create_application())
 
 logger = get_task_logger(__name__)
 
 
-def p_dorks_cse(api_key, cx, keywords, dorks=''):
+def p_dorks_cse(api_key, cx, keywords, dorks=""):
     # Modifiers for dorks
-    if (dorks == ''):
-        dorks = {'twitter': 'site:twitter.com',
-                 'github': 'site:github.com',
-                 'instagram': 'site:instagram.com',
-                 'keybase': 'site:keybase.io',
-                 'linkedin': 'site:linkedin.com',
-                 # 'facebook': 'site:facebook.com',
-                 # 'pinterest': 'site:pinterest.com',
-                 'tiktok': 'site:tiktok.com'}
+    if dorks == "":
+        dorks = {
+            "twitter": "site:twitter.com",
+            "github": "site:github.com",
+            "instagram": "site:instagram.com",
+            "keybase": "site:keybase.io",
+            "linkedin": "site:linkedin.com",
+            # 'facebook': 'site:facebook.com',
+            # 'pinterest': 'site:pinterest.com',
+            "tiktok": "site:tiktok.com",
+        }
 
     node = []
-    resource = build("customsearch", 'v1', developerKey=api_key).cse()
+    resource = build("customsearch", "v1", developerKey=api_key).cse()
     result = resource.list(q=keywords, cx=cx).execute()
 
-    for item in result['items']:
-        node.append({'dork': 'username', 'titles': item["title"],
-                    'links': item["link"],
-                     'descriptions': item["snippet"]})
+    for item in result["items"]:
+        node.append(
+            {
+                "dork": "username",
+                "titles": item["title"],
+                "links": item["link"],
+                "descriptions": item["snippet"],
+            }
+        )
 
     for dork in dorks:
         timeDelay = random.randrange(5, 15)
@@ -64,29 +70,36 @@ def p_dorks_cse(api_key, cx, keywords, dorks=''):
         query = f"{keywords} {dorks[dork]}"
 
         print(f"Processing QUERY : {query}")
-        result = resource.list(q=query, cx='40b052eff66bf4730').execute()
+        result = resource.list(q=query, cx="40b052eff66bf4730").execute()
 
-        if ("items" in result):
-            for item in result['items']:
-                node.append({'dork': dork, 'titles': item["title"],
-                            'links': item["link"],
-                             'descriptions': item["snippet"]})
+        if "items" in result:
+            for item in result["items"]:
+                node.append(
+                    {
+                        "dork": dork,
+                        "titles": item["title"],
+                        "links": item["link"],
+                        "descriptions": item["snippet"],
+                    }
+                )
                 break
 
     return node
 
 
-def p_dorks_yagoogle(keywords, dorks=''):
+def p_dorks_yagoogle(keywords, dorks=""):
     # Modifiers for dorks
-    if (dorks == ''):
-        dorks = {'twitter': 'site:twitter.com',
-                 'github': 'site:github.com',
-                 'instagram': 'site:instagram.com',
-                 'keybase': 'site:keybase.io',
-                 'linkedin': 'site:linkedin.com',
-                 # 'facebook': 'site:facebook.com',
-                 # 'pinterest': 'site:pinterest.com',
-                 'tiktok': 'site:tiktok.com'}
+    if dorks == "":
+        dorks = {
+            "twitter": "site:twitter.com",
+            "github": "site:github.com",
+            "instagram": "site:instagram.com",
+            "keybase": "site:keybase.io",
+            "linkedin": "site:linkedin.com",
+            # 'facebook': 'site:facebook.com',
+            # 'pinterest': 'site:pinterest.com',
+            "tiktok": "site:tiktok.com",
+        }
 
     node = []
 
@@ -102,16 +115,21 @@ def p_dorks_yagoogle(keywords, dorks=''):
         # proxy="socks5h://127.0.0.1:9050",
         verbosity=5,
         verbose_output=True,
-        verify_ssl=False
+        verify_ssl=False,
     )
 
     client.assign_random_user_agent()
     search = client.search()
 
     for u in search:
-        node.append({'dork': 'username', 'titles': u["title"],
-                    'links': u["url"],
-                     'descriptions': u["description"]})
+        node.append(
+            {
+                "dork": "username",
+                "titles": u["title"],
+                "links": u["url"],
+                "descriptions": u["description"],
+            }
+        )
 
     for dork in dorks:
         timeDelay = random.randrange(0, 15)
@@ -133,15 +151,20 @@ def p_dorks_yagoogle(keywords, dorks=''):
         search = client.search()
 
         for u in search:
-            node.append({'dork': dork, 'titles': u["title"],
-                        'links': u["url"],
-                         'descriptions': u["description"]})
+            node.append(
+                {
+                    "dork": dork,
+                    "titles": u["title"],
+                    "links": u["url"],
+                    "descriptions": u["description"],
+                }
+            )
 
     return node
 
 
 def p_dorks(keywords, dorks, from_m="Initial"):
-    """ Task of Celery that get info from google dorks
+    """Task of Celery that get info from google dorks
     Social Networks :
         - twitter
         - github
@@ -169,17 +192,17 @@ def p_dorks(keywords, dorks, from_m="Initial"):
     if os.path.exists(file_path):
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
-            with open(file_path, 'r') as file:
+            with open(file_path) as file:
                 data = json.load(file)
             return data
         except json.JSONDecodeError:
-            logger.error(f"Developer mode ERROR")
+            logger.error("Developer mode ERROR")
 
     # Code
-    api_key = api_keys_search('cse_api_key')
-    cx = api_keys_search('cse_cx')
+    api_key = api_keys_search("cse_api_key")
+    cx = api_keys_search("cse_cx")
 
-    if (api_key):
+    if api_key:
         raw_node = p_dorks_cse(api_key, cx, keywords, dorks)
     else:
         raw_node = p_dorks_yagoogle(keywords, dorks)
@@ -190,33 +213,37 @@ def p_dorks(keywords, dorks, from_m="Initial"):
     output = {}
     for i in raw_node:
         try:
-            output = simple_analysis(i['dork'], "username", keywords,
-                                     [i['titles'],
-                                      i['links'],
-                                      i['descriptions']
-                                      ], output)
+            output = simple_analysis(
+                i["dork"],
+                "username",
+                keywords,
+                [i["titles"], i["links"], i["descriptions"]],
+                output,
+            )
         except Exception:
             traceback.print_exc()
             continue
 
     # Different usernames
     try:
-        users = [item['usernames'].strip() for item in output['usernames']]
+        users = [item["usernames"].strip() for item in output["usernames"]]
     except Exception:
         users = []
 
     # Different name
     try:
-        names = [item['name'].strip() for item in output['names']]
-        names_refined = collections.Counter(names)
+        names = [item["name"].strip() for item in output["names"]]
+        collections.Counter(names)
     except Exception:
         names = []
-        names_refined = []
 
     try:
         best_match = process.extractBests(
             collections.Counter(names).most_common(2)[0][0],
-            names, limit=len(names), score_cutoff=80)
+            names,
+            limit=len(names),
+            score_cutoff=80,
+        )
     except Exception:
         best_match = []
 
@@ -230,49 +257,56 @@ def p_dorks(keywords, dorks, from_m="Initial"):
     name_complete = name_complete.join(name_tokens)
 
     # Search Real Social
-    social = sorted(output['social'], key=lambda k: k['rrss'])
+    social = sorted(output["social"], key=lambda k: k["rrss"])
     social_count = {}
     # To Convert Keys
     social_raw = []
     link_social = "Social"
-    social_item = {"name-node": "Social", "title": "Social",
-                   "subtitle": "", "icon": search_icon_5(
-                       "child", font_list),
-                   "link": link_social}
+    social_item = {
+        "name-node": "Social",
+        "title": "Social",
+        "subtitle": "",
+        "icon": search_icon_5("child", font_list),
+        "link": link_social,
+    }
     social_raw.append(social_item)
     title_count = 0
-    nounce = ''
-    prev = ''
+    nounce = ""
+    prev = ""
     for s in social:
-        if (s['rrss'] + '-|-' + s['user'] + '-|-' + s['name'] not in social_count):
-            social_count[s['rrss'] + '-|-' + s['user'] + '-|-' + s['name']] = 1
+        if s["rrss"] + "-|-" + s["user"] + "-|-" + s["name"] not in social_count:
+            social_count[s["rrss"] + "-|-" + s["user"] + "-|-" + s["name"]] = 1
         else:
-            social_count[s['rrss'] + '-|-' + s['user'] + '-|-' + s['name']] = social_count[s['rrss'] + '-|-' + s['user'] + '-|-' + s['name']] + 1
+            social_count[s["rrss"] + "-|-" + s["user"] + "-|-" + s["name"]] = (
+                social_count[s["rrss"] + "-|-" + s["user"] + "-|-" + s["name"]] + 1
+            )
 
         # Convert keys
-        social_item = {"name-node": "Social" + s['rrss'] + str(title_count),
-                       "title": s['rrss'] + " (" + s['source'] + ")" + nounce,
-                       "subtitle": s['user'],
-                       "icon": search_icon_5(s['rrss'], font_list),
-                       "link": link_social}
+        social_item = {
+            "name-node": "Social" + s["rrss"] + str(title_count),
+            "title": s["rrss"] + " (" + s["source"] + ")" + nounce,
+            "subtitle": s["user"],
+            "icon": search_icon_5(s["rrss"], font_list),
+            "link": link_social,
+        }
         social_raw.append(social_item)
-        if (s['rrss'] + s['source'] == prev):
-            nounce = nounce + ' '
-        prev = s['rrss'] + s['source']
+        if s["rrss"] + s["source"] == prev:
+            nounce = nounce + " "
+        prev = s["rrss"] + s["source"]
         title_count = title_count + 1
 
     socialp = []
-    rrss = ''
+    rrss = ""
     social_refined = []
     a = -1
     for s_c in social_count:
-        if (s_c.split("-|-")[0] != rrss):
+        if s_c.split("-|-")[0] != rrss:
             a = a + 1
             social_refined.append(s_c)
             rrss = s_c.split("-|-")[0]
             count = social_count[s_c]
 
-        elif (count < social_count[s_c]):
+        elif count < social_count[s_c]:
             social_refined[a] = s_c
             rrss = s_c.split("-|-")[0]
             count = social_count[s_c]
@@ -284,42 +318,50 @@ def p_dorks(keywords, dorks, from_m="Initial"):
         #     count = social_count[s_c]
 
     username_refined = []
-    if (len(social_refined) > 0):
+    if len(social_refined) > 0:
         link_social = "Social"
-        social_item = {"name-node": "Social", "title": "Social",
-                       "subtitle": "", "icon": search_icon_5(
-                           "child", font_list),
-                       "link": link_social}
+        social_item = {
+            "name-node": "Social",
+            "title": "Social",
+            "subtitle": "",
+            "icon": search_icon_5("child", font_list),
+            "link": link_social,
+        }
         socialp.append(social_item)
 
         for social in social_refined:
             if (social.split("-|-")[1] not in username_refined) and (
-                    social.split("-|-")[1] != ''):
+                social.split("-|-")[1] != ""
+            ):
                 username_refined.append(social.split("-|-")[1])
-            social_item = {"name-node": social.split("-|-")[0],
-                           "title": social.split("-|-")[0],
-                           "subtitle": social.split("-|-")[1],
-                           "icon": search_icon_5(
-                               social.split("-|-")[0], font_list),
-                           "link": link_social}
+            social_item = {
+                "name-node": social.split("-|-")[0],
+                "title": social.split("-|-")[0],
+                "subtitle": social.split("-|-")[1],
+                "icon": search_icon_5(social.split("-|-")[0], font_list),
+                "link": link_social,
+            }
             socialp.append(social_item)
 
     # Deep Analysis
     for i in raw_node:
         try:
-            output = deep_analysis(name_tokens, username_refined, i['dork'],
-                                   [i['titles'],
-                                   i['links'],
-                                   i['descriptions']], output)
+            output = deep_analysis(
+                name_tokens,
+                username_refined,
+                i["dork"],
+                [i["titles"], i["links"], i["descriptions"]],
+                output,
+            )
         except Exception:
             continue
 
     # Total
     total = []
-    total.append({'module': 'dorks'})
-    total.append({'param': keywords})
+    total.append({"module": "dorks"})
+    total.append({"param": keywords})
     # Evaluates the module that executed the task and set validation
-    total.append({'validation': 'no'})
+    total.append({"validation": "no"})
 
     # Graphic Array
     graphic = []
@@ -335,9 +377,8 @@ def p_dorks(keywords, dorks, from_m="Initial"):
 
     # Prepare other tasks
     for soc in socialp:
-        if (soc["subtitle"] != ""):
-            tasks.append({"module": soc["title"],
-                         "param": soc["subtitle"]})
+        if soc["subtitle"] != "":
+            tasks.append({"module": soc["title"], "param": soc["subtitle"]})
 
     name_cloud = []
     for name in names:
@@ -349,25 +390,25 @@ def p_dorks(keywords, dorks, from_m="Initial"):
     profile.append({"name": name_complete})
 
     # TODO : Repair raw-node
-    total.append({'raw': raw_node})
-    graphic.append({'names': name_cloud})
-    graphic.append({'username': username_cloud})
-    graphic.append({'social': social_raw})
-    graphic.append({'rawresults': output["rawresult"]})
-    graphic.append({'searches': output["search"]})
-    graphic.append({'mentions': output["users"]})
-    graphic.append({'hashtags': output["hashtags"]})
-    graphic.append({'emails': output["emails"]})
-    total.append({'graphic': graphic})
-    total.append({'profile': profile})
-    total.append({'timeline': timeline})
-    total.append({'tasks': tasks})
+    total.append({"raw": raw_node})
+    graphic.append({"names": name_cloud})
+    graphic.append({"username": username_cloud})
+    graphic.append({"social": social_raw})
+    graphic.append({"rawresults": output["rawresult"]})
+    graphic.append({"searches": output["search"]})
+    graphic.append({"mentions": output["users"]})
+    graphic.append({"hashtags": output["hashtags"]})
+    graphic.append({"emails": output["emails"]})
+    total.append({"graphic": graphic})
+    total.append({"profile": profile})
+    total.append({"timeline": timeline})
+    total.append({"tasks": tasks})
 
     return total
 
 
 @celery.task
-def t_dorks(user, dorks=''):
+def t_dorks(user, dorks=""):
     # Principal Variable
     total = []
     # Take initial time
@@ -380,7 +421,7 @@ def t_dorks(user, dorks=''):
     except Exception as e:
         # Check internal error
         if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - "):]
+            reason = str(e)[len("iKy - ") :]
             status = "Warning"
         else:
             reason = str(e)
@@ -388,14 +429,14 @@ def t_dorks(user, dorks=''):
 
         traceback.print_exc()
         traceback_text = traceback.format_exc()
-        total.append({'module': 'dorks'})
-        total.append({'param': user})
-        total.append({'validation': 'not_used'})
+        total.append({"module": "dorks"})
+        total.append({"param": user})
+        total.append({"validation": "not_used"})
 
         raw_node = []
-        raw_node.append({"status": status,
-                         "reason": reason,
-                         "traceback": traceback_text})
+        raw_node.append(
+            {"status": status, "reason": reason, "traceback": traceback_text}
+        )
         total.append({"raw": raw_node})
 
     # Take final time
@@ -416,6 +457,6 @@ if __name__ == "__main__":
     #          'github': 'site:github.com'}
     # dorks = {'twitter': 'site:twitter.com'}
     # dorks = {'instagram': 'site:instagram.com'}
-    dorks = ''
+    dorks = ""
     result = t_dorks(username, dorks=dorks)
     output(result)

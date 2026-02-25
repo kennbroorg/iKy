@@ -1,25 +1,28 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-import sys
 import json
+import sys
+
 import requests
 from bs4 import BeautifulSoup
 
 try:
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
-    sys.path.append('../../')
+    sys.path.append("../../")
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 
 import urllib3
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
@@ -28,8 +31,9 @@ logger = get_task_logger(__name__)
 @celery.task
 def t_usersearch(username):
     data = {"username": username}
-    req = requests.post("https://usersearch.org/results_normal.php",
-                        data=data, verify=False)
+    req = requests.post(
+        "https://usersearch.org/results_normal.php", data=data, verify=False
+    )
     soup = BeautifulSoup(req.content, "lxml")
     atag = soup.findAll("a", {"class": "pretty-button results-button"})
     profiles = []
@@ -40,7 +44,7 @@ def t_usersearch(username):
 
 
 def output(data):
-    print(json.dumps(data, indent=4, separators=(',', ': ')))
+    print(json.dumps(data, indent=4, separators=(",", ": ")))
 
 
 if __name__ == "__main__":

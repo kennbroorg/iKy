@@ -1,27 +1,26 @@
 """Tests for backend/factories/iKy_functions.py - pure extraction functions."""
 
 from factories.iKy_functions import (
-    extract_hashtags,
-    extract_mentions,
-    extract_url,
-    extract_mails,
-    extract_url_linkedin,
-    extract_url_instagram,
-    extract_url_twitter,
-    extract_url_tiktok,
-    extract_url_github,
-    extract_url_githubio,
+    analize_rrss,
+    deep_analysis,
     extract_github,
-    extract_tiktok,
-    extract_twitter,
+    extract_hashtags,
     extract_instagram,
     extract_linkedin,
-    analize_rrss,
+    extract_mails,
+    extract_mentions,
+    extract_tiktok,
+    extract_twitter,
+    extract_url,
+    extract_url_github,
+    extract_url_githubio,
+    extract_url_instagram,
+    extract_url_linkedin,
+    extract_url_tiktok,
+    extract_url_twitter,
     name_match,
     simple_analysis,
-    deep_analysis,
 )
-
 
 # -- extract_hashtags --------------------------------------------------------
 
@@ -286,12 +285,10 @@ class TestNameMatch:
         assert name_match(["John", "Doe"], "John is here") is False
 
     def test_three_names_two_present(self):
-        assert name_match(["John", "Michael", "Doe"],
-                          "John Doe is here") is True
+        assert name_match(["John", "Michael", "Doe"], "John Doe is here") is True
 
     def test_three_names_one_present(self):
-        assert name_match(["John", "Michael", "Doe"],
-                          "John is here") is False
+        assert name_match(["John", "Michael", "Doe"], "John is here") is False
 
     def test_no_match(self):
         assert name_match(["Alice", "Bob"], "Charlie is here") is False
@@ -305,7 +302,7 @@ class TestSimpleAnalysis:
         data = [
             "John Doe (@johndoe) | Twitter",
             "https://twitter.com/johndoe",
-            "Some description"
+            "Some description",
         ]
         output = {}
         result = simple_analysis("google", "search", "johndoe", data, output)
@@ -316,7 +313,7 @@ class TestSimpleAnalysis:
         data = [
             "johndoe (John Doe) \u00b7 GitHub",
             "https://github.com/johndoe",
-            "Some repos"
+            "Some repos",
         ]
         output = {}
         result = simple_analysis("google", "search", "johndoe", data, output)
@@ -327,7 +324,7 @@ class TestSimpleAnalysis:
         data = [
             "John Doe (@johndoe) Instagram profile",
             "https://www.instagram.com/johndoe/",
-            "Photos"
+            "Photos",
         ]
         output = {}
         result = simple_analysis("google", "search", "johndoe", data, output)
@@ -335,24 +332,19 @@ class TestSimpleAnalysis:
         assert "johndoe" in usernames
 
     def test_no_social_match(self):
-        data = [
-            "Random Page",
-            "https://example.com/page",
-            "Nothing interesting"
-        ]
+        data = ["Random Page", "https://example.com/page", "Nothing interesting"]
         output = {}
         result = simple_analysis("google", "search", "testuser", data, output)
         assert result.get("usernames", []) == []
 
     def test_accumulates_output(self):
         """simple_analysis should add to existing output, not replace."""
-        existing = {"usernames": [{"source": "prev", "type": "x",
-                                   "usernames": "old", "rrss": "test"}]}
-        data = [
-            "Title",
-            "https://twitter.com/newuser",
-            "Desc"
-        ]
+        existing = {
+            "usernames": [
+                {"source": "prev", "type": "x", "usernames": "old", "rrss": "test"}
+            ]
+        }
+        data = ["Title", "https://twitter.com/newuser", "Desc"]
         result = simple_analysis("bing", "search", "newuser", data, existing)
         assert len(result["usernames"]) == 2
 
@@ -365,12 +357,10 @@ class TestDeepAnalysis:
         data = [
             "John Doe Profile",
             "https://example.com/johndoe/profile",
-            "A description"
+            "A description",
         ]
         output = {}
-        result = deep_analysis(
-            ["John", "Doe"], ["johndoe"], "google", data, output
-        )
+        result = deep_analysis(["John", "Doe"], ["johndoe"], "google", data, output)
         assert len(result["search"]) == 1
         assert result["search"][0]["link"] == "google"
 
@@ -378,19 +368,17 @@ class TestDeepAnalysis:
         data = [
             "John Doe - Developer",
             "https://example.com/some-page",
-            "A description"
+            "A description",
         ]
         output = {}
-        result = deep_analysis(
-            ["John", "Doe"], ["otheruser"], "bing", data, output
-        )
+        result = deep_analysis(["John", "Doe"], ["otheruser"], "bing", data, output)
         assert len(result["search"]) == 1
 
     def test_no_match_empty_search(self):
         data = [
             "Unrelated Page",
             "https://example.com/page",
-            "Nothing about the person"
+            "Nothing about the person",
         ]
         output = {}
         result = deep_analysis(
@@ -413,7 +401,5 @@ class TestDeepAnalysis:
             ("duckduckgo", "fas fa-kiwi-bird"),
         ]:
             output = {}
-            result = deep_analysis(
-                ["John"], ["johndoe"], searcher, data, output
-            )
+            result = deep_analysis(["John"], ["johndoe"], searcher, data, output)
             assert result["rawresult"][0]["icon"] == expected_icon
