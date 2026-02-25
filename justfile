@@ -68,3 +68,29 @@ rebuild:
 # Remove containers, volumes, and locally-built images
 clean:
     docker compose down -v --rmi local
+
+# --- frontend-next commands ---
+
+# Start frontend-next dev server via Docker
+dev-next:
+    docker run --rm -v "{{justfile_directory()}}/frontend-next:/app" -w /app -p 5173:5173 node:22-bookworm-slim sh -c "npm install && npm run dev -- --host 0.0.0.0"
+
+# Build frontend-next via Docker
+build-next:
+    docker run --rm -v "{{justfile_directory()}}/frontend-next:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npm run build"
+
+# Run frontend-next unit tests via Docker
+test-next:
+    docker run --rm -v "{{justfile_directory()}}/frontend-next:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npx vitest run"
+
+# Run frontend-next e2e tests via Docker (requires dev server running)
+test-next-e2e:
+    docker run --rm -v "{{justfile_directory()}}/frontend-next:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npx playwright install --with-deps chromium && npx playwright test"
+
+# Type-check frontend-next via Docker
+lint-next:
+    docker run --rm -v "{{justfile_directory()}}/frontend-next:/app" -w /app node:22-bookworm-slim sh -c "npm ci && npx tsc --noEmit"
+
+# Open a shell in the frontend-next container
+shell-next:
+    docker compose exec frontend-next sh
