@@ -1,11 +1,23 @@
 import type { ComponentType } from "react";
 
+import {
+  HoleheRenderer,
+  SherlockRenderer,
+  SocialscanRenderer,
+} from "./account-check-renderer";
 import { GithubRenderer } from "./github-renderer";
 import { InstagramRenderer } from "./instagram-renderer";
 import { KeybaseRenderer } from "./keybase-renderer";
+import {
+  DarkpassRenderer,
+  LeakGraphRenderer,
+  LeakLookupRenderer,
+  PsbdmpRenderer,
+} from "./leak-renderer";
 import { LinkedinRenderer } from "./linkedin-renderer";
 import { MastodonRenderer } from "./mastodon-renderer";
 import { RedditRenderer } from "./reddit-renderer";
+import { SearchResultRenderer } from "./search-renderer";
 import { SpotifyRenderer } from "./spotify-renderer";
 import { TiktokRenderer } from "./tiktok-renderer";
 import { TwitchRenderer } from "./twitch-renderer";
@@ -34,4 +46,13 @@ export const MODULE_RENDERERS: Record<
   keybase: KeybaseRenderer,
   venmo: VenmoRenderer,
   github: GithubRenderer,
+  holehe: HoleheRenderer,
+  sherlock: SherlockRenderer,
+  socialscan: SocialscanRenderer,
+  search: SearchResultRenderer,
+  dorks: SearchResultRenderer,
+  leaks: LeakGraphRenderer,
+  leaklookup: LeakLookupRenderer,
+  darkpass: DarkpassRenderer,
+  psbdmp: PsbdmpRenderer,
 };
