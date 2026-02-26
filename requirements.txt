@@ -29,8 +29,8 @@ emailrep==0.0.4
 stop_words
 spotipy==2.25.2
 twitch-python
+browser-cookie3==0.20.1
 parse==1.21.1
-browser-cookie3
 google-api-python-client==2.33.0
 python-Levenshtein
 requests_html
