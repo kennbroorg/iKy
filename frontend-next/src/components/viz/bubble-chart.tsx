@@ -58,7 +58,8 @@ export function computeBubbleLayout(
   packLayout(root);
 
   // Return only leaf nodes (the actual data items)
-  return (root.leaves() as { data: BubbleDatum; x: number; y: number; r: number }[]).map(
+  // After pack(), leaf nodes have x/y/r — cast through unknown for TS
+  return (root.leaves() as unknown as { data: BubbleDatum; x: number; y: number; r: number }[]).map(
     (leaf) => ({
       name: leaf.data.name,
       value: leaf.data.value,

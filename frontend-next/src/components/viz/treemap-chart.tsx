@@ -20,6 +20,7 @@ interface TreemapDatum {
 interface NormalizedNode {
   name: string;
   size: number;
+  [key: string]: string | number | undefined;
 }
 
 interface TreemapChartProps {
