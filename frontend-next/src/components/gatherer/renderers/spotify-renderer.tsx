@@ -12,37 +12,30 @@ import { VizCard } from "./viz-card";
  * Renderer for the Spotify module.
  *
  * Reads 5 visualizations from `result.graphic[0..4]`:
- *  0 spotify    — Force graph (gather format)
- *  1 playlists  — Horizontal bar chart
- *  2 lang       — BubbleChart (music languages)
- *  3 autors     — Word cloud (artists)
- *  4 words      — Word cloud (track words)
+ *  0 social    — Force graph (gather format)
+ *  1 playlist  — Horizontal bar chart
+ *  2 autors    — Word cloud (artists)
+ *  3 words     — Word cloud (track words)
+ *  4 lang      — BubbleChart (music languages)
  */
 export function SpotifyRenderer({ result }: RendererProps) {
   const { graphic } = result;
 
   // 0 — Spotify force graph
-  const spotifyData = gfx<GatherItem[]>(graphic, 0, "spotify");
+  const spotifyData = gfx<GatherItem[]>(graphic, 0, "social");
   const spotifyGraph = spotifyData ? gatherToGraph(spotifyData) : null;
 
   // 1 — Playlists horizontal bar chart
   const playlistsData = gfx<{ name: string; value: number }[]>(
     graphic,
     1,
-    "playlists",
+    "playlist",
   );
 
-  // 2 — Languages bubble chart
-  const langData = gfx<{ name: string; value: number }[]>(
-    graphic,
-    2,
-    "lang",
-  );
-
-  // 3 — Artists word cloud
+  // 2 — Artists word cloud
   const autorsData = gfx<{ label: string; value: number }[]>(
     graphic,
-    3,
+    2,
     "autors",
   );
   const autorsWords = autorsData?.map((h) => ({
@@ -50,16 +43,23 @@ export function SpotifyRenderer({ result }: RendererProps) {
     value: h.value,
   }));
 
-  // 4 — Track words word cloud
+  // 3 — Track words word cloud
   const wordsData = gfx<{ label: string; value: number }[]>(
     graphic,
-    4,
+    3,
     "words",
   );
   const trackWords = wordsData?.map((h) => ({
     text: h.label,
     value: h.value,
   }));
+
+  // 4 — Languages bubble chart
+  const langData = gfx<{ name: string; value: number }[]>(
+    graphic,
+    4,
+    "lang",
+  );
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

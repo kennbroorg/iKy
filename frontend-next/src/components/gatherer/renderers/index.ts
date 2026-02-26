@@ -38,7 +38,7 @@ import { VenmoRenderer } from "./venmo-renderer";
 import type { RendererProps } from "./types";
 
 export type { RendererProps } from "./types";
-export { gfx } from "./types";
+export { gfx, gfxByKey } from "./types";
 export { VizCard } from "./viz-card";
 export { gatherToGraph } from "./graph-helpers";
 export type { GraphNode, GraphLink, GatherItem } from "./graph-helpers";

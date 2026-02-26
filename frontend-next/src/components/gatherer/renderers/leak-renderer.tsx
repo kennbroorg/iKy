@@ -10,13 +10,13 @@ import { VizCard } from "./viz-card";
 /**
  * Renderer for the Leak/HIBP (leaks) module.
  *
- * Reads 1 visualization from `result.graphic[0]`:
- *  0 leak — gather format — Force graph (breached databases)
+ * Backend `graphic.append()`:
+ *  0 {"leaks": gather}  — gather format — Force graph (breached databases)
  */
 export function LeakGraphRenderer({ result }: RendererProps) {
   const { graphic } = result;
 
-  const leakData = gfx<GatherItem[]>(graphic, 0, "leak");
+  const leakData = gfx<GatherItem[]>(graphic, 0, "leaks");
   const leakGraph = leakData ? gatherToGraph(leakData) : null;
 
   return (
@@ -37,38 +37,39 @@ export function LeakGraphRenderer({ result }: RendererProps) {
 /**
  * Renderer for the LeakLookup module.
  *
- * Reads 1 visualization from `result.graphic[0]`:
- *  0 leaklookup — Array of {source, data} entries where data holds leaked fields.
+ * Backend `graphic.append()`:
+ *  0 {"email": leak_email}  — Array of {name: string, value: {name,value}[]}
+ *    Each entry is a leak source with nested field/value pairs.
  *
  * Flattens the nested structure into a DataTable grouped by source.
  */
 export function LeakLookupRenderer({ result }: RendererProps) {
   const { graphic } = result;
 
-  const rawData = gfx<{ source: string; data: Record<string, string> }[]>(
+  const rawData = gfx<{ name: string; value: { name: string; value: string }[] }[]>(
     graphic,
     0,
-    "leaklookup",
+    "email",
   );
 
-  // Flatten nested source/data into flat rows for the DataTable
+  // Flatten nested name/value into flat rows for the DataTable
   const tableRows: Record<string, unknown>[] = [];
   if (rawData) {
     for (const entry of rawData) {
-      if (entry.data && typeof entry.data === "object") {
-        for (const [field, value] of Object.entries(entry.data)) {
+      if (Array.isArray(entry.value)) {
+        for (const detail of entry.value) {
           tableRows.push({
-            source: entry.source,
-            field,
-            value: String(value),
+            source: entry.name,
+            field: detail.name,
+            value: String(detail.value ?? ""),
           });
         }
       } else {
-        // If data is not a nested object, show source with raw data
+        // Fallback: show source with raw data
         tableRows.push({
-          source: entry.source,
+          source: entry.name,
           field: "data",
-          value: String(entry.data ?? ""),
+          value: String(entry.value ?? ""),
         });
       }
     }
@@ -88,8 +89,8 @@ export function LeakLookupRenderer({ result }: RendererProps) {
 /**
  * Renderer for the Darkpass module.
  *
- * Reads 1 visualization from `result.graphic[0]`:
- *  0 darkpass — Array of {password?, status?} entries — leaked passwords
+ * Backend `graphic.append()`:
+ *  0 {"darkpass": gather}  — Array of {username, password} entries
  */
 export function DarkpassRenderer({ result }: RendererProps) {
   const { graphic } = result;
@@ -114,26 +115,26 @@ export function DarkpassRenderer({ result }: RendererProps) {
 /**
  * Renderer for the PsbDmp module.
  *
- * Reads 2 visualizations from `result.graphic[0..1]`:
- *  0 psbdmp — Word cloud (paste content word frequencies)
- *  1 list   — DataTable (paste entries with time, id, tags)
+ * Backend `graphic.append()`:
+ *  0 {"dlist": dump_list}  — Array of {id, tags, time} — paste entries
+ *  1 {"dword": dump_word}  — Array of {label, value} — word frequencies
  */
 export function PsbdmpRenderer({ result }: RendererProps) {
   const { graphic } = result;
 
-  // 0 — Paste content word cloud
+  // 0 — Paste entries table
+  const listData = gfx<Record<string, unknown>[]>(graphic, 0, "dlist");
+
+  // 1 — Paste content word cloud
   const cloudData = gfx<{ label: string; value: number }[]>(
     graphic,
-    0,
-    "psbdmp",
+    1,
+    "dword",
   );
   const cloudWords = cloudData?.map((d) => ({
     text: d.label,
     value: d.value,
   }));
-
-  // 1 — Paste entries table
-  const listData = gfx<Record<string, unknown>[]>(graphic, 1, "list");
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

@@ -1,4 +1,3 @@
-import { DataTable } from "@/components/viz/data-table";
 import { ForceGraph } from "@/components/viz/force-graph";
 import { LocationMap } from "@/components/viz/location-map";
 import { ModuleChart } from "@/components/viz/module-chart";
@@ -12,63 +11,62 @@ import { VizCard } from "./viz-card";
 /**
  * Renderer for the Instagram module.
  *
- * Reads 11 visualizations from `result.graphic[0..10]`:
- *  0 instagram  — Force graph (gather format)
- *  1 popularig  — Line chart (likes/comments per post)
- *  2 mediatype  — Donut chart
- *  3 hashtag    — Word cloud
- *  4 mention    — Word cloud
- *  5 tagged     — Word cloud
- *  6 hour       — Bar chart
- *  7 week       — Bar chart
- *  8 photos     — Force graph (images as picture nodes)
- *  9 list       — DataTable
- * 10 location   — LocationMap
+ * Reads 10 visualizations from `result.graphic[0..9]`:
+ *  0 instagram — Force graph (gather format)
+ *  1 postslist — Line chart (likes/comments per post, multi-series)
+ *  2 postsloc  — LocationMap (post locations)
+ *  3 hashtags  — Word cloud
+ *  4 mentions  — Word cloud
+ *  5 tagged    — Word cloud
+ *  6 hour      — Bar chart
+ *  7 week      — Bar chart
+ *  8 mediatype — Donut chart
+ *  9 photos    — Force graph (images as picture nodes)
  */
 export function InstagramRenderer({ result }: RendererProps) {
   const { graphic } = result;
 
-  // 0 — Instagram force graph
+  // 0 — Instagram force graph (key: "instagram")
   const igData = gfx<GatherItem[]>(graphic, 0, "instagram");
   const igGraph = igData ? gatherToGraph(igData) : null;
 
-  // 1 — Popularity line chart (multi-series)
-  const popularigData = gfx<Record<string, unknown>[]>(
+  // 1 — Popularity line chart (key: "postslist", multi-series)
+  const postslistData = gfx<Record<string, unknown>[]>(
     graphic,
     1,
-    "popularig",
+    "postslist",
   );
 
-  // 2 — Media type donut
-  const mediatypeData = gfx<Record<string, unknown>[]>(
+  // 2 — Post locations (key: "postsloc")
+  const postslocData = gfx<{ lat: number; lng: number; label: string }[]>(
     graphic,
     2,
-    "mediatype",
+    "postsloc",
   );
 
-  // 3 — Hashtag word cloud
+  // 3 — Hashtag word cloud (key: "hashtags")
   const hashtagData = gfx<{ label: string; value: number }[]>(
     graphic,
     3,
-    "hashtag",
+    "hashtags",
   );
   const hashtagWords = hashtagData?.map((h) => ({
     text: h.label,
     value: h.value,
   }));
 
-  // 4 — Mention word cloud
+  // 4 — Mention word cloud (key: "mentions")
   const mentionData = gfx<{ label: string; value: number }[]>(
     graphic,
     4,
-    "mention",
+    "mentions",
   );
   const mentionWords = mentionData?.map((m) => ({
     text: m.label,
     value: m.value,
   }));
 
-  // 5 — Tagged word cloud
+  // 5 — Tagged word cloud (key: "tagged")
   const taggedData = gfx<{ label: string; value: number }[]>(
     graphic,
     5,
@@ -79,25 +77,22 @@ export function InstagramRenderer({ result }: RendererProps) {
     value: t.value,
   }));
 
-  // 6 — Hour bar chart
+  // 6 — Hour bar chart (key: "hour")
   const hourData = gfx<Record<string, unknown>[]>(graphic, 6, "hour");
 
-  // 7 — Week bar chart
+  // 7 — Week bar chart (key: "week")
   const weekData = gfx<Record<string, unknown>[]>(graphic, 7, "week");
 
-  // 8 — Photos force graph
-  const photosData = gfx<GatherItem[]>(graphic, 8, "photos");
-  const photosGraph = photosData ? gatherToGraph(photosData) : null;
-
-  // 9 — Post list data table
-  const listData = gfx<Record<string, unknown>[]>(graphic, 9, "list");
-
-  // 10 — Location map
-  const locationData = gfx<{ lat: number; lng: number; label: string }[]>(
+  // 8 — Media type donut (key: "mediatype")
+  const mediatypeData = gfx<Record<string, unknown>[]>(
     graphic,
-    10,
-    "location",
+    8,
+    "mediatype",
   );
+
+  // 9 — Photos force graph (key: "photos")
+  const photosData = gfx<GatherItem[]>(graphic, 9, "photos");
+  const photosGraph = photosData ? gatherToGraph(photosData) : null;
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -113,9 +108,9 @@ export function InstagramRenderer({ result }: RendererProps) {
       )}
 
       {/* Popularity line chart — spans 2 cols */}
-      {popularigData && popularigData.length > 0 && (
+      {postslistData && postslistData.length > 0 && (
         <VizCard title="Post Popularity" className="md:col-span-2">
-          <ModuleChart data={popularigData} type="line" height={300} />
+          <ModuleChart data={postslistData} type="line" height={300} />
         </VizCard>
       )}
 
@@ -177,17 +172,10 @@ export function InstagramRenderer({ result }: RendererProps) {
         </VizCard>
       )}
 
-      {/* Post list table — spans full width */}
-      {listData && listData.length > 0 && (
-        <VizCard title="Posts" className="lg:col-span-3 md:col-span-2">
-          <DataTable data={listData} searchable pageSize={10} />
-        </VizCard>
-      )}
-
       {/* Location map — spans full width */}
-      {locationData && locationData.length > 0 && (
+      {postslocData && postslocData.length > 0 && (
         <VizCard title="Locations" className="lg:col-span-3 md:col-span-2">
-          <LocationMap locations={locationData} height="400px" />
+          <LocationMap locations={postslocData} height="400px" />
         </VizCard>
       )}
     </div>

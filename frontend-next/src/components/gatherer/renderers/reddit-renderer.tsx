@@ -11,38 +11,40 @@ import { VizCard } from "./viz-card";
  * Renderer for the Reddit module.
  *
  * Reads 4 visualizations from `result.graphic[0..3]`:
- *  0 reddit  — Force graph (gather format)
- *  1 bubble  — BubbleChart (subreddit topics)
- *  2 hour    — Bar chart
- *  3 week    — Bar chart
+ *  0 social — Force graph (gather format)
+ *  1 hour   — Bar chart (activity by hour)
+ *  2 week   — Bar chart (activity by day of week)
+ *  3 topics — BubbleChart (subreddit topics, object with children[])
  */
 export function RedditRenderer({ result }: RendererProps) {
   const { graphic } = result;
 
-  // 0 — Reddit force graph
-  const redditData = gfx<GatherItem[]>(graphic, 0, "reddit");
+  // 0 — Reddit force graph (key: "social")
+  const redditData = gfx<GatherItem[]>(graphic, 0, "social");
   const redditGraph = redditData ? gatherToGraph(redditData) : null;
 
-  // 1 — Subreddit topics bubble chart
-  const bubbleData = gfx<{ name: string; value: number }[]>(
-    graphic,
-    1,
-    "bubble",
-  );
-
-  // 2 — Hour bar chart
+  // 1 — Hour bar chart (key: "hour")
   const hourData = gfx<{ name: string; value: number }[]>(
     graphic,
-    2,
+    1,
     "hour",
   );
 
-  // 3 — Week bar chart
+  // 2 — Week bar chart (key: "week")
   const weekData = gfx<{ name: string; value: number }[]>(
     graphic,
-    3,
+    2,
     "week",
   );
+
+  // 3 — Subreddit topics bubble chart (key: "topics")
+  // Backend produces { name: "", value: 100, children: [{name, count, value}] }
+  const topicsData = gfx<{
+    name: string;
+    value: number;
+    children: { name: string; count: number; value: number }[];
+  }>(graphic, 3, "topics");
+  const bubbleData = topicsData?.children;
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

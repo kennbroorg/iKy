@@ -10,25 +10,25 @@ import { VizCard } from "./viz-card";
  * Renderer for the Mastodon module.
  *
  * Reads 3 visualizations from `result.graphic[0..2]`:
- *  0 mastodon — Force graph (profile info, gather format)
- *  1 list     — DataTable (found accounts)
- *  2 social   — Force graph (social connections, gather format)
+ *  0 user   — Force graph (profile info, gather format)
+ *  1 social — Force graph (social connections, gather format)
+ *  2 list   — DataTable (found accounts)
  */
 export function MastodonRenderer({ result }: RendererProps) {
   const { graphic } = result;
 
   // 0 — Mastodon profile force graph
-  const mastodonData = gfx<GatherItem[]>(graphic, 0, "mastodon");
+  const mastodonData = gfx<GatherItem[]>(graphic, 0, "user");
   const mastodonGraph = mastodonData ? gatherToGraph(mastodonData) : null;
 
-  // 1 — Found accounts data table
+  // 1 — Social connections force graph
+  const socialData = gfx<GatherItem[]>(graphic, 1, "social");
+  const socialGraph = socialData ? gatherToGraph(socialData) : null;
+
+  // 2 — Found accounts data table
   const listData = gfx<
     { title: string; avatar: string; toots: number; followers: number; followings: number; bio: string }[]
-  >(graphic, 1, "list");
-
-  // 2 — Social connections force graph
-  const socialData = gfx<GatherItem[]>(graphic, 2, "social");
-  const socialGraph = socialData ? gatherToGraph(socialData) : null;
+  >(graphic, 2, "list");
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

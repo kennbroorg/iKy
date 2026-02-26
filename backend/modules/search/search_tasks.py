@@ -8,7 +8,7 @@ import sys
 import traceback
 from pathlib import Path
 from shutil import rmtree
-from time import time
+from time import perf_counter
 
 from search_engine_parser.core.engines.baidu import Search as BaiduSearch
 
@@ -1180,7 +1180,7 @@ def p_search(username, from_m="Initial"):
 @celery.task
 def t_search(username, from_m="Initial"):
     total = []
-    tic = time.perf_counter()
+    tic = perf_counter()
     try:
         total = p_search(username)
     except Exception as e:
@@ -1210,7 +1210,7 @@ def t_search(username, from_m="Initial"):
         total.append({"raw": raw_node})
 
     # Take final time
-    toc = time.perf_counter()
+    toc = perf_counter()
     # Show process time
     logger.info(f"Search - Response in {toc - tic:0.4f} seconds")
 

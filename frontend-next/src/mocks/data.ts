@@ -565,7 +565,7 @@ export const MOCK_EMAILREP_RESULT = {
     {
       graphic: [
         {
-          emailrep: [
+          details: [
             {
               "name-node": "EmailRep",
               title: "EmailRep",

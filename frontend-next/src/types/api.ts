@@ -56,11 +56,13 @@ export interface ModuleResultRaw {
   module: string;
   param: string;
   validation: "hard" | "soft" | "no" | "not_used";
-  raw: Record<string, unknown> | RawError[];
+  raw: Record<string, unknown> | RawError[] | string[];
   graphic: GraphicItem[];
   profile: ProfileItem[];
   timeline: TimelineEvent[];
   tasks: TaskReference[];
+  /** GhostProject stores leak data at the top level instead of in graphic[] */
+  leaks?: { email: string; password: string }[];
 }
 
 /** Response from GET /result/<task_id> */

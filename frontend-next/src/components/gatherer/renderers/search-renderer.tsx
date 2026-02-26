@@ -4,35 +4,47 @@ import { WordCloud } from "@/components/viz/word-cloud";
 
 import { gatherToGraph, type GatherItem } from "./graph-helpers";
 import type { RendererProps } from "./types";
-import { gfx } from "./types";
+import { gfxByKey } from "./types";
 import { VizCard } from "./viz-card";
 
 /**
  * Shared renderer for the Search and Dorks modules.
- * Both share the exact same layout with 9 visualizations.
  *
- * Reads from `result.graphic[0..7]`:
- *  0 names      — Word cloud (name frequencies)
- *  1 username   — Word cloud (username frequencies)
- *  2 social     — Force graph (gather format)
- *  3 rawresults — DataTable (all raw results)
- *  4 searches   — DataTable (analyzed/filtered results)
- *  5 mentions   — Word cloud (mention frequencies)
- *  6 hashtags   — Word cloud (hashtag frequencies)
- *  7 emails     — Word cloud (email frequencies)
+ * Search backend `graphic.append()` (9 items):
+ *  0 {"names":      name_cloud}
+ *  1 {"username":   username_cloud}
+ *  2 {"social":     social_raw}
+ *  3 {"rawresults": output["rawresult"]}
+ *  4 {"results":    analized_results}      <-- search only, dorks omits this
+ *  5 {"searches":   output["search"]}
+ *  6 {"mentions":   output["users"]}
+ *  7 {"hashtags":   output["hashtags"]}
+ *  8 {"emails":     output["emails"]}
+ *
+ * Dorks backend `graphic.append()` (8 items — no "results"):
+ *  0 {"names":      name_cloud}
+ *  1 {"username":   username_cloud}
+ *  2 {"social":     social_raw}
+ *  3 {"rawresults": output["rawresult"]}
+ *  4 {"searches":   output["search"]}
+ *  5 {"mentions":   output["users"]}
+ *  6 {"hashtags":   output["hashtags"]}
+ *  7 {"emails":     output["emails"]}
+ *
+ * Uses key-based lookup to handle both modules with the same renderer,
+ * since "results" at index 4 in search shifts all subsequent indices.
  *
  * Layout:
- *  Row 1: Names cloud (col-4), Social graph (col-4), Usernames cloud (col-4)
- *  Row 2: Analyzed list (col-6), Raw list (col-6)
- *  Row 3: Mentions cloud (col-4), Hashtags cloud (col-4), Emails cloud (col-4)
+ *  Row 1: Names cloud, Social graph, Usernames cloud
+ *  Row 2: Analyzed results, Raw results
+ *  Row 3: Mentions cloud, Hashtags cloud, Emails cloud
  */
 export function SearchResultRenderer({ result }: RendererProps) {
   const { graphic } = result;
 
-  // 0 — Names word cloud
-  const namesData = gfx<{ label: string; value: number }[]>(
+  // names — Word cloud (name frequencies)
+  const namesData = gfxByKey<{ label: string; value: number }[]>(
     graphic,
-    0,
     "names",
   );
   const namesWords = namesData?.map((d) => ({
@@ -40,10 +52,9 @@ export function SearchResultRenderer({ result }: RendererProps) {
     value: d.value,
   }));
 
-  // 1 — Usernames word cloud
-  const usernameData = gfx<{ label: string; value: number }[]>(
+  // username — Word cloud (username frequencies)
+  const usernameData = gfxByKey<{ label: string; value: number }[]>(
     graphic,
-    1,
     "username",
   );
   const usernameWords = usernameData?.map((d) => ({
@@ -51,20 +62,22 @@ export function SearchResultRenderer({ result }: RendererProps) {
     value: d.value,
   }));
 
-  // 2 — Social force graph
-  const socialData = gfx<GatherItem[]>(graphic, 2, "social");
+  // social — Force graph (gather format)
+  const socialData = gfxByKey<GatherItem[]>(graphic, "social");
   const socialGraph = socialData ? gatherToGraph(socialData) : null;
 
-  // 3 — Raw results table
-  const rawData = gfx<Record<string, unknown>[]>(graphic, 3, "rawresults");
+  // rawresults — DataTable (all raw results)
+  const rawData = gfxByKey<Record<string, unknown>[]>(graphic, "rawresults");
 
-  // 4 — Analyzed/filtered results table
-  const searchesData = gfx<Record<string, unknown>[]>(graphic, 4, "searches");
-
-  // 5 — Mentions word cloud
-  const mentionsData = gfx<{ label: string; value: number }[]>(
+  // searches — DataTable (analyzed/filtered results)
+  const searchesData = gfxByKey<Record<string, unknown>[]>(
     graphic,
-    5,
+    "searches",
+  );
+
+  // mentions — Word cloud (mention frequencies)
+  const mentionsData = gfxByKey<{ label: string; value: number }[]>(
+    graphic,
     "mentions",
   );
   const mentionsWords = mentionsData?.map((d) => ({
@@ -72,10 +85,9 @@ export function SearchResultRenderer({ result }: RendererProps) {
     value: d.value,
   }));
 
-  // 6 — Hashtags word cloud
-  const hashtagsData = gfx<{ label: string; value: number }[]>(
+  // hashtags — Word cloud (hashtag frequencies)
+  const hashtagsData = gfxByKey<{ label: string; value: number }[]>(
     graphic,
-    6,
     "hashtags",
   );
   const hashtagsWords = hashtagsData?.map((d) => ({
@@ -83,10 +95,9 @@ export function SearchResultRenderer({ result }: RendererProps) {
     value: d.value,
   }));
 
-  // 7 — Emails word cloud
-  const emailsData = gfx<{ label: string; value: number }[]>(
+  // emails — Word cloud (email frequencies)
+  const emailsData = gfxByKey<{ label: string; value: number }[]>(
     graphic,
-    7,
     "emails",
   );
   const emailsWords = emailsData?.map((d) => ({

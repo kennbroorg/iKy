@@ -2,40 +2,43 @@ import { ForceGraph } from "@/components/viz/force-graph";
 
 import { gatherToGraph, type GatherItem } from "./graph-helpers";
 import type { RendererProps } from "./types";
-import { gfx } from "./types";
+import { gfxByKey } from "./types";
 import { VizCard } from "./viz-card";
 
 /**
  * Renderer for the Keybase module.
  *
- * Reads 3 visualizations from `result.graphic[0..2]`:
- *  0 keybase — Force graph (profile info, gather format)
- *  1 devices — Force graph (devices, gather format)
- *  2 social  — Force graph (social proofs, gather format)
+ * Backend `graphic.append()` calls (conditional — indices unstable):
+ *  {"keysocial": social}   — only if len(social) > 1
+ *  {"devices":   devices}  — only if len(devices) > 1
+ *  {"keygraph":  graph}    — only if len(graph) > 1
+ *
+ * All three are gather-format arrays rendered as force graphs.
+ * Uses key-based lookup since conditional appends make indices unstable.
  */
 export function KeybaseRenderer({ result }: RendererProps) {
   const { graphic } = result;
 
-  // 0 — Keybase profile force graph
-  const keybaseData = gfx<GatherItem[]>(graphic, 0, "keybase");
-  const keybaseGraph = keybaseData ? gatherToGraph(keybaseData) : null;
+  // keysocial — Social proofs force graph (conditional)
+  const socialData = gfxByKey<GatherItem[]>(graphic, "keysocial");
+  const socialGraph = socialData ? gatherToGraph(socialData) : null;
 
-  // 1 — Devices force graph
-  const devicesData = gfx<GatherItem[]>(graphic, 1, "devices");
+  // devices — Devices force graph (conditional)
+  const devicesData = gfxByKey<GatherItem[]>(graphic, "devices");
   const devicesGraph = devicesData ? gatherToGraph(devicesData) : null;
 
-  // 2 — Social proofs force graph
-  const socialData = gfx<GatherItem[]>(graphic, 2, "social");
-  const socialGraph = socialData ? gatherToGraph(socialData) : null;
+  // keygraph — Profile info force graph (conditional)
+  const keyGraphData = gfxByKey<GatherItem[]>(graphic, "keygraph");
+  const keyGraph = keyGraphData ? gatherToGraph(keyGraphData) : null;
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {/* Keybase profile graph — spans 2 cols */}
-      {keybaseGraph && keybaseGraph.nodes.length >= 2 && (
+      {/* Profile graph — spans 2 cols */}
+      {keyGraph && keyGraph.nodes.length >= 2 && (
         <VizCard title="Profile" className="md:col-span-2">
           <ForceGraph
-            nodes={keybaseGraph.nodes}
-            links={keybaseGraph.links}
+            nodes={keyGraph.nodes}
+            links={keyGraph.links}
             height={350}
           />
         </VizCard>

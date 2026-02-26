@@ -16,5 +16,7 @@ export function parseModuleResult(
     profile: (findValue("profile") as ModuleResultRaw["profile"]) ?? [],
     timeline: (findValue("timeline") as ModuleResultRaw["timeline"]) ?? [],
     tasks: (findValue("tasks") as ModuleResultRaw["tasks"]) ?? [],
+    // GhostProject stores leaks at top level instead of in graphic[]
+    leaks: findValue("leaks") as ModuleResultRaw["leaks"],
   };
 }

@@ -11,30 +11,32 @@ import { VizCard } from "./viz-card";
  * Renderer for the LinkedIn module.
  *
  * Reads 4 visualizations from `result.graphic[0..3]`:
- *  0 linkedin  — Force graph (gather format)
- *  1 skill     — BubbleChart (skills by endorsement)
- *  2 pos       — DataTable (positions)
- *  3 certs     — DataTable (certifications)
+ *  0 social              — Force graph (gather format)
+ *  1 skills              — BubbleChart (skills by endorsement, wrapped in {name, value, children})
+ *  2 certificationView   — DataTable (certifications + education)
+ *  3 positionGroupView   — DataTable (positions)
  */
 export function LinkedinRenderer({ result }: RendererProps) {
   const { graphic } = result;
 
   // 0 — LinkedIn force graph
-  const linkedinData = gfx<GatherItem[]>(graphic, 0, "linkedin");
+  const linkedinData = gfx<GatherItem[]>(graphic, 0, "social");
   const linkedinGraph = linkedinData ? gatherToGraph(linkedinData) : null;
 
   // 1 — Skills bubble chart
-  const skillData = gfx<{ name: string; value: number }[]>(
+  // Backend wraps skills in {name, value, children: [{name, count, value}]}
+  const skillWrapper = gfx<{ name: string; value: number; children: { name: string; count: number; value: number }[] }>(
     graphic,
     1,
-    "skill",
+    "skills",
   );
+  const skillData = skillWrapper?.children;
 
-  // 2 — Positions data table
-  const posData = gfx<Record<string, unknown>[]>(graphic, 2, "pos");
+  // 2 — Certifications data table
+  const certsData = gfx<Record<string, unknown>[]>(graphic, 2, "certificationView");
 
-  // 3 — Certifications data table
-  const certsData = gfx<Record<string, unknown>[]>(graphic, 3, "certs");
+  // 3 — Positions data table
+  const posData = gfx<Record<string, unknown>[]>(graphic, 3, "positionGroupView");
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

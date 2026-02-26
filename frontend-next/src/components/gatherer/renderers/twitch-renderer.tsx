@@ -10,49 +10,52 @@ import { VizCard } from "./viz-card";
 /**
  * Renderer for the Twitch module.
  *
- * Reads 6 visualizations from `result.graphic[0..5]`:
- *  0 twitch    — Force graph (gather format)
- *  1 duration  — Horizontal bar chart (video durations)
- *  2 hour      — Bar chart
- *  3 week      — Bar chart
- *  4 list      — DataTable (videos)
- *  5 time      — Bar chart (streams over time)
+ * Reads 7 visualizations from `result.graphic[0..6]`:
+ *  0 social    — Force graph (gather format)
+ *  1 table     — DataTable (videos)
+ *  2 duration  — Horizontal bar chart (video durations)
+ *  3 thumbnail — (photos, not rendered here)
+ *  4 week      — Bar chart
+ *  5 hour      — Bar chart
+ *  6 time      — Bar chart (streams over time)
  */
 export function TwitchRenderer({ result }: RendererProps) {
   const { graphic } = result;
 
   // 0 — Twitch force graph
-  const twitchData = gfx<GatherItem[]>(graphic, 0, "twitch");
+  const twitchData = gfx<GatherItem[]>(graphic, 0, "social");
   const twitchGraph = twitchData ? gatherToGraph(twitchData) : null;
 
-  // 1 — Duration horizontal bar chart
+  // 1 — Video list data table
+  const listData = gfx<Record<string, unknown>[]>(graphic, 1, "table");
+
+  // 2 — Duration horizontal bar chart
   const durationData = gfx<{ name: string; value: number }[]>(
     graphic,
-    1,
+    2,
     "duration",
   );
 
-  // 2 — Hour bar chart
-  const hourData = gfx<{ name: string; value: number }[]>(
-    graphic,
-    2,
-    "hour",
-  );
+  // 3 — thumbnail (not rendered)
 
-  // 3 — Week bar chart
+  // 4 — Week bar chart
   const weekData = gfx<{ name: string; value: number }[]>(
     graphic,
-    3,
+    4,
     "week",
   );
 
-  // 4 — Video list data table
-  const listData = gfx<Record<string, unknown>[]>(graphic, 4, "list");
-
-  // 5 — Time bar chart (streams over time)
-  const timeData = gfx<{ name: string; value: number }[]>(
+  // 5 — Hour bar chart
+  const hourData = gfx<{ name: string; value: number }[]>(
     graphic,
     5,
+    "hour",
+  );
+
+  // 6 — Time bar chart (streams over time)
+  const timeData = gfx<{ name: string; value: number }[]>(
+    graphic,
+    6,
     "time",
   );
 
