@@ -10,8 +10,8 @@ services:
             context: .
             dockerfile: ./install/docker/frontend-next/Dockerfile
             args:
-                VITE_API_URL: http://backend:5000
-                VITE_WS_URL: ws://backend:5000
+                VITE_API_URL: /api
+                VITE_WS_URL: ""
         ports:
             - "5173:5173"
         depends_on:
