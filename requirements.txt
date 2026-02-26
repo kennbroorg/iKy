@@ -25,8 +25,8 @@ langdetect==1.0.9
 # googletrans==3.0.0
 TranslatorX==1.2
 vaderSentiment==3.3.2
+stop_words==2025.11.4
 emailrep==0.0.5
-stop_words
 spotipy==2.25.2
 twitch-python
 google-api-python-client==2.190.0
