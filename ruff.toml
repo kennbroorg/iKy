@@ -1,0 +1,10 @@
+target-version = "py39"
+line-length = 120
+
+exclude = [
+    "__pycache__",
+    ".venv",
+]
+
+[lint]
+select = ["E", "F", "W"]
