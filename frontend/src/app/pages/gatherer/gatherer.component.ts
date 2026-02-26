@@ -2325,13 +2325,13 @@ export class GathererComponent implements OnInit {
                 let list = this.gathered['instagram']['result'][4]['graphic'][2]['postsloc'];
 
                 for (const i in list) {
-                    elem = [list[i]['Name'], list[i]['Caption'], list[i]['Accessability'], list[i]['Latitude'], list[i]['Longitude'], list[i]['Time']];
+                    elem = [list[i]['Name'], list[i]['Caption'], list[i]['Accessibility'], list[i]['Latitude'], list[i]['Longitude'], list[i]['Time']];
                     bodyTable.push(elem);
                 }
 
                 doc.setFontSize(10);
                 autoTable(doc, {
-                     head: [['Name', 'Caption', 'Accessability', 'Lat', 'Long', 'Time']],
+                     head: [['Name', 'Caption', 'Accessibility', 'Lat', 'Long', 'Time']],
                      body: bodyTable,
                      headStyles: {fillColor: '#50fcfc',
                                   cellPadding: {top: 2, right: 2, bottom: 2, left: 5},

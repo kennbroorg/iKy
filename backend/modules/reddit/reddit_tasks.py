@@ -1,91 +1,92 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 
-import os
-import sys
 import json
-import requests
-from datetime import datetime
-from collections import Counter
-import time
 import random
+import sys
+import time
 import traceback
+from collections import Counter
+from datetime import datetime
+from pathlib import Path
+
+import requests
 
 try:
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
-    sys.path.append('../../')
+    sys.path.append("../../")
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 
 logger = get_task_logger(__name__)
 
 
-def p_reddit(username, from_m='Initial'):
-    """ Task of Celery that get info from reddit """
+def p_reddit(username, from_m="Initial"):
+    """Task of Celery that get info from reddit"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-reddit.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-reddit.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
-            with open(file_path, 'r') as file:
+            with open(file_path) as file:
                 data = json.load(file)
             return data
         except json.JSONDecodeError:
-            logger.error(f"Developer mode ERROR")
+            logger.error("Developer mode ERROR")
 
     # Code
     user_agents = [
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-        'Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)',
-        'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
-        'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)',
-        'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)',
-        'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)',
-        'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)'
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+        "Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)",
+        "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)",
+        "Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko",
+        "Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)",
+        "Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)",
+        "Mozilla/5.0 (Windows NT 6.1; Win64; x64; Trident/7.0; rv:11.0) like Gecko",
+        "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)",
+        "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)",
+        "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)",
     ]
 
     lastaction = 0
-    headers = {'User-Agent': random.choice(user_agents)}
-    curts = int(time.time())
+    headers = {"User-Agent": random.choice(user_agents)}
     commentdata = []
     linkdata = []
     timelist = []
     hourseconds = 3600
     houroffset = -7
-    offset = hourseconds*houroffset
+    offset = hourseconds * houroffset
     raw_node = []
 
     # Profile
-    req = requests.get('https://www.reddit.com/user/'+username+'/about.json',
-                      headers=headers)
+    req = requests.get(
+        "https://www.reddit.com/user/" + username + "/about.json",
+        headers=headers,
+        timeout=30,
+    )
     user_status = req.status_code
 
     userdata = {}
@@ -93,59 +94,37 @@ def p_reddit(username, from_m='Initial'):
     hourset = []
     weekset = []
     topics_bubble = []
-    if (user_status == 200):
-        userdata = req.json()['data']
+    if user_status == 200:
+        userdata = req.json()["data"]
         raw_node.append({"profile": userdata})
 
-        # Comments
-        while True:
-            comurl = 'https://api.pushshift.io/reddit/search/comment/?author='+username+'&size=500&before='+str(curts)
-            req = requests.get(comurl, headers=headers)
-
-            tempdata = req.json()['data']
-            commentdata += tempdata
-            try:
-                if tempdata[499]:
-                    curts = tempdata[499]['created_utc']
-            except: break
-
+        # NOTE: Pushshift API was decommissioned in April 2023.
+        # Comment/post history via Pushshift is no longer available.
+        # The subreddit analysis, hour/week charts, and last-activity
+        # features that depended on it will be empty until a replacement
+        # data source is integrated.
+        postdata = []
         raw_node.append({"comments": commentdata})
-        curts = int(time.time())
-
-        # Posts/Submissions
-        while True:
-            linkurl = 'https://api.pushshift.io/reddit/search/submission/?author='+username+'&size=500&before='+str(curts)
-            req = requests.get(linkurl, headers=headers)
-            postdata = req.json()['data']
-            linkdata += postdata
-            try:
-                if postdata[499]:
-                    curts = postdata[499]['created_utc']
-            except: break
-
         raw_node.append({"posts": linkdata})
 
-        if (commentdata):
+        if commentdata:
             # Last activity
-            lastcomment = commentdata[0]['created_utc']
-            lastpost = postdata[0]['created_utc']
+            lastcomment = commentdata[0]["created_utc"]
+            lastpost = postdata[0]["created_utc"] if postdata else 0
 
-            if lastcomment > lastpost:
-                lastaction = lastcomment
-            else: lastaction = lastpost
-
+            lastaction = lastcomment if lastcomment > lastpost else lastpost
 
             # Add all subreddits to a list
             # Add all timed activities to a list
             subList = []
             for x in commentdata:
-                subList.append(x['subreddit'].lower())
-                timelist.append(x['created_utc'])
+                subList.append(x["subreddit"].lower())
+                timelist.append(x["created_utc"])
 
-        if (postdata):
+        if postdata:
             for x in postdata:
-                subList.append(x['subreddit'].lower())
-                timelist.append(x['created_utc'])
+                subList.append(x["subreddit"].lower())
+                timelist.append(x["created_utc"])
 
             # Adjust time for offset
             timelist = [x + offset for x in timelist]
@@ -153,11 +132,11 @@ def p_reddit(username, from_m='Initial'):
             # And create a set for comparison purposes
             sublistset = set(subList)
 
-            location_file = os.path.join(os.path.dirname(
-                os.path.realpath(__file__)), "all-locations.txt")
+            location_file = Path(__file__).resolve().parent / "all-locations.txt"
 
             # Load subreddits from file and check them against comments
-            locList = [line.rstrip('\n').lower() for line in open(location_file)]
+            with open(location_file) as f:
+                locList = [line.rstrip("\n").lower() for line in f]
             loclistset = set(locList)
 
             counter = Counter(subList)
@@ -166,18 +145,17 @@ def p_reddit(username, from_m='Initial'):
             topics = []
             for i in gdata:
                 topics.append({"name": i[0], "count": i[1], "value": i[1]})
-            topics_bubble = {"name": "", "value": 100,
-                                "children": topics}
+            topics_bubble = {"name": "", "value": 100, "children": topics}
 
             newtl = []  # hour list
-            wdlist = [] # weekday list
+            wdlist = []  # weekday list
 
             # fill newtl with HOURs
             for x in timelist:
                 newtl.append(datetime.fromtimestamp(int(x)).hour)
 
             # create hour name list
-            hournames = '00:00 01:00 02:00 03:00 04:00 05:00 06:00 07:00 08:00 09:00 10:00 11:00 12:00 13:00 14:00 15:00 16:00 17:00 18:00 19:00 20:00 21:00 22:00 23:00'.split()
+            hournames = "00:00 01:00 02:00 03:00 04:00 05:00 06:00 07:00 08:00 09:00 10:00 11:00 12:00 13:00 14:00 15:00 16:00 17:00 18:00 19:00 20:00 21:00 22:00 23:00".split()
 
             # deal with HOUR counting
             tgCounter = Counter(newtl)
@@ -186,19 +164,19 @@ def p_reddit(username, from_m='Initial'):
             tgdata = sorted(tgdata)
 
             d = []
-            e = 0
-            for g in hournames:
+            for e, g in enumerate(hournames):
                 try:
                     hourset.append({"name": g, "value": int(tgdata[e][1])})
-                    d.append(tuple([g, tgdata[e][1]]))
-                except:
+                    d.append((g, tgdata[e][1]))
+                except Exception:
                     hourset.append({"name": g, "value": 0})
-                    d.append(tuple([g, 0]))
-                e+=1
+                    d.append((g, 0))
             tgdata = d
 
             # estabish weekday list (0 is Monday in Python-land)
-            weekdays = 'Monday Tuesday Wednesday Thursday Friday Saturday Sunday'.split()
+            weekdays = (
+                "Monday Tuesday Wednesday Thursday Friday Saturday Sunday".split()
+            )
             for x in timelist:
                 wdlist.append(datetime.fromtimestamp(int(x)).weekday())
 
@@ -208,15 +186,13 @@ def p_reddit(username, from_m='Initial'):
 
             # change tuple weekday numbers to weekday names
             y = []
-            c = 0
-            for z in weekdays:
+            for c, z in enumerate(weekdays):
                 try:
                     weekset.append({"name": z, "value": int(wddata[c][1])})
-                    y.append(tuple([z, wddata[c][1]]))
-                except:
+                    y.append((z, wddata[c][1]))
+                except Exception:
                     weekset.append({"name": z, "value": 0})
-                    y.append(tuple([z, 0]))
-                c+=1
+                    y.append((z, 0))
             wddata = y
 
     else:
@@ -224,13 +200,13 @@ def p_reddit(username, from_m='Initial'):
 
     # Total
     total = []
-    total.append({'module': 'reddit'})
-    total.append({'param': username})
+    total.append({"module": "reddit"})
+    total.append({"param": username})
     # Evaluates the module that executed the task and set validation
-    if (from_m == 'Initial'):
-        total.append({'validation': 'no'})
+    if from_m == "Initial":
+        total.append({"validation": "no"})
     else:
-        total.append({'validation': 'soft'})
+        total.append({"validation": "soft"})
 
     # Profile Array
     profile = []
@@ -240,120 +216,155 @@ def p_reddit(username, from_m='Initial'):
 
     gather = []
     link_social = "Reddit"
-    gather_item = {"name-node": "Reddit", "title": "Reddit",
-                   "subtitle": "", "icon": "fab fa-reddit-alien",
-                   "link": link_social}
+    gather_item = {
+        "name-node": "Reddit",
+        "title": "Reddit",
+        "subtitle": "",
+        "icon": "fab fa-reddit-alien",
+        "link": link_social,
+    }
     gather.append(gather_item)
 
     # import pdb;pdb.set_trace()
-    if (userdata.get("name", "") != ""):
-        gather_item = {"name-node": "RedditName",
-                        "title": "Name",
-                        "subtitle": userdata.get("name", ""),
-                        "icon": "fas fa-user-circle",
-                        "link": link_social}
+    if userdata.get("name", "") != "":
+        gather_item = {
+            "name-node": "RedditName",
+            "title": "Name",
+            "subtitle": userdata.get("name", ""),
+            "icon": "fas fa-user-circle",
+            "link": link_social,
+        }
         gather.append(gather_item)
-        profile_item = {'name': userdata.get("name", "")}
+        profile_item = {"name": userdata.get("name", "")}
         profile.append(profile_item)
 
-    if (userdata.get("icon_img", "") != ""):
-        gather_item = {"name-node": "Redditphoto",
-                        "title": "Reddit",
-                        "subtitle": "",
-                        "picture": userdata.get("icon_img", ""),
-                        "link": link_social}
+    if userdata.get("icon_img", "") != "":
+        gather_item = {
+            "name-node": "Redditphoto",
+            "title": "Reddit",
+            "subtitle": "",
+            "picture": userdata.get("icon_img", ""),
+            "link": link_social,
+        }
         gather.append(gather_item)
-        photo_item = {"name-node": "Reddit",
-                    "title": "Reddit",
-                    "subtitle": "",
-                    "picture": userdata.get("icon_img", ""),
-                    "link": "Photos"}
-        profile.append({'photos': [photo_item]})
+        photo_item = {
+            "name-node": "Reddit",
+            "title": "Reddit",
+            "subtitle": "",
+            "picture": userdata.get("icon_img", ""),
+            "link": "Photos",
+        }
+        profile.append({"photos": [photo_item]})
 
     # if (sublistset.intersection(loclistset)):
-    if (loclistset):
-        gather_item = {"name-node": "RedditLocation",
-                        "title": "Location",
-                        "subtitle": str(sublistset.intersection(
-                            loclistset)),
-                        "icon": "fas fa-map-marker-alt",
-                        "link": link_social}
+    if loclistset:
+        gather_item = {
+            "name-node": "RedditLocation",
+            "title": "Location",
+            "subtitle": str(sublistset.intersection(loclistset)),
+            "icon": "fas fa-map-marker-alt",
+            "link": link_social,
+        }
         gather.append(gather_item)
-        profile_item = {'location': str(sublistset.intersection(loclistset))}
+        profile_item = {"location": str(sublistset.intersection(loclistset))}
         profile.append(profile_item)
 
-    if (userdata.get("comment_karma", "") != ""):
-        gather_item = {"name-node": "Redditcommentkarma",
-                        "title": "Comment Karma",
-                        "subtitle": userdata.get("comment_karma", ""),
-                        "icon": "fas fa-comments",
-                        "link": link_social}
+    if userdata.get("comment_karma", "") != "":
+        gather_item = {
+            "name-node": "Redditcommentkarma",
+            "title": "Comment Karma",
+            "subtitle": userdata.get("comment_karma", ""),
+            "icon": "fas fa-comments",
+            "link": link_social,
+        }
         gather.append(gather_item)
 
-    if (len(commentdata)):
-        gather_item = {"name-node": "Redditcomment",
-                        "title": "Comments",
-                        "subtitle": str(len(commentdata)),
-                        "icon": "far fa-comments",
-                        "link": link_social}
+    if len(commentdata):
+        gather_item = {
+            "name-node": "Redditcomment",
+            "title": "Comments",
+            "subtitle": str(len(commentdata)),
+            "icon": "far fa-comments",
+            "link": link_social,
+        }
         gather.append(gather_item)
 
-    if (userdata.get("link_karma", "") != ""):
-        gather_item = {"name-node": "Redditlinkkarma",
-                        "title": "Link Karma",
-                        "subtitle": userdata.get("link_karma", ""),
-                        "icon": "fas fa-link",
-                        "link": link_social}
+    if userdata.get("link_karma", "") != "":
+        gather_item = {
+            "name-node": "Redditlinkkarma",
+            "title": "Link Karma",
+            "subtitle": userdata.get("link_karma", ""),
+            "icon": "fas fa-link",
+            "link": link_social,
+        }
         gather.append(gather_item)
 
-    if (len(commentdata)):
-        gather_item = {"name-node": "Redditlink",
-                        "title": "Links",
-                        "subtitle": str(len(linkdata)),
-                        "icon": "fas fa-link",
-                        "link": link_social}
+    if len(commentdata):
+        gather_item = {
+            "name-node": "Redditlink",
+            "title": "Links",
+            "subtitle": str(len(linkdata)),
+            "icon": "fas fa-link",
+            "link": link_social,
+        }
         gather.append(gather_item)
 
-    if (userdata.get("has_verified_email", "") != ""):
-        gather_item = {"name-node": "RedditEmail",
-                        "title": "Verified Email",
-                        "subtitle": userdata.get("has_verified_email", ""),
-                        "icon": "fas fa-at",
-                        "link": link_social}
+    if userdata.get("has_verified_email", "") != "":
+        gather_item = {
+            "name-node": "RedditEmail",
+            "title": "Verified Email",
+            "subtitle": userdata.get("has_verified_email", ""),
+            "icon": "fas fa-at",
+            "link": link_social,
+        }
         gather.append(gather_item)
 
-    if (userdata.get("subreddit", "") != "" and userdata.get("subreddit", "").get("public_description", "") != ""):
-        gather_item = {"name-node": "RedditBio",
-                        "title": "Bio",
-                        "subtitle": userdata.get("subreddit", "").
-                            get("public_description", ""),
-                        "icon": "fas fa-heartbeat",
-                        "link": link_social}
+    if (
+        userdata.get("subreddit", "") != ""
+        and userdata.get("subreddit", "").get("public_description", "") != ""
+    ):
+        gather_item = {
+            "name-node": "RedditBio",
+            "title": "Bio",
+            "subtitle": userdata.get("subreddit", "").get("public_description", ""),
+            "icon": "fas fa-heartbeat",
+            "link": link_social,
+        }
         gather.append(gather_item)
 
-    if (userdata.get("created_utc", "") != ""):
-        gather_item = {"name-node": "RedditCreate",
-                        "title": "Created",
-                        "subtitle": str(datetime.fromtimestamp(
-                            userdata.get("created_utc", ""))),
-                        "icon": "fas fa-calendar-alt",
-                        "link": link_social}
+    if userdata.get("created_utc", "") != "":
+        gather_item = {
+            "name-node": "RedditCreate",
+            "title": "Created",
+            "subtitle": str(datetime.fromtimestamp(userdata.get("created_utc", ""))),
+            "icon": "fas fa-calendar-alt",
+            "link": link_social,
+        }
         gather.append(gather_item)
-        timeline.append({'action': 'Reddit',
-                        'date': str(datetime.fromtimestamp(
-                            userdata['created_utc'])),
-                        'desc': 'Reddit creation account date'})
+        timeline.append(
+            {
+                "action": "Reddit",
+                "date": str(datetime.fromtimestamp(userdata["created_utc"])),
+                "desc": "Reddit creation account date",
+            }
+        )
 
-    if (lastaction):
-        gather_item = {"name-node": "RedditLast",
-                        "title": "Last",
-                        "subtitle": str(datetime.fromtimestamp(lastaction)),
-                        "icon": "far fa-calendar-alt",
-                        "link": link_social}
+    if lastaction:
+        gather_item = {
+            "name-node": "RedditLast",
+            "title": "Last",
+            "subtitle": str(datetime.fromtimestamp(lastaction)),
+            "icon": "far fa-calendar-alt",
+            "link": link_social,
+        }
         gather.append(gather_item)
-        timeline.append({'action': 'Reddit',
-                        'date': str(datetime.fromtimestamp(lastaction)),
-                        'desc': 'Reddit last action'})
+        timeline.append(
+            {
+                "action": "Reddit",
+                "date": str(datetime.fromtimestamp(lastaction)),
+                "desc": "Reddit last action",
+            }
+        )
 
     # Graphic Array
     graphic = []
@@ -361,20 +372,20 @@ def p_reddit(username, from_m='Initial'):
     # Bios Array
     # bios = []
 
-    total.append({'raw': raw_node})
-    graphic.append({'social': gather})
-    graphic.append({'hour': hourset})
-    graphic.append({'week': weekset})
-    graphic.append({'topics': topics_bubble})
-    total.append({'graphic': graphic})
-    total.append({'profile': profile})
-    total.append({'timeline': timeline})
+    total.append({"raw": raw_node})
+    graphic.append({"social": gather})
+    graphic.append({"hour": hourset})
+    graphic.append({"week": weekset})
+    graphic.append({"topics": topics_bubble})
+    total.append({"graphic": graphic})
+    total.append({"profile": profile})
+    total.append({"timeline": timeline})
 
     return total
 
 
 @celery.task
-def t_reddit(user, from_m='Initial'):
+def t_reddit(user, from_m="Initial"):
     total = []
     tic = time.perf_counter()
     try:
@@ -382,7 +393,7 @@ def t_reddit(user, from_m='Initial'):
     except Exception as e:
         # Check internal error
         if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - "):]
+            reason = str(e)[len("iKy - ") :]
             status = "Warning"
         else:
             reason = str(e)
@@ -392,13 +403,17 @@ def t_reddit(user, from_m='Initial'):
         traceback_text = traceback.format_exc()
         total.append({"module": "reddit"})
         total.append({"param": user})
-        total.append({'validation': 'not_used'})
+        total.append({"validation": "not_used"})
 
         raw_node = []
-        raw_node.append({"status": status,
-                         # "reason": "{}".format(e),
-                         "reason": reason,
-                         "traceback": traceback_text})
+        raw_node.append(
+            {
+                "status": status,
+                # "reason": "{}".format(e),
+                "reason": reason,
+                "traceback": traceback_text,
+            }
+        )
         total.append({"raw": raw_node})
 
     # Take final time

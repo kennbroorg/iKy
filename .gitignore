@@ -116,3 +116,7 @@ outputs
 # Pyenv #
 #########
 .python-version
+
+# Dev virtualenv #
+###################
+.venv/

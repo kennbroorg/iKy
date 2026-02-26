@@ -1,92 +1,88 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 
-import os
-import sys
 import json
-import requests
-# import urllib
-import cfscrape
+import sys
 import time
 import traceback
+from pathlib import Path
+
+# import urllib
+import requests
 
 try:
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
-    sys.path.append('../../')
+    sys.path.append("../../")
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
     from factories.configuration import api_keys_search
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 
-# from requests.packages.urllib3.exceptions import InsecureRequestWarning
-# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# import urllib3
+# urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
-# Compatibility code
-# try:
-#     # Python 2: "unicode" is built-in
-#     unicode
-# except NameError:
-#     unicode = str
 
 def p_leaks(email):
-    """ Task of Celery that get info from Have I Been Pwned """
+    """Task of Celery that get info from Have I Been Pwned"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-leaks.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-leaks.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
-            with open(file_path, 'r') as file:
+            with open(file_path) as file:
                 data = json.load(file)
             return data
         except json.JSONDecodeError:
-            logger.error(f"Developer mode ERROR")
+            logger.error("Developer mode ERROR")
 
     # Code
     key = ""
-    url = 'https://haveibeenpwned.com/api/v3/breachedaccount/{}'.format(email)
-    key = api_keys_search('haveibeenpwned_key')
+    url = f"https://haveibeenpwned.com/api/v3/breachedaccount/{email}"
+    key = api_keys_search("haveibeenpwned_key")
 
-    if (not key):
+    if not key:
         raise Exception("iKy - Missing or invalid Key")
 
     # For the future
-    # scraper = cfscrape.create_scraper()
+    # scraper = cloudscraper.create_scraper()
     # req = scraper.get(url)
 
-    req = requests.get(url, headers={'User-Agent': 'iKy', 'hibp-api-key': key},
-            params={'truncateResponse': 'false'}, timeout=10)
+    req = requests.get(
+        url,
+        headers={"User-Agent": "iKy", "hibp-api-key": key},
+        params={"truncateResponse": "false"},
+        timeout=10,
+    )
 
     # Raw Array
-    if (req.status_code == 200):
-        raw_node = json.loads(unicode(req.text))
-    elif (req.status_code == 403):
+    if req.status_code == 200:
+        raw_node = json.loads(req.text)
+    elif req.status_code == 403:
         raise Exception("iKy - Missing or invalid Key")
-    elif (req.status_code == 404):
+    elif req.status_code == 404:
         raise Exception("iKy - No leak found")
-    elif (req.status_code == 503):
+    elif req.status_code == 503:
         raise Exception("iKy - Service blocked")
     else:
         raise Exception("iKy - API Error")
 
     # Total
     total = []
-    total.append({'module': 'leaks'})
-    total.append({'param': email})
-    total.append({'validation': 'hard'})
+    total.append({"module": "leaks"})
+    total.append({"param": email})
+    total.append({"validation": "hard"})
 
     # Graphic Array
     graphic = []
@@ -100,48 +96,48 @@ def p_leaks(email):
     # Gather Array
     gather = []
 
-    if (raw_node[0].get("title", "") == "NOLEAK") or (
-            raw_node[0].get("title", "") == "BLOCKED") or (
-            raw_node[0].get("title", "") == "KEY") or (
-            raw_node[0].get("title", "") == "ERROR"):
-        link = "Leaks"
-        gather_item = {"name-node": "Leaks", "title": "Leaks",
-                       "subtitle": "", "icon": "fas fa-unlock-alt",
-                       "link": link}
-        gather.append(gather_item)
+    link = "Leaks"
+    gather_item = {
+        "name-node": "Leaks",
+        "title": "Leaks",
+        "subtitle": "",
+        "icon": "fas fa-unlock-alt",
+        "link": link,
+    }
+    gather.append(gather_item)
 
-    else:
-        link = "Leaks"
-        gather_item = {"name-node": "Leaks", "title": "Leaks",
-                       "subtitle": "", "icon": "fas fa-unlock-alt",
-                       "link": link}
-        gather.append(gather_item)
-
+    skip_titles = {"NOLEAK", "BLOCKED", "KEY", "ERROR"}
+    if raw_node[0].get("title", "") not in skip_titles:
         for leak in raw_node:
-            gather_item = {"name-node": leak.get("Title", ""),
-                           "title": leak.get("Title", ""),
-                           "subtitle": "Breach Date: " + leak.get(
-                               "BreachDate", ""),
-                           "picture": leak.get("LogoPath", ""),
-                           # "picture": "https://haveibeenpwned.com/Content/" +
-                           #"Images/PwnedLogos/" + leak.get("Name", "") + "." +
-                           # leak.get("LogoType", ""),
-                           "link": link}
+            gather_item = {
+                "name-node": leak.get("Title", ""),
+                "title": leak.get("Title", ""),
+                "subtitle": "Breach Date: " + leak.get("BreachDate", ""),
+                "picture": leak.get("LogoPath", ""),
+                # "picture": "https://haveibeenpwned.com/Content/" +
+                # "Images/PwnedLogos/" + leak.get("Name", "") + "." +
+                # leak.get("LogoType", ""),
+                "link": link,
+            }
             gather.append(gather_item)
-            timeline.append({"action": "Leak : " + leak.get("Title", ""),
-                             "date": leak.get("BreachDate", ""),
-                             "icon": "fa-exclamation-circle",
-                             "desc": leak.get("Description", "")})
+            timeline.append(
+                {
+                    "action": "Leak : " + leak.get("Title", ""),
+                    "date": leak.get("BreachDate", ""),
+                    "icon": "fa-exclamation-circle",
+                    "desc": leak.get("Description", ""),
+                }
+            )
 
     # Please, respect the order of items in the total array
     # Because the frontend depend of that (By now)
-    total.append({'raw': raw_node})
+    total.append({"raw": raw_node})
     # if (len(gather) != 1):
     #     graphic.append({'leaks': gather})
-    graphic.append({'leaks': gather})
-    total.append({'graphic': graphic})
-    total.append({'profile': profile})
-    total.append({'timeline': timeline})
+    graphic.append({"leaks": gather})
+    total.append({"graphic": graphic})
+    total.append({"profile": profile})
+    total.append({"timeline": timeline})
 
     return total
 
@@ -155,7 +151,7 @@ def t_leaks(email):
     except Exception as e:
         # Check internal error
         if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - "):]
+            reason = str(e)[len("iKy - ") :]
             status = "Warning"
         else:
             reason = str(e)
@@ -163,15 +159,19 @@ def t_leaks(email):
 
         traceback.print_exc()
         traceback_text = traceback.format_exc()
-        total.append({'module': 'leaks'})
-        total.append({'param': email})
-        total.append({'validation': 'not_used'})
+        total.append({"module": "leaks"})
+        total.append({"param": email})
+        total.append({"validation": "not_used"})
 
         raw_node = []
-        raw_node.append({"status": status,
-                         # "reason": "{}".format(e),
-                         "reason": reason,
-                         "traceback": traceback_text})
+        raw_node.append(
+            {
+                "status": status,
+                # "reason": "{}".format(e),
+                "reason": reason,
+                "traceback": traceback_text,
+            }
+        )
         total.append({"raw": raw_node})
 
     # Take final time

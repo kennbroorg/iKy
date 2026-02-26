@@ -1,4 +1,4 @@
-FROM python:3.9-slim-bookworm
+FROM python:3.12-slim-bookworm
 
 WORKDIR /app
 
@@ -19,10 +19,9 @@ RUN pip install --no-cache-dir -U pip && \
 # Copy backend code
 COPY ./backend .
 
-# Configure Redis URLs for Docker
-RUN sed -i "s/CELERY_BROKER_URL.*/CELERY_BROKER_URL = 'redis:\/\/redis:6379\/0'/g" /app/factories/configuration.py && \
-    sed -i "s/CELERY_RESULT_BACKEND.*/CELERY_RESULT_BACKEND = 'redis:\/\/redis:6379\/0'/g" /app/factories/configuration.py && \
-    sed -i "s/redis:\/\/localhost/redis:\/\/redis/g" /app/factories/celery_config.py
+# Configure Redis URLs for Docker (read by configuration.py at runtime)
+ENV CELERY_BROKER_URL="redis://redis:6379/0"
+ENV CELERY_RESULT_BACKEND="redis://redis:6379/0"
 
 # Supervisor configuration
 COPY install/docker/backend/supervisor.conf /etc/supervisor.conf
@@ -30,6 +29,6 @@ COPY install/docker/backend/supervisor.conf /etc/supervisor.conf
 EXPOSE 5000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/')" || exit 1
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/tasklist')" || exit 1
 
 CMD ["supervisord", "-c", "/etc/supervisor.conf"]

@@ -1,63 +1,61 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 
-import os
-import sys
 import json
-import requests
 import re
+import sys
 import time
+import traceback
+from enum import Enum
+from pathlib import Path
 from time import monotonic
+
+import requests
+from colorama import Fore, Style, init
 from requests_futures.sessions import FuturesSession
 from torrequest import TorRequest
-from enum import Enum
-from colorama import Fore, Style, init
-import traceback
 
 try:
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
-    from celery.utils.log import get_task_logger
+    from factories.fontcheat import search_icon_5
+
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
-    sys.path.append('../../')
+    sys.path.append("../../")
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from factories.fontcheat import fontawesome_cheat_5, search_icon_5
-    from celery.utils.log import get_task_logger
+    from factories.fontcheat import search_icon_5
+
     celery = create_celery(create_application())
 
-# from requests.packages.urllib3.exceptions import InsecureRequestWarning
-# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# import urllib3
+# urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
 
 def p_sherlock(username):
-    """ Task of Celery that get info from differents sites """
+    """Task of Celery that get info from differents sites"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-sherlock.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-sherlock.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
-            with open(file_path, 'r') as file:
+            with open(file_path) as file:
                 data = json.load(file)
             return data
         except json.JSONDecodeError:
-            logger.error(f"Developer mode ERROR")
+            logger.error("Developer mode ERROR")
 
     # Code
-    data_file_path = os.path.join(os.path.dirname(
-        os.path.realpath(__file__)), "data_sherlock.json")
+    data_file_path = Path(__file__).resolve().parent / "data_sherlock.json"
 
-    with open(data_file_path, "r", encoding="utf-8") as data_file:
+    with open(data_file_path, encoding="utf-8") as data_file:
         data = json.load(data_file)
 
     # Create notify object for query results.
@@ -65,20 +63,16 @@ def p_sherlock(username):
     #                                 verbose=True,
     #                                 print_all=True,
     #                                 color=not False)
-    query_notify = QueryNotifyPrint(result=None,
-                                    verbose=False,
-                                    print_all=False,
-                                    color=not True)
+    query_notify = QueryNotifyPrint(
+        result=None, verbose=False, print_all=False, color=not True
+    )
     raw_node = sherlock(username, data, query_notify, timeout=10)
 
     # Total
     total = []
-    total.append({'module': 'sherlock'})
-    total.append({'param': username})
-    total.append({'validation': 'hard'})
-
-    # Icons unicode
-    font_list = fontawesome_cheat_5()
+    total.append({"module": "sherlock"})
+    total.append({"param": username})
+    total.append({"validation": "hard"})
 
     # Graphic Array
     graphic = []
@@ -97,61 +91,71 @@ def p_sherlock(username):
     social = []
 
     link = "Sherlock"
-    gather_item = {"name-node": "Sherlock", "title": username,
-                   "subtitle": "", "icon": "fas fa-share-alt",
-                   "link": link}
+    gather_item = {
+        "name-node": "Sherlock",
+        "title": username,
+        "subtitle": "",
+        "icon": "fas fa-share-alt",
+        "link": link,
+    }
     gather.append(gather_item)
 
     for rrss in raw_node:
-        if (raw_node[rrss]["status"].status == QueryStatus.CLAIMED):
+        if raw_node[rrss]["status"].status == QueryStatus.CLAIMED:
             status_resp = "Username Detected"
-        elif (raw_node[rrss]["status"].status == QueryStatus.AVAILABLE):
+        elif raw_node[rrss]["status"].status == QueryStatus.AVAILABLE:
             status_resp = "Username NOT Detected"
-        elif (raw_node[rrss]["status"].status == QueryStatus.ILLEGAL):
+        elif raw_node[rrss]["status"].status == QueryStatus.ILLEGAL:
             status_resp = "Username Not Allowable For This Site"
         else:
             status_resp = "Error Occurred While Trying To Detect Username"
 
-        lists_item = {"title": rrss,
-                      "subtitle": raw_node[rrss]["url_main"],
-                      "status": raw_node[rrss]["http_status"],
-                      "response": status_resp}
+        lists_item = {
+            "title": rrss,
+            "subtitle": raw_node[rrss]["url_main"],
+            "status": raw_node[rrss]["http_status"],
+            "response": status_resp,
+        }
         lists.append(lists_item)
-        if (raw_node[rrss]["status"].status == QueryStatus.CLAIMED):
-            fa_icon = search_icon_5(rrss, font_list)
-            if (fa_icon is None):
-                fa_icon = search_icon_5("dot-circle", font_list)
+        if raw_node[rrss]["status"].status == QueryStatus.CLAIMED:
+            fa_icon = search_icon_5(rrss)
+            if fa_icon is None:
+                fa_icon = search_icon_5("dot-circle")
 
-            gather_item = {"name-node": rrss,
-                           "title": rrss,
-                           "icon": fa_icon,
-                           "help": raw_node[rrss]["url_user"],
-                           "link": link}
+            gather_item = {
+                "name-node": rrss,
+                "title": rrss,
+                "icon": fa_icon,
+                "help": raw_node[rrss]["url_user"],
+                "link": link,
+            }
             gather.append(gather_item)
-            social_item = {"name": rrss,
-                           "url": raw_node[rrss]["url_user"],
-                           "icon": fa_icon,
-                           "source": "sherlock",
-                           "username": username}
+            social_item = {
+                "name": rrss,
+                "url": raw_node[rrss]["url_user"],
+                "icon": fa_icon,
+                "source": "sherlock",
+                "username": username,
+            }
             social.append(social_item)
     profile.append({"social": social})
 
     # Please, respect the order of items in the total array
     # Because the frontend depend of that (By now)
-    total.append({'raw': ""})
+    total.append({"raw": ""})
     # total.append({'raw': raw_node})
     # if (len(gather) != 1):
     #     graphic.append({'leaks': gather})
-    graphic.append({'sherlock': gather})
-    graphic.append({'lists': lists})
-    total.append({'graphic': graphic})
-    total.append({'profile': profile})
-    total.append({'timeline': timeline})
+    graphic.append({"sherlock": gather})
+    graphic.append({"lists": lists})
+    total.append({"graphic": graphic})
+    total.append({"profile": profile})
+    total.append({"timeline": timeline})
 
     return total
 
 
-class QueryNotify():
+class QueryNotify:
     def __init__(self, result=None):
         self.result = result
         return
@@ -172,8 +176,7 @@ class QueryNotify():
 
 
 class QueryNotifyPrint(QueryNotify):
-    def __init__(self, result=None, verbose=False, color=True,
-                 print_all=False):
+    def __init__(self, result=None, verbose=False, color=True, print_all=False):
         # Colorama module's initialization.
         init(autoreset=True)
 
@@ -187,9 +190,19 @@ class QueryNotifyPrint(QueryNotify):
     def start(self, message):
         title = "Checking username"
         if self.color:
-            print(Style.BRIGHT + Fore.GREEN + "[" + Fore.YELLOW + "*" +
-                  Fore.GREEN + f"] {title}" + Fore.WHITE + f" {message}" +
-                  Fore.GREEN + " on:")
+            print(
+                Style.BRIGHT
+                + Fore.GREEN
+                + "["
+                + Fore.YELLOW
+                + "*"
+                + Fore.GREEN
+                + f"] {title}"
+                + Fore.WHITE
+                + f" {message}"
+                + Fore.GREEN
+                + " on:"
+            )
         else:
             print(f"[*] {title} {message} on:")
 
@@ -198,7 +211,7 @@ class QueryNotifyPrint(QueryNotify):
     def update(self, result):
         self.result = result
 
-        if self.verbose == False or self.result.query_time is None:
+        if self.verbose is False or self.result.query_time is None:
             response_time_text = ""
         else:
             response_time_text = f" [{round(self.result.query_time * 1000)} ms]"
@@ -206,38 +219,65 @@ class QueryNotifyPrint(QueryNotify):
         # Output to the terminal is desired.
         if result.status == QueryStatus.CLAIMED:
             if self.color:
-                print((Style.BRIGHT + Fore.WHITE + "[" +
-                       Fore.GREEN + "+" +
-                       Fore.WHITE + "]" +
-                       response_time_text +
-                       Fore.GREEN +
-                       f" {self.result.site_name}: " +
-                       Style.RESET_ALL +
-                       f"{self.result.site_url_user}"))
+                print(
+                    Style.BRIGHT
+                    + Fore.WHITE
+                    + "["
+                    + Fore.GREEN
+                    + "+"
+                    + Fore.WHITE
+                    + "]"
+                    + response_time_text
+                    + Fore.GREEN
+                    + f" {self.result.site_name}: "
+                    + Style.RESET_ALL
+                    + f"{self.result.site_url_user}"
+                )
             else:
-                print(f"[+]{response_time_text} {self.result.site_name}: {self.result.site_url_user}")
+                print(
+                    f"[+]{response_time_text} {self.result.site_name}: {self.result.site_url_user}"
+                )
 
         elif result.status == QueryStatus.AVAILABLE:
             if self.print_all:
                 if self.color:
-                    print((Style.BRIGHT + Fore.WHITE + "[" +
-                        Fore.RED + "-" +
-                        Fore.WHITE + "]" +
-                        response_time_text +
-                        Fore.GREEN + f" {self.result.site_name}:" +
-                        Fore.YELLOW + " Not Found!"))
+                    print(
+                        Style.BRIGHT
+                        + Fore.WHITE
+                        + "["
+                        + Fore.RED
+                        + "-"
+                        + Fore.WHITE
+                        + "]"
+                        + response_time_text
+                        + Fore.GREEN
+                        + f" {self.result.site_name}:"
+                        + Fore.YELLOW
+                        + " Not Found!"
+                    )
                 else:
-                    print(f"[-]{response_time_text} {self.result.site_name}: Not Found!")
+                    print(
+                        f"[-]{response_time_text} {self.result.site_name}: Not Found!"
+                    )
 
         elif result.status == QueryStatus.UNKNOWN:
             if self.print_all:
                 if self.color:
-                    print(Style.BRIGHT + Fore.WHITE + "[" +
-                          Fore.RED + "-" +
-                          Fore.WHITE + "]" +
-                          Fore.GREEN + f" {self.result.site_name}:" +
-                          Fore.RED + f" {self.result.context}" +
-                          Fore.YELLOW + f" ")
+                    print(
+                        Style.BRIGHT
+                        + Fore.WHITE
+                        + "["
+                        + Fore.RED
+                        + "-"
+                        + Fore.WHITE
+                        + "]"
+                        + Fore.GREEN
+                        + f" {self.result.site_name}:"
+                        + Fore.RED
+                        + f" {self.result.context}"
+                        + Fore.YELLOW
+                        + " "
+                    )
                 else:
                     print(f"[-] {self.result.site_name}: {self.result.context} ")
 
@@ -245,18 +285,28 @@ class QueryNotifyPrint(QueryNotify):
             if self.print_all:
                 msg = "Illegal Username Format For This Site!"
                 if self.color:
-                    print((Style.BRIGHT + Fore.WHITE + "[" +
-                           Fore.RED + "-" +
-                           Fore.WHITE + "]" +
-                           Fore.GREEN + f" {self.result.site_name}:" +
-                           Fore.YELLOW + f" {msg}"))
+                    print(
+                        Style.BRIGHT
+                        + Fore.WHITE
+                        + "["
+                        + Fore.RED
+                        + "-"
+                        + Fore.WHITE
+                        + "]"
+                        + Fore.GREEN
+                        + f" {self.result.site_name}:"
+                        + Fore.YELLOW
+                        + f" {msg}"
+                    )
                 else:
                     print(f"[-] {self.result.site_name} {msg}")
 
         else:
             # It should be impossible to ever get here...
-            raise ValueError(f"Unknown Query Status '{str(result.status)}' "
-                             f"for site '{self.result.site_name}'")
+            raise ValueError(
+                f"Unknown Query Status '{result.status!s}' "
+                f"for site '{self.result.site_name}'"
+            )
 
         return
 
@@ -266,18 +316,19 @@ class QueryNotifyPrint(QueryNotify):
 
 
 class QueryStatus(Enum):
-    CLAIMED = "Claimed"      # Username Detected
+    CLAIMED = "Claimed"  # Username Detected
     AVAILABLE = "Available"  # Username Not Detected
-    UNKNOWN = "Unknown"      # Error Occurred While Trying To Detect Username
-    ILLEGAL = "Illegal"      # Username Not Allowable For This Site
+    UNKNOWN = "Unknown"  # Error Occurred While Trying To Detect Username
+    ILLEGAL = "Illegal"  # Username Not Allowable For This Site
 
     def __str__(self):
         return self.value
 
 
-class QueryResult():
-    def __init__(self, username, site_name, site_url_user, status,
-                 query_time=None, context=None):
+class QueryResult:
+    def __init__(
+        self, username, site_name, site_url_user, status, query_time=None, context=None
+    ):
         self.username = username
         self.site_name = site_name
         self.site_url_user = site_url_user
@@ -298,9 +349,11 @@ class QueryResult():
 
 
 class SherlockFuturesSession(FuturesSession):
-    def request(self, method, url, hooks={}, *args, **kwargs):
+    def request(self, method, url, hooks=None, *args, **kwargs):
         """Request URL."""
         # Record the start time for the request.
+        if hooks is None:
+            hooks = {}
         start = monotonic()
 
         def response_time(resp, *args, **kwargs):
@@ -313,28 +366,24 @@ class SherlockFuturesSession(FuturesSession):
         # Make sure that the time measurement hook is first, so we will not
         # track any later hook's execution time.
         try:
-            if isinstance(hooks['response'], list):
-                hooks['response'].insert(0, response_time)
-            elif isinstance(hooks['response'], tuple):
+            if isinstance(hooks["response"], list):
+                hooks["response"].insert(0, response_time)
+            elif isinstance(hooks["response"], tuple):
                 # Convert tuple to list and insert time measurement hook first.
-                hooks['response'] = list(hooks['response'])
-                hooks['response'].insert(0, response_time)
+                hooks["response"] = list(hooks["response"])
+                hooks["response"].insert(0, response_time)
             else:
                 # Must have previously contained a single hook function,
                 # so convert to list.
-                hooks['response'] = [response_time, hooks['response']]
+                hooks["response"] = [response_time, hooks["response"]]
         except KeyError:
             # No response hook was already defined, so install it ourselves.
-            hooks['response'] = [response_time]
+            hooks["response"] = [response_time]
 
-        return super(SherlockFuturesSession, self).request(method,
-                                                           url,
-                                                           hooks=hooks,
-                                                           *args, **kwargs)
+        return super().request(method, url, *args, hooks=hooks, **kwargs)
 
 
 def get_response(request_future, error_type, social_network):
-
     # Default for Response object if some failure occurs.
     response = None
 
@@ -364,9 +413,15 @@ def get_response(request_future, error_type, social_network):
     return response, error_context, expection_text
 
 
-def sherlock(username, site_data, query_notify,
-             tor=False, unique_tor=False,
-             proxy=None, timeout=None):
+def sherlock(
+    username,
+    site_data,
+    query_notify,
+    tor=False,
+    unique_tor=False,
+    proxy=None,
+    timeout=None,
+):
     """Run Sherlock Analysis."""
 
     # Notify caller that we are starting the query.
@@ -384,14 +439,12 @@ def sherlock(username, site_data, query_notify,
 
     # Limit number of workers to 20.
     # This is probably vastly overkill.
-    if len(site_data) >= 20:
-        max_workers = 20
-    else:
-        max_workers = len(site_data)
+    max_workers = 20 if len(site_data) >= 20 else len(site_data)
 
     # Create multi-threaded session for all requests.
-    session = SherlockFuturesSession(max_workers=max_workers,
-                                     session=underlying_session)
+    session = SherlockFuturesSession(
+        max_workers=max_workers, session=underlying_session
+    )
 
     # Results from analysis of all sites
     results_total = {}
@@ -399,19 +452,18 @@ def sherlock(username, site_data, query_notify,
     # First create futures for all requests. This allows for the requests
     # to run in parallel
     for social_network, net_info in site_data.items():
-
         # Results from analysis of this specific site
         results_site = {}
 
         # Record URL of main site
-        results_site['url_main'] = net_info.get("urlMain")
+        results_site["url_main"] = net_info.get("urlMain")
 
         # A user agent is needed because some sites don't return the correct
         # information since they think that we are bots
         # (Which we actually are...)
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; ' +
-            'rv:55.0) Gecko/20100101 Firefox/55.0',
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; "
+            + "rv:55.0) Gecko/20100101 Firefox/55.0",
         }
 
         if "headers" in net_info:
@@ -425,28 +477,23 @@ def sherlock(username, site_data, query_notify,
         regex_check = net_info.get("regexCheck")
         if regex_check and re.search(regex_check, username) is None:
             # No need to do the check at the site: this user name is not allowed.
-            results_site['status'] = QueryResult(username,
-                                                 social_network,
-                                                 url,
-                                                 QueryStatus.ILLEGAL)
+            results_site["status"] = QueryResult(
+                username, social_network, url, QueryStatus.ILLEGAL
+            )
             results_site["url_user"] = ""
-            results_site['http_status'] = ""
-            results_site['response_text'] = ""
-            query_notify.update(results_site['status'])
+            results_site["http_status"] = ""
+            results_site["response_text"] = ""
+            query_notify.update(results_site["status"])
         else:
             # URL of user on site (if it exists)
             results_site["url_user"] = url
             url_probe = net_info.get("urlProbe")
-            if url_probe is None:
-                # Probe URL is normal one seen by people out on the web.
-                url_probe = url
-            else:
-                # There is a special URL for probing existence separate
-                # from where the user profile normally can be found.
-                url_probe = url_probe.format(username)
+            url_probe = url if url_probe is None else url_probe.format(username)
 
-            if (net_info["errorType"] == 'status_code' and
-                net_info.get("request_head_only", True) == True):
+            if (
+                net_info["errorType"] == "status_code"
+                and net_info.get("request_head_only", True) is True
+            ):
                 # In most cases when we are detecting by status code,
                 # it is not necessary to get the entire body:  we can
                 # detect fine with just the HEAD response.
@@ -457,30 +504,26 @@ def sherlock(username, site_data, query_notify,
                 # not respond properly unless we request the whole page.
                 request_method = session.get
 
-            if net_info["errorType"] == "response_url":
-                # Site forwards request to a different URL if username not
-                # found.  Disallow the redirect so we can capture the
-                # http status from the original URL request.
-                allow_redirects = False
-            else:
-                # Allow whatever redirect that the site wants to do.
-                # The final result of the request will be what is available.
-                allow_redirects = True
+            allow_redirects = net_info["errorType"] != "response_url"
 
             # This future starts running the request in a new thread,
             # doesn't block the main thread
             if proxy is not None:
                 proxies = {"http": proxy, "https": proxy}
-                future = request_method(url=url_probe, headers=headers,
-                                        proxies=proxies,
-                                        allow_redirects=allow_redirects,
-                                        timeout=timeout
-                                        )
+                future = request_method(
+                    url=url_probe,
+                    headers=headers,
+                    proxies=proxies,
+                    allow_redirects=allow_redirects,
+                    timeout=timeout,
+                )
             else:
-                future = request_method(url=url_probe, headers=headers,
-                                        allow_redirects=allow_redirects,
-                                        timeout=timeout
-                                        )
+                future = request_method(
+                    url=url_probe,
+                    headers=headers,
+                    allow_redirects=allow_redirects,
+                    timeout=timeout,
+                )
 
             # Store future in data for access later
             net_info["request_future"] = future
@@ -497,7 +540,6 @@ def sherlock(username, site_data, query_notify,
     # Core logic: If tor requests, make them here. If multi-threaded requests,
     # wait for responses
     for social_network, net_info in site_data.items():
-
         # Retrieve results again
         results_site = results_total.get(social_network)
 
@@ -513,9 +555,9 @@ def sherlock(username, site_data, query_notify,
 
         # Retrieve future and ensure it has finished
         future = net_info["request_future"]
-        r, error_text, expection_text = get_response(request_future=future,
-                                                     error_type=error_type,
-                                                     social_network=social_network)
+        r, error_text, expection_text = get_response(
+            request_future=future, error_type=error_type, social_network=social_network
+        )
 
         # Get response time for response of our request.
         try:
@@ -534,12 +576,14 @@ def sherlock(username, site_data, query_notify,
             response_text = ""
 
         if error_text is not None:
-            result = QueryResult(username,
-                                 social_network,
-                                 url,
-                                 QueryStatus.UNKNOWN,
-                                 query_time=response_time,
-                                 context=error_text)
+            result = QueryResult(
+                username,
+                social_network,
+                url,
+                QueryStatus.UNKNOWN,
+                query_time=response_time,
+                context=error_text,
+            )
         elif error_type == "message":
             # error_flag True denotes no error found in the HTML
             # error_flag False denotes error found in the HTML
@@ -562,31 +606,39 @@ def sherlock(username, site_data, query_notify,
                         error_flag = False
                         break
             if error_flag:
-                result = QueryResult(username,
-                                     social_network,
-                                     url,
-                                     QueryStatus.CLAIMED,
-                                     query_time=response_time)
+                result = QueryResult(
+                    username,
+                    social_network,
+                    url,
+                    QueryStatus.CLAIMED,
+                    query_time=response_time,
+                )
             else:
-                result = QueryResult(username,
-                                     social_network,
-                                     url,
-                                     QueryStatus.AVAILABLE,
-                                     query_time=response_time)
+                result = QueryResult(
+                    username,
+                    social_network,
+                    url,
+                    QueryStatus.AVAILABLE,
+                    query_time=response_time,
+                )
         elif error_type == "status_code":
             # Checks if the status code of the response is 2XX
-            if not r.status_code >= 300 or r.status_code < 200:
-                result = QueryResult(username,
-                                     social_network,
-                                     url,
-                                     QueryStatus.CLAIMED,
-                                     query_time=response_time)
+            if 200 <= r.status_code < 300:
+                result = QueryResult(
+                    username,
+                    social_network,
+                    url,
+                    QueryStatus.CLAIMED,
+                    query_time=response_time,
+                )
             else:
-                result = QueryResult(username,
-                                     social_network,
-                                     url,
-                                     QueryStatus.AVAILABLE,
-                                     query_time=response_time)
+                result = QueryResult(
+                    username,
+                    social_network,
+                    url,
+                    QueryStatus.AVAILABLE,
+                    query_time=response_time,
+                )
         elif error_type == "response_url":
             # For this detection method, we have turned off the redirect.
             # So, there is no need to check the response URL: it will always
@@ -594,31 +646,36 @@ def sherlock(username, site_data, query_notify,
             # code indicates that the request was successful (i.e. no 404, or
             # forward to some odd redirect).
             if 200 <= r.status_code < 300:
-                result = QueryResult(username,
-                                     social_network,
-                                     url,
-                                     QueryStatus.CLAIMED,
-                                     query_time=response_time)
+                result = QueryResult(
+                    username,
+                    social_network,
+                    url,
+                    QueryStatus.CLAIMED,
+                    query_time=response_time,
+                )
             else:
-                result = QueryResult(username,
-                                     social_network,
-                                     url,
-                                     QueryStatus.AVAILABLE,
-                                     query_time=response_time)
+                result = QueryResult(
+                    username,
+                    social_network,
+                    url,
+                    QueryStatus.AVAILABLE,
+                    query_time=response_time,
+                )
         else:
             # It should be impossible to ever get here...
-            raise ValueError("Unknown Error Type '{}' for "
-                             "site '{}'".format(error_type, social_network))
+            raise ValueError(
+                f"Unknown Error Type '{error_type}' for site '{social_network}'"
+            )
 
         # Notify caller about results of query.
         query_notify.update(result)
 
         # Save status of request
-        results_site['status'] = result
+        results_site["status"] = result
 
         # Save results from request
-        results_site['http_status'] = http_status
-        results_site['response_text'] = response_text
+        results_site["http_status"] = http_status
+        results_site["response_text"] = response_text
 
         # Add this site's results into final dictionary with all of the
         # other results.
@@ -639,7 +696,7 @@ def t_sherlock(username):
     except Exception as e:
         # Check internal error
         if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - "):]
+            reason = str(e)[len("iKy - ") :]
             status = "Warning"
         else:
             reason = str(e)
@@ -647,15 +704,19 @@ def t_sherlock(username):
 
         traceback.print_exc()
         traceback_text = traceback.format_exc()
-        total.append({'module': 'sherlock'})
-        total.append({'param': username})
-        total.append({'validation': 'not_used'})
+        total.append({"module": "sherlock"})
+        total.append({"param": username})
+        total.append({"validation": "not_used"})
 
         raw_node = []
-        raw_node.append({"status": status,
-                         # "reason": "{}".format(e),
-                         "reason": reason,
-                         "traceback": traceback_text})
+        raw_node.append(
+            {
+                "status": status,
+                # "reason": "{}".format(e),
+                "reason": reason,
+                "traceback": traceback_text,
+            }
+        )
         total.append({"raw": raw_node})
 
     # Take final time
