@@ -89,7 +89,7 @@ export class InstagramMapComponent implements OnDestroy {
         for (let loc in this.instagramMaps) {
             console.warn("LOCCCCCCCCC", this.instagramMaps[loc])
             if (this.instagramMaps[loc]['Latitude'] != "None") {
-                L.marker([this.instagramMaps[loc]['Latitude'], this.instagramMaps[loc]['Longitude']], {icon: greenIcon}).addTo(map).bindPopup("<b>" + this.instagramMaps[loc]['Name'] + "</b><br>Caption : " + this.instagramMaps[loc]['Caption'] + "<br>Time : " + this.instagramMaps[loc]['Time'] + "<br>Accessability : " + this.instagramMaps[loc]['Accessability']);
+                L.marker([this.instagramMaps[loc]['Latitude'], this.instagramMaps[loc]['Longitude']], {icon: greenIcon}).addTo(map).bindPopup("<b>" + this.instagramMaps[loc]['Name'] + "</b><br>Caption : " + this.instagramMaps[loc]['Caption'] + "<br>Time : " + this.instagramMaps[loc]['Time'] + "<br>Accessibility : " + this.instagramMaps[loc]['Accessibility']);
             }
         }
         // L.marker([, ], {icon: greenIcon}).addTo(map).bindPopup("<b>" + this.instagramMaps[loc]['Name'] + "</b><br>Caption : " + this.instagramMaps[loc]['Caption']);

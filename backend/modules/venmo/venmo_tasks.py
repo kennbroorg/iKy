@@ -1,122 +1,120 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 
-import os
-import sys
 import json
-import requests
-from bs4 import BeautifulSoup
-from datetime import date
 import random
-import traceback
+import sys
 import time
+import traceback
+from pathlib import Path
 
+import requests
 
 try:
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
-    sys.path.append('../../')
+    sys.path.append("../../")
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 
-# from requests.packages.urllib3.exceptions import InsecureRequestWarning
-# requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# import urllib3
+# urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
 
 month = {
-    'January': "01",
-    'February': "02",
-    'March': "03",
-    'April': "04",
-    'May': "05",
-    'June': "06",
-    'July': "07",
-    'August': "08",
-    'September': "09",
-    'October': "10",
-    'November': "11",
-    'December': "12"
+    "January": "01",
+    "February": "02",
+    "March": "03",
+    "April": "04",
+    "May": "05",
+    "June": "06",
+    "July": "07",
+    "August": "08",
+    "September": "09",
+    "October": "10",
+    "November": "11",
+    "December": "12",
 }
 
 dayName = {
-	'Monday':0,
-	'Tuesday':1,
-	'Wednesday':2,
-	'Thursday':3,
-	'Friday':4,
-	'Saturday':5,
-	'Sunday':6
+    "Monday": 0,
+    "Tuesday": 1,
+    "Wednesday": 2,
+    "Thursday": 3,
+    "Friday": 4,
+    "Saturday": 5,
+    "Sunday": 6,
 }
 
 user_agents = [
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-    'Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)',
-    'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko',
-    'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
-    'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko',
-    'Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko',
-    'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko',
-    'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)',
-    'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko',
-    'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
-    'Mozilla/5.0 (Windows NT 6.1; Win64; x64; Trident/7.0; rv:11.0) like Gecko',
-    'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)',
-    'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)',
-    'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)'
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+    "Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)",
+    "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko",
+    "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)",
+    "Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko",
+    "Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko",
+    "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
+    "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)",
+    "Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko",
+    "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)",
+    "Mozilla/5.0 (Windows NT 6.1; Win64; x64; Trident/7.0; rv:11.0) like Gecko",
+    "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)",
+    "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)",
+    "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)",
 ]
 
 
-@celery.task
 def p_venmo(username, from_m="Initial"):
     """Task of Celery that get info from venmo"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-venmo.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-venmo.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
-            with open(file_path, 'r') as file:
+            with open(file_path) as file:
                 data = json.load(file)
             return data
         except json.JSONDecodeError:
-            logger.error(f"Developer mode ERROR")
+            logger.error("Developer mode ERROR")
 
     # Code
     raw_node = []
     # Parsing user information
-    user = []
-    url = "https://venmo.com/%s" % username
-    url_user = 'https://api.venmo.com/v1/users/{}'.format(username)
-    response = requests.get(url_user, headers={'User-Agent': random.choice(user_agents)}, verify=False)
+    url = f"https://venmo.com/{username}"
+    url_user = f"https://api.venmo.com/v1/users/{username}"
+    response = requests.get(
+        url_user,
+        headers={"User-Agent": random.choice(user_agents)},
+        timeout=30,
+    )
     data_user = response.json()
     # print(" USER : ")
     # print(data_user)
 
-    if (data_user.get("error", "") != ""):
+    if data_user.get("error", "") != "":
         raise Exception("iKy - User not found")
     else:
-        raw_node.append({'user': data_user["data"]})
+        raw_node.append({"user": data_user["data"]})
         # transaction = {"friends": [], "details": []}
         # resp = requests.get(url, headers={'User-Agent': random.choice(user_agents)}, verify=False)
         # html_doc = BeautifulSoup(resp.text, "html.parser")
@@ -167,13 +165,13 @@ def p_venmo(username, from_m="Initial"):
 
     # Total
     total = []
-    total.append({'module': 'venmo'})
-    total.append({'param': username})
+    total.append({"module": "venmo"})
+    total.append({"param": username})
     # Evaluates the module that executed the task and set validation
-    if (from_m == 'Initial'):
-        total.append({'validation': 'no'})
+    if from_m == "Initial":
+        total.append({"validation": "no"})
     else:
-        total.append({'validation': 'soft'})
+        total.append({"validation": "soft"})
 
     # Graphic Array
     graphic = []
@@ -188,32 +186,40 @@ def p_venmo(username, from_m="Initial"):
     gather = []
 
     friends = []
-    transactions = []
 
     link = "Venmo"
-    gather_item = {"name-node": "Venmo", "title": "Venmo",
-                   "subtitle": "",
-                   "icon": "fas fa-money-bill-wave",
-                   "link": link}
+    gather_item = {
+        "name-node": "Venmo",
+        "title": "Venmo",
+        "subtitle": "",
+        "icon": "fas fa-money-bill-wave",
+        "link": link,
+    }
     gather.append(gather_item)
 
-    if ('status' not in raw_node):
+    if "status" not in raw_node:
         # Gather Array
         social = []
 
         link_friends = "Friends"
-        friends_item = {"name-node": "Friends", "title": "Friends",
-                        "subtitle": raw_node[0]["user"]["display_name"],
-                        "icon": "fas fa-user-friends",
-                        "link": link_friends}
+        friends_item = {
+            "name-node": "Friends",
+            "title": "Friends",
+            "subtitle": raw_node[0]["user"]["display_name"],
+            "icon": "fas fa-user-friends",
+            "link": link_friends,
+        }
         friends.append(friends_item)
 
-        gather_item = {"name-node": "Venmoname", "title": "Name",
-                       "subtitle": raw_node[0]["user"]["display_name"],
-                       "icon": "fas fa-user",
-                       "link": link}
+        gather_item = {
+            "name-node": "Venmoname",
+            "title": "Name",
+            "subtitle": raw_node[0]["user"]["display_name"],
+            "icon": "fas fa-user",
+            "link": link,
+        }
         gather.append(gather_item)
-        profile_item = {'name': raw_node[0]["user"]["display_name"]}
+        profile_item = {"name": raw_node[0]["user"]["display_name"]}
         profile.append(profile_item)
 
         # gather_item = {"name-node": "Venmoactive", "title": "Active",
@@ -234,21 +240,38 @@ def p_venmo(username, from_m="Initial"):
         #                 "link": link}
         # gather.append(gather_item)
 
-        gather_item = {"name-node": "VenmoJoin", "title": "Join Date",
-                       "subtitle": raw_node[0]["user"]["date_joined"],
-                       "icon": "fas fa-calendar-check", "link": link}
+        gather_item = {
+            "name-node": "VenmoJoin",
+            "title": "Join Date",
+            "subtitle": raw_node[0]["user"]["date_joined"],
+            "icon": "fas fa-calendar-check",
+            "link": link,
+        }
         gather.append(gather_item)
-        timeline.append({'action': 'Start : Venmo',
-                         'date': raw_node[0]["user"]["date_joined"],
-                         'desc': "Join date for Venmo"})
+        timeline.append(
+            {
+                "action": "Start : Venmo",
+                "date": raw_node[0]["user"]["date_joined"],
+                "desc": "Join date for Venmo",
+            }
+        )
 
-        gather_item = {"name-node": "VenmoPic", "title": "Avatar",
-                       "picture": raw_node[0]["user"]["profile_picture_url"],
-                       "subtitle": "",
-                       "link": link}
+        gather_item = {
+            "name-node": "VenmoPic",
+            "title": "Avatar",
+            "picture": raw_node[0]["user"]["profile_picture_url"],
+            "subtitle": "",
+            "link": link,
+        }
         gather.append(gather_item)
-        profile_item = {'photos': [{"picture": raw_node[0]["user"]["profile_picture_url"],
-                                    "title": "Venmo"}]}
+        profile_item = {
+            "photos": [
+                {
+                    "picture": raw_node[0]["user"]["profile_picture_url"],
+                    "title": "Venmo",
+                }
+            ]
+        }
         profile.append(profile_item)
 
         # gather_item = {"name-node": "VenmoBio", "title": "Bio",
@@ -257,22 +280,31 @@ def p_venmo(username, from_m="Initial"):
         #                "link": link}
         # gather.append(gather_item)
 
-        gather_item = {"name-node": "VenmoID", "title": "UserID",
-                       "subtitle": raw_node[0]["user"]["id"],
-                       "icon": "fas fa-user-circle",
-                       "link": link}
+        gather_item = {
+            "name-node": "VenmoID",
+            "title": "UserID",
+            "subtitle": raw_node[0]["user"]["id"],
+            "icon": "fas fa-user-circle",
+            "link": link,
+        }
         gather.append(gather_item)
 
-        gather_item = {"name-node": "VenmoURL", "title": "URL",
-                       "subtitle": url_user,
-                       "icon": "fas fa-code",
-                       "link": link}
+        gather_item = {
+            "name-node": "VenmoURL",
+            "title": "URL",
+            "subtitle": url_user,
+            "icon": "fas fa-code",
+            "link": link,
+        }
         gather.append(gather_item)
 
-        gather_item = {"name-node": "VenmoUsername", "title": "Username",
-                       "subtitle": username,
-                       "icon": "fas fa-user",
-                       "link": link}
+        gather_item = {
+            "name-node": "VenmoUsername",
+            "title": "Username",
+            "subtitle": username,
+            "icon": "fas fa-user",
+            "link": link,
+        }
         gather.append(gather_item)
 
         # gather_item = {"name-node": "VenmoPhone", "title": "Phone",
@@ -319,24 +351,26 @@ def p_venmo(username, from_m="Initial"):
         #                     "link": link_friends}
         #     friends.append(friends_item)
 
-        social_item = {"name": "Venmo",
-                       "url": url,
-                       "source": "Venmo",
-                       "icon": "fas fa-money-bill-wave",
-                       "username": username}
+        social_item = {
+            "name": "Venmo",
+            "url": url,
+            "source": "Venmo",
+            "icon": "fas fa-money-bill-wave",
+            "username": username,
+        }
         social.append(social_item)
         profile.append({"social": social})
         profile_item = {"username": username}
         profile.append(profile_item)
 
-    print (raw_node)
-    graphic.append({'user': gather})
+    print(raw_node)
+    graphic.append({"user": gather})
     # graphic.append({'friends': friends})
     # graphic.append({'trans': transactions})
-    total.append({'raw': raw_node})
-    total.append({'graphic': graphic})
-    total.append({'profile': profile})
-    total.append({'timeline': timeline})
+    total.append({"raw": raw_node})
+    total.append({"graphic": graphic})
+    total.append({"profile": profile})
+    total.append({"timeline": timeline})
 
     return total
 
@@ -350,7 +384,7 @@ def t_venmo(username, from_m="Initial"):
     except Exception as e:
         # Check internal error
         if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - "):]
+            reason = str(e)[len("iKy - ") :]
             status = "Warning"
         else:
             reason = str(e)
@@ -358,15 +392,19 @@ def t_venmo(username, from_m="Initial"):
 
         traceback.print_exc()
         traceback_text = traceback.format_exc()
-        total.append({'module': 'venmo'})
-        total.append({'param': username})
-        total.append({'validation': 'not_used'})
+        total.append({"module": "venmo"})
+        total.append({"param": username})
+        total.append({"validation": "not_used"})
 
         raw_node = []
-        raw_node.append({"status": status,
-                         # "reason": "{}".format(e),
-                         "reason": reason,
-                         "traceback": traceback_text})
+        raw_node.append(
+            {
+                "status": status,
+                # "reason": "{}".format(e),
+                "reason": reason,
+                "traceback": traceback_text,
+            }
+        )
         total.append({"raw": raw_node})
 
     # Take final time

@@ -1,31 +1,35 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
 
-import os
-import sys
 import json
-import requests
-from bs4 import BeautifulSoup
 import random
+import sys
 import time
+from pathlib import Path
 
+import requests
 
 try:
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 except ImportError:
     # This is to test the module individually, and I know that is piece of shit
-    sys.path.append('../../')
+    sys.path.append("../../")
+    from celery.utils.log import get_task_logger
     from factories._celery import create_celery
     from factories.application import create_application
-    from celery.utils.log import get_task_logger
+
     celery = create_celery(create_application())
 
 
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# urllib3 warning suppression kept intentionally: TOR .onion hidden
+# services use self-signed certificates, so verify=False is expected
+# when routing through a SOCKS proxy to the Tor network.
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
@@ -35,53 +39,50 @@ def t_darkpass(email, from_m="Initial", proxy="127.0.0.1:9050"):
     """Task of Celery that get info from skype"""
 
     # Code to develop the frontend without burning APIs
-    cd = os.getcwd()
-    td = os.path.join(cd, "outputs")
-    output = "output-darkpass.json"
-    file_path = os.path.join(td, output)
+    file_path = Path.cwd() / "outputs" / "output-darkpass.json"
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         logger.warning(f"Developer frontend mode - {file_path}")
         try:
-            with open(file_path, 'r') as file:
+            with open(file_path) as file:
                 data = json.load(file)
             time.sleep(2)
             return data
         except Exception:
-            logger.error(f"Developer mode error")
+            logger.error("Developer mode error")
 
     # Code
     raw_node = []
 
     user_agents = [
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-        'Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)',
-        'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
-        'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)',
-        'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
-        'Mozilla/5.0 (Windows NT 6.1; Win64; x64; Trident/7.0; rv:11.0) like Gecko',
-        'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)',
-        'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)',
-        'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)'
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+        "Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)",
+        "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)",
+        "Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko",
+        "Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)",
+        "Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)",
+        "Mozilla/5.0 (Windows NT 6.1; Win64; x64; Trident/7.0; rv:11.0) like Gecko",
+        "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)",
+        "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)",
+        "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)",
     ]
 
     # Tor proxy
     session = requests.session()
-    session.proxies = {'http': 'socks5h://{}'.format(proxy), 'https': 'socks5h://{}'.format(proxy)}
+    session.proxies = {"http": f"socks5h://{proxy}", "https": f"socks5h://{proxy}"}
 
     url = "http://pwndb2am4tzkvold.onion/"
     username = email
@@ -91,51 +92,68 @@ def t_darkpass(email, from_m="Initial", proxy="127.0.0.1:9050"):
         username = email.split("@")[0]
         domain = email.split("@")[1]
         if not username:
-            username = '%'
+            username = "%"
 
-    request_data = {'luser': username, 'domain': domain, 'luseropr': 1, 'domainopr': 1, 'submitform': 'em'}
+    request_data = {
+        "luser": username,
+        "domain": domain,
+        "luseropr": 1,
+        "domainopr": 1,
+        "submitform": "em",
+    }
 
     try:
-        req = session.post(url, data=request_data, headers={'User-Agent': random.choice(user_agents)})
+        req = session.post(
+            url,
+            data=request_data,
+            headers={"User-Agent": random.choice(user_agents)},
+            timeout=60,
+        )
     except Exception as err:
-        raw_node = { 'status': 'No TOR', 'desc': str(type(err))}
+        raw_node = {"status": "No TOR", "desc": str(type(err))}
 
-    if (raw_node == []):
-        if ("Array" in req.text):
+    if not raw_node:
+        if "Array" in req.text:
             leaks = req.text.split("Array")[1:]
             emails = []
 
             for leak in leaks:
-                leaked_email = ''
-                domain = ''
-                password = ''
+                leaked_email = ""
+                domain = ""
+                password = ""
                 try:
                     leaked_email = leak.split("[luser] =>")[1].split("[")[0].strip()
                     domain = leak.split("[domain] =>")[1].split("[")[0].strip()
                     password = leak.split("[password] =>")[1].split(")")[0].strip()
-                except:
+                except Exception:
                     pass
-                if leaked_email and leaked_email != 'donate':
-                    emails.append({'username': leaked_email, 'domain': domain, 'password': password})
+                if leaked_email and leaked_email != "donate":
+                    emails.append(
+                        {
+                            "username": leaked_email,
+                            "domain": domain,
+                            "password": password,
+                        }
+                    )
 
-            if (len(emails) > 0):
-                raw_node = {'pass': emails}
+            if len(emails) > 0:
+                raw_node = {"pass": emails}
             else:
-                raw_node = { 'status': 'No password leaked'}
+                raw_node = {"status": "No password leaked"}
         else:
-            raw_node = { 'status': 'No password leaked'}
+            raw_node = {"status": "No password leaked"}
 
     print(raw_node)
 
     # Total
     total = []
-    total.append({'module': 'darkpass'})
-    total.append({'param': email})
+    total.append({"module": "darkpass"})
+    total.append({"param": email})
     # Evaluates the module that executed the task and set validation
-    if (from_m == 'Initial'):
-        total.append({'validation': 'no'})
+    if from_m == "Initial":
+        total.append({"validation": "no"})
     else:
-        total.append({'validation': 'soft'})
+        total.append({"validation": "soft"})
 
     # Graphic Array
     graphic = []
@@ -149,18 +167,18 @@ def t_darkpass(email, from_m="Initial", proxy="127.0.0.1:9050"):
     # Gather Array
     gather = []
 
-    if (raw_node.get("pass","") != ""):
-        for passwords in raw_node['pass']:
-            gather_item = {"username": email, "password": passwords['password']}
+    if raw_node.get("pass", "") != "":
+        for passwords in raw_node["pass"]:
+            gather_item = {"username": email, "password": passwords["password"]}
             gather.append(gather_item)
-            profile_item = {"password": passwords['password']}
+            profile_item = {"password": passwords["password"]}
             profile.append(profile_item)
 
-    graphic.append({'darkpass': gather})
-    total.append({'raw': raw_node})
-    total.append({'graphic': graphic})
-    total.append({'profile': profile})
-    total.append({'timeline': timeline})
+    graphic.append({"darkpass": gather})
+    total.append({"raw": raw_node})
+    total.append({"graphic": graphic})
+    total.append({"profile": profile})
+    total.append({"timeline": timeline})
 
     return total
 

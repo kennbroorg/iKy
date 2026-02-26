@@ -1,15 +1,16 @@
-# -*- encoding: utf-8 -*-
 from celery import Celery
+from flask import Flask
 
 
-def create_celery(application):
+def create_celery(application: Flask) -> Celery:
     """
     Configures celery instance from application, using it's config
     :param application: Flask application instance
     :return: Celery instance
     """
-    celery = Celery(application.import_name,
-                    broker=application.config['CELERY_BROKER_URL'])
+    celery = Celery(
+        application.import_name, broker=application.config["CELERY_BROKER_URL"]
+    )
     celery.conf.update(application.config)
     TaskBase = celery.Task
 
