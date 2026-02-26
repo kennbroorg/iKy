@@ -1,0 +1,30 @@
+# Version control
+.git/
+.gitignore
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# Node
+node_modules/
+
+# Dev tooling
+.pre-commit-config.yaml
+ruff.toml
+justfile
+.claude/
+
+# CI/CD & deployment configs
+.gitlab-ci.yml
+install/vagrant/
+
+# Documentation (not needed in image)
+*.md
+LICENSE
+
+# OS files
+.DS_Store
+Thumbs.db

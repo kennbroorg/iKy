@@ -9,8 +9,9 @@
     <img alt="Python" src="https://img.shields.io/badge/python-3.9-informational.svg?style=for-the-badge">
     <img alt="Celery" src="https://img.shields.io/badge/multiprocessing-celery-green.svg?style=for-the-badge">
     <img alt="Flask" src="https://img.shields.io/badge/interface-flask-yellowgreen.svg?style=for-the-badge">
-    <img alt="Node" src="https://img.shields.io/badge/node-12.x-brightgreen.svg?style=for-the-badge">
-    <img alt="Angular" src="https://img.shields.io/badge/web%20framwork-angular%207-red.svg?style=for-the-badge">
+    <img alt="Node" src="https://img.shields.io/badge/node-14.x-brightgreen.svg?style=for-the-badge">
+    <img alt="Angular" src="https://img.shields.io/badge/web%20framework-angular%208-red.svg?style=for-the-badge">
+    <img alt="Docker" src="https://img.shields.io/badge/deploy-docker-blue.svg?style=for-the-badge&logo=docker">
 </div>
 
 <!--
@@ -34,7 +35,7 @@
 
 ---
 
-<div align="center">   
+<div align="center">
 
 [Description](#description)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Installation](#installation)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Website][website]&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Modules](#modules)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Issues][issues]&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Supporting](#sponsor)
 
@@ -97,31 +98,69 @@ Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
 
 <h1 id="installation">Installation</h1>
 
-You must install Redis and start it
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/) (included with Docker Desktop)
+- (Optional) [just](https://github.com/casey/just#installation) task runner
+
+### Quick start
 
 ```shell
-wget http://download.redis.io/redis-stable.tar.gz
-tar xvzf redis-stable.tar.gz
-cd redis-stable
-make
-sudo make install
-cd ..
+git clone https://gitlab.com/kennbroorg/iKy.git
+cd iKy
+docker compose build
+docker compose up -d
 ```
 
-Go to our [website][website]. Download the ZIP file and unzip it, install requeriments and start it in another terminal
-``` shell
-unzip iKy.zip
-cd iKy-pack
-pip install -r requirements.txt
-cd backend
-python3 app.py -e prod
+Or, if you have `just` installed:
+
+```shell
+just build
+just up
 ```
 
-And, finally, [browse](#browse) it.
+Open your browser at [http://localhost:4200](http://localhost:4200)
 
-<h3 id="browser">Browse</h3>
+To stop all services:
 
-Open the browser in this [url](http://127.0.0.1:4200) 
+```shell
+docker compose down
+# or
+just down
+```
+
+<h1 id="development">Development</h1>
+
+The development workflow uses a **virtualenv for linting/pre-commit hooks** and **Docker for building and running** the application.
+
+### Setting up the dev environment
+
+Install [just](https://github.com/casey/just#installation), then:
+
+```shell
+just setup
+source .venv/bin/activate
+```
+
+This creates a Python virtualenv with `pre-commit` and `ruff`, and installs the git hooks.
+
+### Common recipes
+
+| Command | Description |
+|---------|-------------|
+| `just build` | Build Docker images |
+| `just up` | Start all services |
+| `just down` | Stop all services |
+| `just logs` | Follow backend logs (`just logs frontend` for frontend) |
+| `just ps` | Show running containers |
+| `just shell-backend` | Open a shell in the backend container |
+| `just shell-frontend` | Open a shell in the frontend container |
+| `just lint` | Run ruff linter and format check |
+| `just fmt` | Auto-format Python code |
+| `just restart backend` | Restart a specific service |
+| `just rebuild` | Stop, rebuild, and start all services |
+| `just clean` | Remove containers, volumes, and local images |
 
 # API Keys
 
@@ -146,27 +185,26 @@ Below is a table with all the fields to fill out
 
 <h1 id="update">Update iKy</h1>
 
-Because the iKy frontend is developed in Angular, which is transpiled, and a CI/CD process packages it, the best way to upgrade is to download iKy-pack from [website][website] and re-run these steps
+Pull the latest changes and rebuild the Docker images:
 
-``` shell
-unzip iKy.zip
-cd iKy-pack
-pip install -r requirements.txt
-cd backend
-python app.py -e prod
+```shell
+git pull
+docker compose build
+docker compose up -d
 ```
 
-> No reinstallation of redis is necessary.
+Or with `just`:
 
-Once you have completed the above you can copy the apikeys.json file located in backend/factories inside the iKy directory from the old installation to the new installation.
+```shell
+git pull
+just rebuild
+```
 
-Or you can use the graphical interface in the apikeys menu to use the Export/Import options (Export from the old installation and import into the new installation).
+To preserve your API keys across updates, use the Export/Import options in the apikeys menu of the graphical interface.
 
 <div align="center">
     <img alt="apis" height="400" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKy-08.png">
 </div>
-
-Or you can use a combination of both (Best) using the import option from the new installation and looking for the apikeys.json file in backend/factories in the iKy directory of the old installation.
 
 # Wiki
 
