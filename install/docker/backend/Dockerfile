@@ -19,9 +19,12 @@ RUN pip install --no-cache-dir -U pip && \
 # Copy backend code
 COPY ./backend .
 
-# Configure Redis URLs for Docker (read by configuration.py at runtime)
+# Configure Redis URLs for Docker (read by celery_app.py at runtime)
 ENV CELERY_BROKER_URL="redis://redis:6379/0"
 ENV CELERY_RESULT_BACKEND="redis://redis:6379/0"
+
+# Initialize apikeys.json if it doesn't exist
+RUN cp -n factories/apikeys_default.json factories/apikeys.json 2>/dev/null || true
 
 # Supervisor configuration
 COPY install/docker/backend/supervisor.conf /etc/supervisor.conf
