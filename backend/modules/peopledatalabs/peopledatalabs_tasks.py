@@ -8,26 +8,12 @@ from pathlib import Path
 
 from peopledatalabs import PDLPY
 
-try:
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.configuration import api_keys_search
-    from factories.fontcheat import search_icon_5
-    from factories.iKy_functions import location_geo
+from celery.utils.log import get_task_logger
 
-    celery = create_celery(create_application())
-except ImportError:
-    # This is to test the module individually, and I know that is piece of shit
-    sys.path.append("../../")
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.configuration import api_keys_search
-    from factories.fontcheat import search_icon_5
-    from factories.iKy_functions import location_geo
-
-    celery = create_celery(create_application())
+from celery_app import celery
+from factories.configuration import api_keys_search
+from factories.fontcheat import search_icon_5
+from factories.iKy_functions import location_geo
 
 logger = get_task_logger(__name__)
 

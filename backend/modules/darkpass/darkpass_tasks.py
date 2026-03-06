@@ -8,20 +8,9 @@ from pathlib import Path
 
 import requests
 
-try:
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
+from celery.utils.log import get_task_logger
 
-    celery = create_celery(create_application())
-except ImportError:
-    # This is to test the module individually, and I know that is piece of shit
-    sys.path.append("../../")
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-
-    celery = create_celery(create_application())
+from celery_app import celery
 
 
 # urllib3 warning suppression kept intentionally: TOR .onion hidden

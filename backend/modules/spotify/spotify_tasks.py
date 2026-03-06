@@ -16,22 +16,10 @@ from langdetect import detect
 from spotipy.oauth2 import SpotifyClientCredentials
 from stop_words import AVAILABLE_LANGUAGES, get_stop_words
 
-try:
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.configuration import api_keys_search
+from celery.utils.log import get_task_logger
 
-    celery = create_celery(create_application())
-except ImportError:
-    # This is to test the module individually, and I know that is piece of shit
-    sys.path.append("../../")
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.configuration import api_keys_search
-
-    celery = create_celery(create_application())
+from celery_app import celery
+from factories.configuration import api_keys_search
 
 logger = get_task_logger(__name__)
 

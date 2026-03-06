@@ -14,22 +14,10 @@ import tweepy
 
 # import oauth2
 
-try:
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.configuration import api_keys_search
+from celery.utils.log import get_task_logger
 
-    celery = create_celery(create_application())
-except ImportError:
-    # This is to test the module individually, and I know that is piece of shit
-    sys.path.append("../../")
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.configuration import api_keys_search
-
-    celery = create_celery(create_application())
+from celery_app import celery
+from factories.configuration import api_keys_search
 
 __author__ = "KennBro"
 __copyright__ = "Copyright 2020, iKy"

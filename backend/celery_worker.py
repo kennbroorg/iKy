@@ -1,4 +1,1 @@
-from factories._celery import create_celery
-from factories.application import create_application
-
-celery = create_celery(create_application())
+from celery_app import celery  # noqa: F401

@@ -14,24 +14,11 @@ import browser_cookie3
 # from tweety import Twitter
 import tweety
 
-try:
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.configuration import api_keys_search
-    from factories.iKy_functions import analize_rrss, location_geo
+from celery.utils.log import get_task_logger
 
-    celery = create_celery(create_application())
-except ImportError:
-    # This is to test the module individually, and I know that is piece of shit
-    sys.path.append("../../")
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.configuration import api_keys_search
-    from factories.iKy_functions import analize_rrss, location_geo
-
-    celery = create_celery(create_application())
+from celery_app import celery
+from factories.configuration import api_keys_search
+from factories.iKy_functions import analize_rrss, location_geo
 
 logger = get_task_logger(__name__)
 

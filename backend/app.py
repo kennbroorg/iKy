@@ -7,7 +7,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-from factories.application import create_application
 from termcolor import colored
 
 
@@ -19,7 +18,7 @@ def celeryServer():
     subprocess.run(["./celery.sh"], check=True)
 
 
-def flaskServer(ip="127.0.0.1", port=5000, env="prod"):
+def uvicornServer(ip="127.0.0.1", port=5000, env="prod"):
     # For apiKey initialization
     cur_dir = Path.cwd()
     api_keys_file = cur_dir / "factories" / "apikeys.json"
@@ -28,13 +27,16 @@ def flaskServer(ip="127.0.0.1", port=5000, env="prod"):
     if not api_keys_file.is_file():
         shutil.copy(api_keys_default, api_keys_file)
 
-    app = create_application()
+    import uvicorn
 
     debug = env != "prod"
-    if env == "prod":
-        app.run(port=port, debug=False, host=ip, use_reloader=False)
-    else:
-        app.run(host=ip, port=port, debug=debug)
+    uvicorn.run(
+        "main:app",
+        host=ip,
+        port=port,
+        reload=debug,
+        log_level="info",
+    )
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -81,13 +83,13 @@ if __name__ == "__main__":
         celery_proc = multiprocessing.Process(name="celery", target=celeryServer)
         celery_proc.daemon = True
 
-        print(colored("Flask serving...", "yellow"))
+        print(colored("Uvicorn serving...", "yellow"))
         sys.stdout.flush()
-        kwargs_flask = {"ip": ip, "port": 5000}
-        flask_proc = multiprocessing.Process(
-            name="flask", target=flaskServer, kwargs=kwargs_flask
+        kwargs_uvicorn = {"ip": ip, "port": 5000}
+        uvicorn_proc = multiprocessing.Process(
+            name="uvicorn", target=uvicornServer, kwargs=kwargs_uvicorn
         )
-        flask_proc.daemon = True
+        uvicorn_proc.daemon = True
 
         print(colored("HTTPD serving...", "magenta"))
         sys.stdout.flush()
@@ -96,11 +98,11 @@ if __name__ == "__main__":
 
         redis_proc.start()
         celery_proc.start()
-        flask_proc.start()
+        uvicorn_proc.start()
         httpd_proc.start()
         redis_proc.join()
-        flask_proc.join()
+        uvicorn_proc.join()
         celery_proc.join()
         httpd_proc.join()
     else:
-        flaskServer(ip, env="desa")
+        uvicornServer(ip, env="desa")

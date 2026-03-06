@@ -20,22 +20,10 @@ from search_engine_parser.core.engines.yahoo import Search as YahooSearch
 from search_engine_parser.core.engines.yandex import Search as YandexSearch
 from thefuzz import process
 
-try:
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.fontcheat import search_icon_5
+from celery.utils.log import get_task_logger
 
-    celery = create_celery(create_application())
-except ImportError:
-    # This is to test the module individually, and I know that is piece of shit
-    sys.path.append("../../")
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.fontcheat import search_icon_5
-
-    celery = create_celery(create_application())
+from celery_app import celery
+from factories.fontcheat import search_icon_5
 
 # import urllib3
 # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
