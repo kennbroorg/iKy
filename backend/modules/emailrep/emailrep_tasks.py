@@ -2,36 +2,19 @@
 
 import json
 import sys
-import time
-import traceback
-from pathlib import Path
-
-from emailrep import EmailRep
 
 from celery.utils.log import get_task_logger
-
-from celery_app import celery
+from emailrep import EmailRep
 from factories.configuration import api_keys_search
 from factories.fontcheat import search_icon_5
+from factories.task_wrapper import iky_task
 
 logger = get_task_logger(__name__)
 
 
+@iky_task(module_name="emailrep", dev_mode_sleep=15)
 def p_emailrep(username, from_m="Initial"):
-    """Task of Celery that get info from github"""
-
-    # Code to develop the frontend without burning APIs
-    file_path = Path.cwd() / "outputs" / "output-emailrep.json"
-
-    if file_path.exists():
-        logger.warning(f"Developer frontend mode - {file_path}")
-        try:
-            with open(file_path) as file:
-                data = json.load(file)
-                time.sleep(15)
-            return data
-        except json.JSONDecodeError:
-            logger.error("Developer mode ERROR")
+    """Task of Celery that get info from emailrep"""
 
     # Code
     key = api_keys_search("emailrep_key")
@@ -338,44 +321,8 @@ def p_emailrep(username, from_m="Initial"):
     return total
 
 
-@celery.task
-def t_emailrep(email, from_m="Initial"):
-    total = []
-    tic = time.perf_counter()
-    try:
-        total = p_emailrep(email, from_m)
-    except Exception as e:
-        # Check internal error
-        if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - ") :]
-            status = "Warning"
-        else:
-            reason = str(e)
-            status = "Fail"
-
-        traceback.print_exc()
-        traceback_text = traceback.format_exc()
-        total.append({"module": "emailrep"})
-        total.append({"param": email})
-        total.append({"validation": "not_used"})
-
-        raw_node = []
-        raw_node.append(
-            {
-                "status": status,
-                # "reason": "{}".format(e),
-                "reason": reason,
-                "traceback": traceback_text,
-            }
-        )
-        total.append({"raw": raw_node})
-
-    # Take final time
-    toc = time.perf_counter()
-    # Show process time
-    logger.info(f"Emailrep - Response in {toc - tic:0.4f} seconds")
-
-    return total
+# Backward-compatible alias: existing code references t_emailrep
+t_emailrep = p_emailrep
 
 
 def output(data):
