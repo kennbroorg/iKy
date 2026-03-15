@@ -11,8 +11,12 @@ services:
             dockerfile: ./install/docker/backend/Dockerfile
         ports:
             - "5000:5000"
-        links:
-            - "redis:redis"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        environment:
+            CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/0}
+            CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/0}
+            REDIS_HOST: ${REDIS_HOST:-redis}
     redis:
         image: redis
         ports:

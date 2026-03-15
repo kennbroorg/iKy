@@ -17,9 +17,19 @@ setup:
 build:
     docker compose build
 
-# Start all services in background
+# Start all services (auto-detects host Redis)
 up:
-    docker compose up -d
+    #!/usr/bin/env bash
+    if command -v redis-cli &>/dev/null && redis-cli -h 127.0.0.1 -p 6379 ping 2>/dev/null | grep -q PONG; then
+        echo "▶ Host Redis detected on 127.0.0.1:6379 — skipping Redis container"
+        export CELERY_BROKER_URL=redis://host.docker.internal:6379/0
+        export CELERY_RESULT_BACKEND=redis://host.docker.internal:6379/0
+        export REDIS_HOST=host.docker.internal
+        docker compose up -d frontend backend
+    else
+        echo "▶ No host Redis found — starting all services including Redis container"
+        docker compose up -d
+    fi
 
 # Stop all services
 down:
@@ -59,11 +69,21 @@ test *args:
 restart service:
     docker compose restart {{ service }}
 
-# Full rebuild: stop, build, start
+# Full rebuild: stop, build, start (auto-detects host Redis)
 rebuild:
+    #!/usr/bin/env bash
     docker compose down
     docker compose build
-    docker compose up -d
+    if command -v redis-cli &>/dev/null && redis-cli -h 127.0.0.1 -p 6379 ping 2>/dev/null | grep -q PONG; then
+        echo "▶ Host Redis detected — skipping Redis container"
+        export CELERY_BROKER_URL=redis://host.docker.internal:6379/0
+        export CELERY_RESULT_BACKEND=redis://host.docker.internal:6379/0
+        export REDIS_HOST=host.docker.internal
+        docker compose up -d frontend backend
+    else
+        echo "▶ No host Redis — starting all services"
+        docker compose up -d
+    fi
 
 # Remove containers, volumes, and locally-built images
 clean:
