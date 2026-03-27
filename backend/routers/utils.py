@@ -65,18 +65,25 @@ def r_result(task_id: str):
 
 @router.post("/apikey")
 async def r_apikey(request: Request):
-    """Read or write API keys."""
+    """Read or write API keys.
+
+    - Empty body or non-list body (e.g. ``{}``) → read current keys.
+    - Array body → validate and write keys.
+    """
     body = await request.body()
     if body:
         api_keys = await request.json()
-        if not isinstance(api_keys, list) or not all(
-            isinstance(k, dict) and set(k.keys()) <= {"id", "name", "key"}
-            for k in api_keys
-        ):
-            raise HTTPException(status_code=400, detail="Invalid API key format")
-        keys = api_keys_write(api_keys)
-    else:
-        keys = api_keys_read()
+        # If the body is a list, treat it as a write operation
+        if isinstance(api_keys, list):
+            if not all(
+                isinstance(k, dict) and set(k.keys()) <= {"id", "name", "key"}
+                for k in api_keys
+            ):
+                raise HTTPException(status_code=400, detail="Invalid API key format")
+            keys = api_keys_write(api_keys)
+            return {"keys": keys}
+    # Any non-list body (empty, {}, null) → read
+    keys = api_keys_read()
     return {"keys": keys}
 
 
