@@ -1,11 +1,9 @@
 import argparse
 import http.server
 import multiprocessing
-import shutil
 import socketserver
 import subprocess
 import sys
-from pathlib import Path
 
 from termcolor import colored
 
@@ -19,14 +17,6 @@ def celeryServer():
 
 
 def uvicornServer(ip="127.0.0.1", port=5000, env="prod"):
-    # For apiKey initialization
-    cur_dir = Path.cwd()
-    api_keys_file = cur_dir / "factories" / "apikeys.json"
-    api_keys_default = cur_dir / "factories" / "apikeys_default.json"
-
-    if not api_keys_file.is_file():
-        shutil.copy(api_keys_default, api_keys_file)
-
     import uvicorn
 
     debug = env != "prod"
