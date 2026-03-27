@@ -1,35 +1,19 @@
 #!/usr/bin/env python
 
+import argparse
 import json
 import re
-import sys
-import time
-import traceback
-from pathlib import Path
 
 import requests
-
 from celery.utils.log import get_task_logger
-
-from celery_app import celery
+from factories.task_wrapper import iky_task
 
 logger = get_task_logger(__name__)
 
 
+@iky_task(module_name="psbdmp")
 def p_psbdmp(email, from_m="Initial"):
-    """Task of Celery that get info from psbdmp"""
-
-    # Code to develop the frontend without burning APIs
-    file_path = Path.cwd() / "outputs" / "output-psbdmp.json"
-
-    if file_path.exists():
-        logger.info(f"Developer frontend mode - {file_path}")
-        try:
-            with open(file_path) as file:
-                data = json.load(file)
-            return data
-        except json.JSONDecodeError:
-            logger.error("Developer mode ERROR")
+    """Task of Celery that get info from psbdmp."""
 
     # Code
     username = email.split("@")[0] if "@" in email else email
@@ -43,7 +27,7 @@ def p_psbdmp(email, from_m="Initial"):
     dump_word = []
     for dump in req.json():
         response = requests.get(
-            "https://psbdmp.ws/api/v3/dump/{}".format(dump["id"]),
+            f"https://psbdmp.ws/api/v3/dump/{dump['id']}",
             timeout=30,
         )
         dump_list.append({"id": dump["id"], "tags": dump["tags"], "time": dump["time"]})
@@ -58,10 +42,7 @@ def p_psbdmp(email, from_m="Initial"):
     total.append({"module": "psbdmp"})
     total.append({"param": email})
     # Evaluates the module that executed the task and set validation
-    if from_m == "Initial":
-        total.append({"validation": "no"})
-    else:
-        total.append({"validation": "soft"})
+    total.append({"validation": "soft" if from_m != "Initial" else "no"})
 
     # Graphic Array
     graphic = []
@@ -94,44 +75,8 @@ def p_psbdmp(email, from_m="Initial"):
     return total
 
 
-@celery.task
-def t_psbdmp(email, from_m="Initial"):
-    total = []
-    tic = time.perf_counter()
-    try:
-        total = p_psbdmp(email, from_m)
-    except Exception as e:
-        # Check internal error
-        if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - ") :]
-            status = "Warning"
-        else:
-            reason = str(e)
-            status = "Fail"
-
-        traceback.print_exc()
-        traceback_text = traceback.format_exc()
-        total.append({"module": "psbdmp"})
-        total.append({"param": email})
-        total.append({"validation": "not_used"})
-
-        raw_node = []
-        raw_node.append(
-            {
-                "status": status,
-                # "reason": "{}".format(e),
-                "reason": reason,
-                "traceback": traceback_text,
-            }
-        )
-        total.append({"raw": raw_node})
-
-    # Take final time
-    toc = time.perf_counter()
-    # Show process time
-    logger.info(f"PsbDmp - Response in {toc - tic:0.4f} seconds")
-
-    return total
+# Backward-compatible alias: existing code references t_psbdmp
+t_psbdmp = p_psbdmp
 
 
 def output(data):
@@ -139,6 +84,9 @@ def output(data):
 
 
 if __name__ == "__main__":
-    email = sys.argv[1]
-    result = t_psbdmp(email)
+    parser = argparse.ArgumentParser(description="Query psbdmp for Pastebin dumps")
+    parser.add_argument("email", help="Email address to look up")
+    args = parser.parse_args()
+
+    result = t_psbdmp(args.email)
     output(result)
