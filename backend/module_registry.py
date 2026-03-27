@@ -18,15 +18,10 @@ MODULE_REGISTRY: dict[str, tuple[str, bool]] = {
         False,
     ),
     "github": ("modules.github.github_tasks.t_github", True),
-    "ghostproject": (
-        "modules.ghostproject.ghostproject_tasks.t_ghostproject",
-        False,
-    ),
     "keybase": ("modules.keybase.keybase_tasks.t_keybase", True),
     "twitter": ("modules.twitter.twitter_tasks.t_twitter", True),
     "linkedin": ("modules.linkedin.linkedin_tasks.t_linkedin", True),
     "leaks": ("modules.leaks.leaks_tasks.t_leaks", False),
-    "darkpass": ("modules.darkpass.darkpass_tasks.t_darkpass", False),
     "gitlab": ("modules.gitlab.gitlab_tasks.t_gitlab", False),
     "usersearch": (
         "modules.usersearch.usersearch_tasks.t_usersearch",
@@ -55,5 +50,4 @@ MODULE_REGISTRY: dict[str, tuple[str, bool]] = {
     ),
     "twitch": ("modules.twitch.twitch_tasks.t_twitch", False),
     "mastodon": ("modules.mastodon.mastodon_tasks.t_mastodon", False),
-    "psbdmp": ("modules.psbdmp.psbdmp_tasks.t_psbdmp", False),
 }
