@@ -4,6 +4,8 @@ Verifies that the migrated p_emailrep (now a Celery task via @iky_task)
 produces output structurally identical to the old t_emailrep wrapper.
 """
 
+import copy
+import inspect
 import json
 import sys
 from pathlib import Path
@@ -293,3 +295,109 @@ class TestDevModeGoldenFixture:
         assert result == golden
         # emailrep has dev_mode_sleep=15
         mock_sleep.assert_called_once_with(15)
+
+
+# ===========================================================================
+# Refactor verification tests (blacklisted bug fix, signature, consistency)
+# ===========================================================================
+
+
+def _find_gather_item(result, title):
+    """Find a gather item by title in the graphic details list."""
+    graphic = next(item["graphic"] for item in result if "graphic" in item)
+    details = graphic[0]["details"]
+    return next(item for item in details if item["title"] == title)
+
+
+class TestEmailrepRefactor:
+    """Verify the emailrep-refactor changes: icon bug fix, signature, structure."""
+
+    def test_blacklisted_true_shows_thumbs_down(
+        self, mock_api_key_found, mock_fontcheat
+    ):
+        """Blacklisted=True MUST produce thumbs-down (bug fix verification)."""
+        from modules.emailrep.emailrep_tasks import p_emailrep
+
+        response = copy.deepcopy(EMAILREP_RESPONSE)
+        response["details"]["blacklisted"] = True
+
+        mock_rep = MagicMock()
+        mock_rep.query.return_value = response
+
+        with patch(
+            "modules.emailrep.emailrep_tasks.EmailRep",
+            return_value=mock_rep,
+        ):
+            result = p_emailrep("test@example.com")
+
+        item = _find_gather_item(result, "Blacklisted")
+        assert item["icon"] == "fas fa-thumbs-down"
+
+    def test_blacklisted_false_shows_thumbs_up(
+        self, mock_emailrep_api, mock_api_key_found, mock_fontcheat
+    ):
+        """Blacklisted=False MUST produce thumbs-up."""
+        from modules.emailrep.emailrep_tasks import p_emailrep
+
+        result = p_emailrep("test@example.com")
+
+        item = _find_gather_item(result, "Blacklisted")
+        assert item["icon"] == "fas fa-thumbs-up"
+
+    def test_output_positional_structure(
+        self, mock_emailrep_api, mock_api_key_found, mock_fontcheat
+    ):
+        """Output array must be positionally correct per contract."""
+        from modules.emailrep.emailrep_tasks import p_emailrep
+
+        result = p_emailrep("test@example.com")
+
+        assert "module" in result[0] and result[0]["module"] == "emailrep"
+        assert "param" in result[1]
+        assert "validation" in result[2] and result[2]["validation"] == "hard"
+        assert "raw" in result[3]
+        assert "graphic" in result[4]
+        assert "profile" in result[5]
+        assert "timeline" in result[6]
+
+    def test_signature_no_from_m(self):
+        """p_emailrep must accept only 'username' — no 'from_m' parameter."""
+        from modules.emailrep.emailrep_tasks import p_emailrep
+
+        sig = inspect.signature(p_emailrep)
+        param_names = list(sig.parameters.keys())
+        assert param_names == ["username"]
+
+    def test_bool_icon_consistency(self, mock_api_key_found, mock_fontcheat):
+        """All 'bad' boolean fields set to True must produce thumbs-down."""
+        from modules.emailrep.emailrep_tasks import p_emailrep
+
+        bad_fields = {
+            "blacklisted": "Blacklisted",
+            "malicious_activity": "Malicious Activity",
+            "credentials_leaked": "Credentials Leaked",
+            "data_breach": "Data Breach",
+            "spam": "Spam",
+            "disposable": "Disposable or Temporary",
+            "spoofable": "Spoofable",
+            "suspicious_tld": "Suspicious TLD",
+        }
+
+        response = copy.deepcopy(EMAILREP_RESPONSE)
+        for field in bad_fields:
+            response["details"][field] = True
+
+        mock_rep = MagicMock()
+        mock_rep.query.return_value = response
+
+        with patch(
+            "modules.emailrep.emailrep_tasks.EmailRep",
+            return_value=mock_rep,
+        ):
+            result = p_emailrep("test@example.com")
+
+        for field_key, title in bad_fields.items():
+            item = _find_gather_item(result, title)
+            assert item["icon"] == "fas fa-thumbs-down", (
+                f"{title} (field={field_key}) should be thumbs-down when True"
+            )
