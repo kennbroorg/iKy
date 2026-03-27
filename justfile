@@ -13,23 +13,17 @@ setup:
     .venv/bin/pre-commit install
     @echo "Done. Activate with: source .venv/bin/activate"
 
+# Ensure backend/factories/apikeys.json exists (prevents Docker creating a directory)
+init-apikeys:
+    @cp -n backend/factories/apikeys_default.json backend/factories/apikeys.json 2>/dev/null || true
+
 # Build Docker images
-build:
+build: init-apikeys
     docker compose build
 
-# Start all services (auto-detects host Redis)
-up:
-    #!/usr/bin/env bash
-    if command -v redis-cli &>/dev/null && redis-cli -h 127.0.0.1 -p 6379 ping 2>/dev/null | grep -q PONG; then
-        echo "▶ Host Redis detected on 127.0.0.1:6379 — skipping Redis container"
-        export CELERY_BROKER_URL=redis://host.docker.internal:6379/0
-        export CELERY_RESULT_BACKEND=redis://host.docker.internal:6379/0
-        export REDIS_HOST=host.docker.internal
-        docker compose up -d frontend backend
-    else
-        echo "▶ No host Redis found — starting all services including Redis container"
-        docker compose up -d
-    fi
+# Start all services
+up: init-apikeys
+    docker compose up -d
 
 # Stop all services
 down:
@@ -51,6 +45,10 @@ shell-backend:
 shell-frontend:
     docker compose exec frontend sh
 
+# Open a shell in the new-frontend container
+shell-new-frontend:
+    docker compose exec new-frontend sh
+
 # Run linter checks (no auto-fix)
 lint:
     .venv/bin/ruff check .
@@ -69,21 +67,11 @@ test *args:
 restart service:
     docker compose restart {{ service }}
 
-# Full rebuild: stop, build, start (auto-detects host Redis)
-rebuild:
-    #!/usr/bin/env bash
+# Full rebuild: stop, build, start
+rebuild: init-apikeys
     docker compose down
     docker compose build
-    if command -v redis-cli &>/dev/null && redis-cli -h 127.0.0.1 -p 6379 ping 2>/dev/null | grep -q PONG; then
-        echo "▶ Host Redis detected — skipping Redis container"
-        export CELERY_BROKER_URL=redis://host.docker.internal:6379/0
-        export CELERY_RESULT_BACKEND=redis://host.docker.internal:6379/0
-        export REDIS_HOST=host.docker.internal
-        docker compose up -d frontend backend
-    else
-        echo "▶ No host Redis — starting all services"
-        docker compose up -d
-    fi
+    docker compose up -d
 
 # Remove containers, volumes, and locally-built images
 clean:
