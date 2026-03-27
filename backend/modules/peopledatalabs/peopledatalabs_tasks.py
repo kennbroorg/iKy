@@ -1,37 +1,21 @@
 #!/usr/bin/env python
 
+import argparse
 import json
-import sys
-import time
-import traceback
-from pathlib import Path
-
-from peopledatalabs import PDLPY
 
 from celery.utils.log import get_task_logger
-
-from celery_app import celery
 from factories.configuration import api_keys_search
 from factories.fontcheat import search_icon_5
 from factories.iKy_functions import location_geo
+from factories.task_wrapper import iky_task
+from peopledatalabs import PDLPY
 
 logger = get_task_logger(__name__)
 
 
+@iky_task(module_name="peopledatalabs")
 def p_peopledatalabs(email):
-    """Task of Celery that get info from peopledatalabs"""
-
-    # Code to develop the frontend without burning APIs
-    file_path = Path.cwd() / "outputs" / "output-peopledatalabs.json"
-
-    if file_path.exists():
-        logger.warning(f"Developer frontend mode - {file_path}")
-        try:
-            with open(file_path) as file:
-                data = json.load(file)
-            return data
-        except json.JSONDecodeError:
-            logger.error("Developer mode ERROR")
+    """Task of Celery that get info from peopledatalabs."""
 
     # Code
     raw_node = []
@@ -42,15 +26,13 @@ def p_peopledatalabs(email):
         raise Exception("iKy - Missing or invalid Key")
 
     # Create a client, specifying your API key
-    CLIENT = PDLPY(
-        api_key=key,
-    )
+    client = PDLPY(api_key=key)
 
     # Create a parameters JSON object
-    PARAMS = {"email": [email]}
+    params = {"email": [email]}
 
     # Pass the parameters object to the Person Enrichment API
-    json_response = CLIENT.person.enrichment(**PARAMS).json()
+    json_response = client.person.enrichment(**params).json()
 
     # Check for successful response
     if json_response["status"] != 200:
@@ -59,10 +41,6 @@ def p_peopledatalabs(email):
         )
 
     raw_node = json_response["data"]
-
-    # Save enrichment data to JSON file
-    # with open("my_pdl_enrichment.jsonl", "w") as out:
-    #     out.write(json.dumps(raw_node) + "\n")
 
     # Total
     total = []
@@ -137,7 +115,8 @@ def p_peopledatalabs(email):
 
         # Geolocalization
         geo_item = location_geo(
-            data.get("job_company_location_name", ""), data.get("job_last_updated", "")
+            data.get("job_company_location_name", ""),
+            data.get("job_last_updated", ""),
         )
         if geo_item:
             profile.append({"geo": geo_item})
@@ -149,7 +128,6 @@ def p_peopledatalabs(email):
                     "action": "Start : "
                     + data.get("job_company_name", "").capitalize(),
                     "date": data.get("job_start_date", "").replace("-", "/"),
-                    # 'icon': 'fa-building',
                     "desc": str(data.get("job_title", "")).capitalize()
                     + " - Source PDL",
                 }
@@ -159,7 +137,6 @@ def p_peopledatalabs(email):
                 {
                     "action": "End : " + data.get("job_company_name", "").capitalize(),
                     "date": data.get("job_last_updated", "").replace("-", "/"),
-                    # 'icon': 'fa-ban',
                     "desc": str(data.get("job_title", "")).capitalize()
                     + " - Source PDL",
                 }
@@ -283,12 +260,6 @@ def p_peopledatalabs(email):
         for mail in data.get("emails", ""):
             profile_item = {"email": mail["address"]}
             profile.append(profile_item)
-            # data_item = {"name-node": "DataWEmail" + str(e),
-            #              "title": mail.get("type"),
-            #              "subtitle": mail.get("address"),
-            #              "icon": "fas fa-at",
-            #              "link": link_data}
-            # datalabs.append(data_item)
 
     # Profiles RRSS
     if (data.get("profiles", "") != "") and (data.get("profiles", "") is not None):
@@ -300,7 +271,6 @@ def p_peopledatalabs(email):
 
             fa_icon = search_icon_5(social.get("network", ""))
             if fa_icon is None:
-                # fa_icon = search_icon_5("question")
                 fa_icon = "far fa-user"
 
             social_item = {
@@ -364,44 +334,8 @@ def p_peopledatalabs(email):
     return total
 
 
-@celery.task
-def t_peopledatalabs(email, from_m="Initial"):
-    total = []
-    tic = time.perf_counter()
-    try:
-        total = p_peopledatalabs(email)
-    except Exception as e:
-        # Check internal error
-        if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - ") :]
-            status = "Warning"
-        else:
-            reason = str(e)
-            status = "Fail"
-
-        traceback.print_exc()
-        traceback_text = traceback.format_exc()
-        total.append({"module": "peopledatalabs"})
-        total.append({"param": email})
-        total.append({"validation": "not_used"})
-
-        raw_node = []
-        raw_node.append(
-            {
-                "status": status,
-                # "reason": "{}".format(e),
-                "reason": reason,
-                "traceback": traceback_text,
-            }
-        )
-        total.append({"raw": raw_node})
-
-    # Take final time
-    toc = time.perf_counter()
-    # Show process time
-    logger.info(f"PeopleDataLabs - Response in {toc - tic:0.4f} seconds")
-
-    return total
+# Backward-compatible alias: existing code references t_peopledatalabs
+t_peopledatalabs = p_peopledatalabs
 
 
 def output(data):
@@ -409,6 +343,11 @@ def output(data):
 
 
 if __name__ == "__main__":
-    email = sys.argv[1]
-    result = t_peopledatalabs(email)
+    parser = argparse.ArgumentParser(
+        description="Query PeopleDataLabs for person enrichment"
+    )
+    parser.add_argument("email", help="Email address to look up")
+    args = parser.parse_args()
+
+    result = t_peopledatalabs(args.email)
     output(result)
