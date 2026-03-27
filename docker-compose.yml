@@ -5,19 +5,33 @@ services:
             dockerfile: ./install/docker/frontend/Dockerfile
         ports:
             - "4200:4200"
+    iky-frontend:
+        build:
+            context: .
+            dockerfile: ./install/docker/iKy-frontend/Dockerfile
+            args:
+                # Pin to a specific release: e.g. FRONTEND_VERSION=v1.2.3
+                # Leave as "latest" to always pull the most recent build.
+                FRONTEND_VERSION: ${FRONTEND_VERSION:-latest}
+        ports:
+            - "4300:80"
+        depends_on:
+            - backend
     backend:
         build:
             context: .
             dockerfile: ./install/docker/backend/Dockerfile
         ports:
             - "5000:5000"
-        extra_hosts:
-            - "host.docker.internal:host-gateway"
+        depends_on:
+            - redis
         environment:
-            CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/0}
-            CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/0}
-            REDIS_HOST: ${REDIS_HOST:-redis}
+            CELERY_BROKER_URL: redis://redis:6379/0
+            CELERY_RESULT_BACKEND: redis://redis:6379/0
+            REDIS_HOST: redis
+        volumes:
+            - ./backend/factories/apikeys.json:/app/factories/apikeys.json
     redis:
-        image: redis
+        image: redis:7-alpine
         ports:
-            - "6379:6379"
+            - "56379:6379"
