@@ -8,7 +8,11 @@ from celery.utils.log import get_task_logger
 from factories.configuration import api_keys_search
 from factories.iKy_functions import deep_analysis, simple_analysis
 from factories.search_orchestrator import post_process_results
-from factories.search_providers import GoogleCSEProvider, YagoogleProvider
+from factories.search_providers import (
+    BraveSearchProvider,
+    GoogleCSEProvider,
+    GoogleProvider,
+)
 from factories.task_wrapper import iky_task
 from thefuzz import process
 
@@ -37,16 +41,41 @@ def p_dorks(username, from_m="Initial"):
         - pinterest
     """
 
-    # Pick backend: CSE when API keys are available, yagooglesearch otherwise
-    api_key = api_keys_search("cse_api_key")
-    cx = api_keys_search("cse_cx")
+    # Build fallback chain: GoogleCSE → BraveSearch → Google scraper
+    cse_api_key = api_keys_search("cse_api_key")
+    cse_cx = api_keys_search("cse_cx")
+    brave_key = api_keys_search("brave_key")
 
-    if api_key:
-        provider: GoogleCSEProvider | YagoogleProvider = GoogleCSEProvider(api_key, cx)
-    else:
-        provider = YagoogleProvider()
+    raw_node: list[dict] = []
 
-    raw_node = provider.search_with_dorks(username)
+    # 1. Try GoogleCSE first (requires both keys)
+    if cse_api_key and cse_cx:
+        logger.info("Dorks - trying GoogleCSEProvider for %r", username)
+        raw_node = GoogleCSEProvider(cse_api_key, cse_cx).search_with_dorks(username)
+        if not raw_node:
+            logger.warning(
+                "Dorks - GoogleCSEProvider returned no results for %r, falling back",
+                username,
+            )
+
+    # 2. Fallback to BraveSearchProvider (requires brave_key)
+    if not raw_node and brave_key:
+        logger.info("Dorks - trying BraveSearchProvider for %r", username)
+        raw_node = BraveSearchProvider(brave_key).search_with_dorks(username)
+        if not raw_node:
+            logger.warning(
+                "Dorks - BraveSearchProvider returned no results for %r, falling back",
+                username,
+            )
+
+    # 3. Final fallback: GoogleProvider scraper (no key needed)
+    if not raw_node:
+        logger.info("Dorks - trying GoogleProvider (scraper) for %r", username)
+        raw_node = GoogleProvider().search_with_dorks(username)
+        if not raw_node:
+            logger.warning(
+                "Dorks - GoogleProvider returned no results for %r", username
+            )
 
     output_dict: dict = {}
     for i in raw_node:
