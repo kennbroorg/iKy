@@ -44,6 +44,7 @@ MODULE_REGISTRY: dict[str, tuple[str, bool]] = {
     "skype": ("modules.skype.skype_tasks.t_skype", False),
     "search": ("modules.search.search_tasks.t_search", False),
     "reddit": ("modules.reddit.reddit_tasks.t_reddit", False),
+    "spotify": ("modules.spotify.spotify_tasks.t_spotify", False),
     "leaklookup": (
         "modules.leaklookup.leaklookup_tasks.t_leaklookup",
         False,

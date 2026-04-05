@@ -8,7 +8,6 @@ from module_registry import MODULE_REGISTRY
 from schemas import (
     DorksRequest,
     ModuleRequest,
-    SpotifyRequest,
     TweetimentRequest,
     TwitterCompRequest,
     TwitterInfoRequest,
@@ -22,29 +21,6 @@ router = APIRouter()
 # ------------------------------------------------------------------
 # Variant routes (must be defined BEFORE the dynamic /{module} catch-all)
 # ------------------------------------------------------------------
-
-
-@router.post("/spotify")
-def r_spotify(body: SpotifyRequest):
-    """Spotify accepts extra ``proc`` parameter."""
-    logger.info(
-        "Spotify - Detected Username: %s %s %s",
-        body.username,
-        body.from_m,
-        body.proc,
-    )
-    res = celery.send_task(
-        "modules.spotify.spotify_tasks.t_spotify",
-        args=(body.username, body.from_m, body.proc),
-    )
-    logger.debug("Spotify - Task: %s", res.task_id)
-    return {
-        "module": "spotify",
-        "task": res.task_id,
-        "param": body.username,
-        "from_m": body.from_m,
-        "proc": body.proc,
-    }
 
 
 @router.post("/tweetiment")

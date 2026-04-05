@@ -14,13 +14,6 @@ class ModuleRequest(BaseModel):
     model_config = {"populate_by_name": True}
 
 
-class SpotifyRequest(ModuleRequest):
-    """Spotify endpoint accepts an extra ``proc`` parameter."""
-
-    from_m: Annotated[str, Field(alias="from")] = "initial"
-    proc: int = 1
-
-
 class TweetimentRequest(ModuleRequest):
     """Tweetiment endpoint accepts an extra ``task_id`` parameter."""
 
@@ -54,12 +47,6 @@ class ModuleResponse(BaseModel):
     task: str
     param: str
     from_m: str
-
-
-class SpotifyResponse(ModuleResponse):
-    """Spotify response includes ``proc``."""
-
-    proc: int
 
 
 class TwitterCompResponse(BaseModel):
