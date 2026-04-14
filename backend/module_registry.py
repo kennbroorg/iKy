@@ -19,7 +19,7 @@ MODULE_REGISTRY: dict[str, tuple[str, bool]] = {
     ),
     "github": ("modules.github.github_tasks.t_github", True),
     "keybase": ("modules.keybase.keybase_tasks.t_keybase", True),
-    "twitter": ("modules.twitter.twitter_tasks.t_twitter", True),
+    "twitter": ("modules.twitter.twitter_tasks.t_twitter", False),
     "linkedin": ("modules.linkedin.linkedin_tasks.t_linkedin", True),
     "leaks": ("modules.leaks.leaks_tasks.t_leaks", False),
     "gitlab": ("modules.gitlab.gitlab_tasks.t_gitlab", False),
