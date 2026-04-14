@@ -1,600 +1,879 @@
 #!/usr/bin/env python
 
+import asyncio
 import contextlib
 import json
+import os
 import sys
-import time
-import traceback
 from collections import Counter
-from datetime import datetime, timedelta
+from collections.abc import Coroutine
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
-import browser_cookie3
-
-# from tweety import Twitter
-import tweety
-
+import twikit
 from celery.utils.log import get_task_logger
-
-from celery_app import celery
 from factories.configuration import api_keys_search
 from factories.iKy_functions import analize_rrss, location_geo
+from factories.task_wrapper import iky_task
 
 logger = get_task_logger(__name__)
 
+# ---------------------------------------------------------------------------
+# Cookie persistence
+# ---------------------------------------------------------------------------
+_COOKIE_DIR = Path(os.environ.get("TWITTER_COOKIE_DIR", "/app/cookies"))
+_COOKIE_FILE = _COOKIE_DIR / "twitter_cookies.json"
 
-def get_twitter_cookies(cookie_keys):
-    # Try to get cookie from browser
-    ref = ["chromium", "opera", "edge", "firefox", "chrome", "brave"]
-    json_cookie = {}
-    found = False
-    for index, cookie_fn in enumerate(
-        [
-            browser_cookie3.chromium,
-            browser_cookie3.opera,
-            browser_cookie3.edge,
-            browser_cookie3.firefox,
-            browser_cookie3.chrome,
-            browser_cookie3.brave,
-        ]
-    ):
+
+# ---------------------------------------------------------------------------
+# Async helpers
+# ---------------------------------------------------------------------------
+
+T = Any
+
+
+def _run_async(coro: Coroutine[Any, Any, T]) -> T:
+    """Run an async coroutine from sync Celery context."""
+    return asyncio.run(coro)
+
+
+def _convert_browser_cookies(raw: list[dict] | dict) -> dict[str, str]:
+    """Convert browser-exported cookie list to twikit {name: value} dict.
+
+    Browser extensions (Cookie-Editor, EditThisCookie) export cookies as a
+    list of objects with 'name'/'value' keys.  twikit's set_cookies / load_cookies
+    expects a flat ``{cookie_name: cookie_value}`` mapping.
+    """
+    if isinstance(raw, dict):
+        # Already in twikit format — pass through
+        return {str(k): str(v) for k, v in raw.items()}
+    if isinstance(raw, list):
+        result: dict[str, str] = {}
+        for item in raw:
+            name = item.get("name") or item.get("Name")
+            value = item.get("value") or item.get("Value") or ""
+            if name:
+                result[str(name)] = str(value)
+        return result
+    raise ValueError(
+        f"Unexpected cookie format: {type(raw).__name__}. "
+        "Expected list (browser export) or dict (twikit format)."
+    )
+
+
+async def _authenticate(client: twikit.Client) -> None:
+    """Load cookies or fall back to username/password login.
+
+    Auth chain (in order):
+    1. Cookie file on disk  → load directly (fastest path, used after first run)
+    2. ``twitter_cookies`` API key → browser-exported JSON; convert + save to file
+    3. Username/password login  → will likely fail due to Cloudflare; kept as
+       last-resort fallback for environments where login still works
+    4. All methods exhausted   → raise a clear, actionable error message
+    """
+    _COOKIE_DIR.mkdir(parents=True, exist_ok=True)
+
+    # --- 1. Cookie file already on disk ---
+    if _COOKIE_FILE.exists():
         try:
-            for cookie in cookie_fn(domain_name=""):
-                if (
-                    ".x.com" in cookie.domain
-                    and cookie.name in cookie_keys
-                    and not cookie.is_expired()
-                ):
-                    json_cookie["browser"] = ref[index]
-                    json_cookie[cookie.name] = cookie.value
-                    json_cookie[cookie.name + "_expires"] = cookie.expires
-
-            # Check after processing all cookies from this browser
-            found = True
-            for key in cookie_keys:
-                if json_cookie.get(key, "") == "":
-                    found = False
-                    break
-
-        except Exception as e:
-            print(e)
-
-        if found:
-            break
-
-    return {"found": found, "cookies": json_cookie}
-
-
-def get_twitter_user_info(username):
-    # Valid session
-    app = tweety.Twitter("session")
-
-    # FIX: remove kdt
-    # cookie_keys = ["guest_id", "guest_id_marketing", "guest_id_ads", "kdt", "auth_token", "ct0", "twid", "personalization_id"]
-    cookie_keys = [
-        "guest_id",
-        "guest_id_marketing",
-        "guest_id_ads",
-        "auth_token",
-        "ct0",
-        "twid",
-        "personalization_id",
-    ]
-    json_cookies = get_twitter_cookies(cookie_keys)
-
-    if json_cookies["found"]:
-        twitter_cookies = ""
-
-        for cookie in cookie_keys:
-            twitter_cookies = (
-                twitter_cookies + cookie + "=" + json_cookies["cookies"][cookie] + "; "
+            client.load_cookies(str(_COOKIE_FILE))
+            return
+        except Exception:
+            logger.warning(
+                "iKy - Twitter cookies expired or invalid. "
+                "Re-export fresh cookies from x.com. See docs/COOKIES.md"
             )
+            _COOKIE_FILE.unlink(missing_ok=True)
 
-        app.load_cookies(twitter_cookies[:-2])
-
-    # Get user and pass
-    else:
-        twitter_user = api_keys_search("twitter_user")
-        if not twitter_user:
-            raise Exception(
-                "iKy - Missing or invalid user. Needed because the cookies can't be recovered"
+    # --- 2. Browser-exported cookies from API key ---
+    raw_cookie_str = api_keys_search("twitter_cookies")
+    if raw_cookie_str:
+        try:
+            browser_cookies = json.loads(raw_cookie_str)
+            twikit_cookies = _convert_browser_cookies(browser_cookies)
+            client.set_cookies(twikit_cookies)
+            # Persist so subsequent calls use path 1 (faster, no re-parse)
+            client.save_cookies(str(_COOKIE_FILE))
+            logger.info("Twitter authenticated via browser cookies from API key")
+            return
+        except (json.JSONDecodeError, ValueError) as exc:
+            logger.warning(
+                f"Twitter: invalid cookie JSON in twitter_cookies key: {exc}"
             )
-        twitter_pass = api_keys_search("twitter_pass")
-        if not twitter_pass:
-            raise Exception(
-                "iKy - Missing or invalid pass. Needed because the cookies can't be recovered"
-            )
-        app.sign_in(twitter_user, twitter_pass)
+        except Exception as exc:
+            logger.warning(f"Twitter: failed to load browser cookies: {exc}")
 
+    # --- 3. Nothing worked ---
+    raise Exception(
+        "iKy - Twitter requires browser cookies. Export cookies from x.com "
+        "using Cookie-Editor extension and paste the JSON in the twitter_cookies "
+        "API key field. See docs/COOKIES.md for instructions."
+    )
+
+
+async def _get_client() -> twikit.Client:
+    """Create and authenticate a twikit Client."""
+    client = twikit.Client(language="en-US")
+    await _authenticate(client)
+    return client
+
+
+async def _fetch_user(client: twikit.Client, username: str) -> twikit.user.User:
+    """Fetch a user profile by screen name."""
     try:
-        user = app.get_user_info(username)
-    except tweety.exceptions_.UserNotFound:
+        return await client.get_user_by_screen_name(username)
+    except twikit.errors.UserNotFound:
         raise Exception("iKy - User not found") from None
-    except Exception:
-        raise Exception("iKy - API Error") from None
+    except twikit.errors.UserUnavailable:
+        raise Exception("iKy - User not found") from None
+    except Exception as exc:
+        # Re-login once if cookies are stale
+        if "auth" in str(exc).lower() or "cookie" in str(exc).lower():
+            _COOKIE_FILE.unlink(missing_ok=True)
+            await _authenticate(client)
+            try:
+                return await client.get_user_by_screen_name(username)
+            except twikit.errors.UserNotFound:
+                raise Exception("iKy - User not found") from None
+        raise Exception(f"iKy - API Error: {exc}") from exc
 
-    # Get urls
-    url_list = []
-    if user.entities:
-        if (
-            user.entities.get("url", "") != ""
-            and user.entities["url"].get("urls", "") != ""
-        ):
-            for urls in user.entities["url"]["urls"]:
-                if urls["expanded_url"]:
-                    url_list.append(urls["expanded_url"])
-        if (
-            user.entities.get("description", "") != ""
-            and user.entities["description"].get("urls", "") != ""
-        ):
-            for urls in user.entities["description"]["urls"]:
-                if urls["expanded_url"]:
-                    url_list.append(urls["expanded_url"])
 
-    user_info = {
-        "username": username,
-        "name": user.name,
-        "photo": user.profile_image_url_https,
-        "location": user.location,
-        "verified": user.verified,
-        "id": str(user.id),
-        "protected": user.protected,
-        # "tweets": user.data.public_metrics['tweet_count'],
-        "tweets": user.statuses_count,
-        "sensitive": user.possibly_sensitive,
-        "followers": user.followers_count,
-        "following": user.friends_count,
-        "listed": user.listed_count,
-        "statuses": user.statuses_count,
-        "likes": user.favourites_count,
-        "media": user.media_count,
-        "url": url_list,
-        "description": user.description,
-        "created_at": user.created_at,
+async def _fetch_tweets(
+    client: twikit.Client, user: twikit.user.User
+) -> list[twikit.tweet.Tweet]:
+    """Fetch up to ~40 tweets for a user (non-retweet)."""
+    try:
+        results = await user.get_tweets("Tweets", count=40)
+        return list(results)
+    except Exception as exc:
+        logger.warning(f"Tweet fetch error: {exc}")
+        return []
+
+
+async def _fetch_enrichment(
+    client: twikit.Client, user: twikit.user.User, tweets: list[twikit.tweet.Tweet]
+) -> dict[str, Any]:
+    """Best-effort enrichment — never raises, returns partial data."""
+    enrichment: dict[str, Any] = {
+        "followers_sample": [],
+        "following_sample": [],
+        "retweeters_sample": [],
+        "likers_sample": [],
+        "banner_url": None,
+        "pinned_tweet": None,
+        "engagement": {
+            "avg_likes": 0.0,
+            "avg_retweets": 0.0,
+            "avg_replies": 0.0,
+            "avg_views": 0.0,
+            "engagement_rate": 0.0,
+        },
+        "account_age_days": 0,
+        "avg_tweets_per_day": 0.0,
+        "follower_following_ratio": 0.0,
+        "languages": [],
     }
 
-    # Get Tweets
-    tweets = app.get_tweets(user, pages=3)
+    # Banner URL
+    with contextlib.suppress(Exception):
+        enrichment["banner_url"] = getattr(user, "profile_banner_url", None)
 
-    number = 0
-    retweets = 0
-    tweets_info = []
-    views = 0
+    # Pinned tweet — best-effort: fetch actual tweet text by id
+    try:
+        pinned_ids = getattr(user, "pinned_tweet_ids", None)
+        if pinned_ids:
+            pinned_id = str(pinned_ids[0])
+            pinned_text = ""
+            try:
+                pinned_tweet_obj = await client.get_tweet_by_id(pinned_id)
+                pinned_text = getattr(pinned_tweet_obj, "text", "") or ""
+            except Exception:
+                pass
+            enrichment["pinned_tweet"] = {
+                "id": pinned_id,
+                "text": pinned_text,
+            }
+    except Exception:
+        pass
 
-    for tweet in tweets:
+    # Followers sample
+    try:
+        followers = await user.get_followers(count=20)
+        enrichment["followers_sample"] = [
+            {
+                "username": getattr(f, "screen_name", ""),
+                "name": getattr(f, "name", ""),
+                "followers_count": getattr(f, "followers_count", 0),
+            }
+            for f in followers
+        ]
+    except Exception as exc:
+        logger.warning(f"Followers fetch error: {exc}")
+
+    # Following sample
+    try:
+        following = await user.get_following(count=20)
+        enrichment["following_sample"] = [
+            {
+                "username": getattr(f, "screen_name", ""),
+                "name": getattr(f, "name", ""),
+                "followers_count": getattr(f, "followers_count", 0),
+            }
+            for f in following
+        ]
+    except Exception as exc:
+        logger.warning(f"Following fetch error: {exc}")
+
+    # Retweeters and likers for latest 3 tweets
+    retweeters: list[dict[str, str]] = []
+    likers: list[dict[str, str]] = []
+    for tweet in tweets[:3]:
         try:
-            if tweet.is_retweet:
-                retweets = retweets + 1
-            else:
-                number = number + 1
-
-                # Quoted
-                try:
-                    quoted = "True" if tweet.is_quoted else "False"
-                except Exception:
-                    quoted = "undefined"
-
-                # Quoted
-                try:
-                    reply = "True" if tweet.is_reply else "False"
-                except Exception:
-                    reply = "undefined"
-
-                # Possibly Sensitive
-                try:
-                    pos_sen = "True" if tweet.possibly_sensitive else "False"
-                except Exception:
-                    pos_sen = "undefined"
-
-                views = 0 if tweet.views == "Unavailable" else tweet.views
-
-                # TODO: replied_to
-                # TODO: places
-                # TODO: media
-
-                source = tweet.source.replace("Twitter", "").strip()
-                source = source.replace("for", "").strip()
-
-                tweet_item = {
-                    "likes": tweet.likes,
-                    "retweets": tweet.retweet_counts,
-                    "bookmark": tweet.bookmark_count,
-                    "quotes": tweet.quote_counts,
-                    "replies": tweet.reply_counts,
-                    "views": views,
-                    "number": number,
-                    "quoted": quoted,
-                    "reply": reply,
-                    # "user_mentions": tweet.user_mentions,
-                    "user_mentions": [
-                        mentions.username
-                        for mentions in tweet.user_mentions
-                        if mentions.username
-                    ],
-                    # "hashtags": tweet.hashtags,
-                    "hashtags": [
-                        hashtags["text"]
-                        for hashtags in tweet.hashtags
-                        if "text" in hashtags
-                    ],
-                    "symbols": tweet.symbols,
-                    "created_at": tweet.created_on.strftime("%a %b %d %X %z %Y"),
-                    "source": source,
-                    "possibly_sensitive": pos_sen,
-                    "lang": tweet.language,
-                    "text": tweet.text,
+            rts = await tweet.get_retweeters(count=10)
+            retweeters.extend(
+                {
+                    "username": getattr(u, "screen_name", ""),
+                    "name": getattr(u, "name", ""),
                 }
+                for u in rts
+            )
+        except Exception:
+            pass
+        try:
+            lks = await tweet.get_favoriters(count=10)
+            likers.extend(
+                {
+                    "username": getattr(u, "screen_name", ""),
+                    "name": getattr(u, "name", ""),
+                }
+                for u in lks
+            )
+        except Exception:
+            pass
+    enrichment["retweeters_sample"] = retweeters
+    enrichment["likers_sample"] = likers
 
-                tweets_info.append(tweet_item)
+    # Engagement metrics from tweet list
+    non_rt_tweets = [t for t in tweets if t.retweeted_tweet is None]
+    if non_rt_tweets:
+        avg_likes = sum(
+            getattr(t, "favorite_count", 0) or 0 for t in non_rt_tweets
+        ) / len(non_rt_tweets)
+        avg_rts = sum(getattr(t, "retweet_count", 0) or 0 for t in non_rt_tweets) / len(
+            non_rt_tweets
+        )
+        avg_rps = sum(getattr(t, "reply_count", 0) or 0 for t in non_rt_tweets) / len(
+            non_rt_tweets
+        )
+        avg_vw = sum(
+            int(getattr(t, "view_count", 0) or 0) for t in non_rt_tweets
+        ) / len(non_rt_tweets)
+        followers_count = getattr(user, "followers_count", 1) or 1
+        eng_rate = (avg_likes + avg_rts + avg_rps) / followers_count * 100
+        enrichment["engagement"] = {
+            "avg_likes": round(avg_likes, 2),
+            "avg_retweets": round(avg_rts, 2),
+            "avg_replies": round(avg_rps, 2),
+            "avg_views": round(avg_vw, 2),
+            "engagement_rate": round(eng_rate, 4),
+        }
+
+    # Account age
+    try:
+        created_raw = getattr(user, "created_at", None)
+        if created_raw:
+            if isinstance(created_raw, str):
+                created_dt = datetime.strptime(created_raw, "%a %b %d %H:%M:%S %z %Y")
+            else:
+                created_dt = created_raw
+            now = datetime.now(tz=UTC)
+            age_days = (now - created_dt).days
+            enrichment["account_age_days"] = age_days
+            tweets_count = getattr(user, "statuses_count", 0) or 0
+            enrichment["avg_tweets_per_day"] = (
+                round(tweets_count / age_days, 2) if age_days > 0 else 0.0
+            )
+    except Exception as exc:
+        logger.warning(f"Account age calc error: {exc}")
+
+    # Follower/following ratio
+    try:
+        followers_cnt = getattr(user, "followers_count", 0) or 0
+        following_cnt = getattr(user, "following_count", 0) or 1
+        enrichment["follower_following_ratio"] = round(
+            followers_cnt / (following_cnt or 1), 2
+        )
+    except Exception:
+        pass
+
+    # Language distribution from tweets
+    try:
+        lang_counter = Counter(
+            getattr(t, "lang", "und")
+            for t in non_rt_tweets
+            if t.retweeted_tweet is None
+        )
+        enrichment["languages"] = [
+            {"name": lang, "value": count} for lang, count in lang_counter.most_common()
+        ]
+    except Exception:
+        pass
+
+    return enrichment
+
+
+# ---------------------------------------------------------------------------
+# Async pipeline — single event loop for all fetches
+# ---------------------------------------------------------------------------
+
+
+async def _run_pipeline(
+    username: str,
+) -> tuple[twikit.user.User, list, dict[str, Any]]:
+    """Run all async Twitter fetches in a SINGLE event loop.
+
+    Critical: twikit's httpx.AsyncClient transport binds to the event loop
+    on first use.  Separate ``asyncio.run()`` calls would close the loop
+    between calls, killing the transport.  Everything must run in one loop.
+    """
+    client = await _get_client()
+    user = await _fetch_user(client, username)
+    tweets = await _fetch_tweets(client, user)
+    enrichment = await _fetch_enrichment(client, user, tweets)
+    return user, tweets, enrichment
+
+
+# ---------------------------------------------------------------------------
+# Main processing function
+# ---------------------------------------------------------------------------
+
+
+@iky_task(module_name="twitter", dev_mode_sleep=15)
+def p_twitter(username: str) -> list[dict[str, Any]]:
+    """Task of Celery that gets info from Twitter/X via twikit."""
+
+    # --- Authenticate and fetch (single event loop) ---
+    user, all_tweets, enrichment = _run_async(_run_pipeline(username))
+
+    # --- Parse user info ---
+    # Normalise created_at to a datetime object for later use
+    created_raw = getattr(user, "created_at", None)
+    created_at: datetime | None = None
+    if created_raw:
+        try:
+            if isinstance(created_raw, str):
+                created_at = datetime.strptime(created_raw, "%a %b %d %H:%M:%S %z %Y")
+            else:
+                created_at = created_raw
+        except Exception:
+            pass
+
+    # Build URL list from entities
+    url_list: list[str] = []
+    try:
+        entities = getattr(user, "entities", None) or {}
+        url_section = entities.get("url", {}) or {}
+        for url_obj in url_section.get("urls", []):
+            expanded = url_obj.get("expanded_url")
+            if expanded:
+                url_list.append(expanded)
+        desc_section = entities.get("description", {}) or {}
+        for url_obj in desc_section.get("urls", []):
+            expanded = url_obj.get("expanded_url")
+            if expanded:
+                url_list.append(expanded)
+    except Exception:
+        pass
+
+    user_info: dict[str, Any] = {
+        "username": username,
+        "name": getattr(user, "name", ""),
+        "photo": getattr(user, "profile_image_url", ""),
+        "location": getattr(user, "location", "") or "",
+        "verified": getattr(user, "verified", False)
+        or getattr(user, "is_blue_verified", False),
+        "id": str(getattr(user, "id", "")),
+        "protected": getattr(user, "protected", False),
+        "tweets": getattr(user, "statuses_count", 0),
+        "sensitive": getattr(user, "possibly_sensitive", False),
+        "followers": getattr(user, "followers_count", 0),
+        "following": getattr(user, "following_count", 0),
+        "listed": getattr(user, "listed_count", 0),
+        "statuses": getattr(user, "statuses_count", 0),
+        "likes": getattr(user, "favourites_count", 0),
+        "media": getattr(user, "media_count", 0),
+        "url": url_list,
+        "description": getattr(user, "description", "") or "",
+        "created_at": created_at,
+        "banner_url": enrichment.get("banner_url"),
+    }
+
+    # --- Process tweets ---
+    tweet_count = 0
+    retweet_count = 0
+    tweets_info: list[dict[str, Any]] = []
+
+    lk_rt_rp: list[dict[str, Any]] = []
+    mention_temp: list[str] = []
+    hashtag_temp: list[str] = []
+    sources_temp: list[str] = []
+    s_lk: list[dict[str, str]] = []
+    s_rt: list[dict[str, str]] = []
+    s_rp: list[dict[str, str]] = []
+    s_bk: list[dict[str, str]] = []
+    s_qt: list[dict[str, str]] = []
+    s_vw: list[dict[str, str]] = []
+    hours: list[str] = []
+    days: list[str] = []
+    t_timeline: list[dict[str, Any]] = []
+    last_created_at: datetime | None = None
+
+    for tweet in all_tweets:
+        try:
+            is_retweet = tweet.retweeted_tweet is not None
+            if is_retweet:
+                retweet_count += 1
+                continue
+
+            tweet_count += 1
+            idx = tweet_count
+
+            # Optional fields — safe access
+            try:
+                quoted = "True" if tweet.is_quote_tweet else "False"
+            except Exception:
+                quoted = "undefined"
+            try:
+                reply = "True" if tweet.in_reply_to_user_id else "False"
+            except Exception:
+                reply = "undefined"
+            try:
+                pos_sen = "True" if tweet.possibly_sensitive else "False"
+            except Exception:
+                pos_sen = "undefined"
+
+            views_raw = getattr(tweet, "view_count", 0)
+            views = 0
+            try:
+                views = (
+                    int(views_raw) if views_raw not in (None, "Unavailable", "") else 0
+                )
+            except (ValueError, TypeError):
+                views = 0
+
+            # Hashtags — twikit returns list of strings
+            raw_hashtags = getattr(tweet, "hashtags", []) or []
+            hashtag_list: list[str] = []
+            for h in raw_hashtags:
+                if isinstance(h, str):
+                    hashtag_list.append(h)
+                elif isinstance(h, dict):
+                    hashtag_list.append(h.get("text", ""))
+
+            # Mentions
+            raw_mentions = getattr(tweet, "user_mentions", []) or []
+            mention_list: list[str] = []
+            for m in raw_mentions:
+                if isinstance(m, str):
+                    mention_list.append(m)
+                elif hasattr(m, "screen_name"):
+                    mention_list.append(m.screen_name or "")
+                elif isinstance(m, dict):
+                    mention_list.append(m.get("screen_name", ""))
+
+            # Source
+            source_raw = getattr(tweet, "source", "") or ""
+            source = source_raw.replace("Twitter", "").replace("for", "").strip()
+
+            # created_at — twikit may return string or datetime
+            tweet_created_raw = getattr(tweet, "created_at", None)
+            tweet_created: datetime | None = None
+            if tweet_created_raw:
+                try:
+                    if isinstance(tweet_created_raw, str):
+                        tweet_created = datetime.strptime(
+                            tweet_created_raw, "%a %b %d %H:%M:%S %z %Y"
+                        )
+                    else:
+                        tweet_created = tweet_created_raw
+                except Exception:
+                    pass
+
+            # Formatted dates
+            tweet_date = (
+                tweet_created.strftime("%Y-%m-%dT%H:%M:%S.009Z")
+                if tweet_created
+                else ""
+            )
+            tweet_day = tweet_created.strftime("%Y-%m-%d") if tweet_created else ""
+
+            tweet_item: dict[str, Any] = {
+                "likes": getattr(tweet, "favorite_count", 0) or 0,
+                "retweets": getattr(tweet, "retweet_count", 0) or 0,
+                "bookmark": getattr(tweet, "bookmark_count", 0) or 0,
+                "quotes": getattr(tweet, "quote_count", 0) or 0,
+                "replies": getattr(tweet, "reply_count", 0) or 0,
+                "views": views,
+                "number": idx,
+                "quoted": quoted,
+                "reply": reply,
+                "user_mentions": mention_list,
+                "hashtags": hashtag_list,
+                "symbols": getattr(tweet, "symbols", []) or [],
+                "created_at": tweet_date,
+                "source": source,
+                "possibly_sensitive": pos_sen,
+                "lang": getattr(tweet, "lang", "und") or "und",
+                "text": getattr(tweet, "text", "") or "",
+            }
+
+            tweets_info.append(tweet_item)
+            last_created_at = tweet_created
+
+            # Stats series
+            s_lk.append({"name": str(idx), "value": str(tweet_item["likes"])})
+            s_rt.append({"name": str(idx), "value": str(tweet_item["retweets"])})
+            s_rp.append({"name": str(idx), "value": str(tweet_item["replies"])})
+            s_bk.append({"name": str(idx), "value": str(tweet_item["bookmark"])})
+            s_qt.append({"name": str(idx), "value": str(tweet_item["quotes"])})
+            s_vw.append({"name": str(idx), "value": str(tweet_item["views"])})
+
+            for m in mention_list:
+                mention_temp.append(m)
+            for h in hashtag_list:
+                hashtag_temp.append(h)
+            if tweet_day:
+                t_timeline.append({"name": tweet_day, "value": 1})
+            if source:
+                sources_temp.append(source)
+            if tweet_created:
+                hours.append(tweet_created.strftime("%H"))
+                days.append(tweet_created.strftime("%A"))
+
         except Exception:
             continue
 
-    with contextlib.suppress(Exception):
-        Path("./session.json").unlink()
-
-    return user_info, number, retweets, tweets_info
-
-
-def p_twitter(username, from_m):
-    """Task of Celery that get info from twitter"""
-
-    # Code to develop the frontend without burning APIs
-    file_path = Path.cwd() / "outputs" / "output-twitter.json"
-
-    if file_path.exists():
-        logger.warning(f"Developer frontend mode - {file_path}")
-        try:
-            with open(file_path) as file:
-                data = json.load(file)
-            return data
-        except json.JSONDecodeError:
-            logger.error("Developer mode ERROR")
-
-    # Code
-    total = []
-    user_info, tweets, retweets, tweets_info = get_twitter_user_info(username)
-
-    raw_node_tweets = []
-
-    lk_rt_rp = []
-    mention_temp = []
-    hashtag_temp = []
-    sources_temp = []
-    hashtags = []
-    users = []
-    sources = []
-    # tweets = 0
-    # retweets = 0
-    s_lk = []  # Likes
-    s_rt = []  # Retweets
-    s_rp = []  # Replies
-    s_bk = []  # Bookmarks
-    s_qt = []  # Quotes
-    s_vw = []  # Views
-    hours = []
-    days = []
-    t_timeline = []
-    # time_value = 1
-    # prev_day = "0000-00-00"
-
-    raw_node_tweets.append(tweets_info)
-
-    for index, tweet in enumerate(tweets_info):
-        # tweets += 1
-        s_lk.append({"name": str(index), "value": str(tweet["likes"])})
-        s_rt.append({"name": str(index), "value": str(tweet["retweets"])})
-        s_rp.append({"name": str(index), "value": str(tweet["replies"])})
-        s_bk.append({"name": str(index), "value": str(tweet["bookmark"])})
-        s_qt.append({"name": str(index), "value": str(tweet["quotes"])})
-        s_vw.append({"name": str(index), "value": str(tweet["views"])})
-
-        # Mentions
-        for user in tweet["user_mentions"]:
-            mention_temp.append(user)
-
-        # Hashtags
-        for h in tweet["hashtags"]:
-            hashtag_temp.append(h)
-
-        # print(f"Created_at: {type(tweet['created_at'])} - {tweet['created_at']}")
-        created_at = datetime.strptime(tweet["created_at"], "%a %b %d %X %z %Y")
-        tweet_date = created_at.strftime("%Y-%m-%dT%H:%M:%S.009Z")
-        tweet_day = created_at.strftime("%Y-%m-%d")
-        tweet["created_at"] = tweet_date
-
-        # Timeline
-        t_timeline.append({"name": tweet_day, "value": 1})
-
-        # Source
-        sources_temp.append(tweet["source"])
-
-        # Hours and days
-        hours.append(created_at.strftime("%H"))
-        days.append(created_at.strftime("%A"))
-
-    # Timeline (guard against empty timeline)
-    tweet_time = []
+    # --- Timeline ---
+    tweet_time: list[dict[str, Any]] = []
     if t_timeline:
         start_date = datetime.strptime(t_timeline[-1]["name"], "%Y-%m-%d")
         end_date = datetime.strptime(t_timeline[0]["name"], "%Y-%m-%d")
         delta_days = (end_date - start_date).days
-
         for i in range(delta_days + 1):
             current_date = (start_date + timedelta(days=i)).strftime("%Y-%m-%d")
             record_count = sum(1 for item in t_timeline if item["name"] == current_date)
             tweet_time.append({"name": current_date, "value": record_count})
 
-    # Tweet vs Retweets
-    tw_vs_rt = []
-    tw_vs_rt.append({"name": "Tweet", "value": tweets})
-    tw_vs_rt.append({"name": "Retweet", "value": retweets})
+    # --- Tweet vs Retweet ---
+    tw_vs_rt = [
+        {"name": "Tweet", "value": tweet_count},
+        {"name": "Retweet", "value": retweet_count},
+    ]
 
-    # Likes, retweets, replies (continue)
-    lk_rt_rp.append({"name": "Likes", "series": s_lk})
-    lk_rt_rp.append({"name": "Retweets", "series": s_rt})
-    lk_rt_rp.append({"name": "Replies", "series": s_rp})
-    lk_rt_rp.append({"name": "Bookmarks", "series": s_bk})
-    lk_rt_rp.append({"name": "Quotes", "series": s_qt})
-    lk_rt_rp.append({"name": "Views", "series": s_vw})
+    # --- Likes / RTs / Replies chart ---
+    lk_rt_rp = [
+        {"name": "Likes", "series": s_lk},
+        {"name": "Retweets", "series": s_rt},
+        {"name": "Replies", "series": s_rp},
+        {"name": "Bookmarks", "series": s_bk},
+        {"name": "Quotes", "series": s_qt},
+        {"name": "Views", "series": s_vw},
+    ]
 
-    # Mentions (continue)
+    # --- Mentions ---
     mention_counter = Counter(mention_temp)
-
     link_users = "Users"
-    user_item = {
-        "name-node": "Users",
-        "title": "Users",
-        "subtitle": "",
-        "link": link_users,
-    }
-    users.append(user_item)
+    users: list[dict[str, Any]] = [
+        {"name-node": "Users", "title": "Users", "subtitle": "", "link": link_users}
+    ]
     for k, v in mention_counter.items():
-        user_item = {"name-node": k, "title": k, "subtitle": v, "link": link_users}
-        users.append(user_item)
+        users.append({"name-node": k, "title": k, "subtitle": v, "link": link_users})
 
-    # Hashtags (continue)
-    hashtag_counter = Counter(hashtag_temp)
-    for k, v in hashtag_counter.items():
-        hashtags.append({"label": k, "value": v})
+    # --- Hashtags ---
+    hashtags = [{"label": k, "value": v} for k, v in Counter(hashtag_temp).items()]
 
-    # Sources (continue)
-    sources_counter = Counter(sources_temp)
-    for k, v in sources_counter.items():
-        sources.append({"name": k, "value": v})
+    # --- Sources ---
+    sources = [{"name": k, "value": v} for k, v in Counter(sources_temp).items()]
 
-    # hourset
-    hourset = []
+    # --- Hour chart ---
     hournames = "00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23".split()
-
-    twCounter = Counter(hours)
-    tgdata = twCounter.most_common()
-    tgdata = sorted(tgdata)
+    tw_counter = Counter(hours)
+    tg_data = sorted(tw_counter.most_common())
+    hourset: list[dict[str, Any]] = []
     e = 0
     for g in hournames:
-        if (e >= len(tgdata)) or (g < tgdata[e][0]):
+        if (e >= len(tg_data)) or (g < tg_data[e][0]):
             hourset.append({"name": g, "value": 0})
-        elif g == tgdata[e][0]:
-            hourset.append({"name": g, "value": int(tgdata[e][1])})
+        elif g == tg_data[e][0]:
+            hourset.append({"name": g, "value": int(tg_data[e][1])})
             e += 1
 
-    # weekset
-    weekset = []
+    # --- Week chart ---
     weekdays = "Monday Tuesday Wednesday Thursday Friday Saturday Sunday".split()
-    wdCounter = Counter(days)
-    wddata = wdCounter.most_common()
-    wddata = sorted(wddata)
-    y = []
+    wd_counter = Counter(days)
+    wd_data = sorted(wd_counter.most_common())
+    weekset: list[dict[str, Any]] = []
     for c, z in enumerate(weekdays):
         try:
-            weekset.append({"name": z, "value": int(wddata[c][1])})
-        except Exception:
+            weekset.append({"name": z, "value": int(wd_data[c][1])})
+        except (IndexError, TypeError):
             weekset.append({"name": z, "value": 0})
-    wddata = y
 
-    # Total
-    total = []
+    # --- Output assembly ---
+    total: list[dict[str, Any]] = []
+    graphic: list[dict[str, Any]] = []
+    gather: list[dict[str, Any]] = []
+    resume: dict[str, Any] = {}
+    popularity: list[dict[str, Any]] = []
+    approval: list[dict[str, Any]] = []
+    profile: list[dict[str, Any]] = []
+    social: list[dict[str, Any]] = []
+    timeline: list[dict[str, Any]] = []
+    tasks: list[dict[str, Any]] = []
+    presence: list[dict[str, Any]] = []
 
-    # Graphic Array
-    graphic = []
-    resume = []
-    popularity = []
-    approval = []
-    gather = []
+    # Raw nodes — CRITICAL: preserve exact key names for tweetiment compat
+    raw_node_total: list[dict[str, Any]] = [
+        {"raw_node_info": user_info},
+        {
+            "raw_node_tweets": tweets_info
+        },  # tweetiment reads result[3]["raw"][1]["raw_node_tweets"]
+        {"raw_node_enrichment": enrichment},
+    ]
 
-    # Profile Array
-    profile = []
-    social = []
-
-    # Timeline Array
-    timeline = []
-
-    # Tasks Array
-    tasks = []
-
-    # Presence Array
-    presence = []
-
-    raw_node_total = []
-    raw_node_total.append({"raw_node_info": user_info})
-    raw_node_total.append({"raw_node_tweets": tweets_info})
-
-    try:
-        if created_at:
-            create_date = created_at.strftime("%Y-%m-%d")
-            last_tweet = created_at.strftime("%Y-%m-%d")
-    except Exception:
-        pass
-
+    # Header
     total.append({"module": "twitter"})
     total.append({"param": username})
-    # Evaluates the module that executed the task and set validation
-    if from_m == "Initial":
-        total.append({"validation": "no"})
-    else:
-        total.append({"validation": "soft"})
+    total.append({"validation": "hard"})
 
+    # Gather items
     link_social = "Twitter"
-    gather_item = {
-        "name-node": "Twitter",
-        "title": "Twitter",
-        "subtitle": "",
-        "icon": "fab fa-twitter",
-        "link": link_social,
-    }
-    gather.append(gather_item)
+    gather.append(
+        {
+            "name-node": "Twitter",
+            "title": "Twitter",
+            "subtitle": "",
+            "icon": "fab fa-twitter",
+            "link": link_social,
+        }
+    )
+    gather.append(
+        {
+            "name-node": "TwitterName",
+            "title": "Name",
+            "subtitle": user_info["name"],
+            "icon": "fas fa-signature",
+            "link": link_social,
+        }
+    )
+    profile.append({"name": user_info["name"]})
 
-    gather_item = {
-        "name-node": "TwitterName",
-        "title": "Name",
-        "subtitle": user_info["name"],
-        "icon": "fas fa-signature",
-        "link": link_social,
-    }
-    gather.append(gather_item)
-    profile_item = {"name": user_info["name"]}
-    profile.append(profile_item)
+    gather.append(
+        {
+            "name-node": "TwitterUserName",
+            "title": "Username",
+            "subtitle": username,
+            "icon": "fas fa-user-circle",
+            "link": link_social,
+        }
+    )
+    profile.append({"username": username})
 
-    gather_item = {
-        "name-node": "TwitterUserName",
-        "title": "Username",
-        "subtitle": username,
-        "icon": "fas fa-user-circle",
-        "link": link_social,
-    }
-    gather.append(gather_item)
-    profile_item = {"username": username}
-    profile.append(profile_item)
+    gather.append(
+        {
+            "name-node": "Twitterphoto",
+            "title": "Avatar",
+            "subtitle": "",
+            "picture": user_info["photo"],
+            "link": link_social,
+        }
+    )
+    pic = (user_info["photo"] or "").replace("_normal.", "_400x400.")
+    profile.append(
+        {
+            "photos": [
+                {
+                    "name-node": "Twitter",
+                    "title": "Twitter",
+                    "subtitle": "",
+                    "picture": pic,
+                    "link": "Photos",
+                }
+            ]
+        }
+    )
 
-    gather_item = {
-        "name-node": "Twitterphoto",
-        "title": "Avatar",
-        "subtitle": "",
-        "picture": user_info["photo"],
-        "link": link_social,
-    }
-    gather.append(gather_item)
-    pic = user_info["photo"].replace("_normal.", "_400x400.")
-    photo_item = {
-        "name-node": "Twitter",
-        "title": "Twitter",
-        "subtitle": "",
-        "picture": pic,
-        "link": "Photos",
-    }
-    profile.append({"photos": [photo_item]})
-
-    gather_item = {
-        "name-node": "TwitterLocation",
-        "title": "Location",
-        "subtitle": user_info["location"],
-        "icon": "fas fa-map-marker-alt",
-        "link": link_social,
-    }
-    gather.append(gather_item)
-
+    gather.append(
+        {
+            "name-node": "TwitterLocation",
+            "title": "Location",
+            "subtitle": user_info["location"],
+            "icon": "fas fa-map-marker-alt",
+            "link": link_social,
+        }
+    )
     if user_info["location"]:
-        profile_item = {"location": user_info["location"]}
-        profile.append(profile_item)
-
+        profile.append({"location": user_info["location"]})
         try:
-            geo_item = location_geo(user_info["location"], time=create_date)
-            print(f"GEO: {geo_item}")
+            create_date_str = created_at.strftime("%Y-%m-%d") if created_at else ""
+            geo_item = location_geo(user_info["location"], time=create_date_str)
             if geo_item:
                 profile.append({"geo": geo_item})
         except Exception:
             pass
 
-    # verified = "False" if result_api['verified'] == 0 else "True"
-    gather_item = {
-        "name-node": "TwitterVerified",
-        "title": "Verified",
-        "subtitle": str(user_info["verified"]),
-        "icon": "fas fa-certificate",
-        "link": link_social,
-    }
-    gather.append(gather_item)
+    gather.append(
+        {
+            "name-node": "TwitterVerified",
+            "title": "Verified",
+            "subtitle": str(user_info["verified"]),
+            "icon": "fas fa-certificate",
+            "link": link_social,
+        }
+    )
+    gather.append(
+        {
+            "name-node": "TwitterID",
+            "title": "ID",
+            "subtitle": str(user_info["id"]),
+            "icon": "fas fa-id-card",
+            "link": link_social,
+        }
+    )
+    gather.append(
+        {
+            "name-node": "TwitterPrivate",
+            "title": "Protected",
+            "subtitle": str(user_info["protected"]),
+            "icon": "fas fa-user-shield",
+            "link": link_social,
+        }
+    )
+    gather.append(
+        {
+            "name-node": "TwitterSensitive",
+            "title": "Sensitive",
+            "subtitle": str(user_info["sensitive"]),
+            "icon": "fas fa-radiation",
+            "link": link_social,
+        }
+    )
+    gather.append(
+        {
+            "name-node": "TwitterTweets",
+            "title": "Tweets",
+            "subtitle": str(user_info["tweets"]),
+            "icon": "fab fa-twitter-square",
+            "link": link_social,
+        }
+    )
+    gather.append(
+        {
+            "name-node": "TwitterMedia",
+            "title": "Media",
+            "subtitle": str(user_info["media"]),
+            "icon": "fas fa-photo-video",
+            "link": link_social,
+        }
+    )
+    gather.append(
+        {
+            "name-node": "TwitterFollowers",
+            "title": "Followers",
+            "subtitle": str(user_info["followers"]),
+            "icon": "fas fa-users",
+            "link": link_social,
+        }
+    )
+    gather.append(
+        {
+            "name-node": "TwitterFollowing",
+            "title": "Following",
+            "subtitle": str(user_info["following"]),
+            "icon": "fas fa-user-friends",
+            "link": link_social,
+        }
+    )
+    gather.append(
+        {
+            "name-node": "TwitterList",
+            "title": "Listed",
+            "subtitle": str(user_info["listed"]),
+            "icon": "far fa-list-alt",
+            "link": link_social,
+        }
+    )
+    gather.append(
+        {
+            "name-node": "TwitterHeart",
+            "title": "Likes",
+            "subtitle": str(user_info["likes"]),
+            "icon": "fas fa-heart",
+            "link": link_social,
+        }
+    )
 
-    gather_item = {
-        "name-node": "TwitterID",
-        "title": "ID",
-        "subtitle": str(user_info["id"]),
-        "icon": "fas fa-id-card",
-        "link": link_social,
-    }
-    gather.append(gather_item)
+    # Enrichment gather items — new, backward-compatible additions
+    if enrichment.get("banner_url"):
+        gather.append(
+            {
+                "name-node": "TwitterBanner",
+                "title": "Banner",
+                "subtitle": "",
+                "picture": enrichment["banner_url"],
+                "link": link_social,
+            }
+        )
 
-    gather_item = {
-        "name-node": "TwitterPrivate",
-        "title": "Protected",
-        "subtitle": str(user_info["protected"]),
-        "icon": "fas fa-user-shield",
-        "link": link_social,
-    }
-    gather.append(gather_item)
+    pinned = enrichment.get("pinned_tweet")
+    if pinned and pinned.get("text"):
+        gather.append(
+            {
+                "name-node": "TwitterPinned",
+                "title": "Pinned Tweet",
+                "subtitle": (pinned["text"] or "")[:80],
+                "icon": "fas fa-thumbtack",
+                "link": link_social,
+            }
+        )
 
-    gather_item = {
-        "name-node": "TwitterSensitive",
-        "title": "Sensitive",
-        "subtitle": str(user_info["sensitive"]),
-        "icon": "fas fa-radiation",
-        "link": link_social,
-    }
-    gather.append(gather_item)
+    eng = enrichment.get("engagement", {})
+    eng_rate = eng.get("engagement_rate", 0.0)
+    gather.append(
+        {
+            "name-node": "TwitterEngagement",
+            "title": "Engagement Rate",
+            "subtitle": f"{eng_rate:.2%}",
+            "icon": "fas fa-chart-line",
+            "link": link_social,
+        }
+    )
 
-    gather_item = {
-        "name-node": "TwitterTweets",
-        "title": "Tweets",
-        "subtitle": str(user_info["tweets"]),
-        "icon": "fab fa-twitter-square",
-        "link": link_social,
-    }
-    gather.append(gather_item)
+    age_days = enrichment.get("account_age_days", 0)
+    if age_days:
+        gather.append(
+            {
+                "name-node": "TwitterAge",
+                "title": "Account Age",
+                "subtitle": f"{age_days} days",
+                "icon": "fas fa-calendar-alt",
+                "link": link_social,
+            }
+        )
 
-    gather_item = {
-        "name-node": "TwitterMedia",
-        "title": "Media",
-        "subtitle": str(user_info["media"]),
-        "icon": "fas fa-photo-video",
-        "link": link_social,
-    }
-    gather.append(gather_item)
+    ratio = enrichment.get("follower_following_ratio", 0.0)
+    gather.append(
+        {
+            "name-node": "TwitterRatio",
+            "title": "F/F Ratio",
+            "subtitle": f"{ratio:.1f}",
+            "icon": "fas fa-balance-scale",
+            "link": link_social,
+        }
+    )
 
-    gather_item = {
-        "name-node": "TwitterFollowers",
-        "title": "Followers",
-        "subtitle": str(user_info["followers"]),
-        "icon": "fas fa-users",
-        "link": link_social,
-    }
-    gather.append(gather_item)
-
-    gather_item = {
-        "name-node": "TwitterFollowing",
-        "title": "Following",
-        "subtitle": str(user_info["following"]),
-        "icon": "fas fa-user-friends",
-        "link": link_social,
-    }
-    gather.append(gather_item)
-
-    gather_item = {
-        "name-node": "TwitterList",
-        "title": "Listed",
-        "subtitle": str(user_info["listed"]),
-        "icon": "far fa-list-alt",
-        "link": link_social,
-    }
-    gather.append(gather_item)
-
-    gather_item = {
-        "name-node": "TwitterHeart",
-        "title": "Likes",
-        "subtitle": str(user_info["likes"]),
-        "icon": "fas fa-heart",
-        "link": link_social,
-    }
-    gather.append(gather_item)
-
+    # URL / description analysis
     for url in user_info["url"]:
         analyze = analize_rrss(url)
         for item in analyze:
@@ -618,7 +897,7 @@ def p_twitter(username, from_m):
 
     social_item = {
         "name": "Twitter",
-        "url": "https://twitter.com/" + username,
+        "url": f"https://twitter.com/{username}",
         "icon": "fab fa-twitter",
         "source": "Twitter",
         "username": username,
@@ -626,39 +905,45 @@ def p_twitter(username, from_m):
     social.append(social_item)
     profile.append({"social": social})
 
-    children = []
-    children.append({"name": "Likes", "total": user_info["likes"]})
-    children.append({"name": "Tweets", "total": user_info["tweets"]})
-    children.append({"name": "Followers", "total": user_info["followers"]})
-    children.append({"name": "Following", "total": user_info["following"]})
-    children.append({"name": "Listed", "total": user_info["listed"]})
+    # Resume (sunburst)
+    children = [
+        {"name": "Likes", "total": user_info["likes"]},
+        {"name": "Tweets", "total": user_info["tweets"]},
+        {"name": "Followers", "total": user_info["followers"]},
+        {"name": "Following", "total": user_info["following"]},
+        {"name": "Listed", "total": user_info["listed"]},
+    ]
     resume = {"name": "twitter", "children": children}
 
-    popularity.append({"title": "Followers", "value": user_info["followers"]})
-    popularity.append({"title": "Listed", "value": user_info["listed"]})
-    popularity.append({"title": "Following", "value": user_info["following"]})
+    popularity = [
+        {"title": "Followers", "value": user_info["followers"]},
+        {"title": "Listed", "value": user_info["listed"]},
+        {"title": "Following", "value": user_info["following"]},
+    ]
+    approval = [
+        {"title": "Tweets", "value": user_info["tweets"]},
+        {"title": "Likes", "value": user_info["likes"]},
+    ]
 
-    approval.append({"title": "Tweets", "value": user_info["tweets"]})
-    approval.append({"title": "Likes", "value": user_info["likes"]})
-
-    user_create_date = user_info["created_at"].strftime("%Y/%m/%d %H:%M:%S")
-    timeline_item = {
-        "date": user_create_date,
-        "action": "Twitter : Create Account",
-        "icon": "fa-twitter",
-    }
-    timeline.append(timeline_item)
-    user_info["created_at"] = user_create_date
-
-    try:
-        timeline_item = {
-            "date": str(last_tweet),
-            "action": "Twitter : Last Tweet",
-            "icon": "fa-twitter",
-        }
-        timeline.append(timeline_item)
-    except Exception:
-        pass
+    # Timeline events
+    if created_at:
+        user_create_str = created_at.strftime("%Y/%m/%d %H:%M:%S")
+        timeline.append(
+            {
+                "date": user_create_str,
+                "action": "Twitter : Create Account",
+                "icon": "fa-twitter",
+            }
+        )
+        user_info["created_at"] = user_create_str
+    if last_created_at:
+        timeline.append(
+            {
+                "date": last_created_at.strftime("%Y-%m-%d"),
+                "action": "Twitter : Last Tweet",
+                "icon": "fa-twitter",
+            }
+        )
 
     presence.append(
         {
@@ -671,6 +956,19 @@ def p_twitter(username, from_m):
     )
     profile.append({"presence": presence})
 
+    # Language distribution chart (new)
+    lang_dist: list[dict[str, Any]] = enrichment.get("languages", [])
+
+    # Engagement chart (new)
+    engagement_chart: list[dict[str, Any]] = [
+        {"name": "Avg Likes", "value": eng.get("avg_likes", 0)},
+        {"name": "Avg Retweets", "value": eng.get("avg_retweets", 0)},
+        {"name": "Avg Replies", "value": eng.get("avg_replies", 0)},
+        {"name": "Avg Views", "value": eng.get("avg_views", 0)},
+        {"name": "Engagement Rate %", "value": round(eng_rate, 4)},
+    ]
+
+    # Assemble final output
     total.append({"raw": raw_node_total})
     graphic.append({"social": gather})
     graphic.append({"resume": resume})
@@ -684,6 +982,8 @@ def p_twitter(username, from_m):
     graphic.append({"sources": sources})
     graphic.append({"time": tweet_time})
     graphic.append({"twvsrt": tw_vs_rt})
+    graphic.append({"languages": lang_dist})  # NEW
+    graphic.append({"engagement": engagement_chart})  # NEW
     total.append({"graphic": graphic})
     total.append({"profile": profile})
     total.append({"timeline": timeline})
@@ -692,51 +992,15 @@ def p_twitter(username, from_m):
     return total
 
 
-@celery.task
-def t_twitter(username, from_m):
-    total = []
-    tic = time.perf_counter()
-    try:
-        total = p_twitter(username, from_m)
-    except Exception as e:
-        # Check internal error
-        if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - ") :]
-            status = "Warning"
-        else:
-            reason = str(e)
-            status = "Fail"
-
-        traceback.print_exc()
-        traceback_text = traceback.format_exc()
-        total.append({"module": "twitter"})
-        total.append({"param": username})
-        total.append({"validation": "not_used"})
-
-        raw_node = []
-        raw_node.append(
-            {
-                "status": status,
-                # "reason": "{}".format(e),
-                "reason": reason,
-                "traceback": traceback_text,
-            }
-        )
-        total.append({"raw": raw_node})
-
-    # Take final time
-    toc = time.perf_counter()
-    # Show process time
-    logger.info(f"Twitter X - Response in {toc - tic:0.4f} seconds")
-
-    return total
+# Backward-compatible alias — module_registry.py references t_twitter
+t_twitter = p_twitter
 
 
-def output(data):
-    print(json.dumps(data, ensure_ascii=True, indent=2))
+def output(data: list[dict[str, Any]]) -> None:
+    print(json.dumps(data, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
     username = sys.argv[1]
-    result = t_twitter(username, "initial")
+    result = t_twitter(username)
     output(result)
