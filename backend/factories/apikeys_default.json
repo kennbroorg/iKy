@@ -15,5 +15,6 @@
   {"id": 14, "name": "twitch_client_secret", "key": ""},
   {"id": 15, "name": "cse_api_key", "key": ""},
   {"id": 16, "name": "cse_cx", "key": ""},
-  {"id": 17, "name": "brave_key", "key": ""}
+  {"id": 17, "name": "brave_key", "key": ""},
+  {"id": 18, "name": "tiktok_cookies", "key": ""}
 ]
