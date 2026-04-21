@@ -16,6 +16,9 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -U pip && \
     pip install --no-cache-dir -r requirements.txt
 
+# Install Playwright browsers (required by TikTokApi)
+RUN playwright install --with-deps chromium
+
 # Copy backend code
 COPY ./backend .
 
