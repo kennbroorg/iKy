@@ -7,7 +7,6 @@ in search_tasks.py and dorks_tasks.py.
 
 from __future__ import annotations
 
-import collections
 import logging
 
 from factories.fontcheat import search_icon_5
