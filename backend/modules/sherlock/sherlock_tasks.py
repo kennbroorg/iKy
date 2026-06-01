@@ -10,14 +10,12 @@ from pathlib import Path
 from time import monotonic
 
 import requests
+from celery.utils.log import get_task_logger
+from celery_app import celery
 from colorama import Fore, Style, init
+from factories.fontcheat import search_icon_5
 from requests_futures.sessions import FuturesSession
 from torrequest import TorRequest
-
-from celery.utils.log import get_task_logger
-
-from celery_app import celery
-from factories.fontcheat import search_icon_5
 
 # import urllib3
 # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
