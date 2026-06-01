@@ -21,9 +21,9 @@ init-apikeys:
 build: init-apikeys
     docker compose build
 
-# Start all services
+# Start all services (excludes the legacy `frontend`; use `docker compose up frontend` if needed)
 up: init-apikeys
-    docker compose up -d
+    docker compose up -d backend iky-frontend redis
 
 # Stop all services
 down:
@@ -67,11 +67,11 @@ test *args:
 restart service:
     docker compose restart {{ service }}
 
-# Full rebuild: stop, build, start
+# Full rebuild: stop, build, start (excludes the legacy `frontend`)
 rebuild: init-apikeys
     docker compose down
     docker compose build
-    docker compose up -d
+    docker compose up -d backend iky-frontend redis
 
 # Remove containers, volumes, and locally-built images
 clean:
