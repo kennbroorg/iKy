@@ -10,6 +10,24 @@ from factories.task_wrapper import iky_task
 logger = get_task_logger(__name__)
 
 
+def _compose_logo_url(logo: str | None) -> str | None:
+    """Compose the picture URL for a breach logo.
+
+    XposedOrNot's v1 API now returns fully-qualified URLs (e.g. ``https://
+    xposedornot.com/static/logos/Linkedin.png``), but historically returned
+    bare filenames (e.g. ``Linkedin.png``). Pass absolute URLs through
+    unchanged; prepend the legacy base for relative paths.
+
+    Returns the input unchanged when it is empty or ``None`` — the call site
+    only writes ``gather_item["picture"]`` for truthy values.
+    """
+    if not logo:
+        return logo
+    if logo.startswith(("http://", "https://")):
+        return logo
+    return f"https://xposedornot.com/img/{logo}"
+
+
 @iky_task(module_name="leaks")
 def p_leaks(email):
     """Task of Celery that get info from XposedOrNot."""
@@ -106,8 +124,9 @@ def p_leaks(email):
             "subtitle": " · ".join(subtitle_parts),
             "link": link,
         }
-        if logo:
-            gather_item["picture"] = f"https://xposedornot.com/img/{logo}"
+        picture = _compose_logo_url(logo)
+        if picture:
+            gather_item["picture"] = picture
         gather.append(gather_item)
 
         timeline.append(
