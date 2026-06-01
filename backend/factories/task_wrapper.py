@@ -56,10 +56,14 @@ def iky_task(
             tic = time.perf_counter()
             total: list[dict[str, Any]] = []
 
+            # dev_mode kwarg is consumed here — it MUST NOT be passed to
+            # the inner processing function (which doesn't accept it).
+            dev_mode = kwargs.pop("dev_mode", True)
+
             try:
                 # --- Dev-mode bypass ---
                 file_path = Path.cwd() / "outputs" / f"output-{module_name}.json"
-                if file_path.exists():
+                if dev_mode and file_path.exists():
                     logger.warning(f"Developer frontend mode - {file_path}")
                     try:
                         with file_path.open() as f:
@@ -69,6 +73,8 @@ def iky_task(
                         return data
                     except json.JSONDecodeError:
                         logger.error("Developer mode ERROR")
+                elif not dev_mode and file_path.exists():
+                    logger.info(f"dev_mode=False — bypassing golden file {file_path}")
 
                 # --- Call the real processing function ---
                 total = func(*args, **kwargs)
