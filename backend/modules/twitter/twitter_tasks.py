@@ -19,6 +19,77 @@ from factories.task_wrapper import iky_task
 
 logger = get_task_logger(__name__)
 
+
+# ---------------------------------------------------------------------------
+# twikit User monkey-patch — defensive against Twitter API drift
+#
+# twikit 2.3.x does direct dict[key] accesses on the `legacy` payload that
+# Twitter has progressively stopped guaranteeing (e.g. description.urls,
+# url.urls, several boolean flags). We wrap __init__ so missing keys default
+# to safe values instead of crashing with KeyError.
+# ---------------------------------------------------------------------------
+def _patch_twikit_user() -> None:
+    """Wrap twikit.user.User.__init__ so missing legacy keys default safely.
+
+    Twitter's payload has drifted over time and twikit does direct dict
+    access on fields like description.urls that aren't always present.
+    Wrapping here is a no-op when the test suite mocks twikit.user.
+    """
+    user_mod = getattr(twikit, "user", None)
+    if user_mod is None or not hasattr(user_mod, "User"):
+        return
+    user_cls = user_mod.User
+    if getattr(user_cls, "_iky_patched", False):
+        return
+    # Only patch the real twikit User class — not test mocks (MagicMock).
+    # The real class lives in the twikit package; mocks live elsewhere.
+    module_name = getattr(user_cls, "__module__", "")
+    if not module_name.startswith("twikit"):
+        return
+    original_init = user_cls.__init__
+
+    def resilient_init(self, client, data):
+        legacy = data.setdefault("legacy", {})
+        entities = legacy.setdefault("entities", {})
+        entities.setdefault("description", {}).setdefault("urls", [])
+        entities.setdefault("url", {}).setdefault("urls", [])
+        legacy.setdefault("location", "")
+        legacy.setdefault("description", "")
+        legacy.setdefault("pinned_tweet_ids_str", [])
+        legacy.setdefault("withheld_in_countries", [])
+        for key in (
+            "verified",
+            "possibly_sensitive",
+            "can_dm",
+            "can_media_tag",
+            "want_retweets",
+            "default_profile",
+            "default_profile_image",
+            "has_custom_timelines",
+            "is_translator",
+        ):
+            legacy.setdefault(key, False)
+        for key in (
+            "followers_count",
+            "fast_followers_count",
+            "normal_followers_count",
+            "friends_count",
+            "favourites_count",
+            "listed_count",
+            "media_count",
+            "statuses_count",
+        ):
+            legacy.setdefault(key, 0)
+        legacy.setdefault("translator_type", "none")
+        data.setdefault("is_blue_verified", False)
+        original_init(self, client, data)
+
+    user_cls.__init__ = resilient_init
+    user_cls._iky_patched = True
+
+
+_patch_twikit_user()
+
 # ---------------------------------------------------------------------------
 # Cookie persistence
 # ---------------------------------------------------------------------------
