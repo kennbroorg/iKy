@@ -78,7 +78,7 @@ class DuckDuckGoProvider(SearchProvider):
     icon = "fas fa-kiwi-bird"
 
     def search(self, query: str, max_results: int = 10) -> list[SearchResult]:
-        from duckduckgo_search import DDGS
+        from ddgs import DDGS
 
         time.sleep(random.uniform(0.5, 1.5))
         try:

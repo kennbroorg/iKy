@@ -12,12 +12,12 @@ import pytest
 
 # ---------------------------------------------------------------------------
 # Stub heavy optional dependencies before the module is imported so tests
-# run in environments that don't have duckduckgo-search or googlesearch-python
+# run in environments that don't have ddgs or googlesearch-python
 # installed locally (Docker-only deps).
 # ---------------------------------------------------------------------------
 
-if "duckduckgo_search" not in sys.modules:
-    sys.modules["duckduckgo_search"] = MagicMock()
+if "ddgs" not in sys.modules:
+    sys.modules["ddgs"] = MagicMock()
 
 if "googlesearch" not in sys.modules:
     sys.modules["googlesearch"] = MagicMock()
@@ -82,13 +82,13 @@ class TestDuckDuckGoProvider:
 
     def test_happy_path_returns_search_results(self):
         # DDGS is imported lazily inside search():
-        #   from duckduckgo_search import DDGS
+        #   from ddgs import DDGS
         # Patch at the module level that owns it.
-        import duckduckgo_search
+        import ddgs
 
         mock_ddgs_instance = MagicMock()
         mock_ddgs_instance.text.return_value = _DDGS_RESULTS
-        duckduckgo_search.DDGS = MagicMock(return_value=mock_ddgs_instance)
+        ddgs.DDGS = MagicMock(return_value=mock_ddgs_instance)
 
         results = DuckDuckGoProvider().search("john_doe", max_results=2)
 
@@ -97,11 +97,11 @@ class TestDuckDuckGoProvider:
 
     def test_result_mapping_from_ddgs_fields(self):
         """title←title, url←href, description←body."""
-        import duckduckgo_search
+        import ddgs
 
         mock_ddgs = MagicMock()
         mock_ddgs.text.return_value = [_DDGS_RESULTS[0]]
-        duckduckgo_search.DDGS = MagicMock(return_value=mock_ddgs)
+        ddgs.DDGS = MagicMock(return_value=mock_ddgs)
 
         results = DuckDuckGoProvider().search("q")
 
@@ -112,22 +112,22 @@ class TestDuckDuckGoProvider:
         assert r.source == "duckduckgo"
 
     def test_exception_returns_empty_list(self):
-        import duckduckgo_search
+        import ddgs
 
         mock_ddgs = MagicMock()
         mock_ddgs.text.side_effect = RuntimeError("rate limited")
-        duckduckgo_search.DDGS = MagicMock(return_value=mock_ddgs)
+        ddgs.DDGS = MagicMock(return_value=mock_ddgs)
 
         results = DuckDuckGoProvider().search("q")
 
         assert results == []
 
     def test_exception_is_logged_as_warning(self):
-        import duckduckgo_search
+        import ddgs
 
         mock_ddgs = MagicMock()
         mock_ddgs.text.side_effect = ConnectionError("no connection")
-        duckduckgo_search.DDGS = MagicMock(return_value=mock_ddgs)
+        ddgs.DDGS = MagicMock(return_value=mock_ddgs)
 
         with patch("factories.search_providers.logger") as mock_logger:
             DuckDuckGoProvider().search("q")
@@ -136,22 +136,22 @@ class TestDuckDuckGoProvider:
         assert "DuckDuckGo" in mock_logger.warning.call_args[0][0]
 
     def test_max_results_forwarded_to_ddgs(self):
-        import duckduckgo_search
+        import ddgs
 
         mock_ddgs = MagicMock()
         mock_ddgs.text.return_value = []
-        duckduckgo_search.DDGS = MagicMock(return_value=mock_ddgs)
+        ddgs.DDGS = MagicMock(return_value=mock_ddgs)
 
         DuckDuckGoProvider().search("q", max_results=5)
 
         mock_ddgs.text.assert_called_once_with("q", max_results=5)
 
     def test_empty_results_returns_empty_list(self):
-        import duckduckgo_search
+        import ddgs
 
         mock_ddgs = MagicMock()
         mock_ddgs.text.return_value = []
-        duckduckgo_search.DDGS = MagicMock(return_value=mock_ddgs)
+        ddgs.DDGS = MagicMock(return_value=mock_ddgs)
 
         results = DuckDuckGoProvider().search("q")
 
@@ -159,11 +159,11 @@ class TestDuckDuckGoProvider:
 
     def test_missing_fields_use_defaults(self):
         """If ddgs returns a result with missing fields, use empty strings."""
-        import duckduckgo_search
+        import ddgs
 
         mock_ddgs = MagicMock()
         mock_ddgs.text.return_value = [{}]
-        duckduckgo_search.DDGS = MagicMock(return_value=mock_ddgs)
+        ddgs.DDGS = MagicMock(return_value=mock_ddgs)
 
         results = DuckDuckGoProvider().search("q")
 
