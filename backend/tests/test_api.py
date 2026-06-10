@@ -1,6 +1,5 @@
-"""Tests for backend/api.py - Flask API endpoints with mocked Celery dispatch."""
+"""Tests for FastAPI API endpoints with mocked Celery dispatch."""
 
-import json
 from typing import ClassVar
 
 
@@ -8,31 +7,25 @@ class TestTasklistEndpoint:
     def test_tasklist_returns_modules(self, client):
         resp = client.get("/tasklist")
         assert resp.status_code == 200
-        data = resp.get_json()
+        data = resp.json()
         assert "modules" in data
         assert isinstance(data["modules"], list)
         assert "github" in data["modules"]
 
 
 class TestTestingEndpoint:
-    def test_testing_echoes_json(self, app, client):
-        app.debug = True
+    def test_testing_echoes_json(self, client):
         payload = {"key": "value", "num": 42}
-        resp = client.post(
-            "/testing",
-            data=json.dumps(payload),
-            content_type="application/json",
-        )
+        resp = client.post("/testing", json=payload)
         assert resp.status_code == 200
-        assert resp.get_json() == payload
+        assert resp.json() == payload
 
-    def test_testing_returns_404_in_production(self, app, client):
-        app.debug = False
-        resp = client.post(
-            "/testing",
-            data=json.dumps({"key": "value"}),
-            content_type="application/json",
-        )
+    def test_testing_returns_404_in_production(self, client, monkeypatch):
+        # Patch the module-level _DEBUG flag to False
+        import routers.utils
+
+        monkeypatch.setattr(routers.utils, "_DEBUG", False)
+        resp = client.post("/testing", json={"key": "value"})
         assert resp.status_code == 404
 
 
@@ -58,11 +51,10 @@ class TestModuleEndpoints:
             mock_celery_send.send_task.reset_mock()
             resp = client.post(
                 f"/{route}",
-                data=json.dumps({"username": "testuser", "from": "Initial"}),
-                content_type="application/json",
+                json={"username": "testuser", "from": "Initial"},
             )
             assert resp.status_code == 200, f"/{route} returned {resp.status_code}"
-            data = resp.get_json()
+            data = resp.json()
             assert data["module"] == route, f"/{route} wrong module"
             assert data["task"] == "fake-task-id-1234"
             assert data["param"] == "testuser"
@@ -76,28 +68,24 @@ class TestModuleEndpoints:
         """Endpoints should handle missing username gracefully."""
         resp = client.post(
             "/github",
-            data=json.dumps({"from": "Initial"}),
-            content_type="application/json",
+            json={"from": "Initial"},
         )
         assert resp.status_code == 200
-        data = resp.get_json()
+        data = resp.json()
         assert data["param"] == ""
 
     def test_spotify_extra_params(self, client, mock_celery_send):
         """Spotify endpoint accepts extra 'proc' parameter."""
         resp = client.post(
             "/spotify",
-            data=json.dumps(
-                {
-                    "username": "testuser",
-                    "from": "Initial",
-                    "proc": 2,
-                }
-            ),
-            content_type="application/json",
+            json={
+                "username": "testuser",
+                "from": "Initial",
+                "proc": 2,
+            },
         )
         assert resp.status_code == 200
-        data = resp.get_json()
+        data = resp.json()
         assert data["module"] == "spotify"
         call_args = mock_celery_send.send_task.call_args
         assert call_args[0][0] == "modules.spotify.spotify_tasks.t_spotify"
@@ -106,18 +94,23 @@ class TestModuleEndpoints:
         """Dorks endpoint accepts extra 'dorks' parameter."""
         resp = client.post(
             "/dorks",
-            data=json.dumps(
-                {
-                    "username": "testuser",
-                    "dorks": "site:example.com",
-                    "from": "Initial",
-                }
-            ),
-            content_type="application/json",
+            json={
+                "username": "testuser",
+                "dorks": "site:example.com",
+                "from": "Initial",
+            },
         )
         assert resp.status_code == 200
-        data = resp.get_json()
+        data = resp.json()
         assert data["module"] == "dorks"
+
+    def test_unknown_module_returns_404(self, client, mock_celery_send):
+        """Unknown module should return 404."""
+        resp = client.post(
+            "/nonexistent_module",
+            json={"username": "testuser", "from": "Initial"},
+        )
+        assert resp.status_code == 404
 
 
 class TestStateAndResultEndpoints:
@@ -126,7 +119,7 @@ class TestStateAndResultEndpoints:
         mock_celery_send.AsyncResult.return_value.state = "PENDING"
         resp = client.get("/state/fake-id/github")
         assert resp.status_code == 200
-        data = resp.get_json()
+        data = resp.json()
         assert "state" in data
         assert data["task_id"] == "fake-id"
         assert data["task_app"] == "github"

@@ -2,50 +2,21 @@
 
 import json
 import re
-import sys
 import time
-import traceback
-from pathlib import Path
 from urllib.parse import quote
 
 import requests
+from celery.utils.log import get_task_logger
+from factories.fontcheat import search_icon_5
+from factories.iKy_functions import analize_rrss
+from factories.task_wrapper import iky_task
 from requests_html import HTMLSession
-
-try:
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.fontcheat import search_icon_5
-    from factories.iKy_functions import analize_rrss
-
-    celery = create_celery(create_application())
-except ImportError:
-    # This is to test the module individually, and I know that is piece of shit
-    sys.path.append("../../")
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.fontcheat import search_icon_5
-    from factories.iKy_functions import analize_rrss
-
-    celery = create_celery(create_application())
 
 logger = get_task_logger(__name__)
 
 
-def p_keybase(username, from_m):
-    # Code to develop the frontend without burning APIs
-    file_path = Path.cwd() / "outputs" / "output-keybase.json"
-
-    if file_path.exists():
-        logger.warning(f"Developer frontend mode - {file_path}")
-        try:
-            with open(file_path) as file:
-                data = json.load(file)
-            return data
-        except json.JSONDecodeError:
-            logger.error("Developer mode ERROR")
-
+@iky_task(module_name="keybase", dev_mode_sleep=15)
+def p_keybase(username, from_m="Initial"):
     # Code
     safe_user = quote(username, safe="")
     url = f"https://keybase.io/_/api/1.0/user/lookup.json?usernames={safe_user}"
@@ -246,7 +217,8 @@ def p_keybase(username, from_m):
         if raw.get("basics", "") != "":
             if raw.get("basics", "").get("ctime", "") != "":
                 ctime = time.strftime(
-                    "%Y/%m/%d %H:%M:%S", time.gmtime(raw.get("basics", "").get("ctime"))
+                    "%Y/%m/%d %H:%M:%S",
+                    time.gmtime(raw.get("basics", "").get("ctime")),
                 )
                 timeline_item = {
                     "action": "Keybase: Create Account",
@@ -266,7 +238,8 @@ def p_keybase(username, from_m):
 
             if raw.get("basics", "").get("mtime", "") != "":
                 mtime = time.strftime(
-                    "%Y/%m/%d %H:%M:%S", time.gmtime(raw.get("basics", "").get("mtime"))
+                    "%Y/%m/%d %H:%M:%S",
+                    time.gmtime(raw.get("basics", "").get("mtime")),
                 )
                 timeline_item = {
                     "action": "Keybase : Update Account",
@@ -275,9 +248,19 @@ def p_keybase(username, from_m):
                 }
                 timeline.append(timeline_item)
 
+            # Additive: track_version (cryptographic trust indicator)
+            track_version = raw.get("basics", {}).get("track_version")
+            if track_version is not None:
+                graph_item = {
+                    "name-node": "GraphTrackers",
+                    "title": "Trackers",
+                    "subtitle": str(track_version),
+                    "icon": "fas fa-user-check",
+                    "link": link_graph,
+                }
+                graph.append(graph_item)
+
         for dev in raw.get("devices", ""):
-            # print(dev)
-            # print(" Type ", raw.get("devices").get(dev).get("type", ""))
             fa_icon = search_icon_5(raw.get("devices").get(dev).get("type", ""))
             if fa_icon is None:
                 fa_icon = search_icon_5("question")
@@ -290,6 +273,86 @@ def p_keybase(username, from_m):
                 "link": link_device,
             }
             devices.append(device_item)
+
+        # Additive: Signature chain length (sigs.last.seqno = activity indicator)
+        sigs_last = raw.get("sigs", {}).get("last", {}) or {}
+        seqno = sigs_last.get("seqno")
+        if seqno is not None:
+            graph_item = {
+                "name-node": "GraphSigChain",
+                "title": "Signature Chain",
+                "subtitle": str(seqno),
+                "icon": "fas fa-link",
+                "link": link_graph,
+            }
+            graph.append(graph_item)
+
+        # Additive: PGP key metadata (public_keys.primary)
+        public_keys = raw.get("public_keys", {}) or {}
+        pgp_primary = public_keys.get("primary", {}) or {}
+        key_fingerprint = pgp_primary.get("key_fingerprint")
+        if key_fingerprint:
+            profile.append({"key_fingerprint": key_fingerprint})
+            graph_item = {
+                "name-node": "GraphPGPFingerprint",
+                "title": "PGP Fingerprint",
+                "subtitle": key_fingerprint,
+                "icon": "fas fa-fingerprint",
+                "link": link_graph,
+            }
+            graph.append(graph_item)
+
+        key_bits = pgp_primary.get("key_bits")
+        key_algo = pgp_primary.get("key_algo")
+        if key_bits is not None:
+            algo_name = "RSA" if key_algo == 1 else str(key_algo)
+            graph_item = {
+                "name-node": "GraphPGPKeyBits",
+                "title": "PGP Key",
+                "subtitle": f"{algo_name} {key_bits} bits",
+                "icon": "fas fa-key",
+                "link": link_graph,
+            }
+            graph.append(graph_item)
+
+        pgp_ctime = pgp_primary.get("ctime")
+        if pgp_ctime:
+            pgp_ctime_str = time.strftime("%Y/%m/%d %H:%M:%S", time.gmtime(pgp_ctime))
+            timeline_item = {
+                "action": "Keybase: PGP Key Created",
+                "date": pgp_ctime_str,
+                "icon": "fas fa-fingerprint",
+            }
+            timeline.append(timeline_item)
+
+        # Additive: PGP public key URL (link only — no key content fetched)
+        pgp_key_url = f"https://keybase.io/{username}/pgp_keys.asc"
+        profile.append({"pgp_key_url": pgp_key_url})
+
+        # Additive: Signing and encryption key counts (sibkeys / subkeys)
+        sibkeys = public_keys.get("sibkeys", {}) or {}
+        signing_count = len(sibkeys)
+        if signing_count > 0:
+            graph_item = {
+                "name-node": "GraphSigningKeys",
+                "title": "Signing Keys",
+                "subtitle": str(signing_count),
+                "icon": "fas fa-pen-nib",
+                "link": link_graph,
+            }
+            graph.append(graph_item)
+
+        subkeys = public_keys.get("subkeys", {}) or {}
+        encryption_count = len(subkeys)
+        if encryption_count > 0:
+            graph_item = {
+                "name-node": "GraphEncryptionKeys",
+                "title": "Encryption Keys",
+                "subtitle": str(encryption_count),
+                "icon": "fas fa-lock",
+                "link": link_graph,
+            }
+            graph.append(graph_item)
 
         if raw.get("proofs_summary", "") != "":
             for soc in raw.get("proofs_summary", "").get("all"):
@@ -304,6 +367,17 @@ def p_keybase(username, from_m):
                     "icon": fa_icon,
                     "link": link_social,
                 }
+                # Additive: include proof state when present
+                proof_state = soc.get("state")
+                if proof_state is not None:
+                    social_item["state"] = proof_state
+                # Additive: include proof URLs when present
+                human_url = soc.get("human_url")
+                if human_url:
+                    social_item["url"] = human_url
+                proof_url = soc.get("proof_url")
+                if proof_url:
+                    social_item["proof_url"] = proof_url
                 social.append(social_item)
 
                 social_profile_item = {
@@ -322,21 +396,33 @@ def p_keybase(username, from_m):
                     }
                 )
 
-        # Keybase : TODO : Find an example of webs and
-        # Keybase : Find an example of cryptocurrency_addresses and
-        if (
-            raw.get("cryptocurrency_addresses", "") != ""
-            and raw.get("cryptocurrency_addresses", "").get("bitcoin", "") != ""
-        ):
-            for address in raw.get("cryptocurrency_addresses").get("bitcoin"):
+        # Crypto icon map — fallback to generic "coins" icon for unknown currencies
+        _crypto_icons = {
+            "bitcoin": "fab fa-btc",
+            "ethereum": "fab fa-ethereum",
+        }
+
+        # Keybase : TODO : Find an example of webs
+        crypto_addresses = raw.get("cryptocurrency_addresses") or {}
+        wallets: list[dict[str, str]] = []
+        for currency, addresses in crypto_addresses.items():
+            if not addresses:
+                continue
+            fa_crypto_icon = _crypto_icons.get(currency.lower(), "fas fa-coins")
+            for address in addresses:
+                addr_str = address.get("address", "")
                 social_item = {
-                    "name-node": "keybaseBTC",
-                    "title": "Cryptocurrency",
-                    "subtitle": address.get("address"),
-                    "icon": "fab fa-btc",
+                    "name-node": f"keybase{currency.upper()}",
+                    "title": f"Cryptocurrency ({currency})",
+                    "subtitle": addr_str,
+                    "icon": fa_crypto_icon,
                     "link": link_social,
                 }
                 social.append(social_item)
+                if addr_str:
+                    wallets.append({"currency": currency, "address": addr_str})
+        if wallets:
+            profile.append({"wallet": wallets})
 
         presence.append(
             {
@@ -388,51 +474,5 @@ def p_keybase(username, from_m):
     return total
 
 
-@celery.task
-def t_keybase(username, from_m="Initial"):
-    total = []
-    tic = time.perf_counter()
-    try:
-        total = p_keybase(username, from_m)
-    except Exception as e:
-        # Check internal error
-        if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - ") :]
-            status = "Warning"
-        else:
-            reason = str(e)
-            status = "Fail"
-
-        traceback.print_exc()
-        traceback_text = traceback.format_exc()
-        total.append({"module": "keybase"})
-        total.append({"param": username})
-        total.append({"validation": "not_used"})
-
-        raw_node = []
-        raw_node.append(
-            {
-                "status": status,
-                # "reason": "{}".format(e),
-                "reason": reason,
-                "traceback": traceback_text,
-            }
-        )
-        total.append({"raw": raw_node})
-
-    # Take final time
-    toc = time.perf_counter()
-    # Show process time
-    logger.info(f"Keybase - Response in {toc - tic:0.4f} seconds")
-
-    return total
-
-
-def output(data):
-    print(json.dumps(data, ensure_ascii=False, indent=2))
-
-
-if __name__ == "__main__":
-    username = sys.argv[1]
-    result = t_keybase(username, "initial")
-    output(result)
+# Backward-compatible alias: existing code references t_keybase
+t_keybase = p_keybase

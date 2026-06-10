@@ -1,52 +1,19 @@
 #!/usr/bin/env python
 
+import argparse
 import json
-import sys
-import time
-
-# import urllib
-import traceback
-from pathlib import Path
 
 import requests
-
-try:
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.configuration import api_keys_search
-
-    celery = create_celery(create_application())
-except ImportError:
-    # This is to test the module individually, and I know that is piece of shit
-    sys.path.append("../../")
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.configuration import api_keys_search
-
-    celery = create_celery(create_application())
-
-# import urllib3
-# urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+from celery.utils.log import get_task_logger
+from factories.configuration import api_keys_search
+from factories.task_wrapper import iky_task
 
 logger = get_task_logger(__name__)
 
 
+@iky_task(module_name="leaklookup")
 def p_leaklookup(email):
     """Task of Celery that get info from leak-lookup.com"""
-
-    # Code to develop the frontend without burning APIs
-    file_path = Path.cwd() / "outputs" / "output-leaklookup.json"
-
-    if file_path.exists():
-        logger.warning(f"Developer frontend mode - {file_path}")
-        try:
-            with open(file_path) as file:
-                data = json.load(file)
-            return data
-        except json.JSONDecodeError:
-            logger.error("Developer mode ERROR")
 
     # Code
     url = "https://leak-lookup.com/api/search"
@@ -70,7 +37,6 @@ def p_leaklookup(email):
                     for d in details:
                         detail.append({"name": d, "value": details[d]})
                     leak_email.append({"name": leak, "value": detail})
-
             else:
                 leak_email.append(
                     {
@@ -81,7 +47,6 @@ def p_leaklookup(email):
     else:
         raise Exception("iKy - Leaklookup API Error")
 
-    # TODO: Add user request
     # Total
     total = []
     total.append({"module": "leaklookup"})
@@ -106,44 +71,8 @@ def p_leaklookup(email):
     return total
 
 
-@celery.task
-def t_leaklookup(email):
-    total = []
-    tic = time.perf_counter()
-    try:
-        total = p_leaklookup(email)
-    except Exception as e:
-        # Check internal error
-        if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - ") :]
-            status = "Warning"
-        else:
-            reason = str(e)
-            status = "Fail"
-
-        traceback.print_exc()
-        traceback_text = traceback.format_exc()
-        total.append({"module": "leaklookup"})
-        total.append({"param": email})
-        total.append({"validation": "not_used"})
-
-        raw_node = []
-        raw_node.append(
-            {
-                "status": status,
-                # "reason": "{}".format(e),
-                "reason": reason,
-                "traceback": traceback_text,
-            }
-        )
-        total.append({"raw": raw_node})
-
-    # Take final time
-    toc = time.perf_counter()
-    # Show process time
-    logger.info(f"Lealookup - Response in {toc - tic:0.4f} seconds")
-
-    return total
+# Backward-compatible alias: existing code references t_leaklookup
+t_leaklookup = p_leaklookup
 
 
 def output(data):
@@ -151,6 +80,11 @@ def output(data):
 
 
 if __name__ == "__main__":
-    username = sys.argv[1]
-    result = t_leaklookup(username)
+    parser = argparse.ArgumentParser(
+        description="Query leak-lookup.com for email leaks"
+    )
+    parser.add_argument("email", help="Email address to look up")
+    args = parser.parse_args()
+
+    result = t_leaklookup(args.email)
     output(result)

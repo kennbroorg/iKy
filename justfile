@@ -13,13 +13,17 @@ setup:
     .venv/bin/pre-commit install
     @echo "Done. Activate with: source .venv/bin/activate"
 
+# Ensure backend/factories/apikeys.json exists (prevents Docker creating a directory)
+init-apikeys:
+    @cp -n backend/factories/apikeys_default.json backend/factories/apikeys.json 2>/dev/null || true
+
 # Build Docker images
-build:
+build: init-apikeys
     docker compose build
 
-# Start all services in background
-up:
-    docker compose up -d
+# Start all services (excludes the legacy `frontend`; use `docker compose up frontend` if needed)
+up: init-apikeys
+    docker compose up -d backend iky-frontend redis
 
 # Stop all services
 down:
@@ -41,6 +45,10 @@ shell-backend:
 shell-frontend:
     docker compose exec frontend sh
 
+# Open a shell in the new-frontend container
+shell-new-frontend:
+    docker compose exec new-frontend sh
+
 # Run linter checks (no auto-fix)
 lint:
     .venv/bin/ruff check .
@@ -59,11 +67,11 @@ test *args:
 restart service:
     docker compose restart {{ service }}
 
-# Full rebuild: stop, build, start
-rebuild:
+# Full rebuild: stop, build, start (excludes the legacy `frontend`)
+rebuild: init-apikeys
     docker compose down
     docker compose build
-    docker compose up -d
+    docker compose up -d backend iky-frontend redis
 
 # Remove containers, volumes, and locally-built images
 clean:

@@ -1,51 +1,20 @@
 #!/usr/bin/env python
 
+import argparse
 import json
-import sys
-import time
-import traceback
-from pathlib import Path
 
 import holehe.core
 import httpx
 import trio
-
-try:
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.fontcheat import search_icon_5
-
-    celery = create_celery(create_application())
-except ImportError:
-    # This is to test the module individually, and I know that is piece of shit
-    sys.path.append("../../")
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.fontcheat import search_icon_5
-
-    celery = create_celery(create_application())
+from celery.utils.log import get_task_logger
+from factories.fontcheat import search_icon_5
+from factories.task_wrapper import iky_task
 
 logger = get_task_logger(__name__)
 
 
-async def p_holehe(email, from_m):
-    # Code to develop the frontend without burning APIs
-    file_path = Path.cwd() / "outputs" / "output-holehe.json"
-
-    if file_path.exists():
-        logger.warning(f"Developer frontend mode - {file_path}")
-        try:
-            with open(file_path) as file:
-                data = json.load(file)
-            return data
-        except json.JSONDecodeError:
-            logger.error("Developer mode ERROR")
-
-    # Code
-    # holehe.core.is_mail(email)
-
+async def _holehe_query(email):
+    """Run holehe modules asynchronously via trio and return sorted results."""
     modules = holehe.core.import_submodules("holehe.modules")
     websites = holehe.core.get_functions(modules)
 
@@ -54,9 +23,16 @@ async def p_holehe(email, from_m):
     async with trio.open_nursery() as nursery:
         for website in websites:
             nursery.start_soon(holehe.core.launch_module, website, email, client, out)
-            # nursery.start_soon(website, email, client, out)
-    raw_node = sorted(out, key=lambda i: i["name"])  # We sort by modules names
     await client.aclose()
+    return sorted(out, key=lambda i: i["name"])
+
+
+@iky_task(module_name="holehe", dev_mode_sleep=15)
+def p_holehe(email, from_m="initial"):
+    """Task of Celery that get info from holehe."""
+
+    # Run async holehe query synchronously via trio
+    raw_node = trio.run(_holehe_query, email)
 
     # Total
     total = []
@@ -132,44 +108,8 @@ async def p_holehe(email, from_m):
     return total
 
 
-@celery.task
-def t_holehe(email, from_m="initial"):
-    total = []
-    tic = time.perf_counter()
-    try:
-        total = trio.run(p_holehe, email, from_m)
-    except Exception as e:
-        # Check internal error
-        if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - ") :]
-            status = "Warning"
-        else:
-            reason = str(e)
-            status = "Fail"
-
-        traceback.print_exc()
-        traceback_text = traceback.format_exc()
-        total.append({"module": "holehe"})
-        total.append({"param": email})
-        total.append({"validation": "not_used"})
-
-        raw_node = []
-        raw_node.append(
-            {
-                "status": status,
-                # "reason": "{}".format(e),
-                "reason": reason,
-                "traceback": traceback_text,
-            }
-        )
-        total.append({"raw": raw_node})
-
-    # Take final time
-    toc = time.perf_counter()
-    # Show process time
-    logger.info(f"Holehe - Response in {toc - tic:0.4f} seconds")
-
-    return total
+# Backward-compatible alias: existing code references t_holehe
+t_holehe = p_holehe
 
 
 def output(data):
@@ -177,6 +117,11 @@ def output(data):
 
 
 if __name__ == "__main__":
-    email = sys.argv[1]
-    result = t_holehe(email, "initial")
+    parser = argparse.ArgumentParser(
+        description="Query holehe for email registration on sites"
+    )
+    parser.add_argument("email", help="Email address to look up")
+    args = parser.parse_args()
+
+    result = t_holehe(args.email, "initial")
     output(result)

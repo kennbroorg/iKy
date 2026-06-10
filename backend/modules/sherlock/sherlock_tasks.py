@@ -10,26 +10,12 @@ from pathlib import Path
 from time import monotonic
 
 import requests
+from celery.utils.log import get_task_logger
+from celery_app import celery
 from colorama import Fore, Style, init
+from factories.fontcheat import search_icon_5
 from requests_futures.sessions import FuturesSession
 from torrequest import TorRequest
-
-try:
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.fontcheat import search_icon_5
-
-    celery = create_celery(create_application())
-except ImportError:
-    # This is to test the module individually, and I know that is piece of shit
-    sys.path.append("../../")
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.fontcheat import search_icon_5
-
-    celery = create_celery(create_application())
 
 # import urllib3
 # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

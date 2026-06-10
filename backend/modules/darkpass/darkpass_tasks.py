@@ -1,84 +1,54 @@
 #!/usr/bin/env python
 
+import argparse
 import json
 import random
-import sys
-import time
-from pathlib import Path
 
 import requests
-
-try:
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-
-    celery = create_celery(create_application())
-except ImportError:
-    # This is to test the module individually, and I know that is piece of shit
-    sys.path.append("../../")
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-
-    celery = create_celery(create_application())
-
 
 # urllib3 warning suppression kept intentionally: TOR .onion hidden
 # services use self-signed certificates, so verify=False is expected
 # when routing through a SOCKS proxy to the Tor network.
 import urllib3
+from celery.utils.log import get_task_logger
+from factories.task_wrapper import iky_task
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 logger = get_task_logger(__name__)
 
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko",
+    "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
+]
 
-@celery.task
-def t_darkpass(email, from_m="Initial", proxy="127.0.0.1:9050"):
-    """Task of Celery that get info from skype"""
 
-    # Code to develop the frontend without burning APIs
-    file_path = Path.cwd() / "outputs" / "output-darkpass.json"
+@iky_task(module_name="darkpass", dev_mode_sleep=2)
+def p_darkpass(email, from_m="Initial", proxy="127.0.0.1:9050"):
+    """Task of Celery that gets leaked passwords from pwndb via TOR."""
 
-    if file_path.exists():
-        logger.warning(f"Developer frontend mode - {file_path}")
-        try:
-            with open(file_path) as file:
-                data = json.load(file)
-            time.sleep(2)
-            return data
-        except Exception:
-            logger.error("Developer mode error")
+    # Total
+    total = []
+    total.append({"module": "darkpass"})
+    total.append({"param": email})
+    # Evaluates the module that executed the task and set validation
+    total.append({"validation": "soft" if from_m != "Initial" else "no"})
 
-    # Code
-    raw_node = []
+    # Graphic Array
+    graphic = []
 
-    user_agents = [
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36",
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
-        "Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)",
-        "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko",
-        "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)",
-        "Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko",
-        "Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko",
-        "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko",
-        "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)",
-        "Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko",
-        "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)",
-        "Mozilla/5.0 (Windows NT 6.1; Win64; x64; Trident/7.0; rv:11.0) like Gecko",
-        "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)",
-        "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)",
-        "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)",
-    ]
+    # Profile Array
+    profile = []
+
+    # Timeline Array
+    timeline = []
+
+    # Gather Array
+    gather = []
 
     # Tor proxy
     session = requests.session()
@@ -106,66 +76,45 @@ def t_darkpass(email, from_m="Initial", proxy="127.0.0.1:9050"):
         req = session.post(
             url,
             data=request_data,
-            headers={"User-Agent": random.choice(user_agents)},
+            headers={"User-Agent": random.choice(USER_AGENTS)},
             timeout=60,
         )
     except Exception as err:
-        raw_node = {"status": "No TOR", "desc": str(type(err))}
+        raise Exception(
+            f"iKy - TOR is not enabled in {proxy} or pwndb is offline ({type(err).__name__})"
+        ) from err
 
-    if not raw_node:
-        if "Array" in req.text:
-            leaks = req.text.split("Array")[1:]
-            emails = []
+    raw_node = {}
 
-            for leak in leaks:
-                leaked_email = ""
-                domain = ""
-                password = ""
-                try:
-                    leaked_email = leak.split("[luser] =>")[1].split("[")[0].strip()
-                    domain = leak.split("[domain] =>")[1].split("[")[0].strip()
-                    password = leak.split("[password] =>")[1].split(")")[0].strip()
-                except Exception:
-                    pass
-                if leaked_email and leaked_email != "donate":
-                    emails.append(
-                        {
-                            "username": leaked_email,
-                            "domain": domain,
-                            "password": password,
-                        }
-                    )
+    if "Array" in req.text:
+        leaks = req.text.split("Array")[1:]
+        emails = []
 
-            if len(emails) > 0:
-                raw_node = {"pass": emails}
-            else:
-                raw_node = {"status": "No password leaked"}
+        for leak in leaks:
+            leaked_email = ""
+            leak_domain = ""
+            password = ""
+            try:
+                leaked_email = leak.split("[luser] =>")[1].split("[")[0].strip()
+                leak_domain = leak.split("[domain] =>")[1].split("[")[0].strip()
+                password = leak.split("[password] =>")[1].split(")")[0].strip()
+            except Exception:
+                pass
+            if leaked_email and leaked_email != "donate":
+                emails.append(
+                    {
+                        "username": leaked_email,
+                        "domain": leak_domain,
+                        "password": password,
+                    }
+                )
+
+        if len(emails) > 0:
+            raw_node = {"pass": emails}
         else:
             raw_node = {"status": "No password leaked"}
-
-    print(raw_node)
-
-    # Total
-    total = []
-    total.append({"module": "darkpass"})
-    total.append({"param": email})
-    # Evaluates the module that executed the task and set validation
-    if from_m == "Initial":
-        total.append({"validation": "no"})
     else:
-        total.append({"validation": "soft"})
-
-    # Graphic Array
-    graphic = []
-
-    # Profile Array
-    profile = []
-
-    # Timeline Array
-    timeline = []
-
-    # Gather Array
-    gather = []
+        raw_node = {"status": "No password leaked"}
 
     if raw_node.get("pass", "") != "":
         for passwords in raw_node["pass"]:
@@ -183,12 +132,20 @@ def t_darkpass(email, from_m="Initial", proxy="127.0.0.1:9050"):
     return total
 
 
+# Backward-compatible alias: existing code references t_darkpass
+t_darkpass = p_darkpass
+
+
 def output(data):
-    print(" ")
     print(json.dumps(data, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
-    email = sys.argv[1]
-    result = t_darkpass(email)
+    parser = argparse.ArgumentParser(
+        description="Query pwndb for leaked passwords via TOR"
+    )
+    parser.add_argument("email", help="Email address to look up")
+    args = parser.parse_args()
+
+    result = t_darkpass(args.email)
     output(result)

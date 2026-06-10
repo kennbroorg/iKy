@@ -1,82 +1,82 @@
 #!/usr/bin/env python
 
+import argparse
 import json
-import sys
-import time
-import traceback
-from pathlib import Path
 
-# import urllib
 import requests
-
-try:
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.configuration import api_keys_search
-
-    celery = create_celery(create_application())
-except ImportError:
-    # This is to test the module individually, and I know that is piece of shit
-    sys.path.append("../../")
-    from celery.utils.log import get_task_logger
-    from factories._celery import create_celery
-    from factories.application import create_application
-    from factories.configuration import api_keys_search
-
-    celery = create_celery(create_application())
-
-# import urllib3
-# urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+from celery.utils.log import get_task_logger
+from factories.task_wrapper import iky_task
 
 logger = get_task_logger(__name__)
 
 
+def _compose_logo_url(logo: str | None) -> str | None:
+    """Compose the picture URL for a breach logo.
+
+    XposedOrNot's v1 API now returns fully-qualified URLs (e.g. ``https://
+    xposedornot.com/static/logos/Linkedin.png``), but historically returned
+    bare filenames (e.g. ``Linkedin.png``). Pass absolute URLs through
+    unchanged; prepend the legacy base for relative paths.
+
+    Returns the input unchanged when it is empty or ``None`` — the call site
+    only writes ``gather_item["picture"]`` for truthy values.
+    """
+    if not logo:
+        return logo
+    if logo.startswith(("http://", "https://")):
+        return logo
+    return f"https://xposedornot.com/img/{logo}"
+
+
+@iky_task(module_name="leaks")
 def p_leaks(email):
-    """Task of Celery that get info from Have I Been Pwned"""
+    """Task of Celery that get info from XposedOrNot."""
 
-    # Code to develop the frontend without burning APIs
-    file_path = Path.cwd() / "outputs" / "output-leaks.json"
-
-    if file_path.exists():
-        logger.warning(f"Developer frontend mode - {file_path}")
-        try:
-            with open(file_path) as file:
-                data = json.load(file)
-            return data
-        except json.JSONDecodeError:
-            logger.error("Developer mode ERROR")
-
-    # Code
-    key = ""
-    url = f"https://haveibeenpwned.com/api/v3/breachedaccount/{email}"
-    key = api_keys_search("haveibeenpwned_key")
-
-    if not key:
-        raise Exception("iKy - Missing or invalid Key")
-
-    # For the future
-    # scraper = cloudscraper.create_scraper()
-    # req = scraper.get(url)
-
+    url = f"https://api.xposedornot.com/v1/breach-analytics?email={email}"
     req = requests.get(
         url,
-        headers={"User-Agent": "iKy", "hibp-api-key": key},
-        params={"truncateResponse": "false"},
-        timeout=10,
+        headers={"User-Agent": "iKy-OSINT"},
+        timeout=15,
     )
 
-    # Raw Array
-    if req.status_code == 200:
-        raw_node = json.loads(req.text)
-    elif req.status_code == 403:
-        raise Exception("iKy - Missing or invalid Key")
-    elif req.status_code == 404:
+    if req.status_code == 404:
         raise Exception("iKy - No leak found")
-    elif req.status_code == 503:
-        raise Exception("iKy - Service blocked")
-    else:
-        raise Exception("iKy - API Error")
+    elif req.status_code == 429:
+        raise Exception("iKy - Rate limited, try again later")
+    elif req.status_code != 200:
+        raise Exception(f"iKy - XposedOrNot API Error ({req.status_code})")
+
+    data = req.json()
+    exposed = data.get("ExposedBreaches") or {}
+    breaches = exposed.get("breaches_details") or []
+
+    if not breaches:
+        raise Exception("iKy - No leak found")
+
+    metrics = data.get("BreachMetrics") or {}
+    risk_list = metrics.get("risk") or []
+    risk_entry = risk_list[0] if risk_list else {}
+
+    risk_label = str(risk_entry.get("risk_label") or "Unknown")
+    risk_score = int(risk_entry.get("risk_score") or 0)
+
+    total_records = 0
+    for breach in breaches:
+        total_records += int(breach.get("xposed_records") or 0)
+
+    sorted_breaches = sorted(
+        breaches,
+        key=lambda b: int(b.get("xposed_records") or 0),
+        reverse=True,
+    )
+    top_breach = sorted_breaches[0] if sorted_breaches else {}
+
+    years = []
+    for breach in breaches:
+        year_raw = str(breach.get("xposed_date") or "")
+        if year_raw.isdigit() and len(year_raw) == 4:
+            years.append(int(year_raw))
+    last_year = max(years) if years else 0
 
     # Total
     total = []
@@ -106,35 +106,80 @@ def p_leaks(email):
     }
     gather.append(gather_item)
 
-    skip_titles = {"NOLEAK", "BLOCKED", "KEY", "ERROR"}
-    if raw_node[0].get("title", "") not in skip_titles:
-        for leak in raw_node:
-            gather_item = {
-                "name-node": leak.get("Title", ""),
-                "title": leak.get("Title", ""),
-                "subtitle": "Breach Date: " + leak.get("BreachDate", ""),
-                "picture": leak.get("LogoPath", ""),
-                # "picture": "https://haveibeenpwned.com/Content/" +
-                # "Images/PwnedLogos/" + leak.get("Name", "") + "." +
-                # leak.get("LogoType", ""),
-                "link": link,
-            }
-            gather.append(gather_item)
-            timeline.append(
-                {
-                    "action": "Leak : " + leak.get("Title", ""),
-                    "date": leak.get("BreachDate", ""),
-                    "icon": "fa-exclamation-circle",
-                    "desc": leak.get("Description", ""),
-                }
-            )
+    for breach in breaches:
+        name = breach.get("breach", "")
+        date = breach.get("xposed_date", "")
+        desc = breach.get("details", "")
+        logo = breach.get("logo", "")
+        records = breach.get("xposed_records", 0)
+        subtitle_parts = []
+        if date:
+            subtitle_parts.append(f"Date: {date}")
+        if records:
+            subtitle_parts.append(f"Records: {records:,}")
 
-    # Please, respect the order of items in the total array
-    # Because the frontend depend of that (By now)
+        gather_item = {
+            "name-node": name,
+            "title": name,
+            "subtitle": " · ".join(subtitle_parts),
+            "link": link,
+        }
+        picture = _compose_logo_url(logo)
+        if picture:
+            gather_item["picture"] = picture
+        gather.append(gather_item)
+
+        timeline.append(
+            {
+                "action": "Leak : " + name,
+                "date": date,
+                "icon": "fa-exclamation-circle",
+                "desc": desc,
+            }
+        )
+
+    # Raw — full XON response for detail views
+    raw_node = data
+
     total.append({"raw": raw_node})
-    # if (len(gather) != 1):
-    #     graphic.append({'leaks': gather})
     graphic.append({"leaks": gather})
+    graphic.append(
+        {
+            "summary": {
+                "breach_count": len(breaches),
+                "risk_label": risk_label,
+                "risk_score": risk_score,
+                "total_records": total_records,
+                "top_breach": str(top_breach.get("breach") or ""),
+                "last_year": str(last_year) if last_year else "",
+            }
+        }
+    )
+    graphic.append(
+        {
+            "risk": {
+                "risk_label": risk_label,
+                "risk_score": risk_score,
+            }
+        }
+    )
+    graphic.append({"passwords_strength": metrics.get("passwords_strength") or []})
+    graphic.append({"industry": metrics.get("industry") or []})
+    graphic.append({"yearwise_details": metrics.get("yearwise_details") or []})
+    graphic.append({"xposed_data": metrics.get("xposed_data") or []})
+    graphic.append(
+        {
+            "top_breaches": [
+                {
+                    "breach": str(breach.get("breach") or ""),
+                    "records": int(breach.get("xposed_records") or 0),
+                    "year": str(breach.get("xposed_date") or ""),
+                    "industry": str(breach.get("industry") or ""),
+                }
+                for breach in sorted_breaches[:8]
+            ]
+        }
+    )
     total.append({"graphic": graphic})
     total.append({"profile": profile})
     total.append({"timeline": timeline})
@@ -142,44 +187,8 @@ def p_leaks(email):
     return total
 
 
-@celery.task
-def t_leaks(email):
-    total = []
-    tic = time.perf_counter()
-    try:
-        total = p_leaks(email)
-    except Exception as e:
-        # Check internal error
-        if str(e).startswith("iKy - "):
-            reason = str(e)[len("iKy - ") :]
-            status = "Warning"
-        else:
-            reason = str(e)
-            status = "Fail"
-
-        traceback.print_exc()
-        traceback_text = traceback.format_exc()
-        total.append({"module": "leaks"})
-        total.append({"param": email})
-        total.append({"validation": "not_used"})
-
-        raw_node = []
-        raw_node.append(
-            {
-                "status": status,
-                # "reason": "{}".format(e),
-                "reason": reason,
-                "traceback": traceback_text,
-            }
-        )
-        total.append({"raw": raw_node})
-
-    # Take final time
-    toc = time.perf_counter()
-    # Show process time
-    logger.info(f"leaks - Response in {toc - tic:0.4f} seconds")
-
-    return total
+# Backward-compatible alias: existing code references t_leaks
+t_leaks = p_leaks
 
 
 def output(data):
@@ -187,6 +196,9 @@ def output(data):
 
 
 if __name__ == "__main__":
-    username = sys.argv[1]
-    result = t_leaks(username)
+    parser = argparse.ArgumentParser(description="Query XposedOrNot for email breaches")
+    parser.add_argument("email", help="Email address to look up")
+    args = parser.parse_args()
+
+    result = t_leaks(args.email)
     output(result)
