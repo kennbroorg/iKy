@@ -6,10 +6,18 @@ from pydantic import BaseModel, Field
 
 
 class ModuleRequest(BaseModel):
-    """Standard request body for OSINT module endpoints."""
+    """Standard request body for OSINT module endpoints.
+
+    The ``dev_mode`` flag controls whether the task wrapper short-circuits to
+    the local ``outputs/output-<module>.json`` golden file (when present).
+    Defaults to ``True`` for backwards compatibility — frontend dev workflow
+    relies on the golden files.  Callers (e.g. ``scripts/test-module.sh
+    --save``) can pass ``dev_mode: false`` to force a real call.
+    """
 
     username: str = ""
     from_m: Annotated[str, Field(alias="from")] = ""
+    dev_mode: bool = True
 
     model_config = {"populate_by_name": True}
 

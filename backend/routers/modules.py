@@ -177,11 +177,16 @@ def r_module(module: str, body: ModuleRequest):
 
     task_path, pass_from = entry
     args = (body.username, body.from_m) if pass_from else (body.username,)
+    kwargs = {"dev_mode": body.dev_mode}
 
     logger.info(
-        "%s - Detected Username: %s %s", module.title(), body.username, body.from_m
+        "%s - Detected Username: %s %s (dev_mode=%s)",
+        module.title(),
+        body.username,
+        body.from_m,
+        body.dev_mode,
     )
-    res = celery.send_task(task_path, args=args)
+    res = celery.send_task(task_path, args=args, kwargs=kwargs)
     logger.debug("%s - Task: %s", module.title(), res.task_id)
 
     return {
