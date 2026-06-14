@@ -1,15 +1,19 @@
 """Tests for modules.darkweb.darkweb_tasks (Strict TDD).
 
-Covers spec `dark-web` requirements R1-R10:
+The module is UNFILTERED-ONLY (see sdd/dark-web/fix-plan): a live engine spike
+proved Ahmia blocks all scraping, so only the two engines that actually return
+data over Tor ship — Tor66 and OnionLand. These tests exercise the REAL HTML
+structures captured during the spike (no invented markup):
+
   - R1  Module skeleton compliance (alias, registry, attribution, CLI/JSON).
   - R2  Input acceptance (email/username forwarded verbatim, blank warning).
-  - R3  Filtered-default search + aggregation + graceful empty.
-  - R4  Unfiltered engine explicit opt-in + section separation.
+  - R3  Aggregated search across both engines + graceful empty.
   - R5  Tor SOCKS5 proxy session + graceful degradation.
   - R6  Concurrency / timeout / hard deadline.
-  - R7  CAPTCHA / HTTP error / malformed HTML degradation.
+  - R7  CAPTCHA / HTTP error / malformed HTML degradation + real parsers.
   - R8  dev_mode golden-file bypass.
-  - R9  JSON output contract (ordered keys, node wiring, unique ids, no tasks).
+  - R9  JSON output contract (ordered keys, node wiring, unique ids, no tasks,
+        every hit tagged filtered=False, single ``darkweb`` section).
   - R10 Legacy removal (darkpass / psbdmp gone, no dead references).
 
 All network access is mocked. Engine fetches are deterministic via static HTML
@@ -47,39 +51,52 @@ def _no_dev_mode(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# Static HTML fixtures
+# Real-shaped HTML fixtures (captured during the live engine spike)
 # ---------------------------------------------------------------------------
 
-AHMIA_HTML = """
+# Tor66: genuine hits are <b><a href=...onion>Title</a></b><br>description.
+# The first two anchors are navigation chrome and MUST be filtered out.
+TOR66_HTML = """
 <html><body>
-<ol class="result-list">
-  <li class="result">
-    <h4><a href="/search/redirect?redirect_url=http://abc.onion/">Result One</a></h4>
-    <cite>http://abc.onion/</cite>
-    <p>snippet one</p>
-  </li>
-  <li class="result">
-    <h4><a href="/search/redirect?redirect_url=http://def.onion/">Result Two</a></h4>
-    <cite>http://def.onion/</cite>
-    <p>snippet two</p>
-  </li>
-</ol>
+<b><a href='http://tor66sewebgixwhcqfnp5inzp5x5uohhdy3kvtnyfxc2e5mxiuh34iid.onion/fresh'>Fresh Onions</a></b><br>navigation
+<b><a href='http://tor66sewebgixwhcqfnp5inzp5x5uohhdy3kvtnyfxc2e5mxiuh34iid.onion/random'>Random Onion</a></b><br>navigation
+<b><a href='http://7777777jo3a6i4hyon46lxfld7q7ltutpmtc3yitiirds26cpl3uqxid.onion/'>Explore - New World Order</a></b><br>New World Order is an instance focused on the evolution of conspiracy theories
+<b><a href='http://secondrealresult234567abcdefghijklmnopqrstuvwxyz0123456789ab.onion/'>Second Real Result</a></b><br>Another real description here
 </body></html>
 """
 
-AHMIA_EMPTY_HTML = """
+TOR66_EMPTY_HTML = """
 <html><body>
-<ol class="result-list"></ol>
-<p>No hidden services found.</p>
+<b><a href='http://tor66sewebgixwhcqfnp5inzp5x5uohhdy3kvtnyfxc2e5mxiuh34iid.onion/submit'>Submit</a></b><br>nav only
+<p>No results found.</p>
 </body></html>
 """
 
-ONION_LINKS_HTML = """
+# OnionLand: real onion URL lives in div.link text (the <a href> is an
+# obfuscated redirect). Sponsored rows prefix the link text with "Ad".
+ONIONLAND_HTML = """
 <html><body>
-<a href="http://aaa.onion/path">Site A</a>
-<a href="https://clearnet.example.com/page">Not an onion link</a>
-<a href="http://bbb.onion/">Site B</a>
-<a href="http://aaa.onion/path">Site A duplicate</a>
+<div class="result-block">
+  <a data-category="text-result" href="/r?s=obfuscated-redirect-1">Elon Musk menace par Zelensky</a>
+  <div class="link">http://7ov433bmudtgkl3vnjbg6rfke4n4rwk6xi2mxrvlgjgrw46ws7vqrsqd.onion/elon-musk</div>
+  <div class="desc">A page discussing the topic in detail.</div>
+</div>
+<div class="result-block">
+  <a data-category="text-result" href="/r?s=obfuscated-redirect-2">Sponsored Listing</a>
+  <div class="link">Adhttp://adsponsoredonionhost1234567890abcdefghijklmnopqrstuv.onion/promo</div>
+  <div class="desc">Sponsored result.</div>
+</div>
+<div class="result-block">
+  <a data-category="text-result" href="/r?s=obfuscated-redirect-3">Clearnet noise</a>
+  <div class="link">https://example.com/not-an-onion</div>
+  <div class="desc">Should be skipped (not an onion).</div>
+</div>
+</body></html>
+"""
+
+ONIONLAND_EMPTY_HTML = """
+<html><body>
+<div class="results"><p>No results.</p></div>
 </body></html>
 """
 
@@ -109,7 +126,7 @@ def _fetch_factory(spec):
     Unlisted engines default to (False, []) — i.e. unavailable.
     """
 
-    def _fetch(engine, query, tor_session, clearnet_session):
+    def _fetch(engine, query, tor_session):
         available, hits = spec.get(engine.name, (False, []))
         return EngineResult(engine.name, engine.filtered, available, list(hits))
 
@@ -117,7 +134,7 @@ def _fetch_factory(spec):
 
 
 def _recording_fetch(spec, called):
-    def _fetch(engine, query, tor_session, clearnet_session):
+    def _fetch(engine, query, tor_session):
         called.append(engine.name)
         available, hits = spec.get(engine.name, (True, []))
         return EngineResult(engine.name, engine.filtered, available, list(hits))
@@ -126,26 +143,26 @@ def _recording_fetch(spec, called):
 
 
 def _query_recording_fetch(queries):
-    def _fetch(engine, query, tor_session, clearnet_session):
+    def _fetch(engine, query, tor_session):
         queries.append(query)
         return EngineResult(engine.name, engine.filtered, True, [])
 
     return _fetch
 
 
-AHMIA_ENGINE = EngineConfig(
-    name="Ahmia",
-    url="https://ahmia.fi/search/?q={query}",
-    filtered=True,
-    requires_tor=False,
-    parser="ahmia",
-)
-ONION_ENGINE = EngineConfig(
-    name="AhmiaOnion",
-    url="http://exampleonion.onion/search/?q={query}",
-    filtered=True,
+TOR66_ENGINE = EngineConfig(
+    name="Tor66",
+    url="http://tor66example.onion/search?q={query}",
+    filtered=False,
     requires_tor=True,
-    parser="generic_onion",
+    parser="tor66",
+)
+ONIONLAND_ENGINE = EngineConfig(
+    name="OnionLand",
+    url="http://onionlandexample.onion/search?q={query}",
+    filtered=False,
+    requires_tor=True,
+    parser="onionland",
 )
 
 
@@ -176,7 +193,7 @@ class TestSkeletonCompliance:
         """R1-S1 — task is callable with a single positional arg."""
         with patch(
             "modules.darkweb.darkweb_tasks._fetch_engine",
-            _fetch_factory({"Ahmia": (True, []), "AhmiaOnion": (True, [])}),
+            _fetch_factory({"Tor66": (True, []), "OnionLand": (True, [])}),
         ):
             result = t_darkweb("testuser")
         assert isinstance(result, list)
@@ -187,8 +204,8 @@ class TestSkeletonCompliance:
             "modules.darkweb.darkweb_tasks._fetch_engine",
             _fetch_factory(
                 {
-                    "Ahmia": (True, [{"title": "T", "link": "http://t.onion/"}]),
-                    "AhmiaOnion": (True, []),
+                    "Tor66": (True, [{"title": "T", "link": "http://t.onion/"}]),
+                    "OnionLand": (True, []),
                 }
             ),
         ):
@@ -259,39 +276,42 @@ class TestInputAcceptance:
 
 
 # ===========================================================================
-# R3 — Filtered-default search
+# R3 — Aggregated search (both engines always run)
 # ===========================================================================
 
 
 class TestSelectEngines:
-    def test_default_returns_only_filtered_engines(self):
-        """R3-S1 — without opt-in, only filtered engines are selected."""
+    def test_both_engines_run_by_default(self):
+        """R3-S1 — without opt-in, both shipped engines are still selected."""
         engines = _select_engines(False)
-        assert len(engines) >= 1
-        assert all(e.filtered for e in engines)
         names = {e.name for e in engines}
-        assert "Ahmia" in names
-        assert "OnionLand" not in names
-        assert "Tor66" not in names
+        assert names == {"Tor66", "OnionLand"}
 
-    def test_optin_includes_unfiltered_engines(self):
-        """R4 — opt-in adds unfiltered engines alongside filtered ones."""
+    def test_include_unfiltered_has_no_effect(self):
+        """fix-plan — include_unfiltered is reserved; same engine set either way."""
+        assert _select_engines(False) == _select_engines(True)
+
+    def test_no_filtered_engine_ships(self):
+        """fix-plan — there is no scrapable filtered engine; all are unfiltered."""
         engines = _select_engines(True)
-        names = {e.name for e in engines}
-        assert "Ahmia" in names
-        assert {"OnionLand", "Tor66"} <= names
-        assert any(not e.filtered for e in engines)
+        assert all(e.filtered is False for e in engines)
+
+    def test_every_engine_uses_requests_fetch_method(self):
+        """fix-plan — both v1 engines fetch via requests over Tor."""
+        engines = _select_engines(True)
+        assert all(e.fetch_method == "requests" for e in engines)
+        assert all(e.requires_tor for e in engines)
 
 
-class TestFilteredSearch:
-    def test_aggregates_results_from_multiple_filtered_engines(self):
-        """R3-S2 — results from multiple engines aggregate; all filtered True."""
+class TestAggregatedSearch:
+    def test_aggregates_results_from_both_engines(self):
+        """R3-S2 — results from both engines aggregate; all filtered False."""
         spec = {
-            "Ahmia": (
+            "Tor66": (
                 True,
                 [{"title": f"A{i}", "link": f"http://a{i}.onion/"} for i in range(3)],
             ),
-            "AhmiaOnion": (
+            "OnionLand": (
                 True,
                 [{"title": f"B{i}", "link": f"http://b{i}.onion/"} for i in range(2)],
             ),
@@ -300,71 +320,28 @@ class TestFilteredSearch:
             result = t_darkweb("testuser")
         raw = result[3]["raw"]
         assert len(raw) == 5
-        assert all(item["filtered"] is True for item in raw)
-        assert {item["engine"] for item in raw} == {"Ahmia", "AhmiaOnion"}
+        assert all(item["filtered"] is False for item in raw)
+        assert {item["engine"] for item in raw} == {"Tor66", "OnionLand"}
 
     def test_no_results_across_engines_is_graceful_hard(self):
-        """R3-S3 — all engines respond empty -> raw [] and validation hard."""
-        spec = {"Ahmia": (True, []), "AhmiaOnion": (True, [])}
+        """R3-S3 — both engines respond empty -> raw [] and validation hard."""
+        spec = {"Tor66": (True, []), "OnionLand": (True, [])}
         with patch("modules.darkweb.darkweb_tasks._fetch_engine", _fetch_factory(spec)):
             result = t_darkweb("testuser")
         assert result[3]["raw"] == []
         assert result[2]["validation"] == "hard"
 
-
-# ===========================================================================
-# R4 — Unfiltered engine explicit opt-in
-# ===========================================================================
-
-
-class TestUnfilteredOptIn:
-    def test_unfiltered_engines_not_called_without_optin(self):
-        """R4-S1 — unfiltered engines are never fetched by default."""
-        called = []
-        with patch(
-            "modules.darkweb.darkweb_tasks._fetch_engine",
-            _recording_fetch({}, called),
-        ):
-            result = t_darkweb("testuser")
-        assert "OnionLand" not in called
-        assert "Tor66" not in called
-        assert "Ahmia" in called
-        keys = [next(iter(g)) for g in result[4]["graphic"]]
-        assert "darkweb_unfiltered" not in keys
-
-    def test_unfiltered_results_tagged_and_separated(self):
-        """R4-S2 — opt-in results tagged filtered=False in a separate section."""
+    def test_single_section_only_no_unfiltered_section(self):
+        """fix-plan — output has exactly one ``darkweb`` graphic section."""
         spec = {
-            "Ahmia": (True, [{"title": "F1", "link": "http://f1.onion/"}]),
-            "AhmiaOnion": (True, []),
-            "OnionLand": (True, [{"title": "U1", "link": "http://u1.onion/"}]),
-            "Tor66": (True, [{"title": "U2", "link": "http://u2.onion/"}]),
+            "Tor66": (True, [{"title": "T", "link": "http://t.onion/"}]),
+            "OnionLand": (True, [{"title": "O", "link": "http://o.onion/"}]),
         }
         with patch("modules.darkweb.darkweb_tasks._fetch_engine", _fetch_factory(spec)):
             result = t_darkweb("testuser", include_unfiltered=True)
-
-        raw = result[3]["raw"]
-        assert any(item["filtered"] is False for item in raw)
-        assert any(item["filtered"] is True for item in raw)
-
-        graphic = result[4]["graphic"]
-        keys = [next(iter(g)) for g in graphic]
-        assert "darkweb" in keys
-        assert "darkweb_unfiltered" in keys
-
-        darkweb_section = next(g["darkweb"] for g in graphic if "darkweb" in g)
-        unfiltered_section = next(
-            g["darkweb_unfiltered"] for g in graphic if "darkweb_unfiltered" in g
-        )
-        darkweb_hits = [n for n in darkweb_section if n["name-node"] != "DarkWeb"]
-        unfiltered_hits = [
-            n for n in unfiltered_section if n["name-node"] != "DarkWebUnfiltered"
-        ]
-        # No unfiltered onion url leaked into the default section.
-        darkweb_links = {n["subtitle"] for n in darkweb_hits}
-        assert "http://u1.onion/" not in darkweb_links
-        assert "http://u2.onion/" not in darkweb_links
-        assert len(unfiltered_hits) == 2
+        keys = [next(iter(g)) for g in result[4]["graphic"]]
+        assert keys == ["darkweb"]
+        assert "darkweb_unfiltered" not in keys
 
 
 # ===========================================================================
@@ -398,18 +375,18 @@ class TestTorSession:
 class TestFetchEngineDegradation:
     def test_success_returns_hits_and_available(self):
         """R3 — 200 + parseable HTML -> available with hits."""
-        session = _session_returning(_fake_response(200, AHMIA_HTML))
-        result = _fetch_engine(AHMIA_ENGINE, "alice", session, session)
+        session = _session_returning(_fake_response(200, TOR66_HTML))
+        result = _fetch_engine(TOR66_ENGINE, "alice", session)
         assert result.available is True
-        assert result.engine == "Ahmia"
-        assert result.filtered is True
+        assert result.engine == "Tor66"
+        assert result.filtered is False
         assert len(result.hits) == 2
-        assert result.hits[0]["link"] == "http://abc.onion/"
+        assert result.hits[0]["link"].endswith(".onion/")
 
     def test_http_429_is_unavailable_and_not_retried(self):
         """R7-S1 — 429 yields no results and is fetched exactly once."""
         session = _session_returning(_fake_response(429, ""))
-        result = _fetch_engine(AHMIA_ENGINE, "alice", session, session)
+        result = _fetch_engine(TOR66_ENGINE, "alice", session)
         assert result.available is False
         assert result.hits == []
         assert session.get.call_count == 1
@@ -417,7 +394,7 @@ class TestFetchEngineDegradation:
     def test_non_200_is_unavailable(self):
         """R7 — any non-200 status degrades to no results."""
         session = _session_returning(_fake_response(503, "error"))
-        result = _fetch_engine(AHMIA_ENGINE, "alice", session, session)
+        result = _fetch_engine(TOR66_ENGINE, "alice", session)
         assert result.available is False
         assert result.hits == []
 
@@ -426,7 +403,7 @@ class TestFetchEngineDegradation:
         session = _session_returning(
             _fake_response(200, "<html>Please solve the CAPTCHA to continue</html>")
         )
-        result = _fetch_engine(AHMIA_ENGINE, "alice", session, session)
+        result = _fetch_engine(TOR66_ENGINE, "alice", session)
         assert result.available is False
         assert result.hits == []
 
@@ -435,7 +412,7 @@ class TestFetchEngineDegradation:
         session = _session_returning(
             _fake_response(200, "<html><body>nothing parseable here</body></html>")
         )
-        result = _fetch_engine(AHMIA_ENGINE, "alice", session, session)
+        result = _fetch_engine(TOR66_ENGINE, "alice", session)
         assert result.available is True
         assert result.hits == []
 
@@ -443,43 +420,41 @@ class TestFetchEngineDegradation:
         """R5-S2 — connection errors are caught per-engine."""
         session = MagicMock()
         session.get.side_effect = requests.exceptions.ConnectionError("tor down")
-        result = _fetch_engine(AHMIA_ENGINE, "alice", session, session)
+        result = _fetch_engine(TOR66_ENGINE, "alice", session)
         assert result.available is False
         assert result.hits == []
 
     def test_query_is_included_in_request_url(self):
         """R2 — the search term appears in the fetched URL."""
-        session = _session_returning(_fake_response(200, AHMIA_HTML))
-        _fetch_engine(AHMIA_ENGINE, "alice@example.com", session, session)
+        session = _session_returning(_fake_response(200, TOR66_HTML))
+        _fetch_engine(TOR66_ENGINE, "alice@example.com", session)
         called_url = session.get.call_args[0][0]
         assert "alice@example.com" in called_url
 
     def test_onion_engine_uses_tor_session_without_verify(self):
         """R5 — onion engines use the Tor session with verify disabled."""
-        tor = _session_returning(_fake_response(200, ONION_LINKS_HTML))
-        clearnet = _session_returning(_fake_response(200, ""))
-        result = _fetch_engine(ONION_ENGINE, "alice", tor, clearnet)
+        tor = _session_returning(_fake_response(200, ONIONLAND_HTML))
+        result = _fetch_engine(ONIONLAND_ENGINE, "alice", tor)
         assert tor.get.called
-        assert not clearnet.get.called
         assert tor.get.call_args.kwargs.get("verify") is False
         assert len(result.hits) == 2
 
-    def test_clearnet_engine_uses_clearnet_session_with_verify(self):
-        """R5 — clearnet engines use the non-Tor session and verify TLS."""
-        tor = _session_returning(_fake_response(200, ""))
-        clearnet = _session_returning(_fake_response(200, AHMIA_HTML))
-        _fetch_engine(AHMIA_ENGINE, "alice", tor, clearnet)
-        assert clearnet.get.called
-        assert not tor.get.called
-        assert clearnet.get.call_args.kwargs.get("verify") is True
+    def test_per_engine_timeout_is_applied(self):
+        """R6 — the per-engine timeout is passed to the request."""
+        from modules.darkweb.darkweb_tasks import PER_ENGINE_TIMEOUT
+
+        session = _session_returning(_fake_response(200, TOR66_HTML))
+        _fetch_engine(TOR66_ENGINE, "alice", session)
+        assert session.get.call_args.kwargs.get("timeout") == PER_ENGINE_TIMEOUT
+        assert PER_ENGINE_TIMEOUT == 45
 
 
 class TestConcurrencyDegradation:
     def test_slow_engine_does_not_block_responsive_engine(self):
         """R6-S1 — an engine raising (timeout) is skipped; others still return."""
 
-        def _fetch(engine, query, tor_session, clearnet_session):
-            if engine.name == "AhmiaOnion":
+        def _fetch(engine, query, tor_session):
+            if engine.name == "OnionLand":
                 raise TimeoutError("engine timed out")
             return EngineResult(
                 engine.name,
@@ -492,31 +467,59 @@ class TestConcurrencyDegradation:
             result = t_darkweb("testuser")
         raw = result[3]["raw"]
         engines = {item["engine"] for item in raw}
-        assert "Ahmia" in engines
-        assert "AhmiaOnion" not in engines
+        assert "Tor66" in engines
+        assert "OnionLand" not in engines
         assert result[2]["validation"] == "hard"
 
 
 # ===========================================================================
-# R7 (parser layer) — deterministic parsing
+# R7 (parser layer) — deterministic parsing of REAL engine HTML
 # ===========================================================================
 
 
-class TestParsers:
-    def test_parse_ahmia_extracts_title_and_onion_link(self):
-        hits = _parse_results("ahmia", AHMIA_HTML)
+class TestTor66Parser:
+    def test_extracts_real_results_and_skips_nav(self):
+        hits = _parse_results("tor66", TOR66_HTML)
         assert len(hits) == 2
-        assert hits[0] == {"title": "Result One", "link": "http://abc.onion/"}
-        assert hits[1]["link"] == "http://def.onion/"
-
-    def test_parse_ahmia_empty_when_no_results(self):
-        assert _parse_results("ahmia", AHMIA_EMPTY_HTML) == []
-
-    def test_parse_generic_onion_keeps_only_unique_onion_links(self):
-        hits = _parse_results("generic_onion", ONION_LINKS_HTML)
         links = [h["link"] for h in hits]
-        assert links == ["http://aaa.onion/path", "http://bbb.onion/"]
         assert all(".onion" in link for link in links)
+        # Navigation anchors (fresh/random on the tor66 host) are excluded.
+        assert all("tor66" not in link for link in links)
+        assert hits[0]["title"] == "Explore - New World Order"
+        assert hits[0]["link"].startswith("http://7777777jo3a6i4hyon46")
+        assert hits[0]["description"].startswith("New World Order is an instance")
+
+    def test_empty_when_only_nav_present(self):
+        assert _parse_results("tor66", TOR66_EMPTY_HTML) == []
+
+
+class TestOnionLandParser:
+    def test_uses_div_link_text_not_obfuscated_href(self):
+        hits = _parse_results("onionland", ONIONLAND_HTML)
+        # Two real onion rows (the clearnet row is skipped).
+        assert len(hits) == 2
+        first = hits[0]
+        assert first["title"] == "Elon Musk menace par Zelensky"
+        assert first["link"] == (
+            "http://7ov433bmudtgkl3vnjbg6rfke4n4rwk6xi2mxrvlgjgrw46ws7vqrsqd.onion"
+            "/elon-musk"
+        )
+        # The obfuscated /r?s= redirect must never leak into the link.
+        assert "/r?s=" not in first["link"]
+        assert first["description"] == "A page discussing the topic in detail."
+
+    def test_strips_ad_prefix_from_link(self):
+        hits = _parse_results("onionland", ONIONLAND_HTML)
+        ad_hit = hits[1]
+        assert ad_hit["link"].startswith("http://adsponsoredonionhost")
+        assert not ad_hit["link"].startswith("Ad")
+
+    def test_skips_non_onion_rows(self):
+        hits = _parse_results("onionland", ONIONLAND_HTML)
+        assert all(".onion" in h["link"] for h in hits)
+
+    def test_empty_when_no_result_blocks(self):
+        assert _parse_results("onionland", ONIONLAND_EMPTY_HTML) == []
 
 
 # ===========================================================================
@@ -585,7 +588,7 @@ class TestOutputContract:
 
     def test_key_order_and_no_tasks(self):
         """R9-S1 — ordered keys, no follow-up tasks section."""
-        result = self._run({"Ahmia": (True, []), "AhmiaOnion": (True, [])})
+        result = self._run({"Tor66": (True, []), "OnionLand": (True, [])})
         keys = [next(iter(d)) for d in result]
         assert keys == [
             "module",
@@ -599,7 +602,7 @@ class TestOutputContract:
         assert "tasks" not in keys
 
     def test_module_name_and_empty_profile_timeline(self):
-        result = self._run({"Ahmia": (True, []), "AhmiaOnion": (True, [])})
+        result = self._run({"Tor66": (True, []), "OnionLand": (True, [])})
         assert result[0]["module"] == "darkweb"
         assert result[5]["profile"] == []
         assert result[6]["timeline"] == []
@@ -607,24 +610,24 @@ class TestOutputContract:
     def test_raw_items_have_exact_shape(self):
         """R9-S2 — raw items carry exactly title/link/engine/filtered."""
         spec = {
-            "Ahmia": (True, [{"title": "A0", "link": "http://a0.onion/"}]),
-            "AhmiaOnion": (True, [{"title": "B0", "link": "http://b0.onion/"}]),
+            "Tor66": (True, [{"title": "A0", "link": "http://a0.onion/"}]),
+            "OnionLand": (True, [{"title": "B0", "link": "http://b0.onion/"}]),
         }
         result = self._run(spec)
         raw = result[3]["raw"]
         assert len(raw) == 2
         for item in raw:
             assert set(item.keys()) == {"title", "link", "engine", "filtered"}
-            assert isinstance(item["filtered"], bool)
+            assert item["filtered"] is False
 
     def test_graphic_root_and_node_links_and_uniqueness(self):
         """R9-S3 — root node present, hits link to it, ids unique."""
         spec = {
-            "Ahmia": (
+            "Tor66": (
                 True,
                 [{"title": f"A{i}", "link": f"http://a{i}.onion/"} for i in range(2)],
             ),
-            "AhmiaOnion": (True, []),
+            "OnionLand": (True, []),
         }
         result = self._run(spec)
         section = next(g["darkweb"] for g in result[4]["graphic"] if "darkweb" in g)
@@ -640,15 +643,13 @@ class TestOutputContract:
         assert all(n["name-node"].startswith("DW-") for n in hits)
         assert all(".onion" in n["subtitle"] for n in hits)
 
-    def test_node_ids_unique_across_both_sections(self):
-        """R9-S3 — DW-* and DWU-* ids never collide across the whole output."""
+    def test_node_ids_unique_across_section(self):
+        """R9-S3 — DW-* ids never collide within the output."""
         spec = {
-            "Ahmia": (True, [{"title": "F", "link": "http://f.onion/"}]),
-            "AhmiaOnion": (True, []),
+            "Tor66": (True, [{"title": "F", "link": "http://f.onion/"}]),
             "OnionLand": (True, [{"title": "U", "link": "http://u.onion/"}]),
-            "Tor66": (True, []),
         }
-        result = self._run(spec, include_unfiltered=True)
+        result = self._run(spec)
         all_ids = []
         for section in result[4]["graphic"]:
             nodes = next(iter(section.values()))
@@ -700,3 +701,13 @@ class TestLegacyRemoval:
         imports = celery_app.celery.conf.imports
         assert not any("darkpass" in imp for imp in imports)
         assert not any("psbdmp" in imp for imp in imports)
+
+    def test_no_darkweb_unfiltered_dead_code(self):
+        """fix-plan — the removed unfiltered section leaves no references."""
+        import inspect
+
+        from modules.darkweb import darkweb_tasks
+
+        src = inspect.getsource(darkweb_tasks)
+        assert "darkweb_unfiltered" not in src
+        assert "DarkWebUnfiltered" not in src

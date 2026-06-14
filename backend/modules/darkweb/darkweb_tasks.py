@@ -6,7 +6,13 @@
 # multiple .onion search providers) is adapted from robin:
 #   Upstream: https://github.com/apurvsinghgautam/robin  (MIT License)
 # The LLM / NLP / deep-scraping layers of robin are intentionally NOT ported;
-# this module aggregates search-result links only (filtered by default).
+# this module aggregates search-result links only.
+#
+# NOTE on filtering: a live engine spike (sdd/dark-web/engine-spike) proved that
+# the only candidate "filtered" engine (Ahmia) now blocks all scraping. There is
+# currently NO scrapable filtered engine, so this module is UNFILTERED-ONLY: it
+# queries the two engines that actually return data over Tor (Tor66 + OnionLand).
+# Responsible-use is enforced by the consuming UI disclaimer, not an engine tier.
 #
 # ----------------------------------------------------------------------------
 # MIT License
@@ -58,9 +64,11 @@ logger = get_task_logger(__name__)
 # resolution for .onion hostnames happens through Tor, not locally.
 TOR_PROXY_URL = os.getenv("TOR_PROXY_URL", "socks5h://tor:9050")
 
-PER_ENGINE_TIMEOUT = 35  # seconds per engine (spec R6: 30-40s)
-TOTAL_TIMEOUT = 120  # seconds hard wall-clock budget for the whole task
-MAX_WORKERS = 3
+# Loosened after the live spike: cold Tor circuits to these engines can take
+# several seconds, and OnionLand returns large (~170KB) pages.
+PER_ENGINE_TIMEOUT = 45  # seconds per engine
+TOTAL_TIMEOUT = 180  # seconds hard wall-clock budget for the whole task
+MAX_WORKERS = 2
 
 USER_AGENTS = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -71,16 +79,36 @@ USER_AGENTS = (
     "(KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
 )
 
+# Tor66 navigation/menu links share the engine's own host or point at site
+# chrome (random/fresh/submit/...). They are not search hits, so the parser
+# drops any anchor whose href or text contains one of these tokens.
+_TOR66_NAV_TOKENS = (
+    "tor66",
+    "random",
+    "fresh",
+    "serviceinfo",
+    "top_onions",
+    "submit",
+    "advertise",
+    "about",
+)
+
 
 @dataclass(frozen=True)
 class EngineConfig:
-    """Static configuration for a single dark web search engine."""
+    """Static configuration for a single dark web search engine.
+
+    ``fetch_method`` is RESERVED for future fetchers (e.g. ``"playwright"``).
+    Every v1 engine uses ``"requests"``; the spike confirmed Playwright did not
+    unblock any additional engine, so no other method is wired yet.
+    """
 
     name: str
     url: str
     filtered: bool
     requires_tor: bool
     parser: str
+    fetch_method: str = "requests"
 
 
 @dataclass(frozen=True)
@@ -97,26 +125,21 @@ class EngineResult:
     hits: list[dict]
 
 
-# v1 engine set. Filtered (Ahmia) runs by default; the unfiltered engines are
-# opt-in only. NoEvil is intentionally omitted: no live endpoint could be
-# verified, and shipping a dead default URL is worse than fewer engines.
+# v1 engine set. Both engines are unfiltered and verified live (engine spike):
+# they are the only two that actually return scrapable .onion results over Tor.
+# Ahmia (the former "filtered" default), Torch, Haystak, DuckDuckGo onion and
+# Phobos were all dropped — dead, unreachable, or serving a JS/anti-bot shell.
 ENGINES: tuple[EngineConfig, ...] = (
     EngineConfig(
-        name="Ahmia",
-        url="https://ahmia.fi/search/?q={query}",
-        filtered=True,
-        requires_tor=False,
-        parser="ahmia",
-    ),
-    EngineConfig(
-        name="AhmiaOnion",
+        name="Tor66",
         url=(
-            "http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion"
-            "/search/?q={query}"
+            "http://tor66sewebgixwhcqfnp5inzp5x5uohhdy3kvtnyfxc2e5mxiuh34iid.onion"
+            "/search?q={query}"
         ),
-        filtered=True,
+        filtered=False,
         requires_tor=True,
-        parser="generic_onion",
+        parser="tor66",
+        fetch_method="requests",
     ),
     EngineConfig(
         name="OnionLand",
@@ -126,23 +149,14 @@ ENGINES: tuple[EngineConfig, ...] = (
         ),
         filtered=False,
         requires_tor=True,
-        parser="generic_onion",
-    ),
-    EngineConfig(
-        name="Tor66",
-        url=(
-            "http://tor66sewebgixwhcqfnp5inzp5x5uohhdy3kvtnyfxc2e5mxiuh34iid.onion"
-            "/search?q={query}"
-        ),
-        filtered=False,
-        requires_tor=True,
-        parser="generic_onion",
+        parser="onionland",
+        fetch_method="requests",
     ),
 )
 
 
 # ---------------------------------------------------------------------------
-# Tor / clearnet sessions
+# Tor session
 # ---------------------------------------------------------------------------
 
 
@@ -153,31 +167,86 @@ def _build_tor_session() -> requests.Session:
     return session
 
 
-def _build_clearnet_session() -> requests.Session:
-    """Build a plain requests session for clearnet engines (e.g. Ahmia)."""
-    return requests.Session()
-
-
 # ---------------------------------------------------------------------------
 # Parsing
 # ---------------------------------------------------------------------------
 
 
-def _parse_ahmia(soup: BeautifulSoup) -> list[dict]:
-    """Parse Ahmia's ``li.result`` rows into title/onion-link pairs."""
+def _parse_tor66(soup: BeautifulSoup) -> list[dict]:
+    """Parse Tor66 results.
+
+    Real result shape (from the live spike)::
+
+        <b><a href='http://7777...onion/'>Explore - New World Order</a></b>
+        <br>New World Order is an instance focused on ...
+
+    Each genuine hit is an ``<a>`` (pointing at a ``.onion`` host) wrapped in a
+    ``<b>``; its description is the text of the ``<br>`` that follows the bold
+    tag. Navigation/menu anchors are filtered out via ``_TOR66_NAV_TOKENS``.
+    """
     hits: list[dict] = []
-    for item in soup.select("li.result"):
-        heading = item.find("h4")
-        cite = item.find("cite")
-        title = heading.get_text(strip=True) if heading else ""
-        link = cite.get_text(strip=True) if cite else ""
-        if title and link:
-            hits.append({"title": title, "link": link})
+    seen: set[str] = set()
+    for anchor in soup.select('b > a[href*=".onion"]'):
+        href = anchor.get("href", "").strip()
+        title = anchor.get_text(strip=True)
+        haystack = f"{href} {title}".lower()
+        if any(token in haystack for token in _TOR66_NAV_TOKENS):
+            continue
+        if not href or href in seen:
+            continue
+        seen.add(href)
+
+        description = ""
+        bold = anchor.parent
+        sibling = bold.find_next_sibling("br") if bold else None
+        if sibling is not None:
+            following = sibling.next_sibling
+            if isinstance(following, str):
+                description = following.strip()
+
+        hits.append({"title": title or href, "link": href, "description": description})
+    return hits
+
+
+def _parse_onionland(soup: BeautifulSoup) -> list[dict]:
+    """Parse OnionLand results.
+
+    Real result shape (from the live spike)::
+
+        <div class="result-block">
+          <a data-category="text-result" href="/r?s=...">Title ...</a>
+          <div class="link">http://7ov4...onion/...</div>
+          <div class="desc">...</div>
+        </div>
+
+    The visible ``<a href>`` is an obfuscated redirect; the REAL onion URL is
+    the text inside ``div.link``. Sponsored rows prefix that text with ``Ad``,
+    which is stripped.
+    """
+    hits: list[dict] = []
+    seen: set[str] = set()
+    for block in soup.select("div.result-block"):
+        link_div = block.find("div", class_="link")
+        if link_div is None:
+            continue
+        url = link_div.get_text(strip=True)
+        if url.startswith("Ad"):
+            url = url[2:].strip()
+        if ".onion" not in url or url in seen:
+            continue
+        seen.add(url)
+
+        title_anchor = block.find("a")
+        title = title_anchor.get_text(strip=True) if title_anchor else ""
+        desc_div = block.find("div", class_="desc")
+        description = desc_div.get_text(strip=True) if desc_div else ""
+
+        hits.append({"title": title or url, "link": url, "description": description})
     return hits
 
 
 def _parse_generic_onion(soup: BeautifulSoup) -> list[dict]:
-    """Extract unique anchors pointing at ``.onion`` hosts."""
+    """Fallback parser: unique anchors pointing at ``.onion`` hosts."""
     hits: list[dict] = []
     seen: set[str] = set()
     for anchor in soup.find_all("a", href=True):
@@ -186,15 +255,17 @@ def _parse_generic_onion(soup: BeautifulSoup) -> list[dict]:
             continue
         seen.add(href)
         title = anchor.get_text(strip=True) or href
-        hits.append({"title": title, "link": href})
+        hits.append({"title": title, "link": href, "description": ""})
     return hits
 
 
 def _parse_results(parser: str, html: str) -> list[dict]:
     """Dispatch to the parser named in the engine config."""
     soup = BeautifulSoup(html, "html.parser")
-    if parser == "ahmia":
-        return _parse_ahmia(soup)
+    if parser == "tor66":
+        return _parse_tor66(soup)
+    if parser == "onionland":
+        return _parse_onionland(soup)
     return _parse_generic_onion(soup)
 
 
@@ -204,22 +275,25 @@ def _is_captcha(text: str) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Fetching
+# Engine selection / fetching
 # ---------------------------------------------------------------------------
 
 
-def _select_engines(include_unfiltered: bool) -> list[EngineConfig]:
-    """Return filtered engines by default; add unfiltered ones on opt-in."""
-    if include_unfiltered:
-        return list(ENGINES)
-    return [engine for engine in ENGINES if engine.filtered]
+def _select_engines(include_unfiltered: bool = False) -> list[EngineConfig]:
+    """Return the engines to query.
+
+    ``include_unfiltered`` is RESERVED for API stability (schema + router still
+    accept it) but currently has NO effect: there is no scrapable filtered tier
+    to gate, so every engine — both unfiltered — always runs. Keeping the flag
+    avoids breaking callers if a filtered engine is ever re-introduced.
+    """
+    return list(ENGINES)
 
 
 def _fetch_engine(
     engine: EngineConfig,
     query: str,
     tor_session: requests.Session,
-    clearnet_session: requests.Session,
 ) -> EngineResult:
     """Query a single engine, degrading gracefully on any failure.
 
@@ -228,17 +302,15 @@ def _fetch_engine(
     Malformed but successful (HTTP 200) responses count as available with zero
     hits so they do not poison the overall validation badge.
     """
-    session = tor_session if engine.requires_tor else clearnet_session
     url = engine.url.format(query=quote(query, safe="@._-"))
     # .onion endpoints serve self-signed certs over the Tor SOCKS proxy, so
-    # verify=False is expected there; clearnet engines verify TLS normally.
-    verify = not engine.requires_tor
+    # verify=False is expected for every engine here (all require Tor).
     try:
-        resp = session.get(
+        resp = tor_session.get(
             url,
             headers={"User-Agent": random.choice(USER_AGENTS)},
             timeout=PER_ENGINE_TIMEOUT,
-            verify=verify,
+            verify=False,
         )
     except Exception:
         logger.warning("Darkweb - engine %s request failed", engine.name)
@@ -270,37 +342,28 @@ _ROOT_DARKWEB = {
     "icon": "fas fa-spider",
     "link": "DarkWeb",
 }
-_ROOT_UNFILTERED = {
-    "name-node": "DarkWebUnfiltered",
-    "title": "Dark Web (Unfiltered)",
-    "subtitle": "",
-    "icon": "fas fa-spider",
-    "link": "DarkWebUnfiltered",
-}
 
 
-def _normalize(
-    results: list[EngineResult], include_unfiltered: bool
-) -> tuple[list[dict], list[dict]]:
-    """Build the ``raw`` list and the ``graphic`` sections from engine results."""
-    filtered_hits: list[dict] = []
-    unfiltered_hits: list[dict] = []
+def _normalize(results: list[EngineResult]) -> tuple[list[dict], list[dict]]:
+    """Build the ``raw`` list and the single ``graphic`` section.
+
+    All hits land in one ``darkweb`` section tagged ``filtered: False`` — there
+    is no separate unfiltered section anymore (no filtered tier exists).
+    """
+    raw: list[dict] = []
     for result in results:
-        bucket = filtered_hits if result.filtered else unfiltered_hits
         for hit in result.hits:
-            bucket.append(
+            raw.append(
                 {
                     "title": hit["title"],
                     "link": hit["link"],
                     "engine": result.engine,
-                    "filtered": result.filtered,
+                    "filtered": False,
                 }
             )
 
-    raw = filtered_hits + unfiltered_hits
-
     darkweb_nodes = [dict(_ROOT_DARKWEB)]
-    for idx, hit in enumerate(filtered_hits):
+    for idx, hit in enumerate(raw):
         darkweb_nodes.append(
             {
                 "name-node": f"DW-{idx}",
@@ -312,20 +375,6 @@ def _normalize(
         )
     graphic: list[dict] = [{"darkweb": darkweb_nodes}]
 
-    if include_unfiltered:
-        unfiltered_nodes = [dict(_ROOT_UNFILTERED)]
-        for idx, hit in enumerate(unfiltered_hits):
-            unfiltered_nodes.append(
-                {
-                    "name-node": f"DWU-{idx}",
-                    "title": hit["title"],
-                    "subtitle": hit["link"],
-                    "icon": "fas fa-spider",
-                    "link": "DarkWebUnfiltered",
-                }
-            )
-        graphic.append({"darkweb_unfiltered": unfiltered_nodes})
-
     return raw, graphic
 
 
@@ -336,21 +385,22 @@ def _normalize(
 
 @iky_task(module_name="darkweb", dev_mode_sleep=5)
 def p_darkweb(param, include_unfiltered=False):
-    """Aggregate dark web search results for an email or username via Tor."""
+    """Aggregate dark web search results for an email or username via Tor.
+
+    ``include_unfiltered`` is accepted for API stability but RESERVED (no
+    effect): both engines always run. See ``_select_engines``.
+    """
     query = (param or "").strip()
     if not query:
         raise Exception("iKy - Empty search parameter")
 
     tor_session = _build_tor_session()
-    clearnet_session = _build_clearnet_session()
     engines = _select_engines(include_unfiltered)
 
     results: list[EngineResult] = []
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {
-            executor.submit(
-                _fetch_engine, engine, query, tor_session, clearnet_session
-            ): engine
+            executor.submit(_fetch_engine, engine, query, tor_session): engine
             for engine in engines
         }
         try:
@@ -371,7 +421,7 @@ def p_darkweb(param, include_unfiltered=False):
                         EngineResult(engine.name, engine.filtered, False, [])
                     )
 
-    raw, graphic = _normalize(results, include_unfiltered)
+    raw, graphic = _normalize(results)
     validation = "hard" if any(result.available for result in results) else "no"
 
     total = []
@@ -402,7 +452,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--unfiltered",
         action="store_true",
-        help="Include unfiltered engines (explicit opt-in)",
+        help="RESERVED — currently has no effect (both engines always run)",
     )
     args = parser.parse_args()
 
