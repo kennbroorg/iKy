@@ -25,13 +25,23 @@ services:
             - "5000:5000"
         depends_on:
             - redis
+            - tor
         environment:
             CELERY_BROKER_URL: redis://redis:6379/0
             CELERY_RESULT_BACKEND: redis://redis:6379/0
             REDIS_HOST: redis
+            TOR_PROXY_URL: ${TOR_PROXY_URL:-socks5h://tor:9050}
         volumes:
             - ./backend/factories/apikeys.json:/app/factories/apikeys.json
     redis:
         image: redis:7-alpine
         ports:
             - "56379:6379"
+    tor:
+        # SOCKS5 proxy for the darkweb module's .onion lookups.
+        # Pinned by digest (dperson/torproxy has no semantic tags; :latest is
+        # discouraged for reproducible builds).
+        image: dperson/torproxy@sha256:d8b5f1cf24f1b7a0aa334929a264b2606a107223dd0d51eb1cda8aae6fbeec53
+        restart: unless-stopped
+        expose:
+            - "9050"

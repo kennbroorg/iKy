@@ -178,6 +178,10 @@ def r_module(module: str, body: ModuleRequest):
     task_path, pass_from = entry
     args = (body.username, body.from_m) if pass_from else (body.username,)
     kwargs = {"dev_mode": body.dev_mode}
+    # darkweb is the only module that accepts an unfiltered opt-in; forwarding
+    # it for other modules would break their p_* signatures.
+    if module == "darkweb":
+        kwargs["include_unfiltered"] = body.include_unfiltered
 
     logger.info(
         "%s - Detected Username: %s %s (dev_mode=%s)",

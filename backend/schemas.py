@@ -18,6 +18,9 @@ class ModuleRequest(BaseModel):
     username: str = ""
     from_m: Annotated[str, Field(alias="from")] = ""
     dev_mode: bool = True
+    # Opt-in flag consumed only by the ``darkweb`` module to enable its
+    # unfiltered engines.  Ignored by every other module.
+    include_unfiltered: bool = False
 
     model_config = {"populate_by_name": True}
 
