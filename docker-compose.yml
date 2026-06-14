@@ -33,6 +33,7 @@ services:
             TOR_PROXY_URL: ${TOR_PROXY_URL:-socks5h://tor:9050}
         volumes:
             - ./backend/factories/apikeys.json:/app/factories/apikeys.json
+            - ./backend/cookies:/app/cookies
     redis:
         image: redis:7-alpine
         ports:

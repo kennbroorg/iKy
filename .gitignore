@@ -109,6 +109,14 @@ fonta.json
 cookie*.json
 outputs
 
+# Cookie provisioning secrets #
+###############################
+# Real module cookie files are secrets — never commit them.
+# Ignore the directory contents but keep the committed .gitkeep so the
+# Docker bind-mount target exists on a fresh clone.
+backend/cookies/*
+!backend/cookies/.gitkeep
+
 # Vagrant temporal #
 ####################
 .vagrant
