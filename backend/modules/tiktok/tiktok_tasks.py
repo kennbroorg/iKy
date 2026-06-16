@@ -11,10 +11,10 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-import browser_cookie3
 import requests
 from celery.utils.log import get_task_logger
 from factories.configuration import api_keys_search
+from factories.cookie_utils import convert_browser_cookies
 from factories.iKy_functions import analize_rrss
 from factories.task_wrapper import iky_task
 from TikTokApi import TikTokApi
@@ -33,36 +33,23 @@ _COOKIE_FILE = _COOKIE_DIR / "tiktok_cookies.json"
 # ---------------------------------------------------------------------------
 
 
-def _convert_tiktok_cookies(raw: list[dict] | dict) -> dict[str, str]:
-    """Convert browser-exported cookie list to {name: value} dict.
-
-    Browser extensions (Cookie-Editor) export cookies as a list of objects
-    with 'name'/'value' keys. TikTokApi needs specific cookies like msToken.
-    """
-    if isinstance(raw, dict):
-        return {str(k): str(v) for k, v in raw.items()}
-    if isinstance(raw, list):
-        result: dict[str, str] = {}
-        for item in raw:
-            name = item.get("name") or item.get("Name")
-            value = item.get("value") or item.get("Value") or ""
-            if name:
-                result[str(name)] = str(value)
-        return result
-    raise ValueError(
-        f"Unexpected cookie format: {type(raw).__name__}. "
-        "Expected list (browser export) or dict."
-    )
+# Cookie conversion is shared across modules — see factories.cookie_utils.
+# Keep the historical private name as an alias so existing call sites and the
+# test suite resolve while the logic lives in exactly one place.
+_convert_tiktok_cookies = convert_browser_cookies
 
 
 def get_tiktok_cookies(cookie_keys: list[str]) -> dict[str, Any]:
-    """Obtain TikTok cookies through a 3-step auth chain.
+    """Obtain TikTok cookies through a 2-step auth chain.
 
     Auth chain:
     1. Cookie file on disk → load directly
     2. tiktok_cookies API key → Cookie-Editor JSON; convert + save
-    3. browser_cookie3 fallback → search local browsers
-    4. All exhausted → return not found
+    3. All exhausted → return not found (no in-container browser access)
+
+    Note: the host-side ``install/scripts/grab_cookies.py`` extracts cookies
+    from local browsers; the container itself never touches ``browser_cookie3``
+    because Docker has no host browser/keyring access. See ``docs/COOKIES.md``.
     """
     _COOKIE_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -87,7 +74,7 @@ def get_tiktok_cookies(cookie_keys: list[str]) -> dict[str, Any]:
     if raw_cookie_str:
         try:
             browser_cookies = json.loads(raw_cookie_str)
-            cookie_dict = _convert_tiktok_cookies(browser_cookies)
+            cookie_dict = convert_browser_cookies(browser_cookies)
             if all(cookie_dict.get(k) for k in cookie_keys):
                 # Persist for reuse
                 with _COOKIE_FILE.open("w") as f:
@@ -104,48 +91,14 @@ def get_tiktok_cookies(cookie_keys: list[str]) -> dict[str, Any]:
         except Exception as exc:
             logger.warning("TikTok: failed to load cookies from API key: %s", exc)
 
-    # --- 3. browser_cookie3 fallback (non-Docker environments) ---
-    try:
-        json_cookie: dict[str, Any] = {}
-        found = False
-        ref = ["chromium", "opera", "edge", "firefox", "chrome", "brave"]
-        for index, cookie_fn in enumerate(
-            [
-                browser_cookie3.chromium,
-                browser_cookie3.opera,
-                browser_cookie3.edge,
-                browser_cookie3.firefox,
-                browser_cookie3.chrome,
-                browser_cookie3.brave,
-            ]
-        ):
-            try:
-                for cookie in cookie_fn(domain_name=""):
-                    if (
-                        "tiktok.com" in cookie.domain
-                        and cookie.name in cookie_keys
-                        and not cookie.is_expired()
-                    ):
-                        json_cookie["browser"] = ref[index]
-                        json_cookie[cookie.name] = cookie.value
-                        json_cookie[cookie.name + "_expires"] = cookie.expires
-                found = all(json_cookie.get(key, "") != "" for key in cookie_keys)
-            except Exception as e:
-                logger.debug("Cookie browser error: %s", e)
-            if found:
-                # Persist for reuse
-                with _COOKIE_FILE.open("w") as f:
-                    json.dump(json_cookie, f)
-                logger.info("TikTok cookies found via browser_cookie3")
-                return {"found": True, "cookies": json_cookie}
-    except Exception as exc:
-        logger.debug("browser_cookie3 not available: %s", exc)
-
-    # --- 4. Nothing worked ---
+    # --- 3. Nothing worked ---
+    # In-container browser extraction is intentionally absent: Docker has no
+    # access to host browser profiles or the OS keyring. Provision cookies on
+    # the host instead (see docs/COOKIES.md).
     logger.warning(
-        "TikTok cookies not found. Export cookies from tiktok.com "
-        "using Cookie-Editor extension and paste the JSON in the "
-        "tiktok_cookies API key field."
+        "TikTok cookies not found. Provision them on the host: export from "
+        "tiktok.com with Cookie-Editor into the tiktok_cookies API key field, "
+        "or run `just cookies-import`/`just cookies-grab`. See docs/COOKIES.md."
     )
     return {"found": False, "cookies": {}}
 

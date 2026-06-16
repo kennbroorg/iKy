@@ -113,6 +113,12 @@ class TestConvertBrowserCookies:
         for v in result.values():
             assert isinstance(v, str)
 
+    def test_uses_shared_cookie_converter(self):
+        """_convert_browser_cookies must be the shared cookie_utils converter."""
+        from factories.cookie_utils import convert_browser_cookies
+
+        assert linkedin_tasks._convert_browser_cookies is convert_browser_cookies
+
 
 # ===========================================================================
 # Phase 1 — Task 1.3: _authenticate_linkedin() auth-chain tests
