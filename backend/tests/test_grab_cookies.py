@@ -22,6 +22,7 @@ Why dependency injection instead of ``sys.modules`` mocking:
 
 from __future__ import annotations
 
+import http.cookiejar
 import json
 import logging
 import sqlite3
@@ -78,6 +79,39 @@ def _factory(mapping):
     return _loader_factory
 
 
+def _make_cookiejar(pairs, domain=".linkedin.com"):
+    """Build a real ``http.cookiejar.CookieJar`` — the exact type that
+    ``browser_cookie3`` loaders return (NOT a list[dict]).
+
+    Regression guard: the original mocks returned Cookie-Editor ``list[dict]``,
+    which ``convert_browser_cookies`` accepts, so they hid the fact that a real
+    ``CookieJar`` raised ``ValueError`` and was mislabelled "keyring failed".
+    """
+    jar = http.cookiejar.CookieJar()
+    for name, value in pairs:
+        jar.set_cookie(
+            http.cookiejar.Cookie(
+                version=0,
+                name=name,
+                value=value,
+                port=None,
+                port_specified=False,
+                domain=domain,
+                domain_specified=True,
+                domain_initial_dot=domain.startswith("."),
+                path="/",
+                path_specified=True,
+                secure=True,
+                expires=None,
+                discard=False,
+                comment=None,
+                comment_url=None,
+                rest={},
+            )
+        )
+    return jar
+
+
 # ===========================================================================
 # extract_browser_cookies — per-browser classification (triangulation core)
 # ===========================================================================
@@ -103,6 +137,38 @@ class TestExtractBrowserCookies:
         assert result.valid is True
         assert result.cookies["li_at"] == "AQEDtok123"
         assert result.cookies["JSESSIONID"] == '"ajax:9876"'
+
+    def test_real_cookiejar_is_flattened(self):
+        """A real CookieJar (browser_cookie3's return type) must convert to a
+        flat {name: value} dict — this is the regression that the list[dict]
+        mocks failed to catch."""
+        jar = _make_cookiejar(
+            [
+                ("li_at", "AQEDtok123"),
+                ("JSESSIONID", '"ajax:9876"'),
+                ("bcookie", "v=2&abc"),
+            ]
+        )
+        result = extract_browser_cookies(
+            "brave", _loader_returning(jar), "linkedin.com", self.REQUIRED
+        )
+        assert result.status == "success"
+        assert result.valid is True
+        assert result.missing == []
+        assert result.cookies["li_at"] == "AQEDtok123"
+        assert result.cookies["JSESSIONID"] == '"ajax:9876"'
+
+    def test_empty_cookiejar_is_classified_empty(self):
+        """An empty CookieJar (logged-out browser) is 'empty', not 'error'."""
+        result = extract_browser_cookies(
+            "firefox",
+            _loader_returning(_make_cookiejar([])),
+            "linkedin.com",
+            self.REQUIRED,
+        )
+        assert result.status == "empty"
+        assert result.count == 0
+        assert result.valid is False
 
     def test_success_but_missing_required_key_is_not_valid(self):
         only_li_at = [{"name": "li_at", "value": "tok"}]
@@ -204,6 +270,23 @@ class TestRunGrabSuccess:
         assert out.exists()
         data = json.loads(out.read_text())
         assert isinstance(data, dict)
+        assert data["li_at"] == "AQEDtok123"
+        assert data["JSESSIONID"] == '"ajax:9876"'
+
+    def test_real_cookiejar_writes_flat_json_exit_0(self, tmp_path):
+        """End-to-end with a real CookieJar from the 'brave' loader: the file is
+        written with the required keys and exit code is 0."""
+        out = tmp_path / "linkedin_cookies.json"
+        jar = _make_cookiejar([("li_at", "AQEDtok123"), ("JSESSIONID", '"ajax:9876"')])
+        code = run_grab(
+            module="linkedin",
+            domain="linkedin.com",
+            browser="brave",
+            out=str(out),
+            loader_factory=_factory({"brave": _loader_returning(jar)}),
+        )
+        assert code == 0
+        data = json.loads(out.read_text())
         assert data["li_at"] == "AQEDtok123"
         assert data["JSESSIONID"] == '"ajax:9876"'
 

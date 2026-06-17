@@ -61,6 +61,7 @@ class BrowserResult:
     status: str
     cookies: dict[str, str] = field(default_factory=dict)
     missing: list[str] = field(default_factory=list)
+    detail: str = ""
 
     @property
     def count(self) -> int:
@@ -70,6 +71,21 @@ class BrowserResult:
     def valid(self) -> bool:
         """A browser is valid when it produced ALL required cookies."""
         return self.status == "success" and not self.missing
+
+
+def _flatten_loaded(raw: object) -> dict[str, str]:
+    """Normalize a browser loader's return value to a flat ``{name: value}`` dict.
+
+    ``browser_cookie3`` loaders return an ``http.cookiejar.CookieJar`` — an
+    iterable of ``Cookie`` objects exposing ``.name``/``.value``.  Cookie-Editor
+    style payloads (``list[dict]`` / ``dict``) are routed through the shared
+    :func:`convert_browser_cookies` so the grab path and the import path share a
+    single flat-format contract.
+    """
+    if isinstance(raw, list | dict):
+        return convert_browser_cookies(raw)
+    # CookieJar (or any iterable of Cookie-like objects with .name/.value).
+    return {str(cookie.name): str(cookie.value) for cookie in raw}  # type: ignore[union-attr]
 
 
 def extract_browser_cookies(
@@ -86,15 +102,21 @@ def extract_browser_cookies(
     returned :class:`BrowserResult` status.
     """
     required = list(required)
-    error_types = (ValueError, RuntimeError, *browser_error_types)
+    error_types = (
+        ValueError,
+        RuntimeError,
+        TypeError,
+        AttributeError,
+        *browser_error_types,
+    )
     try:
         raw = loader(domain_name=domain)
-        cookies = convert_browser_cookies(raw)
+        cookies = _flatten_loaded(raw)
     except sqlite3.OperationalError as exc:
         status = "locked" if "database is locked" in str(exc).lower() else "error"
-        return BrowserResult(name, status, {}, list(required))
-    except error_types:
-        return BrowserResult(name, "error", {}, list(required))
+        return BrowserResult(name, status, {}, list(required), detail=str(exc))
+    except error_types as exc:
+        return BrowserResult(name, "error", {}, list(required), detail=str(exc))
 
     status = "success" if cookies else "empty"
     missing = missing_required_cookies(cookies, required)
@@ -114,9 +136,15 @@ def write_output(path: str, cookies: Mapping[str, str]) -> None:
 
 def _log_browser(log: logging.Logger, result: BrowserResult, domain: str) -> None:
     if result.status == "locked":
-        log.info("%s: database is locked — skipped", result.name)
+        log.info("%s: database is locked — skipped (close the browser)", result.name)
     elif result.status == "error":
-        log.info("%s: decrypt/keyring failed — skipped", result.name)
+        reason = result.detail or "unknown error"
+        log.info(
+            "%s: could not read cookies — skipped "
+            "(browser not installed, profile not found, or keyring locked): %s",
+            result.name,
+            reason,
+        )
     elif result.status == "empty":
         log.info("%s: zero cookies for %s", result.name, domain)
     else:  # success
