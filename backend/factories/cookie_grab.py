@@ -32,8 +32,12 @@ BROWSER_ORDER: tuple[str, ...] = ("firefox", "chrome", "brave", "edge")
 
 # Module -> default domain + cookies required for a usable Tier-1 session.
 # Extensible: add modules here as their grab contracts are defined.
+# ``required`` is only the success gate; the written file keeps ALL cookies
+# returned for the domain (so dependent cookies like ct0 are preserved).
 MODULE_REQUIRED: dict[str, dict[str, object]] = {
     "linkedin": {"domain": "linkedin.com", "required": ["li_at", "JSESSIONID"]},
+    "twitter": {"domain": "x.com", "required": ["auth_token", "ct0"]},
+    "tiktok": {"domain": "tiktok.com", "required": ["msToken"]},
 }
 
 # Exit codes (documented contract).

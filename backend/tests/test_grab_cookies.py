@@ -510,6 +510,14 @@ class TestModuleRegistry:
         assert MODULE_REQUIRED["linkedin"]["required"] == ["li_at", "JSESSIONID"]
         assert MODULE_REQUIRED["linkedin"]["domain"] == "linkedin.com"
 
+    def test_twitter_required_keys(self):
+        assert MODULE_REQUIRED["twitter"]["required"] == ["auth_token", "ct0"]
+        assert MODULE_REQUIRED["twitter"]["domain"] == "x.com"
+
+    def test_tiktok_required_keys(self):
+        assert MODULE_REQUIRED["tiktok"]["required"] == ["msToken"]
+        assert MODULE_REQUIRED["tiktok"]["domain"] == "tiktok.com"
+
 
 class TestScriptArtifact:
     """The host CLI wrapper must exist and stay a thin wrapper."""
