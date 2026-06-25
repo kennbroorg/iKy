@@ -81,13 +81,15 @@ clean:
 cookies-setup:
     .venv/bin/pip install browser-cookie3==0.20.1
 
-# Import a browser-exported cookie file into the persistent cookie volume.
+# Import a browser-exported cookie file into the persistent cookie volume
+# AND mirror it into apikeys.json so the frontend reflects it.
 # Usage: just cookies-import linkedin ~/linkedin_export.json
 cookies-import module file:
     @test -f "{{ file }}" || { echo "iKy - source file not found: {{ file }}" >&2; exit 1; }
     @mkdir -p backend/cookies
-    @cp "{{ file }}" "backend/cookies/{{ module }}_cookies.json"
-    @echo "iKy - imported cookies -> backend/cookies/{{ module }}_cookies.json"
+    .venv/bin/python install/scripts/grab_cookies.py \
+        --module {{ module }} --import-file "{{ file }}" \
+        --out "backend/cookies/{{ module }}_cookies.json"
 
 # Grab cookies from local browsers into the persistent cookie volume.
 # Tries all browsers unless one is named. Close the target browser first

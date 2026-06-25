@@ -36,6 +36,8 @@ from factories.cookie_grab import (
     BrowserResult,
     extract_browser_cookies,
     run_grab,
+    run_import,
+    update_apikeys,
 )
 from factories.cookie_utils import convert_browser_cookies
 
@@ -495,6 +497,126 @@ class TestRunGrabLogging:
         text = caplog.text.lower()
         assert "summary" in text
         assert str(out) in caplog.text  # output path reported
+
+
+# ===========================================================================
+# apikeys.json mirroring — grab/import populate the frontend Tier-2 store
+# ===========================================================================
+
+
+def _write_apikeys(tmp_path, items):
+    p = tmp_path / "apikeys.json"
+    p.write_text(json.dumps(items))
+    return p
+
+
+class TestUpdateApikeys:
+    def test_sets_existing_entry(self, tmp_path):
+        p = _write_apikeys(tmp_path, [{"id": 1, "name": "linkedin_cookies", "key": ""}])
+        ok = update_apikeys("linkedin_cookies", {"li_at": "x", "JSESSIONID": "y"}, p)
+        assert ok is True
+        entry = next(
+            i for i in json.loads(p.read_text()) if i["name"] == "linkedin_cookies"
+        )
+        assert json.loads(entry["key"]) == {"li_at": "x", "JSESSIONID": "y"}
+
+    def test_appends_when_missing(self, tmp_path):
+        p = _write_apikeys(tmp_path, [{"id": 5, "name": "other", "key": "z"}])
+        update_apikeys("twitter_cookies", {"auth_token": "a", "ct0": "b"}, p)
+        items = json.loads(p.read_text())
+        new = next(i for i in items if i["name"] == "twitter_cookies")
+        assert new["id"] == 6
+        assert json.loads(new["key"]) == {"auth_token": "a", "ct0": "b"}
+
+    def test_missing_file_returns_false(self, tmp_path):
+        assert (
+            update_apikeys("linkedin_cookies", {"li_at": "x"}, tmp_path / "nope.json")
+            is False
+        )
+
+
+class TestGrabApikeysSync:
+    def test_grab_mirrors_into_apikeys(self, tmp_path):
+        out = tmp_path / "linkedin_cookies.json"
+        apikeys = _write_apikeys(
+            tmp_path, [{"id": 1, "name": "linkedin_cookies", "key": ""}]
+        )
+        code = run_grab(
+            module="linkedin",
+            domain="linkedin.com",
+            browser="chrome",
+            out=str(out),
+            loader_factory=_factory(
+                {"chrome": _loader_returning(VALID_LINKEDIN_EXPORT)}
+            ),
+            apikeys_path=apikeys,
+        )
+        assert code == 0
+        entry = next(
+            i
+            for i in json.loads(apikeys.read_text())
+            if i["name"] == "linkedin_cookies"
+        )
+        assert json.loads(entry["key"])["li_at"] == "AQEDtok123"
+
+    def test_grab_without_apikeys_path_still_succeeds(self, tmp_path):
+        out = tmp_path / "linkedin_cookies.json"
+        code = run_grab(
+            module="linkedin",
+            domain="linkedin.com",
+            browser="chrome",
+            out=str(out),
+            loader_factory=_factory(
+                {"chrome": _loader_returning(VALID_LINKEDIN_EXPORT)}
+            ),
+        )
+        assert code == 0
+        assert out.exists()
+
+
+class TestRunImport:
+    def test_writes_flat_file_and_mirrors_apikeys(self, tmp_path):
+        src = tmp_path / "export.json"
+        src.write_text(json.dumps(VALID_LINKEDIN_EXPORT))
+        out = tmp_path / "linkedin_cookies.json"
+        apikeys = _write_apikeys(
+            tmp_path, [{"id": 1, "name": "linkedin_cookies", "key": ""}]
+        )
+        code = run_import(
+            module="linkedin", file=str(src), out=str(out), apikeys_path=apikeys
+        )
+        assert code == 0
+        assert json.loads(out.read_text())["li_at"] == "AQEDtok123"
+        entry = next(
+            i
+            for i in json.loads(apikeys.read_text())
+            if i["name"] == "linkedin_cookies"
+        )
+        assert json.loads(entry["key"])["li_at"] == "AQEDtok123"
+
+    def test_unknown_module_exit_2(self, tmp_path):
+        src = tmp_path / "e.json"
+        src.write_text("[]")
+        assert (
+            run_import(module="myspace", file=str(src), out=str(tmp_path / "o.json"))
+            == 2
+        )
+
+    def test_missing_file_exit_2(self, tmp_path):
+        code = run_import(
+            module="linkedin",
+            file=str(tmp_path / "nope.json"),
+            out=str(tmp_path / "o.json"),
+        )
+        assert code == 2
+
+    def test_bad_json_exit_2(self, tmp_path):
+        src = tmp_path / "bad.json"
+        src.write_text("{not json")
+        code = run_import(
+            module="linkedin", file=str(src), out=str(tmp_path / "o.json")
+        )
+        assert code == 2
 
 
 # ===========================================================================

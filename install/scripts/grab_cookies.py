@@ -40,7 +40,11 @@ from factories.cookie_grab import (  # noqa: E402
     EXIT_INVALID_INPUT,
     MODULE_REQUIRED,
     run_grab,
+    run_import,
 )
+
+# apikeys.json (Tier-2 / frontend store) lives next to the backend factories.
+_APIKEYS_PATH = _REPO_ROOT / "backend" / "factories" / "apikeys.json"
 
 
 def _build_loader_factory(
@@ -81,9 +85,26 @@ def main(argv: Sequence[str] | None = None) -> int:
         choices=BROWSER_ORDER,
         help="Only attempt this browser (default: try all in order).",
     )
+    parser.add_argument(
+        "--import-file",
+        default=None,
+        help=(
+            "Import cookies from this Cookie-Editor JSON file instead of "
+            "grabbing from local browsers."
+        ),
+    )
     args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(message)s", stream=sys.stdout)
+
+    # Import mode: no browser access needed, so browser_cookie3 is not imported.
+    if args.import_file:
+        return run_import(
+            module=args.module,
+            file=args.import_file,
+            out=args.out,
+            apikeys_path=_APIKEYS_PATH,
+        )
 
     try:
         import browser_cookie3
@@ -100,6 +121,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         out=args.out,
         loader_factory=_build_loader_factory(browser_cookie3),
         browser_error_types=(browser_cookie3.BrowserCookieError,),
+        apikeys_path=_APIKEYS_PATH,
     )
 
 

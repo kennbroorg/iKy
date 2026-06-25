@@ -24,20 +24,33 @@ import logging
 import sqlite3
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from factories.cookie_utils import convert_browser_cookies, missing_required_cookies
 
 # Browsers attempted, in priority order, when no single browser is requested.
 BROWSER_ORDER: tuple[str, ...] = ("firefox", "chrome", "brave", "edge")
 
-# Module -> default domain + cookies required for a usable Tier-1 session.
-# Extensible: add modules here as their grab contracts are defined.
+# Module -> default domain + cookies required for a usable Tier-1 session +
+# the apikeys.json field name (Tier-2) that mirrors the cookies for the frontend.
 # ``required`` is only the success gate; the written file keeps ALL cookies
 # returned for the domain (so dependent cookies like ct0 are preserved).
 MODULE_REQUIRED: dict[str, dict[str, object]] = {
-    "linkedin": {"domain": "linkedin.com", "required": ["li_at", "JSESSIONID"]},
-    "twitter": {"domain": "x.com", "required": ["auth_token", "ct0"]},
-    "tiktok": {"domain": "tiktok.com", "required": ["msToken"]},
+    "linkedin": {
+        "domain": "linkedin.com",
+        "required": ["li_at", "JSESSIONID"],
+        "apikey": "linkedin_cookies",
+    },
+    "twitter": {
+        "domain": "x.com",
+        "required": ["auth_token", "ct0"],
+        "apikey": "twitter_cookies",
+    },
+    "tiktok": {
+        "domain": "tiktok.com",
+        "required": ["msToken"],
+        "apikey": "tiktok_cookies",
+    },
 }
 
 # Exit codes (documented contract).
@@ -138,6 +151,52 @@ def write_output(path: str, cookies: Mapping[str, str]) -> None:
         handle.write("\n")
 
 
+def update_apikeys(
+    apikey_name: str, cookies: Mapping[str, str], apikeys_path: str | Path
+) -> bool:
+    """Mirror the flat cookies into the ``apikey_name`` entry of apikeys.json.
+
+    This lets the frontend API Keys editor (Tier-2) reflect cookies provisioned
+    by the host grab/import.  The token values land in apikeys.json — which is
+    gitignored (never committed) but IS visible/exportable in the UI by design.
+
+    Returns ``True`` on update, ``False`` if apikeys.json is missing (skipped).
+    Raises ``OSError``/``ValueError`` only on a corrupt/unwritable file.
+    """
+    path = Path(apikeys_path)
+    if not path.exists():
+        _log.warning("apikeys.json not found at %s — skipped apikeys update", path)
+        return False
+    items = json.loads(path.read_text(encoding="utf-8"))
+    value = json.dumps(dict(cookies))
+    for item in items:
+        if item.get("name") == apikey_name:
+            item["key"] = value
+            break
+    else:
+        next_id = max((int(i.get("id", 0)) for i in items), default=0) + 1
+        items.append({"id": next_id, "name": apikey_name, "key": value})
+    path.write_text(json.dumps(items), encoding="utf-8")
+    return True
+
+
+def _maybe_update_apikeys(
+    log: logging.Logger,
+    spec: Mapping[str, object],
+    cookies: Mapping[str, str],
+    apikeys_path: str | Path | None,
+) -> None:
+    """Best-effort apikeys.json sync; never fails the provisioning run."""
+    apikey_name = spec.get("apikey")
+    if not (apikeys_path and apikey_name):
+        return
+    try:
+        if update_apikeys(str(apikey_name), cookies, apikeys_path):
+            log.info("apikeys.json updated: %s", apikey_name)
+    except (OSError, ValueError) as exc:
+        log.warning("Could not update apikeys.json (%s): %s", apikey_name, exc)
+
+
 def _log_browser(log: logging.Logger, result: BrowserResult, domain: str) -> None:
     if result.status == "locked":
         log.info("%s: database is locked — skipped (close the browser)", result.name)
@@ -164,9 +223,13 @@ def run_grab(
     out: str,
     loader_factory: LoaderFactory,
     browser_error_types: tuple[type[BaseException], ...] = (),
+    apikeys_path: str | Path | None = None,
     logger: logging.Logger | None = None,
 ) -> int:
     """Grab cookies for ``module`` and write the flat JSON to ``out``.
+
+    When ``apikeys_path`` is given, the cookies are also mirrored into that
+    module's apikeys.json field so the frontend reflects them.
 
     Returns an exit code: ``0`` success, ``1`` no browser produced the required
     keys, ``2`` invalid module/browser, ``3`` write failure.
@@ -228,10 +291,69 @@ def run_grab(
         log.error("Failed to write %s: %s", out, exc)
         return EXIT_WRITE_FAILURE
 
+    _maybe_update_apikeys(log, spec, selected.cookies, apikeys_path)
+
     log.info(
         "Summary: browsers tried=%s, valid=%s, missing required keys=[], output=%s",
         tried,
         valid,
         out,
     )
+    return EXIT_OK
+
+
+def run_import(
+    *,
+    module: str,
+    file: str,
+    out: str,
+    apikeys_path: str | Path | None = None,
+    logger: logging.Logger | None = None,
+) -> int:
+    """Import a browser-exported cookie file for ``module``.
+
+    Reads ``file`` (Cookie-Editor export or flat dict), converts it to the flat
+    ``{name: value}`` format, writes it to ``out`` (Tier-1 file) and — when
+    ``apikeys_path`` is given — mirrors it into apikeys.json (Tier-2 / frontend).
+
+    Returns an exit code: ``0`` ok, ``2`` invalid module/file, ``3`` write
+    failure.  Missing required keys only warn (import is permissive).
+    """
+    log = logger or _log
+
+    spec = MODULE_REQUIRED.get(module)
+    if spec is None:
+        log.error(
+            "Unknown module %r. Supported: %s",
+            module,
+            ", ".join(sorted(MODULE_REQUIRED)),
+        )
+        return EXIT_INVALID_INPUT
+
+    try:
+        raw = json.loads(Path(file).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        log.error("Could not read cookie file %s: %s", file, exc)
+        return EXIT_INVALID_INPUT
+
+    try:
+        cookies = convert_browser_cookies(raw)
+    except ValueError as exc:
+        log.error("Invalid cookie format in %s: %s", file, exc)
+        return EXIT_INVALID_INPUT
+
+    try:
+        write_output(out, cookies)
+    except OSError as exc:
+        log.error("Failed to write %s: %s", out, exc)
+        return EXIT_WRITE_FAILURE
+
+    _maybe_update_apikeys(log, spec, cookies, apikeys_path)
+
+    missing = missing_required_cookies(cookies, list(spec["required"]))  # type: ignore[arg-type]
+    if missing:
+        log.warning(
+            "Imported cookies for %s missing required keys: %s", module, missing
+        )
+    log.info("Imported cookies for %s -> %s", module, out)
     return EXIT_OK
