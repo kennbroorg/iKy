@@ -1,10 +1,4 @@
 services:
-    frontend:
-        build:
-            context: .
-            dockerfile: ./install/docker/frontend/Dockerfile
-        ports:
-            - "4200:4200"
     iky-frontend:
         build:
             context: .
