@@ -13,9 +13,7 @@ import sys
 import tweepy
 
 # import oauth2
-
 from celery.utils.log import get_task_logger
-
 from celery_app import celery
 from factories.configuration import api_keys_search
 

@@ -16,9 +16,7 @@ from collections import Counter
 from datetime import datetime
 
 import tweepy
-
 from celery.utils.log import get_task_logger
-
 from celery_app import celery
 from factories.configuration import api_keys_search
 
