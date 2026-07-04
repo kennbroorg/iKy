@@ -1,0 +1,88 @@
+# iKy Caddyfile — equivalente al nginx.conf de install/docker/iKy-frontend
+# Sirve el Angular SPA (pre-built, bajado del release de kennbroorg/iKy)
+# y hace proxy /api/* y /socket.io/* al backend en localhost:5000.
+#
+# Diferencias clave contra el nginx.conf del container:
+#   - Apunta a "localhost:5000" (no "backend:5000") porque corre en el host.
+#   - El root es la ruta absoluta al directorio donde se extrae el frontend.
+#   - No usa try_files nginx-style: usa el matcher @notFile de Caddy.
+#
+# Requisitos: Caddy v2.7+ (para try_files y encode gzip automático).
+
+:{$IKY_PORT:4300} {
+    root * {$IKY_FRONTEND_DIR:./frontend/dist-native}
+
+    # --- Headers de seguridad (equivalente a los add_header del nginx.conf) ---
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    # --- Gzip ---
+    encode zstd gzip
+
+    # --- Cache 1 año para assets hasheados por Angular ---
+    @assets {
+        path *.js *.css *.png *.jpg *.jpeg *.gif *.ico *.svg *.woff *.woff2 *.ttf *.eot
+    }
+    header @assets Cache-Control "public, immutable, max-age=31536000"
+    header @assets X-Robots-Tag "noindex"
+
+    # --- Health-check (replica el location = /health del nginx.conf) ---
+    handle /health {
+        respond "ok\n" 200
+    }
+
+    # --- API reverse proxy: strip /api prefix, igual al pathRewrite del dev proxy ---
+    @api {
+        path /api/*
+    }
+    handle @api {
+        uri strip_prefix /api
+        reverse_proxy localhost:5000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {header.X-Forwarded-For}
+            header_up X-Forwarded-Proto {scheme}
+            transport http {
+                dial_timeout 10s
+                read_timeout 120s
+            }
+        }
+    }
+
+    # --- Socket.io con WebSocket upgrade ---
+    @socketio {
+        path /socket.io/*
+    }
+    handle @socketio {
+        reverse_proxy localhost:5000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up Upgrade {http.request.header.Upgrade}
+            header_up Connection {http.request.header.Connection}
+            transport http {
+                read_timeout 3600s
+            }
+        }
+    }
+
+    # --- SPA fallback: cualquier ruta no matcheada va a /index.html ---
+    handle {
+        try_files {path} {path}/ /index.html
+        file_server
+    }
+
+    # --- Logs explícitos (Caddy ya loguea a stderr por default, esto lo
+    #     separa para que el dev pueda tailear por servicio) ---
+    log {
+        output file {$IKY_LOG_DIR:./.run/logs}/caddy.log {
+            roll_size 10mb
+            roll_keep 5
+        }
+        level INFO
+    }
+}

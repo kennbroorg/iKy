@@ -128,3 +128,12 @@ backend/cookies/*
 # Dev virtualenv #
 ###################
 .venv/
+
+# Native (non-Docker) lifecycle artifacts #
+##########################################
+# - .tools/   downloaded standalone binaries (caddy)
+# - .run/     runtime state: logs/, pids/, redis data
+# - frontend/dist-native/  pre-built frontend extracted from GH release
+.tools/
+.run/
+frontend/dist-native/
