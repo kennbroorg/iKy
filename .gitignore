@@ -137,3 +137,7 @@ backend/cookies/*
 .tools/
 .run/
 frontend/dist-native/
+
+# Local dev / legacy #
+######################
+frontend/
