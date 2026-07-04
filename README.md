@@ -38,7 +38,7 @@
 iKy is an OSINT tool that collects information from an email address or other selectors and displays the results in a visual interface.
 
 <div align="center">
-    <a href="https://vimeo.com/434501702"><img src="frontend/src/assets/images/iKySol.gif"></a>
+    <a href="https://vimeo.com/434501702"><img src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKySol.gif"></a>
 </div>
 <div align="center">
     <em>(pending update: reflects the previous frontend)</em>
@@ -72,6 +72,23 @@ just down
 ```
 
 > `just up` starts `backend`, `iky-frontend`, and `redis`. No other services are launched by default.
+
+### Without Docker (native)
+
+If you cannot run Docker, iKy can run natively: Caddy serves the pre-built
+frontend and Redis + Celery + Uvicorn run as local processes. Requires
+`redis-server`, Python 3.12, `curl` and `tar` on the host (Caddy is downloaded
+automatically).
+
+```shell
+just setup          # create the venv
+just up-native      # installs deps, downloads Caddy + frontend, starts everything
+```
+
+Open your browser at [http://localhost:4300](http://localhost:4300). Stop with Ctrl-C or `just down-native`.
+
+> The frontend is pulled from the latest GitHub release — no Node build needed.
+> `tor` is not launched in native mode; only the `darkweb` module needs it.
 
 <h1 id="architecture">Architecture</h1>
 
@@ -156,7 +173,7 @@ The command reports, browser by browser, what it could read and what it could no
 
 <h1 id="development">Development</h1>
 
-The development workflow uses a **virtualenv for linting/pre-commit hooks** and **Docker for building and running** the application.
+The development workflow uses a **virtualenv for linting/pre-commit hooks** and **Docker (or the native `just up-native` flow) for building and running** the application.
 
 ### Setting up the dev environment
 
@@ -184,6 +201,9 @@ This creates a Python virtualenv with `pre-commit` and `ruff`, and installs the 
 | `just restart backend` | Restart a specific service |
 | `just rebuild` | Stop, rebuild, and start all services |
 | `just clean` | Remove containers, volumes, and local images |
+| `just up-native` | Start iKy natively (no Docker) |
+| `just down-native` | Stop the native services |
+| `just up-native-clean` | Wipe native caches (Caddy, frontend, logs) |
 
 <h1 id="update">Update iKy</h1>
 

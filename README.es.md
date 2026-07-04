@@ -38,7 +38,7 @@
 iKy es una herramienta OSINT que colecta informacion a partir de una direccion de e-mail u otros selectores y muestra los resultados en una interface visual.
 
 <div align="center">
-    <a href="https://vimeo.com/434501702"><img src="frontend/src/assets/images/iKySol.gif"></a>
+    <a href="https://vimeo.com/434501702"><img src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKySol.gif"></a>
 </div>
 <div align="center">
     <em>(pendiente de actualizacion: refleja el frontend anterior)</em>
@@ -72,6 +72,23 @@ just down
 ```
 
 > `just up` inicia `backend`, `iky-frontend` y `redis`. No se levanta ningun otro servicio por defecto.
+
+### Sin Docker (nativo)
+
+Si no puede usar Docker, iKy puede correr de forma nativa: Caddy sirve el
+frontend pre-compilado y Redis + Celery + Uvicorn corren como procesos locales.
+Requiere `redis-server`, Python 3.12, `curl` y `tar` en el host (Caddy se
+descarga automaticamente).
+
+```shell
+just setup          # crear el venv
+just up-native      # instala deps, descarga Caddy + frontend, levanta todo
+```
+
+Abra su navegador en [http://localhost:4300](http://localhost:4300). Detenga con Ctrl-C o `just down-native`.
+
+> El frontend se descarga del ultimo release de GitHub — sin build de Node.
+> `tor` no se levanta en modo nativo; solo el modulo `darkweb` lo necesita.
 
 <h1 id="architecture">Arquitectura</h1>
 
@@ -167,7 +184,7 @@ LinkedIn requiere `li_at` y `JSESSIONID`.
 
 <h1 id="development">Desarrollo</h1>
 
-El flujo de desarrollo utiliza un **virtualenv para linting/pre-commit hooks** y **Docker para compilar y ejecutar** la aplicacion.
+El flujo de desarrollo utiliza un **virtualenv para linting/pre-commit hooks** y **Docker (o el flujo nativo `just up-native`) para compilar y ejecutar** la aplicacion.
 
 ### Configurar el entorno de desarrollo
 
@@ -195,6 +212,9 @@ Esto crea un virtualenv de Python con `pre-commit` y `ruff`, e instala los git h
 | `just restart backend` | Reiniciar un servicio especifico |
 | `just rebuild` | Detener, recompilar e iniciar todos los servicios |
 | `just clean` | Eliminar contenedores, volumenes e imagenes locales |
+| `just up-native` | Iniciar iKy de forma nativa (sin Docker) |
+| `just down-native` | Detener los servicios nativos |
+| `just up-native-clean` | Limpiar caches nativas (Caddy, frontend, logs) |
 
 <h1 id="update">Actualizar iKy</h1>
 
