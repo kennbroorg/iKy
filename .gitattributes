@@ -1,3 +1,5 @@
 *.css linguist-detectable=false
 *.js linguist-detectable=true
 *.ts linguist-detectable=false
+imgs/*.gif filter=lfs diff=lfs merge=lfs -text
+imgs/iKy-08.png filter=lfs diff=lfs merge=lfs -text

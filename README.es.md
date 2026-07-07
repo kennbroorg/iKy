@@ -17,7 +17,7 @@
 ---
 
 <div align="center">
-    <img alt="Logo" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/Logo-Circular.png">
+    <img alt="Logo" src="imgs/Logo-Circular.png">
 </div>
 
 ---
@@ -38,7 +38,7 @@
 iKy es una herramienta OSINT que colecta informacion a partir de una direccion de e-mail u otros selectores y muestra los resultados en una interface visual.
 
 <div align="center">
-    <a href="https://vimeo.com/434501702"><img src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKySol.gif"></a>
+    <a href="https://vimeo.com/434501702"><img src="imgs/iKySol.gif"></a>
 </div>
 <div align="center">
     <em>(pendiente de actualizacion: refleja el frontend anterior)</em>
@@ -228,7 +228,7 @@ just rebuild
 Para preservar sus API keys entre actualizaciones, use las opciones de Exportar/Importar en el menu de apikeys de la interface grafica.
 
 <div align="center">
-    <img alt="apis" height="400" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKy-08.png">
+    <img alt="apis" height="400" src="imgs/iKy-08.png">
 </div>
 <div align="center">
     <em>(pendiente de actualizacion: refleja el frontend anterior)</em>
@@ -240,7 +240,7 @@ Para preservar sus API keys entre actualizaciones, use las opciones de Exportar/
 # Video Demo
 
 <div align="center">
-    <a href="https://vimeo.com/434501702"><img alt="Kali 2019" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKy-01.png"></a>
+    <a href="https://vimeo.com/434501702"><img alt="Kali 2019" src="imgs/iKy-01.png"></a>
     <p>Vimeo</p>
 </div>
 <div align="center">
