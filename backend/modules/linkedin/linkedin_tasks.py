@@ -19,7 +19,8 @@ logger = get_task_logger(__name__)
 # ---------------------------------------------------------------------------
 # Cookie persistence
 # ---------------------------------------------------------------------------
-_COOKIE_DIR = Path(os.environ.get("LINKEDIN_COOKIE_DIR", "/app/cookies"))
+_DEFAULT_COOKIE_DIR = Path(__file__).resolve().parents[2] / "cookies"
+_COOKIE_DIR = Path(os.environ.get("LINKEDIN_COOKIE_DIR", str(_DEFAULT_COOKIE_DIR)))
 _COOKIE_FILE = _COOKIE_DIR / "linkedin_cookies.json"
 
 
@@ -91,7 +92,7 @@ def _authenticate_linkedin(session: requests.Session) -> None:
     raise Exception(
         "iKy - LinkedIn requires browser cookies. Export cookies from linkedin.com "
         "using Cookie-Editor extension and paste the JSON in the linkedin_cookies "
-        "API key field. See docs/COOKIES.md for instructions."
+        "API key field."
     )
 
 

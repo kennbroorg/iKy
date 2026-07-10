@@ -94,7 +94,8 @@ _patch_twikit_user()
 # ---------------------------------------------------------------------------
 # Cookie persistence
 # ---------------------------------------------------------------------------
-_COOKIE_DIR = Path(os.environ.get("TWITTER_COOKIE_DIR", "/app/cookies"))
+_DEFAULT_COOKIE_DIR = Path(__file__).resolve().parents[2] / "cookies"
+_COOKIE_DIR = Path(os.environ.get("TWITTER_COOKIE_DIR", str(_DEFAULT_COOKIE_DIR)))
 _COOKIE_FILE = _COOKIE_DIR / "twitter_cookies.json"
 
 
@@ -162,7 +163,7 @@ async def _authenticate(client: twikit.Client) -> None:
     raise Exception(
         "iKy - Twitter requires browser cookies. Export cookies from x.com "
         "using Cookie-Editor extension and paste the JSON in the twitter_cookies "
-        "API key field. See docs/COOKIES.md for instructions."
+        "API key field."
     )
 
 
