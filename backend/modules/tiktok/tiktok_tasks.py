@@ -174,7 +174,12 @@ async def get_user_info(
             user = api.user(username)
             user_data = await user.info()
         except KeyError as e:
-            if e.args[0] == "user":
+            # TikTokApi raises KeyError("user") when the profile is absent and
+            # KeyError("id") when it returns a userInfo stub without the user's
+            # id (non-existent handle or a stale/invalid msToken). Both mean we
+            # have no usable profile, so surface a clean warning instead of a
+            # raw traceback.
+            if e.args[0] in ("user", "id"):
                 raise Exception("iKy - User Not Found") from e
             raise
 
