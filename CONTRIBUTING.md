@@ -47,7 +47,8 @@ distributed via git. Each contributor must install them manually after cloning.
   `FIX`, `MOD`, `MRG`, `REF`, `REM`, `UPD`, `UPT`. Subject must include at least a few
   words after the tag. Conventional commits (e.g. `feat(x): ...`) are rejected.
 - **`pre-push`** blocks direct pushes to `main`, `master`, and `iKy` (the default
-  branch). Always go through a feature branch and a PR.
+  branch), then hands off to `git lfs pre-push` so LFS objects are uploaded on
+  push. Always go through a feature branch and a PR.
 
 ### First-time install
 
@@ -66,3 +67,31 @@ chmod +x .git/hooks/commit-msg .git/hooks/pre-push
 If you only care about `pre-commit` (ruff, hadolint, file hygiene), step 1 is enough
 and step 2 is optional. The commit message format and protected-branch guard are the
 two pieces you would lose by skipping step 2.
+
+##Large files (Git LFS)
+
+Some binary assets (the demo GIF and large screenshots under `imgs/`) are stored
+with [Git LFS](https://git-lfs.com/) so they don't bloat the `.git` history. The
+tracked patterns live in `.gitattributes`:
+
+```
+imgs/*.gif      filter=lfs diff=lfs merge=lfs -text
+imgs/iKy-08.png filter=lfs diff=lfs merge=lfs -text
+```
+
+**You must have Git LFS installed before cloning**, otherwise those files arrive
+as ~130-byte text pointers instead of the real images.
+
+```bash
+# Debian/Ubuntu
+sudo apt install git-lfs
+# macOS
+brew install git-lfs
+
+# Then, once per machine:
+git lfs install
+```
+
+If you already cloned without LFS, run `git lfs pull` to fetch the real files.
+GitHub provides LFS storage and bandwidth on the free tier (1 GB each), which is
+plenty for these assets.
