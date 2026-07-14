@@ -1,0 +1,3 @@
+# Keeps backend/cookies/ present so the Docker bind-mount
+# (./backend/cookies:/app/cookies) has a target on a fresh clone.
+# Real *_cookies.json files are gitignored secrets — never commit them.

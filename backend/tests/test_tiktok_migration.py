@@ -1794,8 +1794,11 @@ class TestCookieAuthChain:
         )
 
     def test_get_tiktok_cookies_returns_not_found_when_all_fail(self, tmp_path):
-        """When cookie file absent, API key empty, and browser_cookie3 fails →
-        returns {'found': False, 'cookies': {}}."""
+        """Cookie file absent + API key empty → {'found': False, 'cookies': {}}.
+
+        After the dead-path removal there is no in-container browser fallback,
+        so the chain stops at the API-key tier and returns not-found.
+        """
         with (
             patch.object(tiktok_tasks, "_COOKIE_DIR", tmp_path),
             patch.object(
@@ -1804,36 +1807,6 @@ class TestCookieAuthChain:
                 tmp_path / "tiktok_cookies.json",
             ),
             patch.object(tiktok_tasks, "api_keys_search", return_value=False),
-            patch.object(
-                tiktok_tasks.browser_cookie3,
-                "chromium",
-                side_effect=Exception("no browser"),
-            ),
-            patch.object(
-                tiktok_tasks.browser_cookie3,
-                "opera",
-                side_effect=Exception("no browser"),
-            ),
-            patch.object(
-                tiktok_tasks.browser_cookie3,
-                "edge",
-                side_effect=Exception("no browser"),
-            ),
-            patch.object(
-                tiktok_tasks.browser_cookie3,
-                "firefox",
-                side_effect=Exception("no browser"),
-            ),
-            patch.object(
-                tiktok_tasks.browser_cookie3,
-                "chrome",
-                side_effect=Exception("no browser"),
-            ),
-            patch.object(
-                tiktok_tasks.browser_cookie3,
-                "brave",
-                side_effect=Exception("no browser"),
-            ),
         ):
             result = tiktok_tasks.get_tiktok_cookies(["msToken"])
 
@@ -1887,7 +1860,7 @@ class TestCookieAuthChain:
         assert result["cookies"]["msToken"] == "from_file"
 
     def test_get_tiktok_cookies_removes_corrupted_file(self, tmp_path):
-        """Corrupted cookie file is deleted and auth falls through to next step."""
+        """Corrupted cookie file is deleted and auth falls through to not-found."""
         cookie_file = tmp_path / "tiktok_cookies.json"
         cookie_file.write_text("not valid json {{{")
 
@@ -1895,38 +1868,41 @@ class TestCookieAuthChain:
             patch.object(tiktok_tasks, "_COOKIE_DIR", tmp_path),
             patch.object(tiktok_tasks, "_COOKIE_FILE", cookie_file),
             patch.object(tiktok_tasks, "api_keys_search", return_value=False),
-            patch.object(
-                tiktok_tasks.browser_cookie3,
-                "chromium",
-                side_effect=Exception("no"),
-            ),
-            patch.object(
-                tiktok_tasks.browser_cookie3,
-                "opera",
-                side_effect=Exception("no"),
-            ),
-            patch.object(
-                tiktok_tasks.browser_cookie3,
-                "edge",
-                side_effect=Exception("no"),
-            ),
-            patch.object(
-                tiktok_tasks.browser_cookie3,
-                "firefox",
-                side_effect=Exception("no"),
-            ),
-            patch.object(
-                tiktok_tasks.browser_cookie3,
-                "chrome",
-                side_effect=Exception("no"),
-            ),
-            patch.object(
-                tiktok_tasks.browser_cookie3,
-                "brave",
-                side_effect=Exception("no"),
-            ),
         ):
             result = tiktok_tasks.get_tiktok_cookies(["msToken"])
 
         assert not cookie_file.exists()
         assert result["found"] is False
+
+    def test_no_browser_cookie3_import_in_tiktok_tasks(self):
+        """tiktok_tasks.py must NOT import browser_cookie3 (dead-path removal)."""
+        source_path = (
+            Path(__file__).parent.parent / "modules" / "tiktok" / "tiktok_tasks.py"
+        )
+        content = source_path.read_text()
+        tree = ast.parse(content)
+        imported = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imported.update(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                imported.add(node.module)
+        assert "browser_cookie3" not in imported, (
+            "browser_cookie3 must be removed from tiktok_tasks.py imports"
+        )
+
+    def test_uses_shared_cookie_converter(self):
+        """_convert_tiktok_cookies must be the shared cookie_utils converter."""
+        from factories.cookie_utils import convert_browser_cookies
+
+        assert tiktok_tasks._convert_tiktok_cookies is convert_browser_cookies
+
+    def test_not_found_warning_references_docs(self):
+        """The exhausted-chain warning must point users to docs/COOKIES.md."""
+        source_path = (
+            Path(__file__).parent.parent / "modules" / "tiktok" / "tiktok_tasks.py"
+        )
+        content = source_path.read_text()
+        assert "docs/COOKIES.md" in content, (
+            "tiktok_tasks.py must reference docs/COOKIES.md in its guidance"
+        )

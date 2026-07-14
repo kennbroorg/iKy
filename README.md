@@ -1,51 +1,31 @@
 <div align="center" style="margin-bottom: 10px;">
-    <a href="https://twitter.com/intent/follow?screen_name=kennbroorg">
-	<img alt="follow on Twitter" src="https://img.shields.io/twitter/follow/kennbroorg.svg?label=follow%20&style=for-the-badge&logo=twitter&labelColor=abcdef&color=1da1f2">
-    </a>
-</div>
-
-<div align="center" style="margin-bottom: 10px;">
     <img alt="Redis" src="https://img.shields.io/badge/storage-redis-red.svg?style=for-the-badge">
     <img alt="Python" src="https://img.shields.io/badge/python-3.12-informational.svg?style=for-the-badge">
     <img alt="Celery" src="https://img.shields.io/badge/multiprocessing-celery-green.svg?style=for-the-badge">
-    <img alt="Flask" src="https://img.shields.io/badge/interface-flask-yellowgreen.svg?style=for-the-badge">
+    <img alt="FastAPI" src="https://img.shields.io/badge/interface-fastapi-009688.svg?style=for-the-badge">
     <img alt="Node" src="https://img.shields.io/badge/node-22.x-brightgreen.svg?style=for-the-badge">
-    <img alt="Angular" src="https://img.shields.io/badge/web%20framework-angular%208-red.svg?style=for-the-badge">
+    <img alt="Angular" src="https://img.shields.io/badge/web%20framework-angular%2021-dd0031.svg?style=for-the-badge">
     <img alt="Docker" src="https://img.shields.io/badge/deploy-docker-blue.svg?style=for-the-badge&logo=docker">
 </div>
 
-<!--
-<div align="center" style="margin-bottom: 10px;">
-    <img alt="Boostrap" src="https://img.shields.io/badge/toolkit-boostrap-blueviolet.svg?style=for-the-badge">
-    <img alt="UI Kit" src="https://img.shields.io/badge/UI%20Kit-Nebular-9cf.svg?style=for-the-badge">
-</div>
--->
-
 <div align="center">
     <a href="https://gitlab.com/kennbroorg/iKy/blob/iKy/README.es.md">
-	<img alt="README Espanol" src="https://img.shields.io/badge/README-Espa%C3%B1ol-orange.svg?style=for-the-badge">
+	<img alt="README Español" src="https://img.shields.io/badge/README-Espa%C3%B1ol-orange.svg?style=for-the-badge">
     </a>
 </div>
 
 ---
 
 <div align="center">
-    <img alt="Logo" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/Logo-Circular.png">
+    <img alt="Logo" src="imgs/Logo-Circular.png">
 </div>
 
 ---
-
-<div align="center">
 
 [Description](#description)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Installation](#installation)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Website][website]&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Modules](#modules)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Issues][issues]&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;[Supporting](#sponsor)
 
-</div>
-
 ---
 
-<!--
-Website References
--->
 [website]:https://kennbroorg.gitlab.io/ikyweb/
 [issues]:https://gitlab.com/kennbroorg/iKy/-/issues/new?issue%5Bassignee_id%5D=&issue%5Bmilestone_id%5D=
 [readmees]: README.es.md
@@ -54,46 +34,16 @@ Website References
 <h1 align="center">iKy</h1>
 
 <h1 id="description">Description</h1>
-Project iKy is a tool that collects information from an email and shows results in a nice visual interface.
 
-Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
+iKy is an OSINT tool that collects information from an email address or other selectors and displays the results in a visual interface.
 
 <div align="center">
-    <a href="https://vimeo.com/434501702"><img src="frontend/src/assets/images/iKySol.gif"></a>
+    <a href="https://vimeo.com/434501702"><img src="imgs/iKySol.gif"></a>
 </div>
 <div align="center">
+    <em>(pending update: reflects the previous frontend)</em>
+    <br>
     <a href="https://vimeo.com/434501702">Video Demo</a>
-</div>
-
-<h2 id="modules">Modules</h2>
-
-<div align="center" style="margin-bottom: 10px;">
-    <img alt="fullcontact" src="https://img.shields.io/badge/module-fullcontact-blue.svg?style=flat-square">
-    <img alt="twitter" src="https://img.shields.io/badge/module-twitter-blue.svg?style=flat-square">
-    <img alt="linkedin" src="https://img.shields.io/badge/module-linkedin-blue.svg?style=flat-square">
-    <img alt="github" src="https://img.shields.io/badge/module-github-blue.svg?style=flat-square">
-    <img alt="keybase" src="https://img.shields.io/badge/module-keybase-blue.svg?style=flat-square">
-    <img alt="ghostproject" src="https://img.shields.io/badge/module-ghostproject-red.svg?style=flat-square">
-    <img alt="haveibeenpwned" src="https://img.shields.io/badge/module-haveibeenpwned-blue.svg?style=flat-square">
-    <img alt="emailrep.io" src="https://img.shields.io/badge/amodule-emailrep.io-blue.svg?style=flat-square">
-    <img alt="socialscan" src="https://img.shields.io/badge/module-socialscan-blue.svg?style=flat-square">
-    <img alt="instagram" src="https://img.shields.io/badge/module-instagram-blue.svg?style=flat-square">
-    <img alt="tiktok" src="https://img.shields.io/badge/module-tiktok-blue.svg?style=flat-square">
-    <img alt="sherlock" src="https://img.shields.io/badge/module-sherlock-blue.svg?style=flat-square">
-    <img alt="skype" src="https://img.shields.io/badge/module-skype-blue.svg?style=flat-square">
-    <img alt="tinder" src="https://img.shields.io/badge/module-tinder-blue.svg?style=flat-square">
-    <img alt="venmo" src="https://img.shields.io/badge/module-venmo-blue.svg?style=flat-square">
-    <img alt="darkpass" src="https://img.shields.io/badge/module-darkpass-blue.svg?style=flat-square">
-    <img alt="tweetiment" src="https://img.shields.io/badge/module-tweetiment-blue.svg?style=flat-square">
-    <img alt="peopledatalabs" src="https://img.shields.io/badge/module-peopledatalabs-blue.svg?style=flat-square">
-    <img alt="reddit" src="https://img.shields.io/badge/module-reddit-blue.svg?style=flat-square">
-    <img alt="leaklookup" src="https://img.shields.io/badge/module-leaklookup-blue.svg?style=flat-square">
-    <img alt="twint" src="https://img.shields.io/badge/module-twint-blue.svg?style=flat-square">
-    <img alt="holehe" src="https://img.shields.io/badge/module-holehe-blue.svg?style=flat-square">
-    <img alt="spotify" src="https://img.shields.io/badge/module-spotify-blue.svg?style=flat-square">
-    <img alt="twitch" src="https://img.shields.io/badge/module-twitch-blue.svg?style=flat-square">
-    <img alt="dorks" src="https://img.shields.io/badge/module-dorks-blue.svg?style=flat-square">
-    <img alt="mastodon" src="https://img.shields.io/badge/module-mastodon-blue.svg?style=flat-square">
 </div>
 
 <h1 id="installation">Installation</h1>
@@ -109,30 +59,121 @@ Visit the Gitlab Page of the [Project](https://kennbroorg.gitlab.io/ikyweb/)
 ```shell
 git clone https://gitlab.com/kennbroorg/iKy.git
 cd iKy
-docker compose build
-docker compose up -d
-```
-
-Or, if you have `just` installed:
-
-```shell
 just build
 just up
 ```
 
-Open your browser at [http://localhost:4200](http://localhost:4200)
+Open your browser at [http://localhost:4300](http://localhost:4300)
 
 To stop all services:
 
 ```shell
-docker compose down
-# or
 just down
 ```
 
+> `just up` starts `backend`, `iky-frontend`, and `redis`. No other services are launched by default.
+
+### Without Docker (native)
+
+If you cannot run Docker, iKy can run natively: Caddy serves the pre-built
+frontend and Redis + Celery + Uvicorn run as local processes. Requires
+`redis-server`, Python 3.12, `curl` and `tar` on the host (Caddy is downloaded
+automatically).
+
+```shell
+just setup          # create the venv
+just up-native      # installs deps, downloads Caddy + frontend, starts everything
+```
+
+Open your browser at [http://localhost:4300](http://localhost:4300). Stop with Ctrl-C or `just down-native`.
+
+> The frontend is pulled from the latest GitHub release — no Node build needed.
+> `tor` is not launched in native mode; only the `darkweb` module needs it.
+
+<h1 id="architecture">Architecture</h1>
+
+| Service | Stack | Port |
+|---------|-------|------|
+| backend | FastAPI 0.115 + Celery 5.6 | 5000 |
+| iky-frontend | Angular 21 + nginx | 4300 |
+| redis | Redis 7 | 56379 (host) |
+| tor | SOCKS5 proxy (darkweb module) | internal |
+
+<h1 id="modules">Modules</h1>
+
+iKy routes 26 modules through `backend/module_registry.py`:
+
+| Category | Modules |
+|----------|---------|
+| Social networks | twitter, linkedin, instagram, tiktok, mastodon, twitch, reddit |
+| Identity / username | github, gitlab, keybase, sherlock, socialscan, holehe, usersearch, skype |
+| Dating / payments | tinder, venmo |
+| Music | spotify |
+| Reputation / data brokers | peopledatalabs, emailrep, fullcontact |
+| Leaks / breaches | leaks, leaklookup, darkweb, hudsonrock |
+| Search | search |
+
+<h1 id="api-keys">API Keys</h1>
+
+Once the application is loaded in the browser, enter your API keys in the settings panel. Below is the full table of fields from `backend/factories/apikeys_default.json`:
+
+|   **Module**   | **Status** | **Field in apikey** | **How to obtain** |
+| :------------- | :--------: | :------------------ | :----------------- |
+| LinkedIn       | :ok: :cookie: | `linkedin_cookies` (or legacy `linkedin_li_at` / `linkedin_JSESSIONID`) | `just cookies-grab linkedin linkedin.com` or `just cookies-import linkedin <file>` |
+| Twitter        | :ok: :cookie: | `twitter_cookies` | `just cookies-grab twitter x.com` |
+| TikTok         | :ok: :cookie: | `tiktok_cookies` | `just cookies-grab tiktok tiktok.com` |
+| PeopleDataLabs | :ok: | `peopledatalabs_key` | :free: **Free** API — [wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#peopledatalabs) |
+| Emailrep       | :ok: | `emailrep_key` | :free: **Free** API — [wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#emailrep) |
+| Leaklookup     | :ok: | `leaklookup_key` | :free: **Free** API — [wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#leaklookup) |
+| Spotify        | :ok: | `spotify_client_id` / `spotify_client_secret` | :free: **Free** API — [wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#spotify) |
+| Twitch         | :ok: | `twitch_client_id` / `twitch_client_secret` | :free: **Free** API — [wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#twitch) |
+| CSE (Google)   | :ok: | `cse_api_key` / `cse_cx` | :free: **Free** API — [wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#cse) |
+| Brave          | :ok: | `brave_key` | :free: **Free** API |
+| Instagram      | :warning: | `instagram_user` / `instagram_pass` | Under revision |
+| Fullcontact    | :stop_sign: | `fullcontact_api` | Discontinued |
+| HaveIBeenPwned | :stop_sign: | `haveibeenpwned_key` | Discontinued |
+
+> APIs marked with :cookie: use browser session cookies; the rest use service tokens.
+
+<h1 id="cookies">Session cookies</h1>
+
+Some modules (LinkedIn, Twitter, TikTok) require session cookies from your browser. Cookies are stored in `backend/cookies/` (mounted in the container as `/app/cookies`) and persist across restarts. There are two ways to load them, both via `just`.
+
+> Cookies are personal session tokens: do not share them or commit them to the repository (`backend/cookies/` is git-ignored).
+
+### Option A: Import a browser export
+
+Export the site cookies with an extension such as Cookie-Editor to a JSON file and import it:
+
+```shell
+just cookies-import linkedin ~/Downloads/linkedin_cookies.json
+```
+
+### Option B: Extract them automatically from the browser
+
+Extracts cookies directly from your local browser. Close the browser before running (an open browser locks its cookie database):
+
+```shell
+# Try all installed browsers (firefox, chrome, brave, edge)
+just cookies-grab linkedin linkedin.com
+
+# Or a specific one
+just cookies-grab linkedin linkedin.com brave
+```
+
+The command reports, browser by browser, what it could read and what it could not, and writes the file only if it finds the cookies the module needs. For example, LinkedIn requires `li_at` and `JSESSIONID`.
+
+| Module | Domain | Required cookies |
+| :----- | :------ | :--------------- |
+| LinkedIn | linkedin.com | `li_at`, `JSESSIONID` |
+| Twitter | x.com | `auth_token`, `ct0` |
+| TikTok | tiktok.com | `msToken` |
+
+> Cookies expire periodically (LinkedIn cookies last between 1 and 3 months). When a module stops authenticating, run the command again.
+
 <h1 id="development">Development</h1>
 
-The development workflow uses a **virtualenv for linting/pre-commit hooks** and **Docker for building and running** the application.
+The development workflow uses a **virtualenv for linting/pre-commit hooks** and **Docker (or the native `just up-native` flow) for building and running** the application.
 
 ### Setting up the dev environment
 
@@ -155,45 +196,18 @@ This creates a Python virtualenv with `pre-commit` and `ruff`, and installs the 
 | `just logs` | Follow backend logs (`just logs frontend` for frontend) |
 | `just ps` | Show running containers |
 | `just shell-backend` | Open a shell in the backend container |
-| `just shell-frontend` | Open a shell in the frontend container |
 | `just lint` | Run ruff linter and format check |
 | `just fmt` | Auto-format Python code |
 | `just restart backend` | Restart a specific service |
 | `just rebuild` | Stop, rebuild, and start all services |
 | `just clean` | Remove containers, volumes, and local images |
-
-# API Keys
-
-Once the application is loaded in the browser, it should get most of the APIs and/or session cookies from the browser.
-Below is a table with all the fields to fill out
-
-|   **Module**   | **Status** | **Field in apikey** | **Description** |
-| :------------- | :--------: | :--------- | :--------- |
-| Fullcontact    | :octagonal\_sign: |  | Discontinued |
-| PeopleDataLabs | :ok: | peopledatalabs\_key | :free: API **Free**. Explained [here](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#peopledatalabs) |
-| Linkedin | :ok: | linkedin\_li\_at / linkedin\_JSESSIONID [\(***\)](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#postdata) | :free: Cookie browser(:cookie:) method. Explained [here](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#linkedin) |
-| Twitter        | :ok: | twitter\_user / twitter\_pass [\(***\)](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#postdata) | :free: Cookie browser(:cookie:) or user/pass. Explained [here](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#twitter) |
-| Instagram      | :ok: | instagram\_user / instagram\_pass [\(***\)](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#postdata) | :free: Cookie browser(:cookie:) or user/pass. Explained [here](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#instagram) |
-| HaveIBeenPwned | :ok: | haveibeenpwned\_key |:heavy\_dollar\_sign: API **Paid**. Explained [here](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#haveibeenpwned) |
-| Emailrep       | :ok: | emailrep\_key | :free: API **Free**. Explained [here](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#emailrep) |
-| Leaklookup     | :ok: | leaklookup\_key | :free: API **Free**. Explained [here](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#leaklookup) |
-| Spotify        | :ok: | spotify\_client\_id / spotify\_client\_secret | :free: API **Free**. Explained [here](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#spotify) |
-| Twitch         | :ok: | twitch\_client\_id / twitch\_client\_secret | :free: API **Free**. Explained [here](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#twitch) |
-| CSE (Google)   | :ok: | cse\_api\_key / cse\_cx |:free: API **Free**. Explained [here](https://gitlab.com/kennbroorg/iKy/-/wikis/APIs/ApiKeys-get#cse) |
-| Reddit         | :warning: |  | In revision |
-| Tiktok         | :ok: |  | Get from your preferred browser. Just log in with your user |
+| `just up-native` | Start iKy natively (no Docker) |
+| `just down-native` | Stop the native services |
+| `just up-native-clean` | Wipe native caches (Caddy, frontend, logs) |
 
 <h1 id="update">Update iKy</h1>
 
 Pull the latest changes and rebuild the Docker images:
-
-```shell
-git pull
-docker compose build
-docker compose up -d
-```
-
-Or with `just`:
 
 ```shell
 git pull
@@ -203,21 +217,27 @@ just rebuild
 To preserve your API keys across updates, use the Export/Import options in the apikeys menu of the graphical interface.
 
 <div align="center">
-    <img alt="apis" height="400" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKy-08.png">
+    <img alt="apis" height="400" src="imgs/iKy-08.png">
+</div>
+<div align="center">
+    <em>(pending update: reflects the previous frontend)</em>
 </div>
 
 # Wiki
+- [iKy Wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/home)
 
-[iKy Wiki](https://gitlab.com/kennbroorg/iKy/-/wikis/home)
-
-## Demo Video
+# Video Demo
 
 <div align="center">
-    <a href="https://vimeo.com/496879025"><img alt="iKy SOL" src="https://kennbroorg.gitlab.io/ikyweb/assets/img/iKy-01.png"></a>
+    <a href="https://vimeo.com/434501702"><img alt="iKy demo" src="imgs/iKy-01.png"></a>
     <p>Vimeo</p>
+</div>
+<div align="center">
+    <em>(pending update: reflects the previous frontend)</em>
 </div>
 
 <h1 id="sponsor">Support the project</h1>
+
 Whether you use this project, have learned something from it, or just like it, please consider supporting it by buying me a coffee, so I can dedicate more time on open-source projects like this.
 
 <div align="center" style="margin-top: 30px;">

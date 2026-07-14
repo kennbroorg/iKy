@@ -10,11 +10,8 @@ from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
-
 from celery.utils.log import get_task_logger
-
 from celery_app import celery
-
 
 # import urllib3
 # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

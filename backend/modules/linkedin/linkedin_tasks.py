@@ -10,6 +10,7 @@ from pathlib import Path
 import requests
 from celery.utils.log import get_task_logger
 from factories.configuration import api_keys_search
+from factories.cookie_utils import convert_browser_cookies
 from factories.iKy_functions import location_geo
 from factories.task_wrapper import iky_task
 
@@ -18,7 +19,8 @@ logger = get_task_logger(__name__)
 # ---------------------------------------------------------------------------
 # Cookie persistence
 # ---------------------------------------------------------------------------
-_COOKIE_DIR = Path(os.environ.get("LINKEDIN_COOKIE_DIR", "/app/cookies"))
+_DEFAULT_COOKIE_DIR = Path(__file__).resolve().parents[2] / "cookies"
+_COOKIE_DIR = Path(os.environ.get("LINKEDIN_COOKIE_DIR", str(_DEFAULT_COOKIE_DIR)))
 _COOKIE_FILE = _COOKIE_DIR / "linkedin_cookies.json"
 
 
@@ -27,30 +29,10 @@ _COOKIE_FILE = _COOKIE_DIR / "linkedin_cookies.json"
 # ---------------------------------------------------------------------------
 
 
-def _convert_browser_cookies(raw: list[dict] | dict) -> dict[str, str]:
-    """Convert Cookie-Editor export to a flat {name: value} dict.
-
-    Browser extensions (Cookie-Editor, EditThisCookie) export cookies as a
-    list of objects with 'name'/'value' keys.  LinkedIn auth expects a flat
-    ``{cookie_name: cookie_value}`` mapping.
-
-    Mirrors ``twitter_tasks._convert_browser_cookies``.
-    """
-    if isinstance(raw, dict):
-        # Already in flat format — pass through with string coercion
-        return {str(k): str(v) for k, v in raw.items()}
-    if isinstance(raw, list):
-        result: dict[str, str] = {}
-        for item in raw:
-            name = item.get("name") or item.get("Name")
-            value = item.get("value") or item.get("Value") or ""
-            if name:
-                result[str(name)] = str(value)
-        return result
-    raise ValueError(
-        f"Unexpected cookie format: {type(raw).__name__}. "
-        "Expected list (browser export) or dict (flat format)."
-    )
+# Cookie conversion is shared across modules — see factories.cookie_utils.
+# Keep the historical private name as an alias so existing call sites and the
+# test suite resolve while the logic lives in exactly one place.
+_convert_browser_cookies = convert_browser_cookies
 
 
 def _authenticate_linkedin(session: requests.Session) -> None:
@@ -80,7 +62,7 @@ def _authenticate_linkedin(session: requests.Session) -> None:
     if raw_cookie_str:
         try:
             browser_cookies = json.loads(raw_cookie_str)
-            cookie_data = _convert_browser_cookies(browser_cookies)
+            cookie_data = convert_browser_cookies(browser_cookies)
             session.cookies["li_at"] = cookie_data["li_at"]
             session.cookies["JSESSIONID"] = cookie_data["JSESSIONID"]
             session.headers["csrf-token"] = cookie_data["JSESSIONID"].strip('"')
@@ -110,7 +92,7 @@ def _authenticate_linkedin(session: requests.Session) -> None:
     raise Exception(
         "iKy - LinkedIn requires browser cookies. Export cookies from linkedin.com "
         "using Cookie-Editor extension and paste the JSON in the linkedin_cookies "
-        "API key field. See docs/COOKIES.md for instructions."
+        "API key field."
     )
 
 

@@ -9,13 +9,10 @@ from collections import Counter
 from pathlib import Path
 
 import instaloader
-
 from celery.utils.log import get_task_logger
-
 from celery_app import celery
 from factories.configuration import api_keys_search
 from factories.iKy_functions import analize_rrss
-
 
 logger = get_task_logger(__name__)
 

@@ -542,6 +542,13 @@ def test_convert_browser_cookies_invalid_type_raises():
         twitter_tasks._convert_browser_cookies("not-a-list-or-dict")  # type: ignore[arg-type]
 
 
+def test_twitter_uses_shared_cookie_converter():
+    """_convert_browser_cookies must be the shared cookie_utils converter."""
+    from factories.cookie_utils import convert_browser_cookies
+
+    assert twitter_tasks._convert_browser_cookies is convert_browser_cookies
+
+
 def test_auth_no_credentials_raises_with_cookie_instructions(
     tmp_path, mock_twikit_client
 ):

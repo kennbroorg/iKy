@@ -14,6 +14,7 @@ from typing import Any
 import twikit
 from celery.utils.log import get_task_logger
 from factories.configuration import api_keys_search
+from factories.cookie_utils import convert_browser_cookies
 from factories.iKy_functions import analize_rrss, location_geo
 from factories.task_wrapper import iky_task
 
@@ -93,7 +94,8 @@ _patch_twikit_user()
 # ---------------------------------------------------------------------------
 # Cookie persistence
 # ---------------------------------------------------------------------------
-_COOKIE_DIR = Path(os.environ.get("TWITTER_COOKIE_DIR", "/app/cookies"))
+_DEFAULT_COOKIE_DIR = Path(__file__).resolve().parents[2] / "cookies"
+_COOKIE_DIR = Path(os.environ.get("TWITTER_COOKIE_DIR", str(_DEFAULT_COOKIE_DIR)))
 _COOKIE_FILE = _COOKIE_DIR / "twitter_cookies.json"
 
 
@@ -109,28 +111,10 @@ def _run_async(coro: Coroutine[Any, Any, T]) -> T:
     return asyncio.run(coro)
 
 
-def _convert_browser_cookies(raw: list[dict] | dict) -> dict[str, str]:
-    """Convert browser-exported cookie list to twikit {name: value} dict.
-
-    Browser extensions (Cookie-Editor, EditThisCookie) export cookies as a
-    list of objects with 'name'/'value' keys.  twikit's set_cookies / load_cookies
-    expects a flat ``{cookie_name: cookie_value}`` mapping.
-    """
-    if isinstance(raw, dict):
-        # Already in twikit format — pass through
-        return {str(k): str(v) for k, v in raw.items()}
-    if isinstance(raw, list):
-        result: dict[str, str] = {}
-        for item in raw:
-            name = item.get("name") or item.get("Name")
-            value = item.get("value") or item.get("Value") or ""
-            if name:
-                result[str(name)] = str(value)
-        return result
-    raise ValueError(
-        f"Unexpected cookie format: {type(raw).__name__}. "
-        "Expected list (browser export) or dict (twikit format)."
-    )
+# Cookie conversion is shared across modules — see factories.cookie_utils.
+# Keep the historical private name as an alias so existing call sites and the
+# test suite resolve while the logic lives in exactly one place.
+_convert_browser_cookies = convert_browser_cookies
 
 
 async def _authenticate(client: twikit.Client) -> None:
@@ -162,7 +146,7 @@ async def _authenticate(client: twikit.Client) -> None:
     if raw_cookie_str:
         try:
             browser_cookies = json.loads(raw_cookie_str)
-            twikit_cookies = _convert_browser_cookies(browser_cookies)
+            twikit_cookies = convert_browser_cookies(browser_cookies)
             client.set_cookies(twikit_cookies)
             # Persist so subsequent calls use path 1 (faster, no re-parse)
             client.save_cookies(str(_COOKIE_FILE))
@@ -179,7 +163,7 @@ async def _authenticate(client: twikit.Client) -> None:
     raise Exception(
         "iKy - Twitter requires browser cookies. Export cookies from x.com "
         "using Cookie-Editor extension and paste the JSON in the twitter_cookies "
-        "API key field. See docs/COOKIES.md for instructions."
+        "API key field."
     )
 
 
