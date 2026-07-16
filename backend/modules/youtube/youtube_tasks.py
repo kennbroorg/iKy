@@ -248,17 +248,6 @@ def _domain_of(url: str) -> str:
     return match.group(1).lower() if match else url
 
 
-def _unique(values: list[str]) -> list[str]:
-    """Return values with order preserved and duplicates removed."""
-    seen: set[str] = set()
-    result: list[str] = []
-    for value in values:
-        if value not in seen:
-            seen.add(value)
-            result.append(value)
-    return result
-
-
 def _top_words(text: str, top_n: int = 15) -> list[dict]:
     """Return the top-N non-stopword words (length >= 3) from *text*."""
     words = [
@@ -333,8 +322,8 @@ def _analyze(
 
     return {
         "social_links": social_links,
-        "emails": _unique(_EMAIL_RE.findall(all_text)),
-        "hashtags": _unique(_HASHTAG_RE.findall(all_text)),
+        "emails": list(dict.fromkeys(_EMAIL_RE.findall(all_text))),
+        "hashtags": list(dict.fromkeys(_HASHTAG_RE.findall(all_text))),
         "top_commenters": top_commenters,
         "keywords": _top_words(" ".join(transcript_texts)),
         "language": _detect_language(description_blob),
@@ -436,55 +425,33 @@ def _build_output(
     topic_names = [_de_wikipedia(url) for url in topic_categories]
 
     # -- graphic: details (12 identity fields) --
-    details = [
-        _node("YtDetailsTitle", "Title", title, _ICON, channel_url),
-        _node(
-            "YtDetailsChannelId",
-            "Channel ID",
-            channel_id,
-            "fas fa-id-badge",
-            channel_url,
-        ),
-        _node(
+    details_rows = [
+        ("YtDetailsTitle", "Title", title, _ICON),
+        ("YtDetailsChannelId", "Channel ID", channel_id, "fas fa-id-badge"),
+        (
             "YtDetailsDescription",
             "Description",
             raw_description or "N/A",
             "fas fa-align-left",
-            channel_url,
         ),
-        _node(
-            "YtDetailsPublished",
-            "Published",
-            published_at,
-            "fas fa-calendar",
-            channel_url,
-        ),
-        _node("YtDetailsCountry", "Country", country, "fas fa-globe", channel_url),
-        _node(
-            "YtDetailsCustomUrl", "Custom URL", custom_url, "fas fa-link", channel_url
-        ),
-        _node("YtDetailsSubscribers", "Subscribers", subs, "fas fa-users", channel_url),
-        _node(
-            "YtDetailsVideoCount",
-            "Video Count",
-            video_count,
-            "fas fa-photo-video",
-            channel_url,
-        ),
-        _node(
-            "YtDetailsViewCount", "View Count", view_count, "fas fa-eye", channel_url
-        ),
-        _node(
-            "YtDetailsKeywords", "Keywords", keywords_field, "fas fa-tags", channel_url
-        ),
-        _node(
+        ("YtDetailsPublished", "Published", published_at, "fas fa-calendar"),
+        ("YtDetailsCountry", "Country", country, "fas fa-globe"),
+        ("YtDetailsCustomUrl", "Custom URL", custom_url, "fas fa-link"),
+        ("YtDetailsSubscribers", "Subscribers", subs, "fas fa-users"),
+        ("YtDetailsVideoCount", "Video Count", video_count, "fas fa-photo-video"),
+        ("YtDetailsViewCount", "View Count", view_count, "fas fa-eye"),
+        ("YtDetailsKeywords", "Keywords", keywords_field, "fas fa-tags"),
+        (
             "YtDetailsTopics",
             "Topic Categories",
             ", ".join(topic_names) if topic_names else "N/A",
             "fas fa-tag",
-            channel_url,
         ),
-        _node("YtDetailsThumbnails", "Avatar", avatar, "fas fa-image", channel_url),
+        ("YtDetailsThumbnails", "Avatar", avatar, "fas fa-image"),
+    ]
+    details = [
+        _node(name, title_, sub, icon, channel_url)
+        for name, title_, sub, icon in details_rows
     ]
 
     # -- graphic: statistics (chart children) --
@@ -504,60 +471,56 @@ def _build_output(
     comments_off = sum(1 for c in comments.values() if isinstance(c, dict))
     transcripts_ok = sum(1 for t in transcripts.values() if isinstance(t, list))
     transcripts_off = sum(1 for t in transcripts.values() if isinstance(t, dict))
-    status = [
-        _node(
-            "YtStatusCommentsOk",
-            "Videos with comments",
-            comments_ok,
-            "fas fa-comments",
-            channel_url,
-        ),
-        _node(
+    status_rows = [
+        ("YtStatusCommentsOk", "Videos with comments", comments_ok, "fas fa-comments"),
+        (
             "YtStatusCommentsOff",
             "Comments disabled",
             comments_off,
             "fas fa-comment-slash",
-            channel_url,
         ),
-        _node(
+        (
             "YtStatusTranscriptsOk",
             "Transcripts available",
             transcripts_ok,
             "fas fa-closed-captioning",
-            channel_url,
         ),
-        _node(
+        (
             "YtStatusTranscriptsOff",
             "Transcripts unavailable",
             transcripts_off,
             "fas fa-ban",
-            channel_url,
         ),
+    ]
+    status = [
+        _node(name, title_, sub, icon, channel_url)
+        for name, title_, sub, icon in status_rows
     ]
 
     # -- graphic: content (aggregate engagement) --
-    content = [
-        _node(
+    content_rows = [
+        (
             "YtContentViews",
             "Last videos views",
             sum(_to_int(v.get("viewCount")) for v in videos),
             "fas fa-eye",
-            channel_url,
         ),
-        _node(
+        (
             "YtContentLikes",
             "Last videos likes",
             sum(_to_int(v.get("likeCount")) for v in videos),
             "fas fa-thumbs-up",
-            channel_url,
         ),
-        _node(
+        (
             "YtContentComments",
             "Last videos comments",
             sum(_to_int(v.get("commentCount")) for v in videos),
             "fas fa-comments",
-            channel_url,
         ),
+    ]
+    content = [
+        _node(name, title_, sub, icon, channel_url)
+        for name, title_, sub, icon in content_rows
     ]
 
     # -- graphic: thumbnails (avatar + per-video) --

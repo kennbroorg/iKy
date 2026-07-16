@@ -904,11 +904,17 @@ class TestTaskWiring:
 
         assert p_youtube.name == "modules.youtube.youtube_tasks.t_youtube"
 
-    def test_output_is_callable(self):
+    def test_output_is_callable(self, capsys):
         from modules.youtube.youtube_tasks import output
 
-        # Should not raise when dumping a minimal result.
-        output([{"module": "youtube"}])
+        payload = [{"module": "youtube"}, {"param": "testchannel"}]
+        output(payload)
+
+        printed = capsys.readouterr().out
+        parsed = json.loads(printed)
+        assert parsed == payload
+        assert next(iter(parsed[0])) == "module"
+        assert parsed[1]["param"] == "testchannel"
 
 
 # ===========================================================================
