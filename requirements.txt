@@ -34,6 +34,7 @@ twitch-python==0.0.20
 parse==1.21.1
 browser-cookie3==0.20.1
 google-api-python-client==2.190.0
+youtube-transcript-api==1.2.4
 requests_html==0.10.0
 lxml_html_clean
 fontawesome==5.10.1.post1

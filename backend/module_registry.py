@@ -56,4 +56,5 @@ MODULE_REGISTRY: dict[str, tuple[str, bool]] = {
         "modules.hudsonrock.hudsonrock_tasks.t_hudsonrock",
         False,
     ),
+    "youtube": ("modules.youtube.youtube_tasks.t_youtube", False),
 }

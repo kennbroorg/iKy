@@ -17,5 +17,6 @@
   {"id": 16, "name": "cse_cx", "key": ""},
   {"id": 17, "name": "brave_key", "key": ""},
   {"id": 18, "name": "tiktok_cookies", "key": ""},
-  {"id": 19, "name": "linkedin_cookies", "key": ""}
+  {"id": 19, "name": "linkedin_cookies", "key": ""},
+  {"id": 20, "name": "youtube_key", "key": ""}
 ]
