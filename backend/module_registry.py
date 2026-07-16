@@ -52,4 +52,8 @@ MODULE_REGISTRY: dict[str, tuple[str, bool]] = {
     "twitch": ("modules.twitch.twitch_tasks.t_twitch", False),
     "mastodon": ("modules.mastodon.mastodon_tasks.t_mastodon", False),
     "darkweb": ("modules.darkweb.darkweb_tasks.t_darkweb", False),
+    "hudsonrock": (
+        "modules.hudsonrock.hudsonrock_tasks.t_hudsonrock",
+        False,
+    ),
 }
