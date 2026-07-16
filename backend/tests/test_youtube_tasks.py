@@ -14,7 +14,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from googleapiclient.errors import HttpError
-from youtube_transcript_api import IpBlocked, TranscriptsDisabled
+from youtube_transcript_api import IpBlocked, NoTranscriptFound, TranscriptsDisabled
 
 MODULE = "modules.youtube.youtube_tasks"
 
@@ -376,6 +376,13 @@ class TestFetchTranscripts:
 
         with patch(f"{MODULE}.YouTubeTranscriptApi") as api:
             api.return_value.fetch.side_effect = IpBlocked("vid1")
+            assert _fetch_transcripts("vid1") is None
+
+    def test_no_transcript_found_returns_none(self):
+        from modules.youtube.youtube_tasks import _fetch_transcripts
+
+        with patch(f"{MODULE}.YouTubeTranscriptApi") as api:
+            api.return_value.fetch.side_effect = NoTranscriptFound("vid1", ["en"], [])
             assert _fetch_transcripts("vid1") is None
 
     def test_unexpected_error_returns_none(self):
@@ -863,6 +870,22 @@ class TestTaskDegraded:
         result = _run_t_youtube(transcript_raw=None)
         raw = _raw(result)
         assert raw["transcripts"]["v1"] == {"transcriptUnavailable": True}
+
+    def test_no_transcript_found_degrades_and_continues(self):
+        youtube = _happy_youtube()
+        with (
+            patch(f"{MODULE}.api_keys_search", return_value="KEY"),
+            patch(f"{MODULE}.build", return_value=youtube),
+            patch(f"{MODULE}.YouTubeTranscriptApi") as api,
+        ):
+            api.return_value.fetch.side_effect = NoTranscriptFound("v1", ["en"], [])
+            from modules.youtube.youtube_tasks import t_youtube
+
+            result = t_youtube("@testchannel")
+
+        raw = _raw(result)
+        assert raw["transcripts"]["v1"] == {"transcriptUnavailable": True}
+        assert raw["transcripts"]["v2"] == {"transcriptUnavailable": True}
 
 
 # ===========================================================================
