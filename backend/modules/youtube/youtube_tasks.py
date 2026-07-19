@@ -827,5 +827,5 @@ if __name__ == "__main__":
     parser.add_argument("username", help="YouTube channel handle or URL to look up")
     args = parser.parse_args()
 
-    result = t_youtube(args.username)
+    result = t_youtube(args.username, dev_mode=False)
     output(result)
