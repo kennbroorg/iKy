@@ -46,5 +46,7 @@ celery.conf.update(
         "modules.dorks.dorks_tasks",
         "modules.twitter_comparison.twitter_info_tasks",
         "modules.twitter_comparison.twitter_comp_tasks",
+        "modules.youtube.youtube_tasks",
+        "modules.hudsonrock.hudsonrock_tasks",
     ),
 )

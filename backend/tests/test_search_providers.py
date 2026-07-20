@@ -23,8 +23,14 @@ if "googlesearch" not in sys.modules:
     sys.modules["googlesearch"] = MagicMock()
 
 if "googleapiclient" not in sys.modules:
-    sys.modules["googleapiclient"] = MagicMock()
-    sys.modules["googleapiclient.discovery"] = MagicMock()
+    try:
+        # Prefer the real dependency when present (Docker) so other test
+        # modules that need googleapiclient.errors are not shadowed.
+        import googleapiclient
+        import googleapiclient.discovery  # noqa: F401
+    except ImportError:
+        sys.modules["googleapiclient"] = MagicMock()
+        sys.modules["googleapiclient.discovery"] = MagicMock()
 
 from factories.search_providers import (
     BraveSearchProvider,
