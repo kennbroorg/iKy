@@ -476,6 +476,50 @@ class TestAnalyze:
         assert result["language"] == "en"
 
 
+# ===========================================================================
+# _fetch_subscription_count (channels this account follows)
+# ===========================================================================
+
+
+class TestFetchSubscriptionCount:
+    def _youtube(self, execute):
+        youtube = MagicMock()
+        youtube.subscriptions.return_value.list.return_value = execute
+        return youtube
+
+    def test_returns_total_results_when_public(self):
+        from modules.youtube.youtube_tasks import _fetch_subscription_count
+
+        youtube = self._youtube(_execute({"pageInfo": {"totalResults": 128}}))
+        assert _fetch_subscription_count(youtube, "UCchannel0000000000000") == 128
+
+    def test_none_when_page_info_absent(self):
+        from modules.youtube.youtube_tasks import _fetch_subscription_count
+
+        youtube = self._youtube(_execute({"items": []}))
+        assert _fetch_subscription_count(youtube, "UCchannel0000000000000") is None
+
+    def test_none_on_forbidden_http_error(self):
+        from modules.youtube.youtube_tasks import _fetch_subscription_count
+
+        youtube = self._youtube(
+            _execute(raises=_http_error(403, "subscriptionForbidden"))
+        )
+        assert _fetch_subscription_count(youtube, "UCchannel0000000000000") is None
+
+    def test_none_when_channel_id_empty(self):
+        from modules.youtube.youtube_tasks import _fetch_subscription_count
+
+        youtube = MagicMock()
+        assert _fetch_subscription_count(youtube, "") is None
+        youtube.subscriptions.assert_not_called()
+
+    def test_none_when_channel_id_na(self):
+        from modules.youtube.youtube_tasks import _fetch_subscription_count
+
+        assert _fetch_subscription_count(MagicMock(), "N/A") is None
+
+
 # ---------------------------------------------------------------------------
 # Output-contract fixtures
 # ---------------------------------------------------------------------------
@@ -551,7 +595,14 @@ def _profile_get(profile: list, key: str):
 
 
 class TestBuildOutput:
-    def _build(self, channel=None, videos=None, comments=None, analysis=None):
+    def _build(
+        self,
+        channel=None,
+        videos=None,
+        comments=None,
+        analysis=None,
+        subscription_count=None,
+    ):
         from modules.youtube.youtube_tasks import _build_output
 
         channel = channel if channel is not None else CHANNEL_FULL
@@ -560,7 +611,13 @@ class TestBuildOutput:
         transcripts: dict = {}
         analysis = analysis if analysis is not None else _analysis_full()
         return _build_output(
-            "testchannel", channel, videos, comments, transcripts, analysis
+            "testchannel",
+            channel,
+            videos,
+            comments,
+            transcripts,
+            analysis,
+            subscription_count,
         )
 
     def test_seven_key_order(self):
@@ -671,6 +728,34 @@ class TestBuildOutput:
         graphic = next(i["graphic"] for i in result if "graphic" in i)
         titles = [n["title"] for n in _sections(graphic)["social_links"]]
         assert "twitter.com" in titles
+
+    def test_presence_has_subscribers_only_no_views_or_videos(self):
+        result = self._build()
+        presence = _profile_get(
+            next(i["profile"] for i in result if "profile" in i), "presence"
+        )
+        children = presence[0]["children"]
+        names = [c["name"] for c in children]
+        assert names == ["subscribers"]
+        assert "views" not in names
+        assert "videos" not in names
+        assert children[0]["value"] == 1000
+
+    def test_presence_adds_subscriptions_when_count_available(self):
+        result = self._build(subscription_count=128)
+        presence = _profile_get(
+            next(i["profile"] for i in result if "profile" in i), "presence"
+        )
+        children = {c["name"]: c["value"] for c in presence[0]["children"]}
+        assert children == {"subscribers": 1000, "subscriptions": 128}
+
+    def test_presence_omits_subscriptions_when_count_none(self):
+        result = self._build(subscription_count=None)
+        presence = _profile_get(
+            next(i["profile"] for i in result if "profile" in i), "presence"
+        )
+        names = [c["name"] for c in presence[0]["children"]]
+        assert "subscriptions" not in names
 
 
 # ---------------------------------------------------------------------------

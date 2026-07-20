@@ -134,6 +134,38 @@ def _resolve_channel(youtube, handle: str) -> dict | None:
 
 
 # ---------------------------------------------------------------------------
+# Subscriptions (channels this account follows)
+# ---------------------------------------------------------------------------
+
+
+def _fetch_subscription_count(youtube, channel_id: str) -> int | None:
+    """Return how many channels *channel_id* is subscribed to, or ``None``.
+
+    Queries ``subscriptions.list`` scoped to the channel and reads
+    ``pageInfo.totalResults``. Most channels keep their subscriptions private,
+    in which case the API answers 403 (``subscriptionForbidden``) or an empty
+    page — both degrade to ``None`` so the caller can simply omit the datum.
+    Never raises.
+    """
+    if not channel_id or channel_id == "N/A":
+        return None
+    try:
+        resp = (
+            youtube.subscriptions()
+            .list(part="id", channelId=channel_id, maxResults=1)
+            .execute()
+        )
+        total = resp.get("pageInfo", {}).get("totalResults")
+        return int(total) if total is not None else None
+    except HttpError as exc:
+        logger.warning(f"Subscriptions unavailable for {channel_id}: {exc}")
+        return None
+    except Exception as exc:
+        logger.warning(f"Subscriptions fetch error for {channel_id}: {exc}")
+        return None
+
+
+# ---------------------------------------------------------------------------
 # Videos, comments, transcripts (Req 4, 5, 6)
 # ---------------------------------------------------------------------------
 
@@ -392,6 +424,7 @@ def _build_output(
     comments: dict,
     transcripts: dict,
     analysis: dict,
+    subscription_count: int | None = None,
 ) -> list[dict]:
     """Assemble the ordered 7-key iKy result contract for a YouTube channel."""
     snippet = channel.get("snippet", {})
@@ -679,16 +712,20 @@ def _build_output(
                 }
             )
     profile.append({"social": social_entries})
+    # Presence footprint: subscribers only (views/videos would dwarf the
+    # cross-module comparison chart). When the channel exposes its
+    # subscriptions publicly, add how many channels it follows.
+    presence_children = [{"name": "subscribers", "value": _to_int(subs)}]
+    if subscription_count is not None:
+        presence_children.append(
+            {"name": "subscriptions", "value": int(subscription_count)}
+        )
     profile.append(
         {
             "presence": [
                 {
                     "name": "youtube",
-                    "children": [
-                        {"name": "subscribers", "value": _to_int(subs)},
-                        {"name": "videos", "value": _to_int(video_count)},
-                        {"name": "views", "value": _to_int(view_count)},
-                    ],
+                    "children": presence_children,
                 }
             ]
         }
@@ -764,6 +801,8 @@ def p_youtube(username: str) -> list[dict]:
     if not channel:
         raise Exception("iKy - Channel not found")
 
+    subscription_count = _fetch_subscription_count(youtube, channel.get("id", ""))
+
     uploads = (
         channel.get("contentDetails", {}).get("relatedPlaylists", {}).get("uploads", "")
     )
@@ -805,7 +844,15 @@ def p_youtube(username: str) -> list[dict]:
 
     channel_description = channel.get("snippet", {}).get("description", "") or ""
     analysis = _analyze(videos, comments, transcripts, channel_description)
-    return _build_output(handle, channel, videos, comments, transcripts, analysis)
+    return _build_output(
+        handle,
+        channel,
+        videos,
+        comments,
+        transcripts,
+        analysis,
+        subscription_count,
+    )
 
 
 # Backward-compatible alias: the registry references t_youtube
