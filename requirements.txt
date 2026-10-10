@@ -13,7 +13,7 @@ cfscrape==2.1.1
 tweepy==4.16.0
 # twikit>=2.3.1 — broken since Mar 2026 (KEY_BYTE indices, see d60/twikit#416)
 twikit @ git+https://github.com/steverex169/twikit.git@fix/x-client-transaction-webpack-format
-geopy==2.4.1
+geopy==2.5.0
 ddgs>=8.1.1
 googlesearch-python>=1.3.0
 socialscan==2.0.1
