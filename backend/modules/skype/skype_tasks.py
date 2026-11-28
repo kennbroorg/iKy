@@ -35,7 +35,7 @@ def t_skype(email, from_m="Initial"):
 
         results = str(soup.div).replace("</div>", "").split("<br/>")[1:]
 
-        if results != ["An error occoured!"] and results != [
+        if results != ["An error occurred!"] and results != [
             "There were no Skype usernames found with this email."
         ]:
             raw_node = []
